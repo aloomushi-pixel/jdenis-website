@@ -6,6 +6,9 @@ import AdminDashboard from './pages/admin/Dashboard';
 import FactoryDashboard from './pages/factory/Dashboard';
 import WarehouseDashboard from './pages/warehouse/Dashboard';
 import OperatorDeliveries from './pages/operator/Deliveries';
+import ResourceManager from './components/ResourceManager';
+import QuotationModule from './components/QuotationModule';
+import OrderTimeline from './components/OrderTimeline';
 
 function App() {
     const { isAuthenticated, user } = useAuthStore();
@@ -16,12 +19,17 @@ function App() {
         switch (user.role) {
             case 'ADMIN':
                 return '/admin/dashboard';
-            case 'FACTORY_MANAGER':
+            case 'FABRICA':
                 return '/factory/dashboard';
-            case 'WAREHOUSE_MANAGER':
+            case 'ALMACEN_MATERIA_PRIMA':
+            case 'ALMACEN_PRODUCTO_FINAL':
                 return '/warehouse/dashboard';
-            case 'TRANSPORTER':
+            case 'TRANSPORTISTA':
                 return '/operator/deliveries';
+            case 'EJECUTIVO':
+                return '/quotations';
+            case 'CLIENTE':
+                return '/my-orders';
             default:
                 return '/login';
         }
@@ -46,7 +54,7 @@ function App() {
                 <Route
                     path="/factory/dashboard"
                     element={
-                        <ProtectedRoute allowedRoles={['ADMIN', 'FACTORY_MANAGER']}>
+                        <ProtectedRoute allowedRoles={['ADMIN', 'FABRICA']}>
                             <FactoryDashboard />
                         </ProtectedRoute>
                     }
@@ -56,7 +64,7 @@ function App() {
                 <Route
                     path="/warehouse/dashboard"
                     element={
-                        <ProtectedRoute allowedRoles={['ADMIN', 'WAREHOUSE_MANAGER']}>
+                        <ProtectedRoute allowedRoles={['ADMIN', 'ALMACEN_MATERIA_PRIMA', 'ALMACEN_PRODUCTO_FINAL']}>
                             <WarehouseDashboard />
                         </ProtectedRoute>
                     }
@@ -66,8 +74,38 @@ function App() {
                 <Route
                     path="/operator/deliveries"
                     element={
-                        <ProtectedRoute allowedRoles={['TRANSPORTER']}>
+                        <ProtectedRoute allowedRoles={['TRANSPORTISTA', 'ADMIN']}>
                             <OperatorDeliveries />
+                        </ProtectedRoute>
+                    }
+                />
+
+                {/* Resource Manager */}
+                <Route
+                    path="/resources"
+                    element={
+                        <ProtectedRoute allowedRoles={['ADMIN', 'EJECUTIVO']}>
+                            <ResourceManager />
+                        </ProtectedRoute>
+                    }
+                />
+
+                {/* Quotations Module */}
+                <Route
+                    path="/quotations"
+                    element={
+                        <ProtectedRoute allowedRoles={['ADMIN', 'EJECUTIVO']}>
+                            <QuotationModule />
+                        </ProtectedRoute>
+                    }
+                />
+
+                {/* Order Timeline */}
+                <Route
+                    path="/orders/:id/timeline"
+                    element={
+                        <ProtectedRoute allowedRoles={['ADMIN', 'EJECUTIVO', 'FABRICA', 'ALMACEN_MATERIA_PRIMA', 'ALMACEN_PRODUCTO_FINAL', 'TRANSPORTISTA']}>
+                            <OrderTimeline />
                         </ProtectedRoute>
                     }
                 />
