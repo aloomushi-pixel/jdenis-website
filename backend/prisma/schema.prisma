@@ -16,9 +16,12 @@ datasource db {
 
 enum UserRole {
   ADMIN
-  FACTORY_MANAGER
-  WAREHOUSE_MANAGER
-  TRANSPORTER
+  TRANSPORTISTA
+  ALMACEN_MATERIA_PRIMA
+  ALMACEN_PRODUCTO_FINAL
+  FABRICA
+  EJECUTIVO
+  CLIENTE
 }
 
 model User {
@@ -42,6 +45,15 @@ model User {
   stockUpdates            Stock[]
   handoffAsWarehouse      HandoffRecord[]       @relation("WarehouseStaff")
   handoffAsTransporter    HandoffRecord[]       @relation("Transporter")
+  
+  // New relations
+  quotationsCreated       Quotation[]           @relation("CreatedQuotations")
+  ordersCreated           Order[]               @relation("CreatedOrders")
+  ordersAssigned          Order[]               @relation("AssignedOrders")
+  events                  EventLog[]            @relation("UserEvents")
+  wasteRecords            WasteTolerance[]      @relation("RecordedWaste")
+  photosUploaded          Photo[]               @relation("UploadedPhotos")
+  packagingProcessed      PackagingRecord[]     @relation("ProcessedPackaging")
 
   @@map("users")
 }
@@ -143,6 +155,8 @@ model Customer {
 
   // Relations
   salesOrders SalesOrder[]
+  quotations  Quotation[]
+  orders      Order[]
 
   @@map("customers")
 }
@@ -460,3 +474,236 @@ model ProtocolExecution {
 
   @@map("protocol_executions")
 }
+
+// ========================================
+// RESOURCE MANAGEMENT
+// ========================================
+
+enum ResourceCategory {
+  MATERIA_PRIMA
+  EMBALAJE
+  PRODUCTO_FINAL
+  VEHICULOS
+}
+
+enum ResourceFormat {
+  LITROS
+  KILOGRAMOS
+  PIEZA
+}
+
+model Resource {
+  id                      String           @id @default(cuid())
+  category                ResourceCategory
+  title                   String
+  format                  ResourceFormat
+  quantity                Float            @default(0)
+  brand                   String?
+  imageUrl                String?          @map("image_url")
+  satCode                 String?          @map("sat_code") // For finished products
+  rawMaterialComposition  Json?            @map("raw_material_composition") // For finished products
+  createdAt               DateTime         @default(now()) @map("created_at")
+  updatedAt               DateTime         @updatedAt @map("updated_at")
+
+  // Relations
+  quotationItems          QuotationItem[]
+  orderItems              OrderItem[]
+  eventLogs               EventLog[]
+
+  @@map("resources")
+}
+
+// ========================================
+// QUOTATIONS & ORDERS (ENHANCED)
+// ========================================
+
+enum QuotationStatus {
+  DRAFT
+  SENT
+  ACCEPTED
+  REJECTED
+  CONVERTED
+}
+
+model Quotation {
+  id            String          @id @default(uuid())
+  quotationNumber String        @unique @map("quotation_number")
+  customerId    String          @map("customer_id")
+  totalAmount   Float           @map("total_amount")
+  status        QuotationStatus
+  validUntil    DateTime?       @map("valid_until")
+  notes         String?
+  createdBy     String          @map("created_by")
+  createdAt     DateTime        @default(now()) @map("created_at")
+  updatedAt     DateTime        @updatedAt @map("updated_at")
+
+  // Relations
+  customer      Customer        @relation(fields: [customerId], references: [id])
+  createdByUser User            @relation("CreatedQuotations", fields: [createdBy], references: [id])
+  items         QuotationItem[]
+  convertedOrder Order?
+
+  @@map("quotations")
+}
+
+model QuotationItem {
+  id           String     @id @default(uuid())
+  quotationId  String     @map("quotation_id")
+  resourceId   String     @map("resource_id")
+  quantity     Float
+  unitPrice    Float      @map("unit_price")
+
+  // Relations
+  quotation    Quotation  @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+  resource     Resource   @relation(fields: [resourceId], references: [id])
+
+  @@map("quotation_items")
+}
+
+enum OrderStatus {
+  COTIZADO
+  PENDIENTE
+  EN_PRODUCCION
+  EN_EMBALAJE
+  EN_TRANSITO
+  ENTREGADO
+  CANCELADO
+}
+
+model Order {
+  id              String       @id @default(uuid())
+  orderNumber     String       @unique @map("order_number")
+  customerId      String       @map("customer_id")
+  quotationId     String?      @unique @map("quotation_id")
+  totalAmount     Float        @map("total_amount")
+  currentStatus   OrderStatus  @map("current_status")
+  deliveryDate    DateTime?    @map("delivery_date")
+  assignedTo      String?      @map("assigned_to")
+  blockchainHistory Json       @default("[]") @map("blockchain_history") // Array of status changes
+  createdBy       String       @map("created_by")
+  createdAt       DateTime     @default(now()) @map("created_at")
+  updatedAt       DateTime     @updatedAt @map("updated_at")
+
+  // Relations
+  customer        Customer     @relation(fields: [customerId], references: [id])
+  quotation       Quotation?   @relation(fields: [quotationId], references: [id])
+  createdByUser   User         @relation("CreatedOrders", fields: [createdBy], references: [id])
+  assignedToUser  User?        @relation("AssignedOrders", fields: [assignedTo], references: [id])
+  items           OrderItem[]
+  packagingRecords PackagingRecord[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id         String   @id @default(uuid())
+  orderId    String   @map("order_id")
+  resourceId String   @map("resource_id")
+  quantity   Float
+  unitPrice  Float    @map("unit_price")
+
+  // Relations
+  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  resource   Resource @relation(fields: [resourceId], references: [id])
+
+  @@map("order_items")
+}
+
+// ========================================
+// EVENT LOGGING
+// ========================================
+
+enum EventType {
+  COMPRA
+  VENTA
+  INGRESO
+  EGRESO
+  PRODUCCION
+  EMBALAJE
+  TRANSPORTE
+}
+
+model EventLog {
+  id          String    @id @default(uuid())
+  eventType   EventType @map("event_type")
+  userId      String    @map("user_id")
+  resourceId  String?   @map("resource_id")
+  quantity    Float?
+  details     Json?     // Additional event-specific data
+  timestamp   DateTime  @default(now())
+
+  // Relations
+  user        User      @relation("UserEvents", fields: [userId], references: [id])
+  resource    Resource? @relation(fields: [resourceId], references: [id])
+
+  @@map("event_logs")
+}
+
+// ========================================
+// WASTE & TOLERANCE
+// ========================================
+
+model WasteTolerance {
+  id               String   @id @default(uuid())
+  batchId          String   @map("batch_id")
+  expectedQuantity Float    @map("expected_quantity")
+  actualQuantity   Float    @map("actual_quantity")
+  wastePercentage  Float    @map("waste_percentage")
+  notes            String?
+  recordedAt       DateTime @default(now()) @map("recorded_at")
+  recordedBy       String   @map("recorded_by")
+
+  // Relations
+  batch            ProductionBatch @relation(fields: [batchId], references: [id])
+  recordedByUser   User            @relation("RecordedWaste", fields: [recordedBy], references: [id])
+
+  @@map("waste_tolerance")
+}
+
+// ========================================
+// PHOTOS & DOCUMENTATION
+// ========================================
+
+enum PhotoEntityType {
+  ORDER
+  PLIST
+  WEIGHT
+  PACKAGING
+  DELIVERY
+}
+
+model Photo {
+  id          String           @id @default(uuid())
+  entityType  PhotoEntityType  @map("entity_type")
+  entityId    String           @map("entity_id")
+  url         String
+  uploadedBy  String           @map("uploaded_by")
+  uploadedAt  DateTime         @default(now()) @map("uploaded_at")
+
+  // Relations
+  uploader    User             @relation("UploadedPhotos", fields: [uploadedBy], references: [id])
+
+  @@map("photos")
+}
+
+// ========================================
+// PACKAGING (EMBALAJE)
+// ========================================
+
+model PackagingRecord {
+  id            String   @id @default(uuid())
+  orderId       String   @map("order_id")
+  quantityIn    Float    @map("quantity_in")
+  quantityOut   Float    @map("quantity_out")
+  packagingType String   @map("packaging_type")
+  photoIds      Json     @default("[]") @map("photo_ids") // Array of photo IDs
+  processedBy   String   @map("processed_by")
+  processedAt   DateTime @default(now()) @map("processed_at")
+
+  // Relations
+  order         Order    @relation(fields: [orderId], references: [id])
+  processor     User     @relation("ProcessedPackaging", fields: [processedBy], references: [id])
+
+  @@map("packaging_records")
+}
+

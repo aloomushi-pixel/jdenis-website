@@ -4,9 +4,9 @@ import bcrypt from 'bcrypt';
 const prisma = new PrismaClient();
 
 async function main() {
-    console.log('🌱 Starting database seed...');
+    console.log('🌱 Starting database seed with updated roles...');
 
-    // Create admin user
+    // Create users with 7 roles
     const adminPassword = await bcrypt.hash('admin123', 10);
     const admin = await prisma.user.upsert({
         where: { email: 'admin@jdenis.com' },
@@ -18,49 +18,85 @@ async function main() {
             role: 'ADMIN',
         },
     });
-    console.log('✅ Admin user created:', admin.email);
+    console.log('✅ Admin user created');
 
-    // Create factory manager
-    const factoryPassword = await bcrypt.hash('factory123', 10);
-    const factoryManager = await prisma.user.upsert({
+    const transportistaPassword = await bcrypt.hash('transportista123', 10);
+    const transportista = await prisma.user.upsert({
+        where: { email: 'transportista@jdenis.com' },
+        update: {},
+        create: {
+            email: 'transportista@jdenis.com',
+            passwordHash: transportistaPassword,
+            fullName: 'Operador de Transporte',
+            role: 'TRANSPORTISTA',
+        },
+    });
+    console.log('✅ Transportista created');
+
+    const almacenMPPassword = await bcrypt.hash('almacenmp123', 10);
+    const almacenMP = await prisma.user.upsert({
+        where: { email: 'almacenmp@jdenis.com' },
+        update: {},
+        create: {
+            email: 'almacenmp@jdenis.com',
+            passwordHash: almacenMPPassword,
+            fullName: 'Responsable Almacén Materia Prima',
+            role: 'ALMACEN_MATERIA_PRIMA',
+        },
+    });
+    console.log('✅ Almacén Materia Prima user created');
+
+    const almacenPFPassword = await bcrypt.hash('almacenpf123', 10);
+    const almacenPF = await prisma.user.upsert({
+        where: { email: 'almacenpf@jdenis.com' },
+        update: {},
+        create: {
+            email: 'almacenpf@jdenis.com',
+            passwordHash: almacenPFPassword,
+            fullName: 'Responsable Almacén Producto Final',
+            role: 'ALMACEN_PRODUCTO_FINAL',
+        },
+    });
+    console.log('✅ Almacén Producto Final user created');
+
+    const fabricaPassword = await bcrypt.hash('fabrica123', 10);
+    const fabrica = await prisma.user.upsert({
         where: { email: 'fabrica@jdenis.com' },
         update: {},
         create: {
             email: 'fabrica@jdenis.com',
-            passwordHash: factoryPassword,
+            passwordHash: fabricaPassword,
             fullName: 'Encargado de Fábrica',
-            role: 'FACTORY_MANAGER',
+            role: 'FABRICA',
         },
     });
-    console.log('✅ Factory manager created:', factoryManager.email);
+    console.log('✅ Fábrica user created');
 
-    // Create warehouse manager
-    const warehousePassword = await bcrypt.hash('warehouse123', 10);
-    const warehouseManager = await prisma.user.upsert({
-        where: { email: 'almacen@jdenis.com' },
+    const ejecutivoPassword = await bcrypt.hash('ejecutivo123', 10);
+    const ejecutivo = await prisma.user.upsert({
+        where: { email: 'ejecutivo@jdenis.com' },
         update: {},
         create: {
-            email: 'almacen@jdenis.com',
-            passwordHash: warehousePassword,
-            fullName: 'Encargado de Almacén',
-            role: 'WAREHOUSE_MANAGER',
+            email: 'ejecutivo@jdenis.com',
+            passwordHash: ejecutivoPassword,
+            fullName: 'Ejecutivo de Ventas',
+            role: 'EJECUTIVO',
         },
     });
-    console.log('✅ Warehouse manager created:', warehouseManager.email);
+    console.log('✅ Ejecutivo user created');
 
-    // Create transporter
-    const transporterPassword = await bcrypt.hash('transport123', 10);
-    const transporter = await prisma.user.upsert({
-        where: { email: 'transporte@jdenis.com' },
+    const clientePassword = await bcrypt.hash('cliente123', 10);
+    const cliente = await prisma.user.upsert({
+        where: { email: 'cliente@jdenis.com' },
         update: {},
         create: {
-            email: 'transporte@jdenis.com',
-            passwordHash: transporterPassword,
-            fullName: 'Operador de Transporte',
-            role: 'TRANSPORTER',
+            email: 'cliente@jdenis.com',
+            passwordHash: clientePassword,
+            fullName: 'Cliente Demo',
+            role: 'CLIENTE',
         },
     });
-    console.log('✅ Transporter created:', transporter.email);
+    console.log('✅ Cliente user created');
 
     // Create inventory locations
     const officeLocation = await prisma.inventoryLocation.upsert({
@@ -107,31 +143,11 @@ async function main() {
         },
     });
 
-    const rawMaterial2 = await prisma.product.create({
-        data: {
-            sku: 'RM-002',
-            name: 'Materia Prima B',
-            description: 'Material secundario',
-            type: 'RAW_MATERIAL',
-            unit: 'kg',
-        },
-    });
-
     const finishedProduct1 = await prisma.product.create({
         data: {
             sku: 'FP-001',
             name: 'Producto Final A',
             description: 'Producto terminado tipo A',
-            type: 'FINISHED_PRODUCT',
-            unit: 'unidades',
-        },
-    });
-
-    const finishedProduct2 = await prisma.product.create({
-        data: {
-            sku: 'FP-002',
-            name: 'Producto Final B',
-            description: 'Producto terminado tipo B',
             type: 'FINISHED_PRODUCT',
             unit: 'unidades',
         },
@@ -148,28 +164,60 @@ async function main() {
                 updatedBy: admin.id,
             },
             {
-                productId: rawMaterial2.id,
-                locationId: factoryLocation.id,
-                quantity: 300,
-                updatedBy: admin.id,
-            },
-            {
                 productId: finishedProduct1.id,
                 locationId: warehouseLocation.id,
                 quantity: 150,
-                updatedBy: admin.id,
-            },
-            {
-                productId: finishedProduct2.id,
-                locationId: warehouseLocation.id,
-                quantity: 200,
                 updatedBy: admin.id,
             },
         ],
     });
     console.log('✅ Initial stock created');
 
-    // Create sample supplier and customer
+    // Create sample resources
+    await prisma.resource.createMany({
+        data: [
+            {
+                id: 'res-mp-001',
+                category: 'MATERIA_PRIMA',
+                title: 'Adhesivo Industrial',
+                format: 'LITROS',
+                quantity: 100,
+                brand: 'Marca A',
+            },
+            {
+                id: 'res-emb-001',
+                category: 'EMBALAJE',
+                title: 'Caja de Cartón 30x30',
+                format: 'PIEZA',
+                quantity: 500,
+                brand: 'PackPro',
+            },
+            {
+                id: 'res-pf-001',
+                category: 'PRODUCTO_FINAL',
+                title: 'Pestañas Mink 3D',
+                format: 'PIEZA',
+                quantity: 200,
+                brand: 'J DENIS',
+                satCode: '39101510',
+                rawMaterialComposition: JSON.stringify({
+                    'Adhesivo': 0.5,
+                    'Fibra': 1.0,
+                }),
+            },
+            {
+                id: 'res-veh-001',
+                category: 'VEHICULOS',
+                title: 'Camión TR-001',
+                format: 'PIEZA',
+                quantity: 1,
+                brand: 'Ford',
+            },
+        ],
+    });
+    console.log('✅ Resources created');
+
+    // Create supplier and customer
     const supplier = await prisma.supplier.create({
         data: {
             name: 'Proveedor Principal S.A.',
@@ -292,11 +340,14 @@ async function main() {
     console.log('✅ Protocol templates created');
 
     console.log('\n🎉 Database seed completed successfully!');
-    console.log('\n📝 Test users created:');
+    console.log('\n📝 Test users created (7 roles):');
     console.log('   Admin: admin@jdenis.com / admin123');
-    console.log('   Factory: fabrica@jdenis.com / factory123');
-    console.log('   Warehouse: almacen@jdenis.com / warehouse123');
-    console.log('   Transporter: transporte@jdenis.com / transport123');
+    console.log('   Transportista: transportista@jdenis.com / transportista123');
+    console.log('   Almacén MP: almacenmp@jdenis.com / almacenmp123');
+    console.log('   Almacén PF: almacenpf@jdenis.com / almacenpf123');
+    console.log('   Fábrica: fabrica@jdenis.com / fabrica123');
+    console.log('   Ejecutivo: ejecutivo@jdenis.com / ejecutivo123');
+    console.log('   Cliente: cliente@jdenis.com / cliente123');
 }
 
 main()

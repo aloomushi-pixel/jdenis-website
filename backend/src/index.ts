@@ -14,6 +14,10 @@ import salesRoutes from './routes/sales.routes';
 import purchasesRoutes from './routes/purchases.routes';
 import assetsRoutes from './routes/assets.routes';
 import protocolsRoutes from './routes/protocols.routes';
+import resourcesRoutes from './routes/resources.routes';
+import quotationsRoutes from './routes/quotations.routes';
+import ordersRoutes from './routes/orders.routes';
+import analyticsRoutes from './routes/analytics.routes';
 
 dotenv.config();
 
@@ -54,6 +58,10 @@ app.use('/api/sales', salesRoutes);
 app.use('/api/purchases', purchasesRoutes);
 app.use('/api/assets', assetsRoutes);
 app.use('/api/protocols', protocolsRoutes);
+app.use('/api/resources', resourcesRoutes);
+app.use('/api/quotations', quotationsRoutes);
+app.use('/api/orders', ordersRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 // Socket.IO connection handling
 io.on('connection', (socket) => {

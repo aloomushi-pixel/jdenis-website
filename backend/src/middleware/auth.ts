@@ -51,3 +51,7 @@ export const authorize = (...allowedRoles: UserRole[]) => {
 export const generateToken = (userId: string, email: string, role: UserRole): string => {
     return jwt.sign({ userId, email, role }, JWT_SECRET, { expiresIn: '24h' });
 };
+
+// Aliases for better readability
+export const authenticateJWT = authenticate;
+export const authorizeRoles = authorize;
