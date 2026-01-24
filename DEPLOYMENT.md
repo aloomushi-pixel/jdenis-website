@@ -41,23 +41,25 @@ git push -u origin main
 
 4. **Configurar Build Settings**:
    - Build Type: `docker-compose`
-   - Docker Compose Path: `docker-compose.yml`
+   - Docker Compose Path: **`docker-compose.prod.yml`** ⚠️ **IMPORTANTE: Usar el archivo de producción**
 
-5. **Variables de Entorno** (muy importante):
+5. **Variables de Entorno** (⚠️ **CRÍTICO** - Agregar TODAS en la pestaña "Environment"):
 
 ```env
-# Database (Dokploy PostgreSQL)
-DATABASE_URL=postgresql://postgres:postgres@postgres-jdenis:5432/jdenis
-
 # Backend
+DATABASE_URL=postgresql://postgres:postgres@postgres-jdenis:5432/jdenis
 JWT_SECRET=jdenis-production-secret-2026-super-seguro-cambiar
+BACKEND_PORT=4000
 NODE_ENV=production
-PORT=4000
+FRONTEND_URL=http://72.62.162.99
 
 # Frontend Build Args
-VITE_API_URL=http://72.62.162.99:4000
+VITE_API_URL=http://72.62.162.99:4000/api
 VITE_SOCKET_URL=http://72.62.162.99:4000
+FRONTEND_PORT=80
 ```
+
+> 📝 **Nota**: El nombre `postgres-jdenis` en `DATABASE_URL` debe coincidir con el nombre de tu servicio PostgreSQL en Dokploy.
 
 6. **Crear Base de Datos PostgreSQL** (si no existe):
    - En Dokploy: "New Database" → PostgreSQL
@@ -68,16 +70,17 @@ VITE_SOCKET_URL=http://72.62.162.99:4000
 
 7. **Deploy**:
    - Click en "Deploy"
-   - Esperar ~5 minutos para build completo
+   - Esperar ~5-8 minutos para build completo
 
 ### 3️⃣ Post-Deploy: Ejecutar Migraciones
 
 Una vez desplegado, necesitas ejecutar las migraciones:
 
 #### Opción A: Desde la UI de Dokploy
-1. Ir al contenedor `backend`
-2. Click en "Console" o "Terminal"
-3. Ejecutar:
+1. Ir al servicio del compose → pestaña "Logs"
+2. Buscar el contenedor `jdenis-backend`
+3. Click en "Console" o "Terminal"
+4. Ejecutar:
 ```bash
 npx prisma migrate deploy
 npx prisma db seed
@@ -88,17 +91,17 @@ npx prisma db seed
 # Conectar al servidor
 ssh root@72.62.162.99
 
-# Encontrar el contenedor
-docker ps | grep backend
+# Encontrar el contenedor backend
+docker ps | grep jdenis-backend
 
 # Ejecutar comandos
-docker exec -it <container-id> npx prisma migrate deploy
-docker exec -it <container-id> npx prisma db seed
+docker exec -it jdenis-backend npx prisma migrate deploy
+docker exec -it jdenis-backend npx prisma db seed
 ```
 
 ### 4️⃣ Verificar Deployment
 
-1. **Backend API**: http://72.62.162.99:4000/health
+1. **Backend API**: http://72.62.162.99:4000/api/health
    - Debería retornar: `{"status":"OK","message":"J DENIS ERP/WMS API"}`
 
 2. **Frontend**: http://72.62.162.99
@@ -106,61 +109,120 @@ docker exec -it <container-id> npx prisma db seed
 
 3. **Database Connection**:
    - Verificar que el backend se conectó a PostgreSQL
-   - Ver logs en Dokploy
+   - Ver logs en Dokploy → pestaña "Logs" → filtrar por `jdenis-backend`
 
 ### 5️⃣ Configurar Dominio (Opcional)
 
-En Dokploy, en la configuración del proyecto:
-1. Agregar dominio custom: `jdenis.tudominio.com`
-2. Dokploy configurará automáticamente SSL con Let's Encrypt
+En Dokploy, en la configuración del servicio:
+1. Pestaña "Domains"
+2. Agregar dominio custom: `jdenis.tudominio.com`
+3. Dokploy configurará automáticamente SSL con Let's Encrypt
 
-### 🐛 ¿Qué hacer si algo falla?
+---
 
-#### Error: "Cannot connect to database"
-```bash
-# Verificar que PostgreSQL esté corriendo
-docker ps | grep postgres
+## 🐛 Troubleshooting
 
-# Ver logs
-docker logs <postgres-container-id>
+### Error: "npm ci" Failed During Build
 
-# Verificar DATABASE_URL en variables de entorno
-```
+**Síntoma**: El frontend falla con `npm error Usage: npm ci` en los logs de build.
 
-#### Error: "Prisma Client not generated"
+**Causa**: El repositorio no tiene `package-lock.json` o está desactualizado.
+
+**Solución**: 
+- ✅ **Ya corregido**: Los Dockerfiles ahora usan `npm install --legacy-peer-deps` en lugar de `npm ci`.
+- Asegúrate de hacer `git pull` del repositorio actualizado.
+- En Dokploy, haz clic en "Rebuild" para usar los Dockerfiles actualizados.
+
+### Error: Faltan Variables de Entorno
+
+**Síntoma**: La aplicación no arranca o muestra errores de conexión.
+
+**Causa**: Las variables de entorno no están configuradas en Dokploy.
+
+**Solución**:
+1. Ve a la pestaña **"Environment"** del servicio compose en Dokploy
+2. Agrega **TODAS** las variables listadas en la sección 2, paso 5
+3. Haz clic en **"Save"**
+4. Haz clic en **"Redeploy"**
+
+### Error de Conexión a Base de Datos
+
+**Síntoma**: Backend muestra `Error: Can't reach database server`
+
+**Causa**: El nombre del servicio en `DATABASE_URL` no coincide con el servicio PostgreSQL en Dokploy.
+
+**Solución**:
+1. Verifica el nombre exacto de tu servicio PostgreSQL en Dokploy (pestaña "Services")
+2. Actualiza la variable `DATABASE_URL` para que use el nombre correcto:
+   ```
+   postgresql://postgres:postgres@[NOMBRE_SERVICIO_POSTGRES]:5432/jdenis
+   ```
+3. Ejemplo: `postgresql://postgres:postgres@postgres-jdenis:5432/jdenis`
+4. Guarda y redeploy
+
+### Frontend muestra "Cannot connect to server"
+
+**Síntoma**: La interfaz no carga datos o muestra errores de red en la consola del navegador.
+
+**Causa**: Variables `VITE_API_URL` o `VITE_SOCKET_URL` mal configuradas.
+
+**Solución**:
+1. Verifica las variables de entorno en Dokploy:
+   ```
+   VITE_API_URL=http://72.62.162.99:4000/api
+   VITE_SOCKET_URL=http://72.62.162.99:4000
+   ```
+2. **Importante**: Estas variables se usan en **build time**, así que necesitas **rebuild** completo:
+   - Dokploy → Servicio → "Rebuild"
+3. Verifica que el backend esté corriendo: `curl http://72.62.162.99:4000/api/health`
+
+### Error 502 Bad Gateway
+
+**Síntoma**: Nginx muestra "502 Bad Gateway"
+
+**Causa**: El backend no está corriendo o el puerto es incorrecto.
+
+**Solución**:
+1. Ver logs del contenedor backend en Dokploy → "Logs"
+2. Verificar que `BACKEND_PORT=4000` esté configurado
+3. Verificar que el backend arrancó correctamente (buscar "Server running on port 4000" en logs)
+4. Reiniciar el servicio si es necesario
+
+### Error: "Prisma Client not generated"
+
+**Síntoma**: Backend falla con error `@prisma/client did not initialize yet`
+
+**Solución**:
 ```bash
 # En el contenedor backend
-docker exec -it <backend-container-id> npx prisma generate
+docker exec -it jdenis-backend npx prisma generate
+docker exec -it jdenis-backend npm start
 ```
 
-#### Frontend muestra "Cannot connect to server"
-- Verificar que `VITE_API_URL` esté correctamente configurado
-- Verificar que el backend esté corriendo: `http://72.62.162.99:4000/health`
+---
 
-#### Error 502 Bad Gateway
-- El backend probablemente no está corriendo
-- Ver logs del contenedor backend en Dokploy
-- Verificar que el PORT=4000 esté configurado
-
-### 📊 Monitoreo
+## 📊 Monitoreo
 
 En Dokploy puedes ver:
-- **Logs** en tiempo real
-- **Métricas** de CPU/RAM
-- **Deployments** históricos
-- **Reiniciar** servicios si es necesario
+- **Logs** en tiempo real (pestaña "Logs")
+- **Métricas** de CPU/RAM (pestaña "Metrics" si disponible)
+- **Deployments** históricos (pestaña "Deployments")
+- **Reiniciar** servicios (botón "Restart" en cada servicio)
 
-### 🔄 Actualizar la App
+---
+
+## 🔄 Actualizar la App
 
 Cada vez que hagas cambios:
 
 ```bash
+cd "c:\Users\Usuario\OneDrive\Documentos\J. DENIS\j-denis-erp"
 git add .
 git commit -m "feat: nueva funcionalidad"
 git push origin main
 ```
 
-Dokploy detectará automáticamente el push y redespleará la aplicación.
+Dokploy puede detectar automáticamente el push y redesplegar, o puedes hacer clic manualmente en "Deploy" en la interfaz.
 
 ---
 
@@ -168,13 +230,15 @@ Dokploy detectará automáticamente el push y redespleará la aplicación.
 
 - [ ] Repositorio publicado en GitHub
 - [ ] Dokploy conectado al repositorio
-- [ ] Variables de entorno configuradas
+- [ ] Docker Compose Path apunta a `docker-compose.prod.yml`
+- [ ] **TODAS** las variables de entorno configuradas (8 variables)
 - [ ] Base de datos PostgreSQL creada
-- [ ] Migraciones ejecutadas
-- [ ] Seed ejecutado (usuarios de prueba)
-- [ ] Backend responde en /health
-- [ ] Frontend carga correctamente
-- [ ] Login funciona con admin@jdenis.com
+- [ ] Build completado exitosamente (sin errores de `npm ci`)
+- [ ] Migraciones ejecutadas (`npx prisma migrate deploy`)
+- [ ] Seed ejecutado (`npx prisma db seed`)
+- [ ] Backend responde en http://72.62.162.99:4000/api/health
+- [ ] Frontend carga correctamente en http://72.62.162.99
+- [ ] Login funciona con admin@jdenis.com / admin123
 
 ---
 

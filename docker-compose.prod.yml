@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: jdenis-backend
+    restart: unless-stopped
+    environment:
+      # Database connection (ajustar según el nombre del servicio de PostgreSQL en Dokploy)
+      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:postgres@postgres-jdenis:5432/jdenis}
+      JWT_SECRET: ${JWT_SECRET:-jdenis-production-secret-2026-super-seguro-cambiar}
+      PORT: ${BACKEND_PORT:-4000}
+      NODE_ENV: ${NODE_ENV:-production}
+      # CORS origin - Frontend URL
+      FRONTEND_URL: ${FRONTEND_URL:-http://72.62.162.99}
+    ports:
+      - "${BACKEND_PORT:-4000}:${BACKEND_PORT:-4000}"
+    networks:
+      - jdenis-network
+    healthcheck:
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:${BACKEND_PORT:-4000}/api/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Frontend (React PWA with Nginx)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        # Build-time environment variables para Vite
+        VITE_API_URL: ${VITE_API_URL:-http://72.62.162.99:4000/api}
+        VITE_SOCKET_URL: ${VITE_SOCKET_URL:-http://72.62.162.99:4000}
+    container_name: jdenis-frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-80}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - jdenis-network
+    healthcheck:
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  jdenis-network:
+    driver: bridge
