@@ -1,183 +1,136 @@
 # J DENIS ERP/WMS Platform
 
-Sistema integral de gestión empresarial (ERP) y gestión de almacén (WMS) para J DENIS, una Progressive Web Application con arquitectura moderna.
+Sistema integral de gestión empresarial (ERP/WMS) para J DENIS con tracking blockchain, analytics en tiempo real, y gestión completa de recursos.
+
+![Version](https://img.shields.io/badge/version-2.0.0-blue)
+![License](https://img.shields.io/badge/license-Proprietary-red)
 
 ## 🚀 Características Principales
 
-### **Tres Módulos de Negocio**
-- **Administración Central**: Gestión de compras, ventas, inventario global, RR.HH. y flota de transporte
-- **Fábrica**: Control de producción, entrada de materiales, balance de stock y salida de productos
-- **Almacén**: Recepción de productos, optimización de espacio (racks), despacho y protocolos de entrega
+### Backend
+- ✅ **7 Roles de Usuario**: Admin, Transportista, Almacén MP, Almacén PF, Fábrica, Ejecutivo, Cliente
+- ✅ **Sistema Blockchain**: Tracking inmutable de pedidos
+- ✅ **Analytics Dashboard**: 6 métricas clave en tiempo real
+- ✅ **Gestión de Recursos**: 4 categorías (Materia Prima, Embalaje, Producto Final, Vehículos)
+- ✅ **Cotizaciones y Ventas**: Módulo ejecutivo completo
+- ✅ **Event Logging**: Auditoría completa de operaciones
 
-### **Cuatro Roles de Usuario**
-1. **Administrador**: Vista completa con analytics y métricas de negocio
-2. **Encargado de Fábrica**: Dashboard de producción y protocolos técnicos
-3. **Encargado de Almacén**: Logística de almacenamiento y despacho
-4. **Transportista**: Interfaz móvil simplificada para entregas
-
-### **Funcionalidades Destacadas**
-- ✅ **Inventario en Tiempo Real** con WebSocket (Socket.IO)
-- ✅ **PWA (Progressive Web App)** con soporte offline
-- ✅ **Autenticación JWT** con control de acceso basado en roles (RBAC)
-- ✅ **Protocolos Técnicos** con checklists paso a paso
-- ✅ **Mobile-First Design** optimizado para tabletas y smartphones
-- ✅ **Dashboards Personalizados** según el rol del usuario
+### Frontend
+- ✅ **Dashboard Responsive**: Gráficas Recharts (Pie, Bar, Line)
+- ✅ **Gestor de Recursos**: Tabs por categoría con CRUD
+- ✅ **Timeline Blockchain**: Visualización de historial de pedidos
+- ✅ **PWA Ready**: Instalable en móviles y tablets
 
 ## 📦 Stack Tecnológico
 
-### **Frontend**
-- React 18 + TypeScript
-- Vite (Build tool)
-- Tailwind CSS
-- Zustand (State management)
-- Socket.IO Client (Real-time)
-- React Router (Navigation)
-- Vite PWA Plugin
-
-### **Backend**
-- Node.js 20 + Express
-- TypeScript
-- Prisma ORM
-- PostgreSQL 16
-- Socket.IO Server
+### Backend
+- Node.js + Express + TypeScript
+- PostgreSQL + Prisma ORM
+- Socket.io para real-time
 - JWT Authentication
-- Bcrypt (Password hashing)
-- Zod (Validation)
+- Docker ready
 
-### **DevOps**
-- Docker + Docker Compose
-- Nginx (Reverse proxy)
-- Multi-stage builds
+### Frontend
+- React 18 + TypeScript
+- Vite
+- TailwindCSS
+- Recharts para analytics
+- React Router v6
+- Zustand para state management
 
-## 🛠️ Instalación y Despliegue
+## 🔐 Usuarios de Prueba
 
-### **Requisitos Previos**
-- Docker y Docker Compose instalados
-- Git
-- Cuenta en Dokploy (para producción)
+Después del seed, estos usuarios estarán disponibles:
 
-### **Despliegue con Docker Compose**
+| Email | Password | Rol |
+|-------|----------|-----|
+| admin@jdenis.com | admin123 | ADMIN |
+| transportista@jdenis.com | transportista123 | TRANSPORTISTA |
+| almacenmp@jdenis.com | almacenmp123 | ALMACEN_MATERIA_PRIMA |
+| almacenpf@jdenis.com | almacenpf123 | ALMACEN_PRODUCTO_FINAL |
+| fabrica@jdenis.com | fabrica123 | FABRICA |
+| ejecutivo@jdenis.com | ejecutivo123 | EJECUTIVO |
+| cliente@jdenis.com | cliente123 | CLIENTE |
 
-1. **Clonar el repositorio**
+## 🛠️ Instalación Local
+
+### Opción 1: Docker (Recomendado)
+
 ```bash
-git clone <tu-repositorio>
+# Clonar repositorio
+git clone <tu-repo-url>
 cd j-denis-erp
+
+# Copiar variables de entorno
+cp .env.example .env
+
+# Editar .env con tus credenciales
+# Importante: Cambiar DATABASE_URL, JWT_SECRET
+
+# Levantar servicios
+docker compose up -d --build
+
+# Esperar ~30 segundos para que Postgres inicie
+# La app estará en http://localhost
 ```
 
-2. **Construir y ejecutar los contenedores**
+### Opción 2: Manual
+
 ```bash
-docker-compose up --build -d
-```
-
-3. **Verificar que todo está corriendo**
-```bash
-docker-compose ps
-```
-
-Deberías ver 3 servicios corriendo:
-- `jdenis-db` (PostgreSQL en puerto 5432)
-- `jdenis-backend` (API en puerto 3000)
-- `jdenis-frontend` (Nginx en puerto 80)
-
-4. **Acceder a la aplicación**
-- Frontend: http://localhost
-- Backend API: http://localhost:3000
-- Database: localhost:5432
-
-### **Primer Inicio - Datos de Prueba**
-
-El backend ejecuta automáticamente las migraciones y el seed de la base de datos en el primer inicio. Se crean los siguientes usuarios de prueba:
-
-| Rol | Email | Contraseña |
-|-----|-------|------------|
-| Administrador | admin@jdenis.com | admin123 |
-| Encargado de Fábrica | fabrica@jdenis.com | factory123 |
-| Encargado de Almacén | almacen@jdenis.com | warehouse123 |
-| Transportista | transporte@jdenis.com | transport123 |
-
-### **Despliegue en Dokploy**
-
-1. **Preparar el repositorio**
-   - Sube todo el código a un repositorio Git (GitHub, GitLab, etc.)
-
-2. **En Dokploy**
-   - Crea un nuevo proyecto
-   - Conecta tu repositorio
-   - Selecciona "Docker Compose" como método de despliegue
-   - Apunta al archivo `docker-compose.yml`
-
-3. **Variables de Entorno (Importante)**
-   
-   En Dokploy, configura estas variables de entorno:
-   
-   **Backend:**
-   ```
-   DATABASE_URL=postgresql://jdenis:jdenis123@db:5432/jdenis_erp?schema=public
-   JWT_SECRET=<genera-un-secreto-seguro>
-   PORT=3000
-   NODE_ENV=production
-   ```
-
-4. **Desplegar**
-   - Haz clic en "Deploy"
-   - Dokploy construirá las imágenes y ejecutará los contenedores
-
-## 📱 Uso de la Aplicación
-
-### **Panel de Administración**
-- Vista general de inventario en tiempo real
-- Gestión de órdenes de compra y venta
-- Administración de empleados (RR.HH.)
-- Control de flota de transporte
-- Analytics y métricas de negocio
-
-### **Panel de Fábrica**
-- Creación de lotes de producción
-- Registro de consumo de materiales
-- Registro de productos terminados
-- Ejecución de protocolos de calidad
-- Balance de stock (materiales vs productos)
-
-### **Panel de Almacén**
-- Recepción de productos desde fábrica
-- Gestión de ubicaciones (racks)
-- Optimización de espacio
-- Preparación de despachos
-- Módulo de transición a transportista
-
-### **App de Transportista (Móvil)**
-- Lista de entregas asignadas
-- Confirmación de entregas
-- Registro de firmas
-- Historial de entregas completadas
-
-## 🔧 Desarrollo Local
-
-### **Backend**
-```bash
+# Backend
 cd backend
 npm install
+npx prisma generate
+npx prisma migrate dev
+npx prisma db seed
 npm run dev
-```
 
-### **Frontend**
-```bash
+# Frontend (en otra terminal)
 cd frontend
 npm install
 npm run dev
 ```
 
-### **Base de Datos**
+## 🌐 Deployment en Dokploy
+
+### 1. Crear Repositorio en GitHub
 ```bash
-# Ejecutar migraciones
-cd backend
-npx prisma migrate dev
+# Conectar a tu repositorio
+git remote add origin https://github.com/TU_USUARIO/j-denis-erp.git
+git branch -M main
+git push -u origin main
+```
 
-# Seed de datos
+### 2. Configurar en Dokploy
+
+1. **Login en Dokploy**: http://72.62.162.99:3000
+2. **Crear nuevo proyecto**: "J DENIS ERP"
+3. **Conectar GitHub**: Autorizar acceso al repositorio
+4. **Configurar Variables de Entorno**:
+
+```env
+# Base de datos (Dokploy creará automáticamente)
+DATABASE_URL=postgresql://user:password@postgres:5432/jdenis
+
+# Backend
+JWT_SECRET=tu-secret-super-seguro-cambiar-en-produccion
+NODE_ENV=production
+PORT=4000
+
+# Frontend
+VITE_API_URL=http://72.62.162.99:4000
+VITE_SOCKET_URL=http://72.62.162.99:4000
+```
+
+5. **Deploy**: Hacer clic en "Deploy"
+
+### 3. Ejecutar Migraciones Post-Deploy
+
+Una vez desplegado, ejecutar en la consola del contenedor:
+
+```bash
+npx prisma migrate deploy
 npx prisma db seed
-
-# Abrir Prisma Studio
-npx prisma studio
 ```
 
 ## 📊 Estructura del Proyecto
@@ -185,84 +138,117 @@ npx prisma studio
 ```
 j-denis-erp/
 ├── backend/
-│   ├── src/
-│   │   ├── config/          # Configuración (DB, etc.)
-│   │   ├── middleware/      # Auth, validación
-│   │   ├── routes/          # Endpoints API
-│   │   └── index.ts         # Servidor Express
 │   ├── prisma/
-│   │   ├── schema.prisma    # Modelo de datos
-│   │   └── seed.ts          # Datos iniciales
-│   ├── Dockerfile
-│   └── package.json
+│   │   ├── schema.prisma      # Schema con 7 roles y 8 nuevos modelos
+│   │   └── seed.ts            # Seed con datos de prueba
+│   └── src/
+│       ├── routes/
+│       │   ├── resources.routes.ts    # Gestión de recursos
+│       │   ├── quotations.routes.ts   # Sistema de cotizaciones
+│       │   ├── orders.routes.ts       # Pedidos con blockchain
+│       │   └── analytics.routes.ts    # Dashboard analytics
+│       └── middleware/
+│           └── auth.ts        # Autenticación JWT
 ├── frontend/
-│   ├── src/
-│   │   ├── components/      # Componentes React
-│   │   ├── pages/           # Páginas por rol
-│   │   ├── services/        # API y Socket.IO
-│   │   ├── store/           # Zustand stores
-│   │   ├── App.tsx
-│   │   └── main.tsx
-│   ├── Dockerfile
-│   ├── nginx.conf
-│   └── package.json
-├── docker-compose.yml
-└── README.md
+│   └── src/
+│       ├── components/
+│       │   ├── DashboardAnalytics.tsx  # 6 gráficas analytics
+│       │   ├── ResourceManager.tsx     # Gestor de recursos
+│       │   ├── QuotationModule.tsx     # Cotizaciones
+│       │   └── OrderTimeline.tsx       # Timeline blockchain
+│       └── store/
+│           └── authStore.ts   # 7 roles
+└── docker-compose.yml
 ```
+
+## 🔄 Workflow de Desarrollo
+
+```bash
+# 1. Crear rama para feature
+git checkout -b feature/nueva-funcionalidad
+
+# 2. Hacer cambios y commit
+git add .
+git commit -m "feat: descripción del cambio"
+
+# 3. Push a GitHub
+git push origin feature/nueva-funcionalidad
+
+# 4. Merge a main
+# Dokploy detectará el cambio y redesplegaraá automáticamente
+```
+
+## 📚 API Endpoints
+
+### Recursos
+- `GET /api/resources` - Listar recursos
+- `POST /api/resources` - Crear recurso
+- `PUT /api/resources/:id` - Actualizar
+- `DELETE /api/resources/:id` - Eliminar
+
+### Cotizaciones
+- `GET /api/quotations` - Listar cotizaciones
+- `POST /api/quotations` - Crear cotización
+- `PUT /api/quotations/:id/convert` - Convertir a pedido
+
+### Pedidos (Blockchain)
+- `GET /api/orders` - Listar pedidos
+- `PUT /api/orders/:id/status` - Actualizar status (agrega a blockchain)
+- `GET /api/orders/:id/timeline` - Ver timeline completo
+
+### Analytics
+- `GET /api/analytics/dashboard` - Métricas principales
+- `GET /api/analytics/charts` - Datos para gráficas
 
 ## 🔐 Seguridad
 
-- ✅ Contraseñas hasheadas con bcrypt
-- ✅ Autenticación JWT con expiración de tokens
-- ✅ RBAC (Control de acceso basado en roles)
-- ✅ Validación de requests con Zod
+- ✅ JWT Authentication
+- ✅ Role-Based Access Control (RBAC)
+- ✅ Protected routes en frontend
+- ✅ Validación de permisos en backend
 - ✅ CORS configurado
-- ✅ SQL Injection prevention (Prisma ORM)
+- ✅ Helmet.js para security headers
 
-## 🌐 API Endpoints
+## 🐛 Troubleshooting
 
-### **Auth**
-- `POST /api/auth/login` - Iniciar sesión
-- `POST /api/auth/logout` - Cerrar sesión
+### Error: Cannot connect to database
+```bash
+# Verificar que Postgres esté corriendo
+docker compose ps
 
-### **Inventory**
-- `GET /api/inventory` - Obtener inventario global
-- `GET /api/inventory/locations` - Ubicaciones de inventario
-- `GET /api/inventory/products` - Listar productos
+# Ver logs
+docker compose logs postgres
+```
 
-### **Factory**
-- `GET /api/factory/batches` - Lotes de producción
-- `POST /api/factory/batches` - Crear lote
-- `POST /api/factory/batches/:id/materials` - Registrar consumo
-- `POST /api/factory/batches/:id/output` - Registrar producción
+### Error: Prisma Client not generated
+```bash
+cd backend
+npx prisma generate
+```
 
-### **Warehouse**
-- `GET /api/warehouse/racks` - Racks de almacenamiento
-- `GET /api/warehouse/receiving` - Logs de recepción
-- `POST /api/warehouse/receiving` - Recibir productos
-- `POST /api/warehouse/dispatch` - Despachar productos
-- `POST /api/warehouse/handoff` - Entrega a transportista
+### Frontend no conecta con backend
+Verificar que `VITE_API_URL` en `.env` apunte a la URL correcta del backend.
 
-### **Sales & Purchases**
-- `GET /api/sales` - Órdenes de venta
-- `POST /api/sales` - Crear orden de venta
-- `GET /api/purchases` - Órdenes de compra
-- `GET /api/purchases/suppliers` - Proveedores
+## 📝 Changelog
 
-### **Assets**
-- `GET /api/assets` - Flota de vehículos
-- `GET /api/assets/deliveries` - Entregas
-- `PATCH /api/assets/deliveries/:id/complete` - Completar entrega
+### v2.0.0 (2026-01-23)
+- ✨ Implementación completa de 7 roles de usuario
+- ✨ Sistema blockchain para tracking de pedidos
+- ✨ Dashboard analytics con 6 métricas
+- ✨ Gestor de recursos con 4 categorías
+- ✨ Módulo ejecutivo (cotizaciones y ventas)
+- ✨ Timeline visual de pedidos
+- 🎨 Diseño responsive completo
+- 🔧 Mejoras en autenticación y permisos
 
-### **Protocols**
-- `GET /api/protocols/templates` - Plantillas de protocolos
-- `POST /api/protocols/execute` - Ejecutar protocolo
-- `PATCH /api/protocols/execute/:id` - Actualizar ejecución
+## 📄 Licencia
 
-## 📞 Soporte
+Proprietary - © 2026 J DENIS
 
-Para preguntas o soporte, contacta al equipo de J DENIS.
+## 👨‍💻 Autor
+
+Desarrollado para J DENIS
 
 ---
 
-**Desarrollado para J DENIS** | Sistema ERP/WMS Integral
+**¿Necesitas ayuda?** Contacta al equipo de desarrollo.
