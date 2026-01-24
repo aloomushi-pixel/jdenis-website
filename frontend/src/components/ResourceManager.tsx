@@ -25,7 +25,6 @@ const CATEGORIES = [
 export default function ResourceManager() {
     const [activeTab, setActiveTab] = useState<ResourceCategory>('MATERIA_PRIMA');
     const [resources, setResources] = useState<Resource[]>([]);
-    const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
     const [formData, setFormData] = useState<Partial<Resource>>({
         category: 'MATERIA_PRIMA',
@@ -43,8 +42,6 @@ export default function ResourceManager() {
             setResources(response.data);
         } catch (error) {
             console.error('Error fetching resources:', error);
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -97,8 +94,8 @@ export default function ResourceManager() {
                             key={cat.id}
                             onClick={() => setActiveTab(cat.id as ResourceCategory)}
                             className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${activeTab === cat.id
-                                    ? 'border-indigo-600 text-indigo-600'
-                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                ? 'border-indigo-600 text-indigo-600'
+                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                                 }`}
                         >
                             <span className="mr-2">{cat.icon}</span>
