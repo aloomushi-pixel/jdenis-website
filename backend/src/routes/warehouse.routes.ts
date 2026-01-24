@@ -6,7 +6,7 @@ import { updateStock } from './inventory.routes';
 const router = Router();
 
 // Get storage racks
-router.get('/racks', authenticate, authorize('ADMIN', 'WAREHOUSE_MANAGER'), async (req, res) => {
+router.get('/racks', authenticate, authorize('ADMIN', 'ALMACEN_MATERIA_PRIMA', 'ALMACEN_PRODUCTO_FINAL'), async (req, res) => {
     try {
         const racks = await prisma.storageRack.findMany({
             include: {
@@ -24,7 +24,7 @@ router.get('/racks', authenticate, authorize('ADMIN', 'WAREHOUSE_MANAGER'), asyn
 });
 
 // Get receiving logs
-router.get('/receiving', authenticate, authorize('ADMIN', 'WAREHOUSE_MANAGER'), async (req, res) => {
+router.get('/receiving', authenticate, authorize('ADMIN', 'ALMACEN_MATERIA_PRIMA', 'ALMACEN_PRODUCTO_FINAL'), async (req, res) => {
     try {
         const logs = await prisma.receivingLog.findMany({
             include: {
@@ -47,7 +47,7 @@ router.get('/receiving', authenticate, authorize('ADMIN', 'WAREHOUSE_MANAGER'), 
 });
 
 // Create receiving log (receive products from factory)
-router.post('/receiving', authenticate, authorize('WAREHOUSE_MANAGER'), async (req: AuthRequest, res) => {
+router.post('/receiving', authenticate, authorize('ALMACEN_MATERIA_PRIMA', 'ALMACEN_PRODUCTO_FINAL'), async (req: AuthRequest, res) => {
     try {
         const { source, productId, quantity, rackCode, notes } = req.body;
 
@@ -112,7 +112,7 @@ router.post('/receiving', authenticate, authorize('WAREHOUSE_MANAGER'), async (r
 });
 
 // Get dispatch logs
-router.get('/dispatch', authenticate, authorize('ADMIN', 'WAREHOUSE_MANAGER'), async (req, res) => {
+router.get('/dispatch', authenticate, authorize('ADMIN', 'ALMACEN_MATERIA_PRIMA', 'ALMACEN_PRODUCTO_FINAL'), async (req, res) => {
     try {
         const logs = await prisma.dispatchLog.findMany({
             include: {
@@ -149,7 +149,7 @@ router.get('/dispatch', authenticate, authorize('ADMIN', 'WAREHOUSE_MANAGER'), a
 });
 
 // Create dispatch log
-router.post('/dispatch', authenticate, authorize('WAREHOUSE_MANAGER'), async (req: AuthRequest, res) => {
+router.post('/dispatch', authenticate, authorize('ALMACEN_PRODUCTO_FINAL'), async (req: AuthRequest, res) => {
     try {
         const { salesOrderId, productId, quantity, transporterId, notes } = req.body;
 
@@ -189,7 +189,7 @@ router.post('/dispatch', authenticate, authorize('WAREHOUSE_MANAGER'), async (re
 });
 
 // Create handoff record (transition to transporter)
-router.post('/handoff', authenticate, authorize('WAREHOUSE_MANAGER'), async (req: AuthRequest, res) => {
+router.post('/handoff', authenticate, authorize('ALMACEN_PRODUCTO_FINAL'), async (req: AuthRequest, res) => {
     try {
         const { dispatchLogId, transporterId, signatureData, notes } = req.body;
 

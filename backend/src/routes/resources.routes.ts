@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { PrismaClient } from '@prisma/client';
-import { authenticateJWT, authorizeRoles } from '../middleware/auth';
+import { authenticateJWT, authorize } from '../middleware/auth';
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -27,7 +27,7 @@ router.get('/', authenticateJWT, async (req: any, res) => {
 // @route   POST /api/resources
 // @desc    Create new resource
 // @access  Private (Admin, Ejecutivo)
-router.post('/', authenticateJWT, authorizeRoles(['ADMIN', 'EJECUTIVO']), async (req: any, res) => {
+router.post('/', authenticateJWT, authorize('ADMIN', 'EJECUTIVO'), async (req: any, res) => {
     try {
         const { id, category, title, format, quantity, brand, imageUrl, satCode, rawMaterialComposition } = req.body;
 
@@ -66,7 +66,7 @@ router.post('/', authenticateJWT, authorizeRoles(['ADMIN', 'EJECUTIVO']), async 
 // @route   PUT /api/resources/:id
 // @desc    Update resource
 // @access  Private (Admin, Ejecutivo)
-router.put('/:id', authenticateJWT, authorizeRoles(['ADMIN', 'EJECUTIVO']), async (req: any, res) => {
+router.put('/:id', authenticateJWT, authorize('ADMIN', 'EJECUTIVO'), async (req: any, res) => {
     try {
         const { id } = req.params;
         const updates = req.body;
@@ -86,7 +86,7 @@ router.put('/:id', authenticateJWT, authorizeRoles(['ADMIN', 'EJECUTIVO']), asyn
 // @route   DELETE /api/resources/:id
 // @desc    Delete resource
 // @access  Private (Admin only)
-router.delete('/:id', authenticateJWT, authorizeRoles(['ADMIN']), async (req: any, res) => {
+router.delete('/:id', authenticateJWT, authorize('ADMIN'), async (req: any, res) => {
     try {
         const { id } = req.params;
 

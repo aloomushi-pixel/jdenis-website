@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { PrismaClient } from '@prisma/client';
-import { authenticateJWT, authorizeRoles } from '../middleware/auth';
+import { authenticateJWT, authorize } from '../middleware/auth';
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
 // @route   GET /api/quotations
 // @desc    Get all quotations
 // @access  Private (Ejecutivo, Admin)
-router.get('/', authenticateJWT, authorizeRoles(['ADMIN', 'EJECUTIVO']), async (req: any, res) => {
+router.get('/', authenticateJWT, authorize('ADMIN', 'EJECUTIVO'), async (req: any, res) => {
     try {
         const quotations = await prisma.quotation.findMany({
             include: {
@@ -32,7 +32,7 @@ router.get('/', authenticateJWT, authorizeRoles(['ADMIN', 'EJECUTIVO']), async (
 // @route   POST /api/quotations
 // @desc    Create new quotation
 // @access  Private (Ejecutivo, Admin)
-router.post('/', authenticateJWT, authorizeRoles(['ADMIN', 'EJECUTIVO']), async (req: any, res) => {
+router.post('/', authenticateJWT, authorize('ADMIN', 'EJECUTIVO'), async (req: any, res) => {
     try {
         const { customerId, items, validUntil, notes } = req.body;
 
@@ -82,7 +82,7 @@ router.post('/', authenticateJWT, authorizeRoles(['ADMIN', 'EJECUTIVO']), async 
 // @route   PUT /api/quotations/:id/convert
 // @desc    Convert quotation to order
 // @access  Private (Ejecutivo, Admin)
-router.put('/:id/convert', authenticateJWT, authorizeRoles(['ADMIN', 'EJECUTIVO']), async (req: any, res) => {
+router.put('/:id/convert', authenticateJWT, authorize('ADMIN', 'EJECUTIVO'), async (req: any, res) => {
     try {
         const { id } = req.params;
         const { deliveryDate } = req.body;
@@ -174,7 +174,7 @@ router.put('/:id/convert', authenticateJWT, authorizeRoles(['ADMIN', 'EJECUTIVO'
 // @route   GET /api/quotations/:id
 // @desc    Get quotation by ID
 // @access  Private (Ejecutivo, Admin)
-router.get('/:id', authenticateJWT, authorizeRoles(['ADMIN', 'EJECUTIVO']), async (req: any, res) => {
+router.get('/:id', authenticateJWT, authorize('ADMIN', 'EJECUTIVO'), async (req: any, res) => {
     try {
         const { id } = req.params;
 
