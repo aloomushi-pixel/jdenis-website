@@ -65,7 +65,7 @@ router.patch('/deliveries/:id/complete', authenticate, authorize('TRANSPORTISTA'
         const { notes } = req.body;
 
         const delivery = await prisma.deliveryAssignment.update({
-            where: { id },
+            where: { id: id as string },
             data: {
                 status: 'COMPLETED',
                 completedAt: new Date(),

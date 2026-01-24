@@ -78,7 +78,7 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
     res.status(500).json({ error: 'Internal server error' });
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
 httpServer.listen(PORT, '0.0.0.0', () => {
     console.log('🚀 J DENIS ERP/WMS Server running');
