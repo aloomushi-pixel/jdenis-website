@@ -38,7 +38,7 @@ router.get('/templates/type/:type', authenticate, async (req, res) => {
 });
 
 // Start protocol execution
-router.post('/execute', authenticate, authorize('FACTORY_MANAGER', 'WAREHOUSE_MANAGER'), async (req: AuthRequest, res) => {
+router.post('/execute', authenticate, authorize('FABRICA', 'ALMACEN_MATERIA_PRIMA', 'ALMACEN_PRODUCTO_FINAL'), async (req: AuthRequest, res) => {
     try {
         const { templateId } = req.body;
 
@@ -75,7 +75,7 @@ router.post('/execute', authenticate, authorize('FACTORY_MANAGER', 'WAREHOUSE_MA
 });
 
 // Update protocol execution (complete steps)
-router.patch('/execute/:id', authenticate, authorize('FACTORY_MANAGER', 'WAREHOUSE_MANAGER'), async (req, res) => {
+router.patch('/execute/:id', authenticate, authorize('FABRICA', 'ALMACEN_MATERIA_PRIMA', 'ALMACEN_PRODUCTO_FINAL'), async (req, res) => {
     try {
         const { id } = req.params;
         const { stepsData, status } = req.body;
@@ -100,7 +100,7 @@ router.patch('/execute/:id', authenticate, authorize('FACTORY_MANAGER', 'WAREHOU
 });
 
 // Get protocol execution history
-router.get('/executions', authenticate, authorize('ADMIN', 'FACTORY_MANAGER', 'WAREHOUSE_MANAGER'), async (req, res) => {
+router.get('/executions', authenticate, authorize('ADMIN', 'FABRICA', 'ALMACEN_MATERIA_PRIMA', 'ALMACEN_PRODUCTO_FINAL'), async (req, res) => {
     try {
         const executions = await prisma.protocolExecution.findMany({
             include: {

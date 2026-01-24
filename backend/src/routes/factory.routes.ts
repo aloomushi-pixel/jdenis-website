@@ -6,7 +6,7 @@ import { updateStock } from './inventory.routes';
 const router = Router();
 
 // Get all production batches
-router.get('/batches', authenticate, authorize('ADMIN', 'FACTORY_MANAGER'), async (req, res) => {
+router.get('/batches', authenticate, authorize('ADMIN', 'FABRICA'), async (req, res) => {
     try {
         const batches = await prisma.productionBatch.findMany({
             include: {
@@ -39,7 +39,7 @@ router.get('/batches', authenticate, authorize('ADMIN', 'FACTORY_MANAGER'), asyn
 });
 
 // Create new production batch
-router.post('/batches', authenticate, authorize('ADMIN', 'FACTORY_MANAGER'), async (req: AuthRequest, res) => {
+router.post('/batches', authenticate, authorize('ADMIN', 'FABRICA'), async (req: AuthRequest, res) => {
     try {
         const { batchNumber, notes } = req.body;
 
@@ -67,7 +67,7 @@ router.post('/batches', authenticate, authorize('ADMIN', 'FACTORY_MANAGER'), asy
 });
 
 // Record material consumption
-router.post('/batches/:batchId/materials', authenticate, authorize('FACTORY_MANAGER'), async (req: AuthRequest, res) => {
+router.post('/batches/:batchId/materials', authenticate, authorize('FABRICA'), async (req: AuthRequest, res) => {
     try {
         const { batchId } = req.params;
         const { productId, quantityUsed } = req.body;
@@ -104,7 +104,7 @@ router.post('/batches/:batchId/materials', authenticate, authorize('FACTORY_MANA
 });
 
 // Record production output
-router.post('/batches/:batchId/output', authenticate, authorize('FACTORY_MANAGER'), async (req: AuthRequest, res) => {
+router.post('/batches/:batchId/output', authenticate, authorize('FABRICA'), async (req: AuthRequest, res) => {
     try {
         const { batchId } = req.params;
         const { productId, quantityProduced } = req.body;
@@ -142,7 +142,7 @@ router.post('/batches/:batchId/output', authenticate, authorize('FACTORY_MANAGER
 });
 
 // Complete production batch
-router.patch('/batches/:batchId/complete', authenticate, authorize('FACTORY_MANAGER'), async (req, res) => {
+router.patch('/batches/:batchId/complete', authenticate, authorize('FABRICA'), async (req, res) => {
     try {
         const { batchId } = req.params;
 

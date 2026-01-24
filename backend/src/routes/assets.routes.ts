@@ -20,9 +20,9 @@ router.get('/', authenticate, authorize('ADMIN'), async (req, res) => {
 });
 
 // Get delivery assignments
-router.get('/deliveries', authenticate, authorize('ADMIN', 'WAREHOUSE_MANAGER', 'TRANSPORTER'), async (req: AuthRequest, res) => {
+router.get('/deliveries', authenticate, authorize('ADMIN', 'ALMACEN_MATERIA_PRIMA', 'ALMACEN_PRODUCTO_FINAL', 'TRANSPORTISTA'), async (req: AuthRequest, res) => {
     try {
-        const where = req.user!.role === 'TRANSPORTER'
+        const where = req.user!.role === 'TRANSPORTISTA'
             ? { transporterId: req.user!.userId }
             : {};
 
@@ -59,7 +59,7 @@ router.get('/deliveries', authenticate, authorize('ADMIN', 'WAREHOUSE_MANAGER', 
 });
 
 // Complete delivery (for transporters)
-router.patch('/deliveries/:id/complete', authenticate, authorize('TRANSPORTER'), async (req, res) => {
+router.patch('/deliveries/:id/complete', authenticate, authorize('TRANSPORTISTA'), async (req, res) => {
     try {
         const { id } = req.params;
         const { notes } = req.body;
