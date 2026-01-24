@@ -28,7 +28,7 @@ router.get('/location/:locationId', authenticate, async (req, res) => {
     try {
         const { locationId } = req.params;
         const inventory = await prisma.stock.findMany({
-            where: { locationId },
+            where: { locationId: locationId as string },
             include: {
                 product: true,
                 location: true,

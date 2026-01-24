@@ -81,7 +81,7 @@ router.patch('/execute/:id', authenticate, authorize('FABRICA', 'ALMACEN_MATERIA
         const { stepsData, status } = req.body;
 
         const execution = await prisma.protocolExecution.update({
-            where: { id },
+            where: { id: id as string },
             data: {
                 stepsData: JSON.stringify(stepsData),
                 status,

@@ -84,7 +84,7 @@ router.post('/batches/:batchId/materials', authenticate, authorize('FABRICA'), a
         // Record material consumption
         const consumption = await prisma.materialConsumption.create({
             data: {
-                batchId,
+                batchId: batchId as string,
                 productId,
                 quantityUsed,
             },
@@ -121,7 +121,7 @@ router.post('/batches/:batchId/output', authenticate, authorize('FABRICA'), asyn
         // Record production output
         const output = await prisma.productionOutput.create({
             data: {
-                batchId,
+                batchId: batchId as string,
                 productId,
                 quantityProduced,
                 verifiedBy: req.user!.userId,
@@ -147,7 +147,7 @@ router.patch('/batches/:batchId/complete', authenticate, authorize('FABRICA'), a
         const { batchId } = req.params;
 
         const batch = await prisma.productionBatch.update({
-            where: { id: batchId },
+            where: { id: batchId as string },
             data: {
                 status: 'COMPLETED',
                 endDate: new Date(),
