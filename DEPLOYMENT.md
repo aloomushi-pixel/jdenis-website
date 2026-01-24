@@ -1,172 +1,181 @@
-# Guía de Despliegue en Dokploy - J DENIS ERP/WMS
+# 🚀 Guía de Deployment - J DENIS ERP/WMS
 
-## Pasos para Desplegar en Dokploy
+## 📋 Pasos para publicar en GitHub y deploy en Dokploy
 
-### 1. Preparación del Repositorio Git
-
-Primero, sube todo el código a un repositorio Git (GitHub, GitLab, Bitbucket):
+### 1️⃣ Publicar en GitHub (SI NO TIENES REMOTE CONFIGURADO)
 
 ```bash
-cd j-denis-erp
-git init
-git add .
-git commit -m "Initial commit: J DENIS ERP/WMS Platform"
-git remote add origin <tu-url-de-repositorio>
+# Crear repositorio en GitHub primero en: https://github.com/new
+# Nombre sugerido: j-denis-erp
+
+# Luego ejecutar:
+cd "c:\Users\Usuario\OneDrive\Documentos\J. DENIS\j-denis-erp"
+
+# Si ya tienes origin configurado, solo push:
+git push origin master
+
+# Si NO tienes origin:
+git remote add origin https://github.com/TU_USUARIO/j-denis-erp.git
+git branch -M main
 git push -u origin main
 ```
 
-### 2. Configuración en Dokploy
+### 2️⃣ Configurar en Dokploy
 
-1. **Accede a tu panel de Dokploy**
-   - Ve a https://tu-dominio-dokploy.com
+#### Acceso:
+- **URL**: http://72.62.162.99:3000
+- **Usuario**: caballeroangela49@gmail.com
+- **Password**: Darepamaxidi7
 
-2. **Crear Nuevo Proyecto**
-   - Click en "New Project"
-   - Nombre: `j-denis-erp`
-   - Tipo: "Docker Compose"
+#### Pasos en Dokploy:
 
-3. **Conectar Repositorio**
-   - Conecta tu repositorio Git
-   - Selecciona la rama `main`
-   - Dokploy detectará automáticamente el `docker-compose.yml`
+1. **Login** en http://72.62.162.99:3000/dashboard
 
-4. **Configurar Variables de Entorno**
+2. **Ir al proyecto existente** o crear uno nuevo:
+   - Click en "New Project" → "J DENIS ERP"
 
-   En la sección de "Environment Variables", agrega:
+3. **Conectar GitHub Repository**:
+   - Click en "New Application" → "From GitHub"
+   - Seleccionar repositorio `j-denis-erp`
+   - Branch: `main` o `master`
 
-   ```
-   # Base de datos
-   POSTGRES_DB=jdenis_erp
-   POSTGRES_USER=jdenis
-   POSTGRES_PASSWORD=<contraseña-segura>
+4. **Configurar Build Settings**:
+   - Build Type: `docker-compose`
+   - Docker Compose Path: `docker-compose.yml`
 
-   # Backend
-   DATABASE_URL=postgresql://jdenis:<contraseña>@db:5432/jdenis_erp?schema=public
-   JWT_SECRET=<genera-secreto-jwt-seguro>
-   PORT=3000
-   NODE_ENV=production
-   FRONTEND_URL=https://tu-dominio.com
+5. **Variables de Entorno** (muy importante):
 
-   # Frontend
-   VITE_API_URL=https://api.tu-dominio.com/api
-   VITE_SOCKET_URL=https://api.tu-dominio.com
-   ```
+```env
+# Database (Dokploy PostgreSQL)
+DATABASE_URL=postgresql://postgres:postgres@postgres-jdenis:5432/jdenis
 
-   **⚠️ IMPORTANTE**: Cambia las contraseñas y secretos por valores seguros.
+# Backend
+JWT_SECRET=jdenis-production-secret-2026-super-seguro-cambiar
+NODE_ENV=production
+PORT=4000
 
-### 3. Configuración de Dominios
-
-En Dokploy, configura los dominios:
-
-- **Frontend**: `https://jdenis.tu-dominio.com` → Puerto 80
-- **Backend API**: `https://api.jdenis.tu-dominio.com` → Puerto 3000
-
-Dokploy configurará automáticamente SSL con Let's Encrypt.
-
-### 4. Desplegar la Aplicación
-
-1. Click en el botón **"Deploy"**
-2. Dokploy ejecutará:
-   - `docker-compose build` para construir las imágenes
-   - `docker-compose up -d` para iniciar los contenedores
-   - Las migraciones de base de datos se ejecutan automáticamente
-   - El seed de datos iniciales se carga en el primer despliegue
-
-3. **Monitorear el Despliegue**
-   - Verifica los logs en tiempo real en Dokploy
-   - Asegúrate de que los 3 servicios estén "running":
-     - `jdenis-db`
-     - `jdenis-backend`
-     - `jdenis-frontend`
-
-### 5. Verificación Post-Despliegue
-
-1. **Accede a la aplicación**
-   - Ve a `https://jdenis.tu-dominio.com`
-   - Deberías ver la pantalla de login
-
-2. **Prueba con usuarios de prueba**
-   - Admin: admin@jdenis.com / admin123
-   - Fábrica: fabrica@jdenis.com / factory123
-   - Almacén: almacen@jdenis.com / warehouse123
-   - Transporte: transporte@jdenis.com / transport123
-
-3. **Verifica funcionalidades clave**
-   - ✅ Login funciona
-   - ✅ Dashboard carga con datos
-   - ✅ Inventario en tiempo real se actualiza
-   - ✅ PWA se puede instalar en móvil
-
-### 6. Configuración de Volúmenes Persistentes
-
-Dokploy maneja automáticamente el volumen de PostgreSQL definido en docker-compose:
-
-```yaml
-volumes:
-  postgres_data:
-    driver: local
+# Frontend Build Args
+VITE_API_URL=http://72.62.162.99:4000
+VITE_SOCKET_URL=http://72.62.162.99:4000
 ```
 
-**⚠️ IMPORTANTE**: Configura backups automáticos en Dokploy para el volumen `postgres_data`.
+6. **Crear Base de Datos PostgreSQL** (si no existe):
+   - En Dokploy: "New Database" → PostgreSQL
+   - Name: `postgres-jdenis`
+   - User: `postgres`
+   - Password: `postgres`
+   - Database: `jdenis`
 
-### 7. Actualizaciones Futuras
+7. **Deploy**:
+   - Click en "Deploy"
+   - Esperar ~5 minutos para build completo
 
-Para actualizar la aplicación:
+### 3️⃣ Post-Deploy: Ejecutar Migraciones
 
-1. Haz push de tus cambios al repositorio:
-   ```bash
-   git add .
-   git commit -m "Actualización de funcionalidades"
-   git push
-   ```
+Una vez desplegado, necesitas ejecutar las migraciones:
 
-2. En Dokploy:
-   - Click en "Redeploy"
-   - Dokploy reconstruirá las imágenes y reiniciará los servicios
-   - Zero-downtime deployment si configuras "Rolling Updates"
-
-### 8. Monitoreo y Logs
-
-En Dokploy puedes:
-
-- **Ver logs en tiempo real** de cada servicio
-- **Métricas de uso** (CPU, RAM, almacenamiento)
-- **Estado de salud** de los contenedores
-- **Alertas** ante fallos
-
-### 9. Seguridad Adicional
-
-1. **Firewall**: Asegúrate de que solo los puertos 80 y 443 estén expuestos públicamente
-2. **Base de datos**: El puerto 5432 debe estar accesible SOLO internamente entre contenedores
-3. **Secretos**: Nunca commitees archivos `.env` al repositorio
-4. **HTTPS**: Dokploy configura SSL automáticamente, verifica que esté activo
-
-### 10. Solución de Problemas Comunes
-
-#### Backend no inicia
+#### Opción A: Desde la UI de Dokploy
+1. Ir al contenedor `backend`
+2. Click en "Console" o "Terminal"
+3. Ejecutar:
 ```bash
-# Ver logs del backend
-docker logs jdenis-backend
-
-# Verificar conexión a DB
-docker exec -it jdenis-backend sh
-node -e "require('./dist/config/database').default.$connect().then(() => console.log('DB OK'))"
+npx prisma migrate deploy
+npx prisma db seed
 ```
 
-#### Frontend muestra pantalla en blanco
-- Verifica que las variables `VITE_API_URL` y `VITE_SOCKET_URL` apunten a tu dominio de backend
-- Revisa la consola del navegador para errores de CORS
-
-#### Base de datos no tiene datos
+#### Opción B: Desde SSH
 ```bash
-# Re-ejecutar seed
-docker exec -it jdenis-backend npm run prisma:seed
+# Conectar al servidor
+ssh root@72.62.162.99
+
+# Encontrar el contenedor
+docker ps | grep backend
+
+# Ejecutar comandos
+docker exec -it <container-id> npx prisma migrate deploy
+docker exec -it <container-id> npx prisma db seed
 ```
 
-## 🎉 ¡Listo!
+### 4️⃣ Verificar Deployment
 
-Tu plataforma J DENIS ERP/WMS está desplegada en producción con Dokploy.
+1. **Backend API**: http://72.62.162.99:4000/health
+   - Debería retornar: `{"status":"OK","message":"J DENIS ERP/WMS API"}`
+
+2. **Frontend**: http://72.62.162.99
+   - Login con: `admin@jdenis.com` / `admin123`
+
+3. **Database Connection**:
+   - Verificar que el backend se conectó a PostgreSQL
+   - Ver logs en Dokploy
+
+### 5️⃣ Configurar Dominio (Opcional)
+
+En Dokploy, en la configuración del proyecto:
+1. Agregar dominio custom: `jdenis.tudominio.com`
+2. Dokploy configurará automáticamente SSL con Let's Encrypt
+
+### 🐛 ¿Qué hacer si algo falla?
+
+#### Error: "Cannot connect to database"
+```bash
+# Verificar que PostgreSQL esté corriendo
+docker ps | grep postgres
+
+# Ver logs
+docker logs <postgres-container-id>
+
+# Verificar DATABASE_URL en variables de entorno
+```
+
+#### Error: "Prisma Client not generated"
+```bash
+# En el contenedor backend
+docker exec -it <backend-container-id> npx prisma generate
+```
+
+#### Frontend muestra "Cannot connect to server"
+- Verificar que `VITE_API_URL` esté correctamente configurado
+- Verificar que el backend esté corriendo: `http://72.62.162.99:4000/health`
+
+#### Error 502 Bad Gateway
+- El backend probablemente no está corriendo
+- Ver logs del contenedor backend en Dokploy
+- Verificar que el PORT=4000 esté configurado
+
+### 📊 Monitoreo
+
+En Dokploy puedes ver:
+- **Logs** en tiempo real
+- **Métricas** de CPU/RAM
+- **Deployments** históricos
+- **Reiniciar** servicios si es necesario
+
+### 🔄 Actualizar la App
+
+Cada vez que hagas cambios:
+
+```bash
+git add .
+git commit -m "feat: nueva funcionalidad"
+git push origin main
+```
+
+Dokploy detectará automáticamente el push y redespleará la aplicación.
 
 ---
 
-**Soporte Técnico**: Contacta al equipo de desarrollo para asistencia.
+## ✅ Checklist Final
+
+- [ ] Repositorio publicado en GitHub
+- [ ] Dokploy conectado al repositorio
+- [ ] Variables de entorno configuradas
+- [ ] Base de datos PostgreSQL creada
+- [ ] Migraciones ejecutadas
+- [ ] Seed ejecutado (usuarios de prueba)
+- [ ] Backend responde en /health
+- [ ] Frontend carga correctamente
+- [ ] Login funciona con admin@jdenis.com
+
+---
+
+**¡Listo! La plataforma J DENIS ERP/WMS está en producción** 🎉
