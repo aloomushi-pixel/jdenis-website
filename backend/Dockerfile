@@ -36,7 +36,7 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 
 # Expose port
-EXPOSE 3000
+EXPOSE 4000
 
 # Run migrations, seed, and start server
-CMD npx prisma migrate deploy && npx prisma db seed && npm start
+CMD echo "Checking DB URL..." && echo "DB_URL is set: ${DATABASE_URL:+yes}" && npx prisma migrate deploy && npx prisma db seed && npm start
