@@ -15,7 +15,7 @@ services:
       PORT: ${BACKEND_PORT:-4000}
       NODE_ENV: ${NODE_ENV:-production}
       # CORS origin - Frontend URL
-      FRONTEND_URL: ${FRONTEND_URL:-http://72.62.162.99}
+      FRONTEND_URL: ${FRONTEND_URL:-https://j-denis-j-denis-i7lwcq-4dd6ab-72-62-162-99.traefik.me}
     ports:
       - "${BACKEND_PORT:-4000}:${BACKEND_PORT:-4000}"
     networks:
@@ -34,8 +34,8 @@ services:
       dockerfile: Dockerfile
       args:
         # Build-time environment variables para Vite
-        VITE_API_URL: ${VITE_API_URL:-http://72.62.162.99:4000/api}
-        VITE_SOCKET_URL: ${VITE_SOCKET_URL:-http://72.62.162.99:4000}
+        VITE_API_URL: /api
+        VITE_SOCKET_URL: /
     container_name: jdenis-frontend
     restart: unless-stopped
     ports:
