@@ -10,7 +10,7 @@ services:
     restart: unless-stopped
     environment:
       # Database connection (ajustar según el nombre del servicio de PostgreSQL en Dokploy)
-      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:postgres@postgres-jdenis:5432/jdenis}
+      DATABASE_URL: postgresql://postgres:postgres@postgres-jdenis:5432/jdenis?schema=public
       JWT_SECRET: ${JWT_SECRET:-jdenis-production-secret-2026-super-seguro-cambiar}
       PORT: 4000
       NODE_ENV: ${NODE_ENV:-production}
