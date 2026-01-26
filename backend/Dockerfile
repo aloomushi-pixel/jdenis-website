@@ -39,4 +39,5 @@ COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 EXPOSE 4000
 
 # Run migrations, seed, and start server
-CMD echo "Checking DB URL..." && echo "DB_URL is set: ${DATABASE_URL:+yes}" && npx prisma migrate deploy && npx prisma db seed && npm start
+# Run migrations, seed, and start server
+CMD echo "DATABASE_URL=$DATABASE_URL" > .env && npx prisma migrate deploy && npx prisma db seed && npm start
