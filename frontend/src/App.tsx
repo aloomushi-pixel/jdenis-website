@@ -9,6 +9,7 @@ import OperatorDeliveries from './pages/operator/Deliveries';
 import ResourceManager from './components/ResourceManager';
 import QuotationModule from './components/QuotationModule';
 import OrderTimeline from './components/OrderTimeline';
+import MyOrders from './pages/customer/MyOrders';
 
 function App() {
     const { isAuthenticated, user } = useAuthStore();
@@ -104,8 +105,18 @@ function App() {
                 <Route
                     path="/orders/:id/timeline"
                     element={
-                        <ProtectedRoute allowedRoles={['ADMIN', 'EJECUTIVO', 'FABRICA', 'ALMACEN_MATERIA_PRIMA', 'ALMACEN_PRODUCTO_FINAL', 'TRANSPORTISTA']}>
+                        <ProtectedRoute allowedRoles={['ADMIN', 'EJECUTIVO', 'FABRICA', 'ALMACEN_MATERIA_PRIMA', 'ALMACEN_PRODUCTO_FINAL', 'TRANSPORTISTA', 'CLIENTE']}>
                             <OrderTimeline />
+                        </ProtectedRoute>
+                    }
+                />
+
+                {/* Customer Portal - My Orders */}
+                <Route
+                    path="/my-orders"
+                    element={
+                        <ProtectedRoute allowedRoles={['CLIENTE', 'ADMIN']}>
+                            <MyOrders />
                         </ProtectedRoute>
                     }
                 />

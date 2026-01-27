@@ -31,10 +31,16 @@ Workflow unificado que combina: auto-testing, permisos completos, QA de roles, d
 
 Todos estos comandos se ejecutan SIN pedir confirmación (SafeToAutoRun=true):
 
-### Git
+### Git (incluyendo commits multi-línea)
 
 ```bash
 git status | git add . | git commit -m "msg" | git push | git pull | git log -n 5 | git diff | git branch | git checkout | git merge
+
+# Multi-line commits también son auto-ejecutables
+git commit -m "fix: descripción
+
+- detalle 1
+- detalle 2"
 ```
 
 ### Build/Dev
@@ -47,7 +53,7 @@ npm run build | npm run dev | npm install | npm ci | tsc --noEmit | npx prisma g
 
 ```bash
 # Docker Compose - TODOS
-docker compose up | docker compose down | docker compose build | docker compose logs | docker compose ps | docker compose restart | docker compose exec | docker compose up -d | docker compose up -d --build | docker compose build --no-cache
+docker compose up | docker compose down | docker compose build | docker compose logs | docker compose ps | docker compose restart | docker compose exec | docker compose up -d | docker compose up -d --build | docker compose build --no-cache | docker compose up -d --force-recreate
 
 # Docker CLI - TODOS
 docker info | docker ps | docker ps -a | docker logs | docker inspect | docker exec | docker cp | docker build | docker buildx | docker run | docker stop | docker start | docker rm | docker rmi
@@ -56,10 +62,19 @@ docker info | docker ps | docker ps -a | docker logs | docker inspect | docker e
 docker compose ps --format | docker logs --tail | docker inspect --format | docker build --progress | docker buildx build
 ```
 
-### PowerShell Utilities (auto-ejecutables)
+### PowerShell (TODOS auto-ejecutables)
 
 ```powershell
-Start-Sleep | Get-Content | Select-Object | Select-String | Out-String | Tee-Object | Invoke-WebRequest | curl | Where-Object
+# Utilidades básicas
+Start-Sleep | Get-Content | Select-Object | Select-String | Out-String | Tee-Object | Where-Object | ConvertFrom-Json | ConvertTo-Json
+
+# HTTP Requests (incluyendo con variables y tokens)
+Invoke-WebRequest | curl
+$login = Invoke-WebRequest ... | $token = ($response.Content | ConvertFrom-Json).token
+Invoke-WebRequest -Headers @{Authorization="Bearer $token"} ...
+
+# Node inline
+node -e "..." | docker compose exec -T backend node -e "..."
 ```
 
 ### Base de Datos
