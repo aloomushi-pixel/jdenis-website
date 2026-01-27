@@ -1,0 +1,267 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ========================================
+   J.DENIS WEBSITE - WHISPERED LUXURY THEME
+   Lujo Silencioso + Pharma-Luxe Aesthetic
+   ======================================== */
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-cream text-charcoal font-sans antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-serif text-navy;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-cream;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-navy/20 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-navy/40;
+  }
+}
+
+@layer components {
+  /* ========================================
+     BUTTONS
+     ======================================== */
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-medium transition-all duration-300;
+  }
+
+  .btn-primary {
+    @apply bg-gold text-white hover:bg-gold-dark shadow-gold hover:shadow-lg;
+    @apply hover:scale-[1.02] active:scale-[0.98];
+  }
+
+  .btn-secondary {
+    @apply bg-navy text-white hover:bg-navy-light;
+    @apply hover:scale-[1.02] active:scale-[0.98];
+  }
+
+  .btn-outline {
+    @apply border-2 border-navy text-navy hover:bg-navy hover:text-white;
+  }
+
+  .btn-ghost {
+    @apply text-navy hover:bg-navy/5;
+  }
+
+  /* ========================================
+     CARDS - PHARMA-LUXE STYLE
+     ======================================== */
+
+  .product-card {
+    @apply bg-white rounded-2xl overflow-hidden shadow-luxury transition-all duration-300;
+    @apply hover:shadow-luxury-lg hover:scale-[1.02];
+  }
+
+  .product-card-image {
+    @apply w-full aspect-square object-cover bg-blush;
+  }
+
+  .product-card-body {
+    @apply p-5;
+  }
+
+  .product-card-title {
+    @apply font-serif text-lg text-navy font-medium mb-1;
+  }
+
+  .product-card-price {
+    @apply text-gold font-semibold text-xl;
+  }
+
+  /* ========================================
+     NAVIGATION
+     ======================================== */
+
+  .nav-link {
+    @apply text-charcoal-light font-medium transition-colors duration-200;
+    @apply hover:text-gold relative;
+  }
+
+  .nav-link::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-0 h-0.5 bg-gold transition-all duration-300;
+  }
+
+  .nav-link:hover::after {
+    @apply w-full;
+  }
+
+  .nav-link.active {
+    @apply text-gold;
+  }
+
+  .nav-link.active::after {
+    @apply w-full;
+  }
+
+  /* ========================================
+     FORMS
+     ======================================== */
+
+  .input {
+    @apply w-full px-4 py-3 rounded-lg border border-charcoal/20 bg-white;
+    @apply text-charcoal placeholder:text-charcoal/40;
+    @apply focus:outline-none focus:ring-2 focus:ring-gold/30 focus:border-gold;
+    @apply transition-all duration-200;
+  }
+
+  .label {
+    @apply block text-sm font-medium text-charcoal mb-2;
+  }
+
+  .select {
+    @apply input appearance-none cursor-pointer bg-no-repeat bg-right pr-10;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%232D3748' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.75rem center;
+    background-size: 1.25em;
+  }
+
+  /* ========================================
+     BADGES
+     ======================================== */
+
+  .badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
+  }
+
+  .badge-gold {
+    @apply bg-gold/10 text-gold border border-gold/20;
+  }
+
+  .badge-navy {
+    @apply bg-navy/10 text-navy border border-navy/20;
+  }
+
+  .badge-success {
+    @apply bg-green-50 text-green-700 border border-green-200;
+  }
+
+  /* ========================================
+     SECTIONS & LAYOUT
+     ======================================== */
+
+  .section {
+    @apply py-16 lg:py-24;
+  }
+
+  .container-luxury {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .section-title {
+    @apply font-serif text-3xl lg:text-4xl text-navy mb-4;
+  }
+
+  .section-subtitle {
+    @apply text-charcoal-light text-lg max-w-2xl;
+  }
+
+  /* ========================================
+     HERO
+     ======================================== */
+
+  .hero {
+    @apply relative min-h-[80vh] flex items-center;
+    @apply bg-gradient-to-br from-cream via-blush/30 to-cream;
+  }
+
+  .hero-title {
+    @apply font-serif text-4xl md:text-5xl lg:text-6xl text-navy leading-tight;
+  }
+
+  .hero-subtitle {
+    @apply text-lg md:text-xl text-charcoal-light mt-6 max-w-xl;
+  }
+
+  /* ========================================
+     CART DRAWER
+     ======================================== */
+
+  .cart-drawer {
+    @apply fixed inset-y-0 right-0 w-full max-w-md bg-white shadow-2xl z-50;
+    @apply transform transition-transform duration-300;
+  }
+
+  .cart-drawer.closed {
+    @apply translate-x-full;
+  }
+
+  .cart-item {
+    @apply flex gap-4 p-4 border-b border-charcoal/10;
+  }
+
+  /* ========================================
+     ANIMATIONS
+     ======================================== */
+
+  .stagger-1 {
+    animation-delay: 0.1s;
+  }
+
+  .stagger-2 {
+    animation-delay: 0.2s;
+  }
+
+  .stagger-3 {
+    animation-delay: 0.3s;
+  }
+
+  .stagger-4 {
+    animation-delay: 0.4s;
+  }
+
+  /* ========================================
+     SPECIALTY - FILTER CHIPS
+     ======================================== */
+
+  .filter-chip {
+    @apply px-4 py-2 rounded-full border border-charcoal/20 text-sm font-medium;
+    @apply transition-all duration-200 cursor-pointer;
+    @apply hover:border-gold hover:text-gold;
+  }
+
+  .filter-chip.active {
+    @apply bg-gold text-white border-gold;
+  }
+}
+
+/* ========================================
+   UTILITY CLASSES
+   ======================================== */
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .gold-gradient {
+    @apply bg-gradient-to-r from-gold to-amber-500 bg-clip-text text-transparent;
+  }
+}
