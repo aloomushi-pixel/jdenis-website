@@ -45,16 +45,8 @@ router.post('/', authenticateJWT, authorize('ADMIN', 'EJECUTIVO'), async (req: a
             },
         });
 
-        // Log event
-        await prisma.eventLog.create({
-            data: {
-                eventType: 'INGRESO',
-                userId: req.user.id,
-                resourceId: resource.id,
-                quantity,
-                details: { action: 'resource_created' },
-            },
-        });
+        // TODO: Add EventLog when model is implemented
+        console.log(`Resource created: ${resource.id} by user ${req.user.id}`);
 
         res.status(201).json(resource);
     } catch (error) {

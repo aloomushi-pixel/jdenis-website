@@ -75,7 +75,7 @@ router.post('/', authenticate, authorize('ADMIN'), async (req: AuthRequest, res)
 });
 
 // Get all customers
-router.get('/customers', authenticate, authorize('ADMIN'), async (req, res) => {
+router.get('/customers', authenticate, authorize('ADMIN', 'EJECUTIVO'), async (req, res) => {
     try {
         const customers = await prisma.customer.findMany({
             orderBy: {
@@ -90,7 +90,7 @@ router.get('/customers', authenticate, authorize('ADMIN'), async (req, res) => {
 });
 
 // Create customer
-router.post('/customers', authenticate, authorize('ADMIN'), async (req, res) => {
+router.post('/customers', authenticate, authorize('ADMIN', 'EJECUTIVO'), async (req, res) => {
     try {
         const { name, contactName, email, phone, address } = req.body;
 
