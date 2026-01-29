@@ -20,6 +20,20 @@ async function main() {
     });
     console.log('✅ Admin user created');
 
+    // Usuario administrador personal
+    const personalAdminPassword = await bcrypt.hash('Darepamaxidi7', 10);
+    const personalAdmin = await prisma.user.upsert({
+        where: { email: 'caballeroangela49@gmail.com' },
+        update: {},
+        create: {
+            email: 'caballeroangela49@gmail.com',
+            passwordHash: personalAdminPassword,
+            fullName: 'Angela Caballero',
+            role: 'ADMIN',
+        },
+    });
+    console.log('✅ Personal Admin user created');
+
     const transportistaPassword = await bcrypt.hash('transportista123', 10);
     const transportista = await prisma.user.upsert({
         where: { email: 'transportista@jdenis.com' },
@@ -340,7 +354,8 @@ async function main() {
     console.log('✅ Protocol templates created');
 
     console.log('\n🎉 Database seed completed successfully!');
-    console.log('\n📝 Test users created (7 roles):');
+    console.log('\n📝 Test users created (7 roles + 1 personal admin):');
+    console.log('   👤 Personal Admin: caballeroangela49@gmail.com / Darepamaxidi7');
     console.log('   Admin: admin@jdenis.com / admin123');
     console.log('   Transportista: transportista@jdenis.com / transportista123');
     console.log('   Almacén MP: almacenmp@jdenis.com / almacenmp123');
