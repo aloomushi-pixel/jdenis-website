@@ -1,5 +1,32 @@
 # 🚀 Guía de Deployment - J DENIS ERP/WMS
 
+## 🚨 SOLUCIÓN RÁPIDA: Error "Dockerfile not found" en Dokploy
+
+**Si ves este error en los logs de Dokploy:**
+```
+ERROR: failed to build: failed to solve: failed to read dockerfile: open Dockerfile: no such file or directory
+❌ Docker build failed
+```
+
+**Causa**: Dokploy está configurado en modo "Dockerfile" pero el proyecto usa Docker Compose.
+
+**Solución Inmediata:**
+
+1. **Ir a Dokploy** → http://72.62.162.99:3000
+2. **Login** con caballeroangela49@gmail.com / Darepamaxidi7
+3. **Seleccionar el proyecto** "jdenis-website"
+4. **Click en Settings/Configuración**
+5. **En la sección "Build":**
+   - ✅ **Build Type**: Cambiar de "Dockerfile" a **"Docker Compose"**
+   - ✅ **Compose Path**: Escribir `docker-compose.prod.yml`
+   - ✅ **Compose Command**: Dejar vacío o usar `up -d`
+6. **Click en "Save"**
+7. **Click en "Redeploy"**
+
+> ⚠️ **CRÍTICO**: El proyecto NO tiene un Dockerfile en la raíz. Usa docker-compose.prod.yml con múltiples servicios (db, backend, frontend).
+
+---
+
 ## 📋 Pasos para publicar en GitHub y deploy en Dokploy
 
 ### 1️⃣ Publicar en GitHub (SI NO TIENES REMOTE CONFIGURADO)
@@ -39,9 +66,16 @@ git push -u origin main
    - Seleccionar repositorio `j-denis-erp`
    - Branch: `main` o `master`
 
-4. **Configurar Build Settings**:
-   - Build Type: `docker-compose`
-   - Docker Compose Path: **`docker-compose.prod.yml`** ⚠️ **IMPORTANTE: Usar el archivo de producción**
+4. **Configurar Build Settings** (⚠️ **MUY IMPORTANTE**):
+   - **Build Type**: Seleccionar **"Docker Compose"** (NO "Dockerfile")
+   - **Compose Path**: Escribir exactamente: `docker-compose.prod.yml`
+   - **Compose Command**: Dejar vacío o escribir `up -d`
+   
+   > 🚨 **ERROR COMÚN**: Si seleccionas "Dockerfile" en Build Type, el deploy fallará con:
+   > ```
+   > ERROR: failed to read dockerfile: open Dockerfile: no such file or directory
+   > ```
+   > **Solución**: Cambiar a "Docker Compose" y especificar `docker-compose.prod.yml`
 
 5. **Variables de Entorno** (⚠️ **CRÍTICO** - Agregar TODAS en la pestaña "Environment"):
 
