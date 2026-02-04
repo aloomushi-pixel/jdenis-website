@@ -39,8 +39,8 @@ COPY prisma ./prisma/
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 
-# Expose port
-EXPOSE 3000
+# Expose port (configurable via PORT env var, default 4000 in production)
+EXPOSE 4000
 
 # Run prisma generate, migrations, seed (optional), and start server
 CMD echo "DATABASE_URL=$DATABASE_URL" > .env && \
