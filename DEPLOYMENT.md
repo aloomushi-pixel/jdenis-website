@@ -1,5 +1,32 @@
 # 🚀 Guía de Deployment - J DENIS ERP/WMS
 
+## 🚨 SOLUCIÓN RÁPIDA: Error "can't cd to docker-compose.prod.yml"
+
+**Si ves este error en los logs de Dokploy (después de configurar Docker Compose):**
+```
+/bin/sh: cd: can't cd to /etc/dokploy/.../docker-compose.prod.yml
+❌ The path .../docker-compose.prod.yml does not exist
+```
+
+**Causa**: El campo de configuración en Dokploy está mal configurado. Dokploy intenta hacer `cd` al archivo compose como si fuera un directorio.
+
+**Solución Inmediata:**
+
+1. **Ir a Dokploy** → http://72.62.162.99:3000
+2. **Login** con caballeroangela49@gmail.com / Darepamaxidi7
+3. **Seleccionar el proyecto** "jdenis-website"
+4. **Click en Settings/Configuración**
+5. **Buscar la sección de Docker Compose:**
+   - ✅ **Compose File**: `docker-compose.prod.yml` (solo el nombre del archivo)
+   - ✅ **Working Directory**: `.` o dejar vacío (NO poner la ruta del archivo compose)
+   - ✅ **Command**: `up -d --build` o dejar vacío
+6. **Click en "Save"**
+7. **Click en "Redeploy"**
+
+> ⚠️ **CRÍTICO**: El compose file debe ser SOLO el nombre del archivo, no una ruta completa. Dokploy ejecutará: `docker compose -f docker-compose.prod.yml up -d` desde el directorio del código.
+
+---
+
 ## 🚨 SOLUCIÓN RÁPIDA: Error "Dockerfile not found" en Dokploy
 
 **Si ves este error en los logs de Dokploy:**
@@ -145,9 +172,31 @@ docker exec -it jdenis-backend npx prisma db seed
    - Debería retornar: `{"status":"OK","message":"J DENIS ERP/WMS API"}`
 
 2. **Frontend**: http://72.62.162.99
-   - Login con: `admin@jdenis.com` / `admin123`
+   - Debería cargar la página de login
 
-3. **Database Connection**:
+3. **Login con credenciales:**
+
+   **Usuario Administrador Personal:**
+   - Email: `caballeroangela49@gmail.com`
+   - Password: `Darepamaxidi7`
+   - Rol: ADMIN
+
+   **Usuario Administrador Demo:**
+   - Email: `admin@jdenis.com`
+   - Password: `admin123`
+   - Rol: ADMIN
+
+   **Otros usuarios de prueba:**
+   - Transportista: `transportista@jdenis.com` / `transportista123`
+   - Almacén MP: `almacenmp@jdenis.com` / `almacenmp123`
+   - Almacén PF: `almacenpf@jdenis.com` / `almacenpf123`
+   - Fábrica: `fabrica@jdenis.com` / `fabrica123`
+   - Ejecutivo: `ejecutivo@jdenis.com` / `ejecutivo123`
+   - Cliente: `cliente@jdenis.com` / `cliente123`
+
+   > 📝 **Nota**: Estas credenciales se crean automáticamente al ejecutar `npx prisma db seed`
+
+4. **Database Connection**:
    - Verificar que el backend se conectó a PostgreSQL
    - Ver logs en Dokploy → pestaña "Logs" → filtrar por `jdenis-backend`
 
