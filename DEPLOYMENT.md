@@ -47,26 +47,32 @@ git push -u origin main
 
 ```env
 # Backend
-DATABASE_URL=postgresql://postgres:postgres@postgres-jdenis:5432/jdenis
+DATABASE_URL=postgresql://postgres:postgres@db:5432/jdenis
 JWT_SECRET=jdenis-production-secret-2026-super-seguro-cambiar
-BACKEND_PORT=4000
+PORT=4000
 NODE_ENV=production
 FRONTEND_URL=http://72.62.162.99
 
-# Frontend Build Args
-VITE_API_URL=http://72.62.162.99:4000/api
-VITE_SOCKET_URL=http://72.62.162.99:4000
-FRONTEND_PORT=80
+# Frontend Build Args (build-time)
+VITE_API_URL=/api
+VITE_SOCKET_URL=/
+
+# Database credentials (para el servicio db interno)
+POSTGRES_DB=jdenis
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
 ```
 
-> 📝 **Nota**: El nombre `postgres-jdenis` en `DATABASE_URL` debe coincidir con el nombre de tu servicio PostgreSQL en Dokploy.
+> 📝 **Nota Importante**: 
+> - El servicio PostgreSQL **YA ESTÁ INCLUIDO** en `docker-compose.prod.yml`
+> - `DATABASE_URL` usa `db` como hostname (nombre del servicio en el compose)
+> - Las variables `VITE_*` usan rutas relativas porque nginx hace proxy interno
+> - **NO necesitas crear una base de datos separada en Dokploy**, el compose la levanta automáticamente
 
-6. **Crear Base de Datos PostgreSQL** (si no existe):
-   - En Dokploy: "New Database" → PostgreSQL
-   - Name: `postgres-jdenis`
-   - User: `postgres`
-   - Password: `postgres`
-   - Database: `jdenis`
+6. ~~**Crear Base de Datos PostgreSQL**~~ (YA NO NECESARIO):
+   - ✅ **El servicio PostgreSQL ya viene incluido en docker-compose.prod.yml**
+   - El contenedor `postgres-jdenis` se levantará automáticamente con el compose
+   - Solo necesitas configurar las variables de entorno del paso 5
 
 7. **Deploy**:
    - Click en "Deploy"
@@ -149,16 +155,23 @@ En Dokploy, en la configuración del servicio:
 
 **Síntoma**: Backend muestra `Error: Can't reach database server`
 
-**Causa**: El nombre del servicio en `DATABASE_URL` no coincide con el servicio PostgreSQL en Dokploy.
+**Causa**: El servicio de base de datos no arrancó o las credenciales son incorrectas.
 
 **Solución**:
-1. Verifica el nombre exacto de tu servicio PostgreSQL en Dokploy (pestaña "Services")
-2. Actualiza la variable `DATABASE_URL` para que use el nombre correcto:
+1. Verifica que el servicio `db` esté corriendo:
+   ```bash
+   docker ps | grep postgres-jdenis
    ```
-   postgresql://postgres:postgres@[NOMBRE_SERVICIO_POSTGRES]:5432/jdenis
+2. Verifica los logs de la base de datos:
+   ```bash
+   docker logs postgres-jdenis
    ```
-3. Ejemplo: `postgresql://postgres:postgres@postgres-jdenis:5432/jdenis`
-4. Guarda y redeploy
+3. La `DATABASE_URL` debe usar `db` como hostname (nombre del servicio en docker-compose.prod.yml):
+   ```
+   postgresql://postgres:postgres@db:5432/jdenis
+   ```
+4. Verifica que las variables `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD` estén configuradas
+5. Guarda y redeploy
 
 ### Frontend muestra "Cannot connect to server"
 
