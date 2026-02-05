@@ -50,5 +50,5 @@ EXPOSE 4000
 CMD echo "DATABASE_URL=$DATABASE_URL" > .env && \
     ./node_modules/.bin/prisma generate && \
     ./node_modules/.bin/prisma migrate deploy && \
-    (./node_modules/.bin/prisma db seed || echo "Seed skipped or already done") && \
+    (./node_modules/.bin/tsx prisma/seed.ts || echo "Seed skipped or already done") && \
     npm start
