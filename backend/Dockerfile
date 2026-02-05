@@ -46,9 +46,11 @@ COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 EXPOSE 4000
 
 # Run prisma generate, migrations, and start server
-# Added debug logging to identify where process hangs
+# Added debug logging to identify process stages
+# DIRECT_URL is for migrations (bypasses Supabase pooler), DATABASE_URL is for runtime
 CMD echo "=== Starting J DENIS Backend ===" && \
     echo "DATABASE_URL=$DATABASE_URL" > .env && \
+    echo "DIRECT_URL=$DIRECT_URL" >> .env && \
     echo "=== Step 1: Running prisma generate ===" && \
     npx prisma generate && \
     echo "=== Step 2: Running prisma migrate deploy ===" && \
