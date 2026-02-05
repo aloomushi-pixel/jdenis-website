@@ -46,9 +46,9 @@ COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 EXPOSE 4000
 
 # Run prisma generate, migrations, seed (optional), and start server
-# Use explicit paths to node_modules/.bin to ensure binaries are found
+# Use npx for prisma commands which handles path resolution automatically
 CMD echo "DATABASE_URL=$DATABASE_URL" > .env && \
-    ./node_modules/.bin/prisma generate && \
-    ./node_modules/.bin/prisma migrate deploy && \
-    (./node_modules/.bin/tsx prisma/seed.ts || echo "Seed skipped or already done") && \
+    npx prisma generate && \
+    npx prisma migrate deploy && \
+    (npx prisma db seed || echo "Seed skipped or already done") && \
     npm start
