@@ -45,10 +45,9 @@ COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 # Expose port (configurable via PORT env var, default 4000 in production)
 EXPOSE 4000
 
-# Run prisma generate, migrations, seed (optional), and start server
-# Use npx for prisma commands which handles path resolution automatically
+# Run prisma generate, migrations, and start server
+# Seed temporarily disabled for debugging - can be re-enabled later
 CMD echo "DATABASE_URL=$DATABASE_URL" > .env && \
     npx prisma generate && \
     npx prisma migrate deploy && \
-    (npx prisma db seed || echo "Seed skipped or already done") && \
     npm start
