@@ -23,14 +23,17 @@ RUN npm run build
 # Production stage
 FROM node:20-slim
 
-# Install OpenSSL for Prisma
-RUN apt-get update && apt-get install -y openssl ca-certificates && rm -rf /var/lib/apt/lists/*
+# Install OpenSSL and wget for Prisma and healthchecks
+RUN apt-get update && apt-get install -y openssl ca-certificates wget && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Copy package files and install production dependencies 
+# Copy package files first
 COPY package*.json ./
-RUN npm install --only=production --legacy-peer-deps
+
+# Install ALL dependencies (not just production) to ensure npx and prisma CLI are available
+# This is needed because prisma CLI commands run in the CMD
+RUN npm ci --legacy-peer-deps
 
 # Copy Prisma schema and seed files
 COPY prisma ./prisma/
@@ -43,8 +46,9 @@ COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 EXPOSE 4000
 
 # Run prisma generate, migrations, seed (optional), and start server
+# Use explicit paths to node_modules/.bin to ensure binaries are found
 CMD echo "DATABASE_URL=$DATABASE_URL" > .env && \
-    npx prisma generate && \
-    npx prisma migrate deploy && \
-    (npx prisma db seed || echo "Seed skipped or already done") && \
+    ./node_modules/.bin/prisma generate && \
+    ./node_modules/.bin/prisma migrate deploy && \
+    (./node_modules/.bin/prisma db seed || echo "Seed skipped or already done") && \
     npm start
