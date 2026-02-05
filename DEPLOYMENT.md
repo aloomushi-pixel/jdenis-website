@@ -107,33 +107,38 @@ git push -u origin main
 5. **Variables de Entorno** (⚠️ **CRÍTICO** - Agregar TODAS en la pestaña "Environment"):
 
 ```env
-# Backend
-DATABASE_URL=postgresql://postgres:postgres@db:5432/jdenis
+# Backend - Supabase PostgreSQL (Managed Cloud Database)
+# Obtener la contraseña desde: https://supabase.com/dashboard/project/vqcjxzsibywdxpvkyysa/settings/database
+DATABASE_URL=postgresql://postgres.vqcjxzsibywdxpvkyysa:[YOUR-PASSWORD]@aws-0-us-west-2.pooler.supabase.com:6543/postgres
+
+# JWT Secret (CAMBIAR EN PRODUCCIÓN)
 JWT_SECRET=jdenis-production-secret-2026-super-seguro-cambiar
+
+# Backend port
 PORT=4000
+
+# Node environment
 NODE_ENV=production
+
+# CORS - Frontend URL
 FRONTEND_URL=http://72.62.162.99
 
 # Frontend Build Args (build-time)
-VITE_API_URL=/api
-VITE_SOCKET_URL=/
-
-# Database credentials (para el servicio db interno)
-POSTGRES_DB=jdenis
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=postgres
+VITE_API_URL=http://72.62.162.99:4000/api
+VITE_SOCKET_URL=http://72.62.162.99:4000
 ```
 
 > 📝 **Nota Importante**: 
-> - El servicio PostgreSQL **YA ESTÁ INCLUIDO** en `docker-compose.prod.yml`
-> - `DATABASE_URL` usa `db` como hostname (nombre del servicio en el compose)
-> - Las variables `VITE_*` usan rutas relativas porque nginx hace proxy interno
-> - **NO necesitas crear una base de datos separada en Dokploy**, el compose la levanta automáticamente
+> - La base de datos está hospedada en **Supabase** (PostgreSQL cloud-managed)
+> - Reemplaza `[YOUR-PASSWORD]` con la contraseña de tu proyecto Supabase
+> - Para obtener la contraseña: Supabase Dashboard → Settings → Database → Database Password
+> - Las variables `VITE_*` deben apuntar a la URL pública del backend
+> - **NO necesitas crear un servicio PostgreSQL local**, la base de datos está en la nube
 
 6. ~~**Crear Base de Datos PostgreSQL**~~ (YA NO NECESARIO):
-   - ✅ **El servicio PostgreSQL ya viene incluido en docker-compose.prod.yml**
-   - El contenedor `postgres-jdenis` se levantará automáticamente con el compose
-   - Solo necesitas configurar las variables de entorno del paso 5
+   - ✅ **La base de datos está hospedada en Supabase** (proyecto: J DENIS)
+   - Todas las tablas y esquemas ya están migrados a Supabase
+   - Solo necesitas configurar la `DATABASE_URL` con tus credenciales de Supabase
 
 7. **Deploy**:
    - Click en "Deploy"
@@ -236,25 +241,22 @@ En Dokploy, en la configuración del servicio:
 
 ### Error de Conexión a Base de Datos
 
-**Síntoma**: Backend muestra `Error: Can't reach database server`
+**Síntoma**: Backend muestra `Error: Can't reach database server` o `Connection timeout`
 
-**Causa**: El servicio de base de datos no arrancó o las credenciales son incorrectas.
+**Causa**: Las credenciales de Supabase son incorrectas o la URL de conexión está mal formada.
 
 **Solución**:
-1. Verifica que el servicio `db` esté corriendo:
-   ```bash
-   docker ps | grep postgres-jdenis
+1. Verifica que la `DATABASE_URL` esté correctamente configurada en Dokploy:
    ```
-2. Verifica los logs de la base de datos:
-   ```bash
-   docker logs postgres-jdenis
+   postgresql://postgres.vqcjxzsibywdxpvkyysa:[PASSWORD]@aws-0-us-west-2.pooler.supabase.com:6543/postgres
    ```
-3. La `DATABASE_URL` debe usar `db` como hostname (nombre del servicio en docker-compose.prod.yml):
-   ```
-   postgresql://postgres:postgres@db:5432/jdenis
-   ```
-4. Verifica que las variables `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD` estén configuradas
-5. Guarda y redeploy
+2. Obtén la contraseña correcta desde el Dashboard de Supabase:
+   - Ir a https://supabase.com/dashboard/project/vqcjxzsibywdxpvkyysa/settings/database
+   - Copiar la contraseña del proyecto
+3. Reemplaza `[PASSWORD]` en `DATABASE_URL` con la contraseña real
+4. Asegúrate de no tener espacios o caracteres especiales mal escapados
+5. Guarda las variables de entorno en Dokploy y redeploy
+6. Verifica los logs del backend para confirmar la conexión exitosa
 
 ### Frontend muestra "Cannot connect to server"
 

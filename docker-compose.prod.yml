@@ -1,25 +1,6 @@
 version: '3.8'
 
 services:
-  # PostgreSQL Database
-  db:
-    image: postgres:16-alpine
-    container_name: postgres-jdenis
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB:-jdenis}
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - jdenis-network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   # Backend API
   backend:
     build:
@@ -28,8 +9,8 @@ services:
     container_name: jdenis-backend
     restart: unless-stopped
     environment:
-      # Database connection (usando el nombre del servicio db)
-      DATABASE_URL: postgresql://postgres:postgres@db:5432/jdenis?schema=public
+      # Database connection to Supabase (provide DATABASE_URL in Dokploy environment)
+      DATABASE_URL: ${DATABASE_URL}
       JWT_SECRET: ${JWT_SECRET:-jdenis-production-secret-2026-super-seguro-cambiar}
       PORT: ${PORT:-4000}
       NODE_ENV: ${NODE_ENV:-production}
@@ -39,11 +20,8 @@ services:
       - "4000:4000"
     networks:
       - jdenis-network
-    depends_on:
-      db:
-        condition: service_healthy
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:4000/api/health"]
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:4000/api/health" ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -74,14 +52,12 @@ services:
       backend:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80"]
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80" ]
       interval: 30s
       timeout: 10s
       retries: 3
 
 volumes:
-  postgres_data:
-    driver: local
 
 networks:
   jdenis-network:
