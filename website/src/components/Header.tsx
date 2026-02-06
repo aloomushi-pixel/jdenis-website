@@ -13,6 +13,7 @@ export default function Header() {
         { path: '/', label: 'Inicio' },
         { path: '/tienda', label: 'Tienda' },
         { path: '/academia', label: 'Academia' },
+        { path: '/blog', label: 'Blog' },
         { path: '/nosotros', label: 'Nosotros' },
     ];
 

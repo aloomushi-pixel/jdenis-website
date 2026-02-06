@@ -10,6 +10,8 @@ import Login from './pages/Login';
 import MyAccount from './pages/MyAccount';
 import About from './pages/About';
 import Academy from './pages/Academy';
+import Blog from './pages/Blog';
+import BlogPost from './pages/BlogPost';
 
 function App() {
   return (
@@ -26,6 +28,8 @@ function App() {
             <Route path="/mi-cuenta" element={<MyAccount />} />
             <Route path="/nosotros" element={<About />} />
             <Route path="/academia" element={<Academy />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:slug" element={<BlogPost />} />
           </Routes>
         </main>
         <Footer />
