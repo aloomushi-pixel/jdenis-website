@@ -115,9 +115,18 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* ACADEMY MODULE - KRAFT SECTION */}
-            <section className="section section-kraft">
-                <div className="container-luxury">
+            {/* ACADEMY MODULE - DYNAMIC SECTION */}
+            <section className="py-20 relative overflow-hidden bg-gradient-to-br from-cream via-cream-dark to-cream">
+                {/* Dynamic pattern overlay */}
+                <div className="absolute inset-0 opacity-10">
+                    <div className="absolute top-0 left-0 w-72 h-72 bg-gold/30 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
+                    <div className="absolute bottom-0 right-0 w-96 h-96 bg-forest/20 rounded-full blur-3xl translate-x-1/3 translate-y-1/3" />
+                    <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-gold/20 rounded-full blur-2xl -translate-x-1/2 -translate-y-1/2" />
+                </div>
+                {/* Decorative lines */}
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
+                <div className="container-luxury relative z-10">
                     <div className="grid lg:grid-cols-2 gap-12 items-center">
                         <motion.div
                             initial={{ opacity: 0, x: -20 }}
@@ -241,8 +250,14 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* CTA FINAL - FOREST SECTION */}
-            <section className="section section-forest relative overflow-hidden">
+            {/* CTA FINAL - DYNAMIC SECTION */}
+            <section className="py-20 relative overflow-hidden bg-forest">
+                {/* Dynamic pattern overlay */}
+                <div className="absolute inset-0 opacity-20">
+                    <div className="absolute top-0 right-0 w-80 h-80 bg-gold/40 rounded-full blur-3xl translate-x-1/3 -translate-y-1/3" />
+                    <div className="absolute bottom-0 left-0 w-96 h-96 bg-gold/30 rounded-full blur-3xl -translate-x-1/3 translate-y-1/3" />
+                    <div className="absolute top-1/2 left-1/4 w-48 h-48 bg-gold/20 rounded-full blur-2xl" />
+                </div>
                 {/* Decorative elements */}
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
