@@ -14,9 +14,9 @@ export default {
           dark: '#141d2b',     // Darker navy
         },
         cream: {
-          DEFAULT: '#f8f5f0',  // Warm white/cream
-          dark: '#ede8e0',
-          light: '#fdfcfa',
+          DEFAULT: '#ffffff',  // Pure white background
+          dark: '#f5f5f5',
+          light: '#ffffff',
         },
         gold: {
           DEFAULT: '#c9a857',  // Gold from leaves
@@ -33,7 +33,7 @@ export default {
         noir: '#1e2a3d',
         'rose-gold': '#c9a857',
         champagne: '#dbc17a',
-        pearl: '#f8f5f0',
+        pearl: '#ffffff',
       },
       fontFamily: {
         serif: ['Playfair Display', 'Georgia', 'serif'],

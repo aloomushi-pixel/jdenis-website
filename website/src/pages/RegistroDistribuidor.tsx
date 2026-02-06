@@ -127,27 +127,22 @@ export default function RegistroDistribuidor() {
                             <div className="space-y-6">
                                 {[
                                     {
-                                        icon: '💰',
                                         title: 'Precios Preferenciales',
                                         desc: 'Accede a descuentos exclusivos de hasta 40% en toda la línea de productos profesionales.'
                                     },
                                     {
-                                        icon: '🎓',
                                         title: 'Capacitación Incluida',
                                         desc: 'Cursos gratuitos con la Maestra Gabriela Elizalde para ti y tu equipo de trabajo.'
                                     },
                                     {
-                                        icon: '📦',
                                         title: 'Envíos Prioritarios',
                                         desc: 'Entregas en 24-48 horas y sin costo en pedidos mayores a $3,000 MXN.'
                                     },
                                     {
-                                        icon: '🏆',
                                         title: '25 Años de Respaldo',
                                         desc: 'Representa la marca líder en México con patentes propias y manufactura nacional.'
                                     },
                                     {
-                                        icon: '📈',
                                         title: 'Material de Marketing',
                                         desc: 'Catálogos digitales, banners y contenido para redes sociales listos para usar.'
                                     },
@@ -160,7 +155,7 @@ export default function RegistroDistribuidor() {
                                         transition={{ delay: i * 0.1 }}
                                         className="flex gap-4 p-4 bg-white border border-kraft/30 hover:border-gold/50 transition-colors"
                                     >
-                                        <span className="text-2xl">{benefit.icon}</span>
+                                        <div className="w-2 h-full bg-gold flex-shrink-0" />
                                         <div>
                                             <h3 className="font-medium text-forest mb-1">{benefit.title}</h3>
                                             <p className="text-charcoal/60 text-sm">{benefit.desc}</p>
