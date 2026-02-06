@@ -9,8 +9,11 @@ services:
     container_name: jdenis-backend
     restart: unless-stopped
     environment:
-      # Database connection to Supabase (provide DATABASE_URL in Dokploy environment)
+      # Database connections to Supabase
+      # DATABASE_URL: pooler connection (6543) for runtime
+      # DIRECT_URL: direct connection (5432) for migrations
       DATABASE_URL: ${DATABASE_URL}
+      DIRECT_URL: ${DIRECT_URL}
       JWT_SECRET: ${JWT_SECRET:-jdenis-production-secret-2026-super-seguro-cambiar}
       PORT: ${PORT:-4000}
       NODE_ENV: ${NODE_ENV:-production}
