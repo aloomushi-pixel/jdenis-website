@@ -12,29 +12,47 @@ export default function Home() {
                 <div className="absolute inset-0 botanical-pattern opacity-30" />
 
                 <div className="hero-content">
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8 }}
-                    >
-                        <span className="hero-badge">Desde 1998 · Ciencia Botánica</span>
-                        <h1 className="hero-title">
-                            El Arte de la<br />
-                            <span className="text-gold">Mirada Perfecta</span>
-                        </h1>
-                        <p className="hero-subtitle">
-                            Fórmulas de laboratorio con ingredientes naturales para profesionales
-                            que buscan resultados extraordinarios.
-                        </p>
-                        <div className="flex flex-wrap justify-center gap-4">
-                            <Link to="/tienda" className="btn btn-secondary">
-                                Ver Productos
-                            </Link>
-                            <Link to="/registro-distribuidor" className="btn btn-outline-light">
-                                Registro Distribuidor
-                            </Link>
-                        </div>
-                    </motion.div>
+                    <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center max-w-7xl mx-auto">
+                        {/* Text Column */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 30 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8 }}
+                            className="text-center lg:text-left"
+                        >
+                            <span className="hero-badge">Desde 1998 · Ciencia Botánica</span>
+                            <h1 className="hero-title">
+                                El Arte de la<br />
+                                <span className="text-gold">Mirada Perfecta</span>
+                            </h1>
+                            <p className="hero-subtitle">
+                                Fórmulas de laboratorio con ingredientes naturales para profesionales
+                                que buscan resultados extraordinarios.
+                            </p>
+                            <div className="flex flex-wrap justify-center lg:justify-start gap-4">
+                                <Link to="/tienda" className="btn btn-secondary">
+                                    Ver Productos
+                                </Link>
+                                <Link to="/registro-distribuidor" className="btn btn-outline-light">
+                                    Registro Distribuidor
+                                </Link>
+                            </div>
+                        </motion.div>
+
+                        {/* Image Column */}
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 0.8, delay: 0.2 }}
+                            className="hidden lg:block"
+                        >
+                            <img
+                                src="/hero-products.jpg"
+                                alt="Productos J. Denis - Línea profesional de cosméticos para cejas y pestañas"
+                                className="w-full h-auto max-w-xl mx-auto drop-shadow-2xl"
+                            />
+                        </motion.div>
+                    </div>
                 </div>
             </section>
 
