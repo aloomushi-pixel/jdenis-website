@@ -19,6 +19,8 @@ const courses = [
         description: 'Aprende la técnica 1:1 para extensiones naturales y duraderas.',
         topics: ['Selección de curvaturas', 'Aplicación de adhesivo', 'Diseño de mirada', 'Retiros seguros'],
         nextDate: '22 de Febrero 2025',
+        video: '/videos/Mejora_de_video_con_pestañas_fijas.mp4',
+        videoTitle: 'Tutorial: Extensiones Clásicas Paso a Paso',
     },
     {
         id: 3,
@@ -39,6 +41,8 @@ const courses = [
         description: 'Coloración y moldeado profesional de cejas.',
         topics: ['Preparación de henna', 'Mapeo de cejas', 'Laminado paso a paso', 'Aftercare'],
         nextDate: '8 de Marzo 2025',
+        video: '/videos/Video_con_logo_J_DENIS.mp4',
+        videoTitle: 'Técnica Brow Henna J. Denis',
     },
 ];
 
