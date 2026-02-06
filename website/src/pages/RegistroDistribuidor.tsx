@@ -339,19 +339,19 @@ export default function RegistroDistribuidor() {
             </section>
 
             {/* SEO Section */}
-            <section className="section section-dark">
+            <section className="py-16 bg-forest">
                 <div className="container-luxury">
                     <div className="max-w-3xl mx-auto text-center">
-                        <h2 className="font-serif text-2xl text-champagne mb-6">
+                        <h2 className="font-serif text-2xl text-gold mb-6">
                             Proveedor de Productos Cosméticos Profesionales en México
                         </h2>
-                        <p className="text-pearl/50 leading-relaxed mb-6">
+                        <p className="text-gray-300 leading-relaxed mb-6">
                             J. Denis es el proveedor líder de productos para cejas y pestañas en México desde 1998.
                             Ofrecemos precios competitivos para estéticas, salones de belleza y profesionales independientes.
                             Nuestros cursos certificados te preparan para ofrecer servicios de Lash Lifting, Laminado de Cejas,
                             Henna para Cejas y más técnicas con alta demanda.
                         </p>
-                        <p className="text-pearl/50 leading-relaxed">
+                        <p className="text-gray-300 leading-relaxed">
                             Únete a más de 5,000 profesionales que ya distribuyen nuestros productos en todo el país.
                             Manufactura 100% mexicana, patentes propias y el respaldo de la Maestra Gabriela Elizalde,
                             pionera del mercado de cejas y pestañas en Latinoamérica.
