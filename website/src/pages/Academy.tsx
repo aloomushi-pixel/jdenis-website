@@ -81,14 +81,13 @@ export default function Academy() {
                 <div className="container-luxury">
                     <div className="grid md:grid-cols-4 gap-6 text-center">
                         {[
-                            { icon: '🏆', text: 'Certificación Oficial' },
-                            { icon: '👩‍🏫', text: 'Grupos Reducidos' },
-                            { icon: '🧪', text: 'Kit de Productos Incluido' },
-                            { icon: '📍', text: 'Sede Lindavista, CDMX' },
+                            'Certificación Oficial',
+                            'Grupos Reducidos',
+                            'Kit de Productos Incluido',
+                            'Sede Lindavista, CDMX',
                         ].map((item, i) => (
-                            <div key={i} className="flex items-center justify-center gap-3">
-                                <span className="text-2xl">{item.icon}</span>
-                                <span className="font-medium text-forest">{item.text}</span>
+                            <div key={i} className="flex items-center justify-center">
+                                <span className="font-medium text-forest">{item}</span>
                             </div>
                         ))}
                     </div>

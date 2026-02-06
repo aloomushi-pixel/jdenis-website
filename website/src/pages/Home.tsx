@@ -25,7 +25,7 @@ export default function Home() {
                         transition={{ duration: 0.8 }}
                         className="text-center max-w-3xl mx-auto"
                     >
-                        <span className="hero-badge">Desde 1998 · Ciencia Botánica</span>
+                        <span className="hero-badge">Desde 1998</span>
                         <h1 className="hero-title">
                             El Arte de la<br />
                             <span className="text-gold">Mirada Perfecta</span>
@@ -52,19 +52,16 @@ export default function Home() {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {[
                             {
-                                icon: '🏆',
                                 value: 'Desde 1998',
                                 label: 'Pioneros en México',
                                 description: 'Primera marca mexicana especializada en cejas y pestañas profesionales'
                             },
                             {
-                                icon: '🔬',
                                 value: 'Patentes Propias',
                                 label: 'Técnicas Certificadas',
                                 description: 'Métodos exclusivos desarrollados y patentados por nuestro laboratorio'
                             },
                             {
-                                icon: '🌿',
                                 value: '100% Mexicano',
                                 label: 'Manufactura Nacional',
                                 description: 'Control de calidad total en nuestras instalaciones de CDMX'
@@ -78,7 +75,6 @@ export default function Home() {
                                 transition={{ delay: i * 0.15 }}
                                 className="legacy-card"
                             >
-                                <span className="text-3xl mb-3 block">{stat.icon}</span>
                                 <span className="text-gold text-xl font-serif font-semibold block">{stat.value}</span>
                                 <p className="text-cream/80 text-sm font-medium mt-1 mb-2">{stat.label}</p>
                                 <p className="text-cream/50 text-xs leading-relaxed">{stat.description}</p>
@@ -127,13 +123,17 @@ export default function Home() {
                             initial={{ opacity: 0, x: -20 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
-                            className="relative aspect-[4/3] overflow-hidden"
+                            className="relative aspect-[4/3] overflow-hidden bg-forest"
                         >
-                            <img
-                                src="/gaby-elizalde-seminario.jpg"
-                                alt="Maestra Gabriela Elizalde impartiendo seminario"
+                            <video
+                                autoPlay
+                                muted
+                                loop
+                                playsInline
                                 className="w-full h-full object-cover"
-                            />
+                            >
+                                <source src="/videos/Video_con_logo_J_DENIS.mp4" type="video/mp4" />
+                            </video>
                             <div className="absolute inset-0 bg-gradient-to-t from-forest/60 to-transparent" />
                             <div className="absolute bottom-4 left-4 right-4">
                                 <span className="inline-block px-3 py-1 bg-gold text-forest text-xs font-bold">
