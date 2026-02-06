@@ -13,8 +13,9 @@ export default function Home() {
                     className="absolute inset-0 bg-cover bg-center bg-no-repeat"
                     style={{ backgroundImage: 'url(/hero-products.jpg)' }}
                 />
-                {/* Subtle overlay for text readability */}
-                <div className="absolute inset-0 bg-gradient-to-t from-forest/60 via-forest/30 to-transparent" />
+                {/* Stronger overlay for text readability */}
+                <div className="absolute inset-0 bg-black/50" />
+                <div className="absolute inset-0 bg-gradient-to-t from-forest/90 via-forest/50 to-transparent" />
                 {/* Subtle botanical pattern overlay */}
                 <div className="absolute inset-0 botanical-pattern opacity-20" />
 
