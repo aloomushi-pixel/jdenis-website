@@ -1,20 +1,85 @@
 // Supabase Client for J.Denis Website
 // Enhanced with E-commerce Manager Skill
 import { createClient } from '@supabase/supabase-js';
-import type { Database, Tables } from './database.types';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://irdeiiichmanewpnuaml.supabase.co';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlyZGVpaWljaG1hbmV3cG51YW1sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAxODA3NDgsImV4cCI6MjA4NTc1Njc0OH0.vNzADcACLa_4VLw2iQzINUZcP3Hl7rcBKoKanB4aJ8Y';
 
-export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// Re-export types for convenience
-export type Product = Tables<'products'>;
-export type ProductCategory = Tables<'product_categories'>;
-export type OrderB2B = Tables<'orders_b2b'>;
-export type OrderItem = Tables<'order_items'>;
-export type Cart = Tables<'carts'>;
-export type CartItem = Tables<'cart_items'>;
+// Type definitions for e-commerce entities
+export interface Product {
+    id: string;
+    slug: string;
+    name: string;
+    description: string | null;
+    price: number;
+    compare_at_price: number | null;
+    image_url: string | null;
+    category: string;
+    sku: string | null;
+    stock: number | null;
+    is_active: boolean | null;
+    is_featured: boolean | null;
+    sort_order: number | null;
+    created_at: string | null;
+    updated_at: string | null;
+}
+
+export interface ProductCategory {
+    id: string;
+    slug: string;
+    name: string;
+    icon: string | null;
+    description: string | null;
+    sort_order: number | null;
+    is_active: boolean | null;
+    created_at: string | null;
+}
+
+export interface OrderB2B {
+    id: string;
+    order_number: string;
+    user_id: string;
+    status: string;
+    subtotal: number;
+    tax: number | null;
+    shipping: number | null;
+    total: number;
+    shipping_address: Record<string, unknown> | null;
+    billing_address: Record<string, unknown> | null;
+    payment_method: string | null;
+    payment_reference: string | null;
+    notes: string | null;
+    created_at: string | null;
+    updated_at: string | null;
+}
+
+export interface OrderItem {
+    id: string;
+    order_id: string;
+    product_id: string;
+    product_name: string;
+    quantity: number;
+    unit_price: number;
+    total: number;
+}
+
+export interface Cart {
+    id: string;
+    user_id: string | null;
+    session_id: string | null;
+    created_at: string | null;
+    updated_at: string | null;
+}
+
+export interface CartItem {
+    id: string;
+    cart_id: string;
+    product_id: string;
+    quantity: number;
+    added_at: string | null;
+}
 
 // =============================================
 // PRODUCT FUNCTIONS
