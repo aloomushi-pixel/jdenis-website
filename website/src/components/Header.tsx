@@ -88,7 +88,7 @@ export default function Header() {
                                     to="/login"
                                     className="hidden sm:block text-xs tracking-wider uppercase text-cream/70 hover:text-gold transition-colors"
                                 >
-                                    Acceso B2B
+                                    Acceso
                                 </Link>
                             )}
 
@@ -177,7 +177,7 @@ export default function Header() {
                             onClick={() => setMobileMenuOpen(false)}
                             className="btn btn-outline-light"
                         >
-                            Acceso B2B
+                            Acceso
                         </Link>
                     )}
                 </nav>
