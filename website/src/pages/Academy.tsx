@@ -28,6 +28,8 @@ const courses = [
         description: 'Técnica de abanicos 2D a 6D para efectos dramáticos.',
         topics: ['Creación de abanicos', 'Volumen Mega', 'Corrección de errores', 'Diseño personalizado'],
         nextDate: '1 de Marzo 2025',
+        video: '/videos/Modelo_Con_Pestañas_Naturales.mp4',
+        videoTitle: 'Tutorial: Pestañas Naturales con Volumen Ruso',
     },
     {
         id: 4,
@@ -131,6 +133,23 @@ export default function Academy() {
                                             ))}
                                         </ul>
                                     </div>
+
+                                    {course.video && (
+                                        <div className="mb-6 p-4 bg-slate-50 rounded-xl">
+                                            <p className="text-sm font-medium text-navy mb-3 flex items-center gap-2">
+                                                <span className="text-gold">▶</span>
+                                                {course.videoTitle || 'Video Tutorial'}
+                                            </p>
+                                            <video
+                                                controls
+                                                className="w-full rounded-lg shadow-md"
+                                                poster=""
+                                            >
+                                                <source src={course.video} type="video/mp4" />
+                                                Tu navegador no soporta el elemento de video.
+                                            </video>
+                                        </div>
+                                    )}
 
                                     <div className="flex items-center justify-between pt-4 border-t border-charcoal/10">
                                         <div>
