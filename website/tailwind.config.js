@@ -7,11 +7,11 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Botanical Apothecary Theme
+        // Deep Navy Apothecary Theme
         forest: {
-          DEFAULT: '#1a2f23',
-          light: '#2d4a3a',
-          dark: '#0f1d15',
+          DEFAULT: '#1a2535',  // Deep navy blue
+          light: '#2d3d52',
+          dark: '#0f1520',
         },
         cream: {
           DEFAULT: '#f5f0e8',
@@ -30,7 +30,7 @@ export default {
         },
         charcoal: '#2a2a2a',
         // Legacy mappings for compatibility
-        noir: '#1a2f23',
+        noir: '#1a2535',
         'rose-gold': '#b8965a',
         champagne: '#d4b87a',
         pearl: '#f5f0e8',
@@ -44,11 +44,11 @@ export default {
         'botanical': '4px',
       },
       boxShadow: {
-        'botanical': '0 4px 20px rgba(26, 47, 35, 0.1)',
-        'botanical-lg': '0 10px 40px rgba(26, 47, 35, 0.15)',
-        'botanical-xl': '0 20px 60px rgba(26, 47, 35, 0.2)',
+        'botanical': '0 4px 20px rgba(26, 37, 53, 0.1)',
+        'botanical-lg': '0 10px 40px rgba(26, 37, 53, 0.15)',
+        'botanical-xl': '0 20px 60px rgba(26, 37, 53, 0.2)',
         'card': '0 2px 12px rgba(0, 0, 0, 0.08)',
-        'card-hover': '0 8px 30px rgba(26, 47, 35, 0.12)',
+        'card-hover': '0 8px 30px rgba(26, 37, 53, 0.12)',
         'luxury': '0 4px 20px rgba(184, 150, 90, 0.15)',
         'luxury-lg': '0 10px 40px rgba(184, 150, 90, 0.2)',
       },
@@ -77,7 +77,7 @@ export default {
         },
       },
       backgroundImage: {
-        'gradient-forest': 'linear-gradient(135deg, #1a2f23, #2d4a3a)',
+        'gradient-forest': 'linear-gradient(135deg, #1a2535, #2d3d52)',
         'gradient-cream': 'linear-gradient(180deg, #f5f0e8 0%, #e8e0d5 100%)',
         'gradient-kraft': 'linear-gradient(180deg, #c4a87c 0%, #a08858 100%)',
       },
