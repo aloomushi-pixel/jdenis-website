@@ -185,24 +185,24 @@ export default function RegistroDistribuidor() {
                                 <form onSubmit={handleSubmit} className="space-y-5">
                                     <div className="grid md:grid-cols-2 gap-4">
                                         <div>
-                                            <label className="block text-pearl/60 text-sm mb-2">Nombre Completo *</label>
+                                            <label className="block text-charcoal text-sm mb-2">Nombre Completo *</label>
                                             <input
                                                 type="text"
                                                 required
                                                 value={formData.fullName}
                                                 onChange={e => setFormData({ ...formData, fullName: e.target.value })}
-                                                className="w-full px-4 py-3 bg-noir/50 border border-pearl/10 rounded-lg text-pearl focus:border-rose-gold focus:outline-none transition-colors"
+                                                className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-charcoal placeholder:text-gray-400 focus:border-gold focus:ring-1 focus:ring-gold focus:outline-none transition-colors"
                                                 placeholder="Tu nombre"
                                             />
                                         </div>
                                         <div>
-                                            <label className="block text-pearl/60 text-sm mb-2">Email *</label>
+                                            <label className="block text-charcoal text-sm mb-2">Email *</label>
                                             <input
                                                 type="email"
                                                 required
                                                 value={formData.email}
                                                 onChange={e => setFormData({ ...formData, email: e.target.value })}
-                                                className="w-full px-4 py-3 bg-noir/50 border border-pearl/10 rounded-lg text-pearl focus:border-rose-gold focus:outline-none transition-colors"
+                                                className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-charcoal placeholder:text-gray-400 focus:border-gold focus:ring-1 focus:ring-gold focus:outline-none transition-colors"
                                                 placeholder="tu@email.com"
                                             />
                                         </div>
@@ -210,23 +210,23 @@ export default function RegistroDistribuidor() {
 
                                     <div className="grid md:grid-cols-2 gap-4">
                                         <div>
-                                            <label className="block text-pearl/60 text-sm mb-2">Teléfono / WhatsApp *</label>
+                                            <label className="block text-charcoal text-sm mb-2">Teléfono / WhatsApp *</label>
                                             <input
                                                 type="tel"
                                                 required
                                                 value={formData.phone}
                                                 onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                                                className="w-full px-4 py-3 bg-noir/50 border border-pearl/10 rounded-lg text-pearl focus:border-rose-gold focus:outline-none transition-colors"
+                                                className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-charcoal placeholder:text-gray-400 focus:border-gold focus:ring-1 focus:ring-gold focus:outline-none transition-colors"
                                                 placeholder="55 1234 5678"
                                             />
                                         </div>
                                         <div>
-                                            <label className="block text-pearl/60 text-sm mb-2">Nombre del Negocio</label>
+                                            <label className="block text-charcoal text-sm mb-2">Nombre del Negocio</label>
                                             <input
                                                 type="text"
                                                 value={formData.businessName}
                                                 onChange={e => setFormData({ ...formData, businessName: e.target.value })}
-                                                className="w-full px-4 py-3 bg-noir/50 border border-pearl/10 rounded-lg text-pearl focus:border-rose-gold focus:outline-none transition-colors"
+                                                className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-charcoal placeholder:text-gray-400 focus:border-gold focus:ring-1 focus:ring-gold focus:outline-none transition-colors"
                                                 placeholder="Salón / Estética"
                                             />
                                         </div>
@@ -234,31 +234,31 @@ export default function RegistroDistribuidor() {
 
                                     <div className="grid md:grid-cols-2 gap-4">
                                         <div>
-                                            <label className="block text-pearl/60 text-sm mb-2">Ciudad *</label>
+                                            <label className="block text-charcoal text-sm mb-2">Ciudad *</label>
                                             <input
                                                 type="text"
                                                 required
                                                 value={formData.city}
                                                 onChange={e => setFormData({ ...formData, city: e.target.value })}
-                                                className="w-full px-4 py-3 bg-noir/50 border border-pearl/10 rounded-lg text-pearl focus:border-rose-gold focus:outline-none transition-colors"
+                                                className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-charcoal placeholder:text-gray-400 focus:border-gold focus:ring-1 focus:ring-gold focus:outline-none transition-colors"
                                                 placeholder="Ciudad de México"
                                             />
                                         </div>
                                         <div>
-                                            <label className="block text-pearl/60 text-sm mb-2">Estado *</label>
+                                            <label className="block text-charcoal text-sm mb-2">Estado *</label>
                                             <input
                                                 type="text"
                                                 required
                                                 value={formData.state}
                                                 onChange={e => setFormData({ ...formData, state: e.target.value })}
-                                                className="w-full px-4 py-3 bg-noir/50 border border-pearl/10 rounded-lg text-pearl focus:border-rose-gold focus:outline-none transition-colors"
+                                                className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-charcoal placeholder:text-gray-400 focus:border-gold focus:ring-1 focus:ring-gold focus:outline-none transition-colors"
                                                 placeholder="CDMX"
                                             />
                                         </div>
                                     </div>
 
                                     <div>
-                                        <label className="block text-pearl/60 text-sm mb-2">¿Tienes experiencia en el ramo de belleza? *</label>
+                                        <label className="block text-charcoal text-sm mb-2">¿Tienes experiencia en el ramo de belleza? *</label>
                                         <div className="flex gap-4">
                                             <label className="flex items-center gap-2 cursor-pointer">
                                                 <input
@@ -269,7 +269,7 @@ export default function RegistroDistribuidor() {
                                                     onChange={e => setFormData({ ...formData, hasExperience: e.target.value })}
                                                     className="w-4 h-4 accent-rose-gold"
                                                 />
-                                                <span className="text-pearl/70">Sí</span>
+                                                <span className="text-charcoal">Sí</span>
                                             </label>
                                             <label className="flex items-center gap-2 cursor-pointer">
                                                 <input
@@ -280,20 +280,20 @@ export default function RegistroDistribuidor() {
                                                     onChange={e => setFormData({ ...formData, hasExperience: e.target.value })}
                                                     className="w-4 h-4 accent-rose-gold"
                                                 />
-                                                <span className="text-pearl/70">No, pero me interesa</span>
+                                                <span className="text-charcoal">No, pero me interesa</span>
                                             </label>
                                         </div>
                                     </div>
 
                                     <div>
-                                        <label className="block text-pearl/60 text-sm mb-2">¿Qué te interesa? (selecciona uno o más)</label>
+                                        <label className="block text-charcoal text-sm mb-2">¿Qué te interesa? (selecciona uno o más)</label>
                                         <div className="flex flex-wrap gap-3">
                                             {['Productos', 'Cursos', 'Distribución', 'Todo'].map(interest => (
                                                 <label
                                                     key={interest}
                                                     className={`px-4 py-2 rounded-full border cursor-pointer transition-colors ${formData.interests.includes(interest)
-                                                        ? 'bg-rose-gold/20 border-rose-gold text-rose-gold'
-                                                        : 'border-pearl/20 text-pearl/60 hover:border-pearl/40'
+                                                        ? 'bg-gold/20 border-gold text-forest font-medium'
+                                                        : 'border-gray-300 text-charcoal/70 hover:border-gold/50'
                                                         }`}
                                                 >
                                                     <input
@@ -314,7 +314,7 @@ export default function RegistroDistribuidor() {
                                             value={formData.message}
                                             onChange={e => setFormData({ ...formData, message: e.target.value })}
                                             rows={3}
-                                            className="w-full px-4 py-3 bg-noir/50 border border-pearl/10 rounded-lg text-pearl focus:border-rose-gold focus:outline-none transition-colors resize-none"
+                                            className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-charcoal placeholder:text-gray-400 focus:border-gold focus:ring-1 focus:ring-gold focus:outline-none transition-colors resize-none"
                                             placeholder="Cuéntanos más sobre tu negocio o intereses..."
                                         />
                                     </div>
