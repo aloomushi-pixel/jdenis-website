@@ -1,9 +1,9 @@
-import { motion, AnimatePresence } from 'framer-motion';
-import { useCartStore } from '../store/cartStore';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { useCartStore } from '../store/cartStore';
 
 export default function CartDrawer() {
-    const { items, isOpen, closeCart, removeItem, updateQuantity, total } = useCartStore();
+    const { isOpen, closeCart, items, removeItem, updateQuantity, total } = useCartStore();
 
     return (
         <AnimatePresence>
@@ -15,7 +15,7 @@ export default function CartDrawer() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={closeCart}
-                        className="fixed inset-0 bg-navy/40 backdrop-blur-sm z-40"
+                        className="fixed inset-0 bg-mauve/30 backdrop-blur-sm z-40"
                     />
 
                     {/* Drawer */}
@@ -24,71 +24,60 @@ export default function CartDrawer() {
                         animate={{ x: 0 }}
                         exit={{ x: '100%' }}
                         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                        className="fixed inset-y-0 right-0 w-full max-w-md bg-white shadow-2xl z-50 flex flex-col"
+                        className="fixed inset-y-0 right-0 w-full max-w-md bg-cream shadow-soft-xl z-50 flex flex-col rounded-l-4xl"
                     >
                         {/* Header */}
-                        <div className="flex items-center justify-between p-6 border-b border-charcoal/10">
-                            <h2 className="font-serif text-xl text-navy">Tu Carrito</h2>
+                        <div className="flex items-center justify-between p-6 border-b border-rose/20">
+                            <h2 className="font-serif text-xl text-mauve">Tu Carrito</h2>
                             <button
                                 onClick={closeCart}
-                                className="p-2 rounded-lg hover:bg-charcoal/5 transition-colors"
+                                className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-rose/20 transition-colors text-mauve"
                             >
-                                <svg className="w-6 h-6 text-charcoal" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
-                                </svg>
+                                ✕
                             </button>
                         </div>
 
                         {/* Items */}
-                        <div className="flex-1 overflow-y-auto">
+                        <div className="flex-1 overflow-y-auto p-6">
                             {items.length === 0 ? (
-                                <div className="flex flex-col items-center justify-center h-full p-8 text-center">
-                                    <svg className="w-20 h-20 text-charcoal/20 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1}
-                                            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                                    </svg>
-                                    <p className="text-charcoal-light mb-4">Tu carrito está vacío</p>
-                                    <button onClick={closeCart} className="btn btn-outline">
-                                        Explorar Tienda
-                                    </button>
+                                <div className="text-center py-12">
+                                    <p className="text-6xl mb-4">🛍️</p>
+                                    <p className="text-ink/60">Tu carrito está vacío</p>
                                 </div>
                             ) : (
-                                <div className="divide-y divide-charcoal/10">
+                                <div className="space-y-5">
                                     {items.map((item) => (
-                                        <div key={item.id} className="cart-item">
+                                        <div key={item.id} className="flex gap-4 p-4 bg-blush rounded-2xl">
                                             <img
                                                 src={item.image}
                                                 alt={item.name}
-                                                className="w-20 h-20 object-cover rounded-lg bg-blush"
+                                                className="w-20 h-20 object-cover rounded-xl bg-white"
                                             />
                                             <div className="flex-1">
-                                                <h3 className="font-medium text-navy text-sm">{item.name}</h3>
-                                                <p className="text-gold font-semibold">${item.price.toLocaleString()}</p>
-                                                <div className="flex items-center gap-2 mt-2">
+                                                <h3 className="font-medium text-mauve">{item.name}</h3>
+                                                <p className="text-rose-deep font-semibold">${item.price}</p>
+                                                <div className="flex items-center gap-3 mt-2">
                                                     <button
                                                         onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                                                        className="w-8 h-8 rounded-full border border-charcoal/20 flex items-center justify-center hover:border-gold transition-colors"
+                                                        className="w-8 h-8 rounded-full bg-white text-mauve hover:bg-rose/20 flex items-center justify-center transition-colors shadow-sm"
                                                     >
                                                         −
                                                     </button>
-                                                    <span className="w-8 text-center text-sm font-medium">{item.quantity}</span>
+                                                    <span className="text-ink font-medium">{item.quantity}</span>
                                                     <button
                                                         onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                                                        className="w-8 h-8 rounded-full border border-charcoal/20 flex items-center justify-center hover:border-gold transition-colors"
+                                                        className="w-8 h-8 rounded-full bg-white text-mauve hover:bg-rose/20 flex items-center justify-center transition-colors shadow-sm"
                                                     >
                                                         +
                                                     </button>
-                                                    <button
-                                                        onClick={() => removeItem(item.id)}
-                                                        className="ml-auto text-charcoal/40 hover:text-red-500 transition-colors"
-                                                    >
-                                                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-                                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                        </svg>
-                                                    </button>
                                                 </div>
                                             </div>
+                                            <button
+                                                onClick={() => removeItem(item.id)}
+                                                className="text-mauve/40 hover:text-rose-deep transition-colors"
+                                            >
+                                                🗑️
+                                            </button>
                                         </div>
                                     ))}
                                 </div>
@@ -97,16 +86,11 @@ export default function CartDrawer() {
 
                         {/* Footer */}
                         {items.length > 0 && (
-                            <div className="border-t border-charcoal/10 p-6 space-y-4">
-                                <div className="flex items-center justify-between">
-                                    <span className="text-charcoal-light">Subtotal</span>
-                                    <span className="font-serif text-xl text-navy font-semibold">
-                                        ${total().toLocaleString()} MXN
-                                    </span>
+                            <div className="p-6 border-t border-rose/20 bg-blush/50 rounded-bl-4xl">
+                                <div className="flex justify-between mb-4">
+                                    <span className="text-ink font-medium">Subtotal</span>
+                                    <span className="text-rose-deep font-bold text-xl">${total().toLocaleString()} MXN</span>
                                 </div>
-                                <p className="text-xs text-charcoal/50">
-                                    Envío FedEx: $200 MXN (se calcula en checkout)
-                                </p>
                                 <Link
                                     to="/checkout"
                                     onClick={closeCart}

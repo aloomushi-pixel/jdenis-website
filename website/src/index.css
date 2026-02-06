@@ -1,12 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Nunito+Sans:wght@300;400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* ========================================
-   J.DENIS WEBSITE - WHISPERED LUXURY THEME
-   Lujo Silencioso + Pharma-Luxe Aesthetic
+   J.DENIS - SOFT LUXURY THEME
+   Elegancia Legacy con Colores Suaves
    ======================================== */
 
 @layer base {
@@ -15,132 +15,220 @@
   }
 
   body {
-    @apply bg-cream text-charcoal font-sans antialiased;
+    @apply bg-cream text-ink font-sans antialiased;
   }
 
   h1,
   h2,
   h3,
   h4 {
-    @apply font-serif text-navy;
+    @apply font-serif text-mauve;
   }
 
-  /* Custom Scrollbar */
+  /* Elegant Scrollbar */
   ::-webkit-scrollbar {
     width: 8px;
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-cream;
+    @apply bg-blush;
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-navy/20 rounded-full;
+    @apply bg-rose rounded-full;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-navy/40;
+    @apply bg-rose-deep;
+  }
+
+  /* Selection */
+  ::selection {
+    @apply bg-rose/30 text-mauve-dark;
   }
 }
 
 @layer components {
   /* ========================================
-     BUTTONS
+     BUTTONS - SOFT ROUNDED STYLE
      ======================================== */
 
   .btn {
-    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-medium transition-all duration-300;
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 font-medium transition-all duration-300;
+    @apply text-sm tracking-wide rounded-pill;
   }
 
   .btn-primary {
-    @apply bg-gold text-white hover:bg-gold-dark shadow-gold hover:shadow-lg;
-    @apply hover:scale-[1.02] active:scale-[0.98];
+    @apply bg-gradient-to-r from-rose to-rose-deep text-white;
+    @apply hover:shadow-soft-hover hover:-translate-y-1;
+    @apply active:scale-[0.98];
   }
 
   .btn-secondary {
-    @apply bg-navy text-white hover:bg-navy-light;
-    @apply hover:scale-[1.02] active:scale-[0.98];
+    @apply bg-white text-mauve border-2 border-rose;
+    @apply hover:bg-rose hover:text-white;
   }
 
   .btn-outline {
-    @apply border-2 border-navy text-navy hover:bg-navy hover:text-white;
+    @apply border-2 border-rose text-mauve bg-transparent rounded-pill;
+    @apply hover:bg-rose hover:text-white;
   }
 
   .btn-ghost {
-    @apply text-navy hover:bg-navy/5;
+    @apply text-mauve hover:text-rose-deep;
   }
 
   /* ========================================
-     CARDS - PHARMA-LUXE STYLE
+     PRODUCT CARDS - SOFT ROUNDED
      ======================================== */
 
   .product-card {
-    @apply bg-white rounded-2xl overflow-hidden shadow-luxury transition-all duration-300;
-    @apply hover:shadow-luxury-lg hover:scale-[1.02];
+    @apply bg-white relative overflow-hidden transition-all duration-400 rounded-soft;
+    @apply hover:-translate-y-3 hover:shadow-card-hover;
   }
 
   .product-card-image {
-    @apply w-full aspect-square object-cover bg-blush;
+    @apply w-full aspect-square object-cover bg-blush rounded-t-soft;
   }
 
   .product-card-body {
-    @apply p-5;
+    @apply p-6 text-center;
   }
 
   .product-card-title {
-    @apply font-serif text-lg text-navy font-medium mb-1;
+    @apply font-serif text-lg text-mauve font-normal mb-2;
   }
 
   .product-card-price {
-    @apply text-gold font-semibold text-xl;
+    @apply text-rose-deep font-semibold text-xl;
   }
 
   /* ========================================
-     NAVIGATION
+     NAVIGATION - SOFT GLASS
      ======================================== */
 
+  .nav-header {
+    @apply fixed top-0 w-full z-50;
+    @apply bg-cream/90;
+    @apply backdrop-blur-md;
+    @apply transition-all duration-300;
+  }
+
+  .nav-header.scrolled {
+    @apply bg-cream shadow-soft;
+  }
+
   .nav-link {
-    @apply text-charcoal-light font-medium transition-colors duration-200;
-    @apply hover:text-gold relative;
-  }
-
-  .nav-link::after {
-    content: '';
-    @apply absolute bottom-0 left-0 w-0 h-0.5 bg-gold transition-all duration-300;
-  }
-
-  .nav-link:hover::after {
-    @apply w-full;
+    @apply text-ink text-sm font-medium;
+    @apply transition-all duration-300;
+    @apply hover:text-rose-deep;
   }
 
   .nav-link.active {
-    @apply text-gold;
+    @apply text-rose-deep;
   }
 
-  .nav-link.active::after {
-    @apply w-full;
+  .logo {
+    @apply font-serif text-2xl font-normal text-mauve;
   }
 
   /* ========================================
-     FORMS
+     HERO SECTION - SOFT GRADIENTS
+     ======================================== */
+
+  .hero {
+    @apply relative min-h-screen flex items-center justify-center text-center;
+    background:
+      radial-gradient(circle at 80% 20%, rgba(232, 196, 196, 0.4) 0%, transparent 50%),
+      radial-gradient(circle at 20% 80%, rgba(212, 165, 165, 0.2) 0%, transparent 40%),
+      #fefcfb;
+    @apply overflow-hidden;
+  }
+
+  .hero::before {
+    content: '';
+    @apply absolute w-[600px] h-[600px] rounded-full;
+    @apply border border-rose/30;
+    @apply animate-pulse-soft;
+  }
+
+  .hero-content {
+    @apply relative z-10 max-w-4xl px-6;
+  }
+
+  .hero-badge {
+    @apply inline-block px-6 py-2 bg-rose rounded-pill;
+    @apply text-sm font-semibold text-mauve;
+    @apply mb-8;
+  }
+
+  .hero-title {
+    @apply font-serif text-4xl md:text-5xl lg:text-6xl font-normal;
+    @apply leading-tight text-mauve mb-6;
+  }
+
+  .hero-subtitle {
+    @apply text-lg text-ink/80 font-light leading-relaxed;
+    @apply max-w-xl mx-auto mb-10;
+  }
+
+  /* ========================================
+     SECTIONS
+     ======================================== */
+
+  .section {
+    @apply py-20 lg:py-28;
+  }
+
+  .section-blush {
+    @apply bg-blush;
+  }
+
+  .section-cream {
+    @apply bg-cream;
+  }
+
+  .section-dark {
+    @apply bg-blush;
+  }
+
+  .section-noir {
+    @apply bg-cream;
+  }
+
+  .container-luxury {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .section-header {
+    @apply text-center mb-16;
+  }
+
+  .section-badge {
+    @apply text-rose-deep text-sm font-semibold tracking-wide mb-2;
+  }
+
+  .section-title {
+    @apply font-serif text-3xl lg:text-4xl text-mauve;
+  }
+
+  .section-subtitle {
+    @apply text-ink/70 text-lg max-w-2xl mx-auto mt-4;
+  }
+
+  /* ========================================
+     FORMS - SOFT ROUNDED INPUTS
      ======================================== */
 
   .input {
-    @apply w-full px-4 py-3 rounded-lg border border-charcoal/20 bg-white;
-    @apply text-charcoal placeholder:text-charcoal/40;
-    @apply focus:outline-none focus:ring-2 focus:ring-gold/30 focus:border-gold;
-    @apply transition-all duration-200;
+    @apply w-full px-5 py-4 bg-white border-2 border-rose/30 rounded-2xl;
+    @apply text-ink placeholder:text-ink/40;
+    @apply focus:outline-none focus:border-rose focus:ring-2 focus:ring-rose/20;
+    @apply transition-all duration-300;
   }
 
   .label {
-    @apply block text-sm font-medium text-charcoal mb-2;
-  }
-
-  .select {
-    @apply input appearance-none cursor-pointer bg-no-repeat bg-right pr-10;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%232D3748' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-    background-position: right 0.75rem center;
-    background-size: 1.25em;
+    @apply block text-sm font-medium text-mauve mb-2;
   }
 
   /* ========================================
@@ -148,65 +236,28 @@
      ======================================== */
 
   .badge {
-    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
+    @apply inline-flex items-center px-4 py-1.5 text-sm font-medium rounded-pill;
   }
 
   .badge-gold {
-    @apply bg-gold/10 text-gold border border-gold/20;
+    @apply bg-rose/20 text-rose-deep;
   }
 
-  .badge-navy {
-    @apply bg-navy/10 text-navy border border-navy/20;
+  .badge-rose {
+    @apply bg-rose/20 text-rose-deep;
   }
 
   .badge-success {
-    @apply bg-green-50 text-green-700 border border-green-200;
+    @apply bg-green-100 text-green-700;
   }
 
   /* ========================================
-     SECTIONS & LAYOUT
-     ======================================== */
-
-  .section {
-    @apply py-16 lg:py-24;
-  }
-
-  .container-luxury {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
-  }
-
-  .section-title {
-    @apply font-serif text-3xl lg:text-4xl text-navy mb-4;
-  }
-
-  .section-subtitle {
-    @apply text-charcoal-light text-lg max-w-2xl;
-  }
-
-  /* ========================================
-     HERO
-     ======================================== */
-
-  .hero {
-    @apply relative min-h-[80vh] flex items-center;
-    @apply bg-gradient-to-br from-cream via-blush/30 to-cream;
-  }
-
-  .hero-title {
-    @apply font-serif text-4xl md:text-5xl lg:text-6xl text-navy leading-tight;
-  }
-
-  .hero-subtitle {
-    @apply text-lg md:text-xl text-charcoal-light mt-6 max-w-xl;
-  }
-
-  /* ========================================
-     CART DRAWER
+     CART DRAWER - SOFT STYLE
      ======================================== */
 
   .cart-drawer {
-    @apply fixed inset-y-0 right-0 w-full max-w-md bg-white shadow-2xl z-50;
-    @apply transform transition-transform duration-300;
+    @apply fixed inset-y-0 right-0 w-full max-w-md bg-cream shadow-soft-xl z-50;
+    @apply transform transition-transform duration-400 rounded-l-4xl;
   }
 
   .cart-drawer.closed {
@@ -214,54 +265,81 @@
   }
 
   .cart-item {
-    @apply flex gap-4 p-4 border-b border-charcoal/10;
+    @apply flex gap-4 p-5 border-b border-rose/10;
   }
 
   /* ========================================
-     ANIMATIONS
+     TESTIMONIAL CARDS
      ======================================== */
 
-  .stagger-1 {
-    animation-delay: 0.1s;
-  }
-
-  .stagger-2 {
-    animation-delay: 0.2s;
-  }
-
-  .stagger-3 {
-    animation-delay: 0.3s;
-  }
-
-  .stagger-4 {
-    animation-delay: 0.4s;
+  .testimonial-card {
+    @apply bg-white p-8 relative rounded-soft shadow-card;
+    @apply before:content-['"'] before:absolute before:top-4 before:left-6;
+    @apply before:text-6xl before:text-rose/30 before:font-serif;
   }
 
   /* ========================================
-     SPECIALTY - FILTER CHIPS
+     FOOTER
      ======================================== */
 
-  .filter-chip {
-    @apply px-4 py-2 rounded-full border border-charcoal/20 text-sm font-medium;
-    @apply transition-all duration-200 cursor-pointer;
-    @apply hover:border-gold hover:text-gold;
+  .footer {
+    @apply bg-rose py-12;
   }
 
-  .filter-chip.active {
-    @apply bg-gold text-white border-gold;
+  .footer-link {
+    @apply text-mauve-dark text-sm hover:text-white transition-colors;
+  }
+
+  /* ========================================
+     UTILITY CLASSES
+     ======================================== */
+
+  .rose-gradient {
+    @apply bg-gradient-to-r from-rose to-rose-deep bg-clip-text text-transparent;
+  }
+
+  .glass {
+    @apply bg-cream/80 backdrop-blur-md border border-rose/10 rounded-soft;
+  }
+
+  .shine {
+    @apply relative overflow-hidden;
+  }
+
+  .shine::after {
+    content: '';
+    @apply absolute inset-0 -translate-x-full;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    @apply transition-transform duration-500;
+  }
+
+  .shine:hover::after {
+    @apply translate-x-full;
+  }
+
+  /* ========================================
+     FLOATING CARDS
+     ======================================== */
+
+  .floating-card {
+    @apply bg-white p-6 rounded-2xl shadow-card;
   }
 }
-
-/* ========================================
-   UTILITY CLASSES
-   ======================================== */
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
 
-  .gold-gradient {
-    @apply bg-gradient-to-r from-gold to-amber-500 bg-clip-text text-transparent;
+  .animate-in {
+    animation: fadeIn 0.6s ease-out forwards;
+  }
+
+  .rounded-soft {
+    border-radius: 24px;
+  }
+
+  .rounded-pill {
+    border-radius: 50px;
   }
 }

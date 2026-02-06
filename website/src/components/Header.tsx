@@ -1,13 +1,24 @@
-import { Link, useLocation } from 'react-router-dom';
-import { useCartStore } from '../store/cartStore';
-import { useAuthStore } from '../store/authStore';
 import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { useAuthStore } from '../store/authStore';
+import { useCartStore } from '../store/cartStore';
 
 export default function Header() {
     const location = useLocation();
     const { openCart, itemCount } = useCartStore();
     const { isAuthenticated, user, logout } = useAuthStore();
     const count = itemCount();
+    const [scrolled, setScrolled] = useState(false);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrolled(window.scrollY > 50);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     const navLinks = [
         { path: '/', label: 'Inicio' },
@@ -18,90 +29,153 @@ export default function Header() {
     ];
 
     return (
-        <header className="sticky top-0 z-40 bg-cream/95 backdrop-blur-md border-b border-charcoal/5">
-            <div className="container-luxury">
-                <div className="flex items-center justify-between h-20">
-                    {/* Logo */}
-                    <Link to="/" className="flex items-center gap-3">
-                        <motion.div
-                            whileHover={{ scale: 1.05 }}
-                            className="font-serif text-2xl text-navy font-bold tracking-tight"
-                        >
-                            J. DENIS
-                        </motion.div>
-                        <span className="hidden sm:block text-xs text-charcoal-light uppercase tracking-widest">
-                            Desde 1998
-                        </span>
-                    </Link>
-
-                    {/* Navigation */}
-                    <nav className="hidden md:flex items-center gap-8">
-                        {navLinks.map((link) => (
-                            <Link
-                                key={link.path}
-                                to={link.path}
-                                className={`nav-link ${location.pathname === link.path ? 'active' : ''}`}
+        <>
+            <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled
+                ? 'bg-noir/98 backdrop-blur-md shadow-luxury-lg py-3 border-b border-rose-gold/20'
+                : 'bg-gradient-to-b from-noir via-noir/95 to-transparent py-5'
+                }`}>
+                <div className="container-luxury">
+                    <div className="flex items-center justify-between">
+                        {/* Logo */}
+                        <Link to="/" className="flex items-center gap-3">
+                            <motion.div
+                                whileHover={{ scale: 1.02 }}
+                                className="logo"
                             >
-                                {link.label}
-                            </Link>
-                        ))}
-                    </nav>
+                                J. DENIS
+                            </motion.div>
+                        </Link>
 
-                    {/* Actions */}
-                    <div className="flex items-center gap-4">
-                        {/* User */}
-                        {isAuthenticated ? (
-                            <div className="hidden sm:flex items-center gap-3">
-                                <Link to="/mi-cuenta" className="text-sm text-charcoal hover:text-gold transition-colors">
-                                    {user?.fullName?.split(' ')[0]}
+                        {/* Navigation */}
+                        <nav className="hidden md:flex items-center gap-8">
+                            {navLinks.map((link) => (
+                                <Link
+                                    key={link.path}
+                                    to={link.path}
+                                    className={`nav-link ${location.pathname === link.path ? 'active' : ''}`}
+                                >
+                                    {link.label}
                                 </Link>
-                                <button
-                                    onClick={logout}
-                                    className="text-xs text-charcoal-light hover:text-gold"
-                                >
-                                    Salir
-                                </button>
-                            </div>
-                        ) : (
-                            <Link
-                                to="/login"
-                                className="hidden sm:block text-sm font-medium text-navy hover:text-gold transition-colors"
-                            >
-                                Iniciar Sesión
-                            </Link>
-                        )}
+                            ))}
+                        </nav>
 
-                        {/* Cart Button */}
-                        <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            onClick={openCart}
-                            className="relative p-2 rounded-lg hover:bg-navy/5 transition-colors"
-                        >
-                            <svg className="w-6 h-6 text-navy" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-                                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                            </svg>
-                            {count > 0 && (
-                                <motion.span
-                                    initial={{ scale: 0 }}
-                                    animate={{ scale: 1 }}
-                                    className="absolute -top-1 -right-1 w-5 h-5 bg-gold text-white text-xs rounded-full flex items-center justify-center font-medium"
+                        {/* Actions */}
+                        <div className="flex items-center gap-6">
+                            {/* User */}
+                            {isAuthenticated ? (
+                                <div className="hidden sm:flex items-center gap-4">
+                                    <Link
+                                        to="/mi-cuenta"
+                                        className="text-xs tracking-wider uppercase text-pearl/70 hover:text-rose-gold transition-colors"
+                                    >
+                                        {user?.fullName?.split(' ')[0]}
+                                    </Link>
+                                    <button
+                                        onClick={logout}
+                                        className="text-xs text-pearl/50 hover:text-rose-gold transition-colors"
+                                    >
+                                        Salir
+                                    </button>
+                                </div>
+                            ) : (
+                                <Link
+                                    to="/login"
+                                    className="hidden sm:block text-xs tracking-wider uppercase text-pearl/70 hover:text-rose-gold transition-colors"
                                 >
-                                    {count}
-                                </motion.span>
+                                    Acceso B2B
+                                </Link>
                             )}
-                        </motion.button>
 
-                        {/* Mobile Menu (simplified) */}
-                        <button className="md:hidden p-2">
-                            <svg className="w-6 h-6 text-navy" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 12h16M4 18h16" />
-                            </svg>
-                        </button>
+                            {/* Cart Button */}
+                            <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={openCart}
+                                className="relative p-2 text-pearl/70 hover:text-rose-gold transition-colors"
+                            >
+                                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                                        d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                                </svg>
+                                {count > 0 && (
+                                    <motion.span
+                                        initial={{ scale: 0 }}
+                                        animate={{ scale: 1 }}
+                                        className="absolute -top-1 -right-1 w-5 h-5 bg-rose-gold text-noir text-xs rounded-full flex items-center justify-center font-semibold"
+                                    >
+                                        {count}
+                                    </motion.span>
+                                )}
+                            </motion.button>
+
+                            {/* Mobile Menu Toggle */}
+                            <button
+                                className="md:hidden p-2 text-pearl/70"
+                                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                            >
+                                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    {mobileMenuOpen ? (
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
+                                    ) : (
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 12h16M4 18h16" />
+                                    )}
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </header>
+            </header>
+
+            {/* Mobile Menu */}
+            <motion.div
+                initial={false}
+                animate={{
+                    opacity: mobileMenuOpen ? 1 : 0,
+                    y: mobileMenuOpen ? 0 : -20
+                }}
+                className={`fixed inset-0 z-40 bg-noir/98 backdrop-blur-lg md:hidden ${mobileMenuOpen ? 'pointer-events-auto' : 'pointer-events-none'
+                    }`}
+                style={{ paddingTop: '100px' }}
+            >
+                <nav className="container-luxury flex flex-col items-center gap-8 py-12">
+                    {navLinks.map((link) => (
+                        <Link
+                            key={link.path}
+                            to={link.path}
+                            onClick={() => setMobileMenuOpen(false)}
+                            className={`text-lg font-serif tracking-wider ${location.pathname === link.path
+                                ? 'text-rose-gold'
+                                : 'text-pearl/70 hover:text-rose-gold'
+                                } transition-colors`}
+                        >
+                            {link.label}
+                        </Link>
+                    ))}
+                    <div className="w-16 h-px bg-rose-gold/30 my-4" />
+                    {isAuthenticated ? (
+                        <>
+                            <Link
+                                to="/mi-cuenta"
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="text-pearl/70 hover:text-rose-gold"
+                            >
+                                Mi Cuenta
+                            </Link>
+                            <button onClick={() => { logout(); setMobileMenuOpen(false); }} className="text-pearl/50">
+                                Cerrar Sesión
+                            </button>
+                        </>
+                    ) : (
+                        <Link
+                            to="/login"
+                            onClick={() => setMobileMenuOpen(false)}
+                            className="btn btn-outline"
+                        >
+                            Acceso B2B
+                        </Link>
+                    )}
+                </nav>
+            </motion.div>
+        </>
     );
 }

@@ -1,17 +1,18 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Header from './components/Header';
-import Footer from './components/Footer';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import CartDrawer from './components/CartDrawer';
-import Home from './pages/Home';
-import Shop from './pages/Shop';
-import ProductDetail from './pages/ProductDetail';
-import Checkout from './pages/Checkout';
-import Login from './pages/Login';
-import MyAccount from './pages/MyAccount';
+import Footer from './components/Footer';
+import Header from './components/Header';
 import About from './pages/About';
 import Academy from './pages/Academy';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
+import Checkout from './pages/Checkout';
+import Home from './pages/Home';
+import Login from './pages/Login';
+import MyAccount from './pages/MyAccount';
+import ProductDetail from './pages/ProductDetail';
+import RegistroDistribuidor from './pages/RegistroDistribuidor';
+import Shop from './pages/Shop';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
             <Route path="/academia" element={<Academy />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogPost />} />
+            <Route path="/registro-distribuidor" element={<RegistroDistribuidor />} />
           </Routes>
         </main>
         <Footer />
@@ -40,3 +42,4 @@ function App() {
 }
 
 export default App;
+

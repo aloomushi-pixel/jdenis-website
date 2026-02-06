@@ -5,104 +5,94 @@ import { bestsellers } from '../data/products';
 
 export default function Home() {
     return (
-        <div className="min-h-screen">
-            {/* HERO SECTION */}
+        <div className="min-h-screen bg-noir">
+            {/* HERO SECTION - GLAMOUR NOIR */}
             <section className="hero">
-                <div className="container-luxury">
-                    <div className="grid lg:grid-cols-2 gap-12 items-center">
-                        <motion.div
-                            initial={{ opacity: 0, x: -30 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.6 }}
-                        >
-                            <span className="badge badge-gold mb-4">25 AÑOS DE EXCELENCIA</span>
-                            <h1 className="hero-title text-balance">
-                                Elevamos la Belleza Profesional a una <span className="gold-gradient">Ciencia</span>
-                            </h1>
-                            <p className="hero-subtitle">
-                                25 años de innovación técnica y patentes mexicanas para la mirada.
-                                Productos de laboratorio con calidad científica para profesionales exigentes.
-                            </p>
-                            <div className="flex flex-wrap gap-4 mt-8">
-                                <Link to="/tienda" className="btn btn-primary">
-                                    Explorar Tienda
-                                </Link>
-                                <Link to="/academia" className="btn btn-outline">
-                                    Ver Cursos
-                                </Link>
-                            </div>
-                        </motion.div>
+                {/* Animated Circle */}
+                <div className="absolute w-[500px] h-[500px] md:w-[600px] md:h-[600px] border border-rose-gold/20 rounded-full animate-pulse-soft" />
+                <div className="absolute w-[400px] h-[400px] md:w-[500px] md:h-[500px] border border-rose-gold/10 rounded-full animate-pulse-soft" style={{ animationDelay: '1s' }} />
 
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 0.6, delay: 0.2 }}
-                            className="relative"
-                        >
-                            <div className="relative aspect-square rounded-3xl overflow-hidden shadow-luxury-lg">
-                                <video
-                                    autoPlay
-                                    muted
-                                    loop
-                                    playsInline
-                                    className="w-full h-full object-cover"
-                                >
-                                    <source src="/videos/Mejora_de_video_con_pestañas_fijas.mp4" type="video/mp4" />
-                                    Tu navegador no soporta el elemento de video.
-                                </video>
-                                <div className="absolute inset-0 bg-gradient-to-t from-navy/30 to-transparent" />
-                            </div>
-                            {/* Floating Badge */}
-                            <motion.div
-                                animate={{ y: [0, -10, 0] }}
-                                transition={{ duration: 3, repeat: Infinity }}
-                                className="absolute -bottom-4 -left-4 bg-white p-4 rounded-2xl shadow-luxury"
-                            >
-                                <div className="text-center">
-                                    <p className="text-3xl font-serif text-gold font-bold">50+</p>
-                                    <p className="text-xs text-charcoal-light">Años de experiencia docente</p>
-                                </div>
-                            </motion.div>
-                        </motion.div>
-                    </div>
+                <div className="hero-content">
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8 }}
+                    >
+                        <span className="hero-badge">25 Años de Excelencia</span>
+                        <h1 className="hero-title">
+                            El Arte de la<br />
+                            <span className="gold-gradient">Mirada Perfecta</span>
+                        </h1>
+                        <p className="hero-subtitle">
+                            Productos de laboratorio con calidad científica para profesionales
+                            que buscan resultados extraordinarios.
+                        </p>
+                        <div className="flex flex-wrap justify-center gap-4">
+                            <Link to="/tienda" className="btn btn-primary">
+                                Ver Productos
+                            </Link>
+                            <Link to="/registro-distribuidor" className="btn btn-outline border-rose-gold text-rose-gold hover:bg-rose-gold hover:text-noir">
+                                Registro Distribuidor
+                            </Link>
+                        </div>
+                    </motion.div>
                 </div>
             </section>
 
-            {/* LEGACY STRIP */}
-            <section className="bg-navy py-6">
+            {/* LEGACY STRIP - REDESIGNED */}
+            <section className="bg-gradient-to-r from-charcoal via-noir to-charcoal py-12 border-y border-rose-gold/10">
                 <div className="container-luxury">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-                        <div className="text-white/90">
-                            <span className="text-gold text-2xl font-serif">1998</span>
-                            <p className="text-sm mt-1">Fundada en México</p>
-                        </div>
-                        <div className="text-white/90">
-                            <span className="text-gold text-2xl font-serif">Patentes</span>
-                            <p className="text-sm mt-1">Técnicas propias certificadas</p>
-                        </div>
-                        <div className="text-white/90">
-                            <span className="text-gold text-2xl font-serif">100%</span>
-                            <p className="text-sm mt-1">Manufactura mexicana</p>
-                        </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {[
+                            {
+                                icon: '🏆',
+                                value: 'Desde 1998',
+                                label: 'Pioneros en México',
+                                description: 'Primera marca mexicana especializada en cejas y pestañas profesionales'
+                            },
+                            {
+                                icon: '🔬',
+                                value: 'Patentes Propias',
+                                label: 'Técnicas Certificadas',
+                                description: 'Métodos exclusivos desarrollados y patentados por nuestro laboratorio'
+                            },
+                            {
+                                icon: '🇲🇽',
+                                value: '100% Mexicano',
+                                label: 'Manufactura Nacional',
+                                description: 'Control de calidad total en nuestras instalaciones de CDMX'
+                            },
+                        ].map((stat, i) => (
+                            <motion.div
+                                key={i}
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: i * 0.15 }}
+                                className="text-center p-6 rounded-lg bg-noir/50 border border-pearl/5 hover:border-rose-gold/30 transition-colors"
+                            >
+                                <span className="text-4xl mb-4 block">{stat.icon}</span>
+                                <span className="text-rose-gold text-2xl font-serif font-bold block">{stat.value}</span>
+                                <p className="text-champagne text-sm font-medium mt-1 mb-2">{stat.label}</p>
+                                <p className="text-pearl/50 text-xs leading-relaxed">{stat.description}</p>
+                            </motion.div>
+                        ))}
                     </div>
                 </div>
             </section>
 
             {/* BESTSELLERS */}
-            <section className="section bg-cream">
+            <section className="section section-noir">
                 <div className="container-luxury">
-                    <div className="text-center mb-12">
-                        <motion.h2
+                    <div className="section-header">
+                        <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
-                            className="section-title"
                         >
-                            Productos Estrella
-                        </motion.h2>
-                        <p className="section-subtitle mx-auto">
-                            Los favoritos de los profesionales de la belleza
-                        </p>
+                            <span className="section-badge">Productos Signature</span>
+                            <h2 className="section-title">Los Favoritos de las Profesionales</h2>
+                        </motion.div>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -111,7 +101,7 @@ export default function Home() {
                         ))}
                     </div>
 
-                    <div className="text-center mt-10">
+                    <div className="text-center mt-12">
                         <Link to="/tienda" className="btn btn-outline">
                             Ver Todo el Catálogo
                         </Link>
@@ -120,20 +110,26 @@ export default function Home() {
             </section>
 
             {/* ACADEMY MODULE */}
-            <section className="section bg-blush/50">
+            <section className="section section-dark">
                 <div className="container-luxury">
                     <div className="grid lg:grid-cols-2 gap-12 items-center">
                         <motion.div
                             initial={{ opacity: 0, x: -20 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
-                            className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-luxury"
+                            className="relative aspect-[4/3] overflow-hidden rounded-lg"
                         >
                             <img
                                 src="/gaby-elizalde-seminario.jpg"
                                 alt="Maestra Gabriela Elizalde impartiendo seminario"
                                 className="w-full h-full object-cover"
                             />
+                            <div className="absolute inset-0 bg-gradient-to-t from-noir/60 to-transparent" />
+                            <div className="absolute bottom-4 left-4 right-4">
+                                <span className="inline-block px-3 py-1 bg-rose-gold text-noir text-xs font-bold rounded-full">
+                                    +50 años de experiencia
+                                </span>
+                            </div>
                         </motion.div>
 
                         <motion.div
@@ -141,28 +137,26 @@ export default function Home() {
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
                         >
-                            <span className="badge badge-navy mb-4">ACADEMIA J. DENIS</span>
-                            <h2 className="section-title">
+                            <span className="section-badge">Academia J. Denis</span>
+                            <h2 className="section-title mb-6">
                                 Aprende de la Pionera
                             </h2>
-                            <p className="text-charcoal-light leading-relaxed mb-6">
-                                La <strong>Maestra Gabriela Elizalde</strong>, con más de 50 años de experiencia,
+                            <p className="text-pearl/60 leading-relaxed mb-8">
+                                La <strong className="text-champagne">Maestra Gabriela Elizalde</strong>, con más de 50 años de experiencia,
                                 ha formado a miles de profesionales en técnicas patentadas que revolucionaron
                                 el mercado de cejas y pestañas en Latinoamérica.
                             </p>
-                            <ul className="space-y-3 mb-8">
-                                <li className="flex items-center gap-3 text-charcoal">
-                                    <span className="w-6 h-6 rounded-full bg-gold/20 text-gold flex items-center justify-center text-sm">✓</span>
-                                    Certificaciones oficiales con validez profesional
-                                </li>
-                                <li className="flex items-center gap-3 text-charcoal">
-                                    <span className="w-6 h-6 rounded-full bg-gold/20 text-gold flex items-center justify-center text-sm">✓</span>
-                                    Técnicas exclusivas: Lash Lifting, Laminado, Henna
-                                </li>
-                                <li className="flex items-center gap-3 text-charcoal">
-                                    <span className="w-6 h-6 rounded-full bg-gold/20 text-gold flex items-center justify-center text-sm">✓</span>
-                                    Grupos reducidos en sede Lindavista, CDMX
-                                </li>
+                            <ul className="space-y-4 mb-8">
+                                {[
+                                    'Certificaciones oficiales con validez profesional',
+                                    'Técnicas exclusivas: Lash Lifting, Laminado, Henna',
+                                    'Grupos reducidos en sede Lindavista, CDMX',
+                                ].map((item, i) => (
+                                    <li key={i} className="flex items-center gap-3 text-pearl/80">
+                                        <span className="w-6 h-6 flex items-center justify-center text-rose-gold">✓</span>
+                                        {item}
+                                    </li>
+                                ))}
                             </ul>
                             <Link to="/academia" className="btn btn-primary">
                                 Ver Próximos Cursos
@@ -172,12 +166,13 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* TESTIMONIALS / UGC */}
-            <section className="section bg-cream">
+            {/* TESTIMONIALS WITH AVATARS */}
+            <section className="section section-noir">
                 <div className="container-luxury">
-                    <div className="text-center mb-12">
+                    <div className="section-header">
+                        <span className="section-badge">Testimonios</span>
                         <h2 className="section-title">Lo que Dicen Nuestras Profesionales</h2>
-                        <p className="section-subtitle mx-auto">
+                        <p className="section-subtitle">
                             Miles de especialistas confían en J. Denis
                         </p>
                     </div>
@@ -188,16 +183,19 @@ export default function Home() {
                                 name: 'María González',
                                 role: 'Lashista Certificada, Monterrey',
                                 text: 'Los productos J. Denis me han permitido ofrecer resultados que mis clientas aman. La calidad es incomparable.',
+                                avatar: 'https://ui-avatars.com/api/?name=Maria+Gonzalez&background=d4a574&color=1a1a1a&size=128&bold=true&font-size=0.4'
                             },
                             {
                                 name: 'Ana Martínez',
                                 role: 'Dueña de Salón, CDMX',
                                 text: 'Después de tomar el curso con la Maestra Gaby, mi técnica mejoró al 100%. Los kits son todo lo que necesitas.',
+                                avatar: 'https://ui-avatars.com/api/?name=Ana+Martinez&background=c9967a&color=1a1a1a&size=128&bold=true&font-size=0.4'
                             },
                             {
                                 name: 'Lucía Hernández',
                                 role: 'Microblader Profesional, Guadalajara',
                                 text: 'El Compass Silver Ratio revolucionó mi trabajo. Precisión perfecta en cada diseño de ceja.',
+                                avatar: 'https://ui-avatars.com/api/?name=Lucia+Hernandez&background=b8956a&color=1a1a1a&size=128&bold=true&font-size=0.4'
                             },
                         ].map((testimonial, i) => (
                             <motion.div
@@ -206,17 +204,26 @@ export default function Home() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ delay: i * 0.1 }}
-                                className="bg-white p-8 rounded-2xl shadow-luxury"
+                                className="testimonial-card"
                             >
-                                <div className="flex gap-1 mb-4">
+                                <div className="flex gap-1 mb-4 relative z-10">
                                     {[1, 2, 3, 4, 5].map(star => (
-                                        <span key={star} className="text-gold">★</span>
+                                        <span key={star} className="text-rose-gold">★</span>
                                     ))}
                                 </div>
-                                <p className="text-charcoal-light italic mb-6">"{testimonial.text}"</p>
-                                <div>
-                                    <p className="font-medium text-navy">{testimonial.name}</p>
-                                    <p className="text-sm text-charcoal-light">{testimonial.role}</p>
+                                <p className="text-pearl/70 italic mb-6 relative z-10 leading-relaxed">
+                                    "{testimonial.text}"
+                                </p>
+                                <div className="flex items-center gap-4 relative z-10">
+                                    <img
+                                        src={testimonial.avatar}
+                                        alt={testimonial.name}
+                                        className="w-12 h-12 rounded-full object-cover border-2 border-rose-gold/30"
+                                    />
+                                    <div>
+                                        <p className="font-medium text-champagne">{testimonial.name}</p>
+                                        <p className="text-sm text-pearl/50">{testimonial.role}</p>
+                                    </div>
                                 </div>
                             </motion.div>
                         ))}
@@ -224,30 +231,56 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* CTA FINAL */}
-            <section className="bg-navy py-16">
-                <div className="container-luxury text-center">
-                    <h2 className="font-serif text-3xl lg:text-4xl text-white mb-4">
-                        ¿Lista para elevar tu carrera profesional?
-                    </h2>
-                    <p className="text-white/70 max-w-xl mx-auto mb-8">
-                        Únete a la comunidad de especialistas que confían en J. Denis
-                    </p>
-                    <div className="flex flex-wrap justify-center gap-4">
-                        <Link to="/tienda" className="btn btn-primary">
-                            Comprar Ahora
-                        </Link>
-                        <a
-                            href="https://wa.me/525527271067"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="btn bg-green-500 text-white hover:bg-green-600"
-                        >
-                            💬 WhatsApp
-                        </a>
-                    </div>
+            {/* CTA FINAL - SOPHISTICATED DESIGN */}
+            <section className="relative py-24 overflow-hidden">
+                {/* Premium Background */}
+                <div className="absolute inset-0 bg-gradient-to-br from-rose-gold/20 via-noir to-charcoal" />
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-rose-gold/10 via-transparent to-transparent" />
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-rose-gold/50 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-rose-gold/50 to-transparent" />
+
+                {/* Decorative elements */}
+                <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-64 h-64 rounded-full bg-rose-gold/5 blur-3xl" />
+                <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-64 h-64 rounded-full bg-champagne/5 blur-3xl" />
+
+                <div className="container-luxury relative z-10">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="max-w-3xl mx-auto text-center"
+                    >
+                        <span className="inline-block px-4 py-2 bg-rose-gold/10 border border-rose-gold/30 rounded-full text-rose-gold text-sm font-medium mb-6">
+                            Únete a +5,000 profesionales
+                        </span>
+                        <h2 className="font-serif text-4xl lg:text-5xl text-champagne mb-6 leading-tight">
+                            ¿Lista para elevar tu carrera profesional?
+                        </h2>
+                        <p className="text-pearl/60 text-lg max-w-xl mx-auto mb-10">
+                            Accede a productos premium con precios especiales para profesionales
+                            y distribuye la marca líder en tu zona.
+                        </p>
+                        <div className="flex flex-wrap justify-center gap-4">
+                            <Link
+                                to="/tienda"
+                                className="btn bg-rose-gold text-noir font-bold hover:bg-champagne transition-colors px-8 py-4 text-lg"
+                            >
+                                Ver Productos
+                            </Link>
+                            <Link
+                                to="/registro-distribuidor"
+                                className="btn bg-transparent border-2 border-rose-gold text-rose-gold font-bold hover:bg-rose-gold/10 transition-colors px-8 py-4 text-lg"
+                            >
+                                Registro Distribuidor
+                            </Link>
+                        </div>
+                        <p className="text-pearl/40 text-sm mt-8">
+                            💬 ¿Dudas? <a href="https://wa.me/525527271067" target="_blank" rel="noopener noreferrer" className="text-rose-gold hover:underline">Escríbenos por WhatsApp</a>
+                        </p>
+                    </motion.div>
                 </div>
             </section>
         </div>
     );
 }
+

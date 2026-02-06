@@ -42,7 +42,6 @@ Click **Deploy** → Esperar 2-3 min
 
 ## Verificar
 
-Dokploy te dará una URL automática tipo:
-`https://jdenis-xxxxx.dokploy.com`
+Dominio: `https://jdenis.store`
 
 Supabase: ✅ `ACTIVE_HEALTHY`
