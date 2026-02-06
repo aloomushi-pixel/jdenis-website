@@ -40,11 +40,16 @@ export default function Home() {
                             className="relative"
                         >
                             <div className="relative aspect-square rounded-3xl overflow-hidden shadow-luxury-lg">
-                                <img
-                                    src="/hero-lash-lifting.jpg"
-                                    alt="Técnica profesional de Lash Lifting"
+                                <video
+                                    autoPlay
+                                    muted
+                                    loop
+                                    playsInline
                                     className="w-full h-full object-cover"
-                                />
+                                >
+                                    <source src="/videos/Mejora_de_video_con_pestañas_fijas.mp4" type="video/mp4" />
+                                    Tu navegador no soporta el elemento de video.
+                                </video>
                                 <div className="absolute inset-0 bg-gradient-to-t from-navy/30 to-transparent" />
                             </div>
                             {/* Floating Badge */}
