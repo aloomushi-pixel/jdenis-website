@@ -50,23 +50,26 @@ export default function Academy() {
     return (
         <div className="min-h-screen bg-cream">
             {/* Hero */}
-            <section className="bg-navy py-16">
-                <div className="container-luxury text-center">
+            <section className="pt-32 pb-16 bg-forest relative overflow-hidden">
+                <div className="absolute inset-0 botanical-pattern opacity-20" />
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
+
+                <div className="container-luxury text-center relative z-10">
                     <motion.span
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className="badge bg-gold/20 text-gold border-gold/30 mb-4"
+                        className="inline-block px-4 py-2 bg-gold/20 border border-gold/40 text-gold text-sm font-medium mb-4"
                     >
                         ACADEMIA J. DENIS
                     </motion.span>
                     <motion.h1
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="font-serif text-4xl lg:text-5xl text-white mb-4"
+                        className="font-serif text-4xl lg:text-5xl text-cream mb-4"
                     >
                         Formación Profesional
                     </motion.h1>
-                    <p className="text-white/70 max-w-2xl mx-auto">
+                    <p className="text-cream/70 max-w-2xl mx-auto">
                         Aprende de la Maestra Gabriela Elizalde y su equipo de especialistas
                         con más de 50 años de experiencia combinada.
                     </p>
@@ -74,7 +77,7 @@ export default function Academy() {
             </section>
 
             {/* Why Us */}
-            <section className="py-12 bg-blush/50">
+            <section className="py-12 section-kraft">
                 <div className="container-luxury">
                     <div className="grid md:grid-cols-4 gap-6 text-center">
                         {[
@@ -85,7 +88,7 @@ export default function Academy() {
                         ].map((item, i) => (
                             <div key={i} className="flex items-center justify-center gap-3">
                                 <span className="text-2xl">{item.icon}</span>
-                                <span className="font-medium text-navy">{item.text}</span>
+                                <span className="font-medium text-forest">{item.text}</span>
                             </div>
                         ))}
                     </div>
@@ -93,9 +96,9 @@ export default function Academy() {
             </section>
 
             {/* Courses */}
-            <section className="section">
+            <section className="section section-cream">
                 <div className="container-luxury">
-                    <h2 className="section-title text-center mb-12">Próximos Cursos</h2>
+                    <h2 className="font-serif text-3xl text-forest text-center mb-12">Próximos Cursos</h2>
 
                     <div className="grid md:grid-cols-2 gap-8">
                         {courses.map((course, index) => (
@@ -105,32 +108,32 @@ export default function Academy() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ delay: index * 0.1 }}
-                                className="bg-white rounded-2xl overflow-hidden shadow-luxury hover:shadow-luxury-lg transition-shadow"
+                                className="bg-white border border-kraft/30 overflow-hidden hover:border-gold/50 transition-all"
                             >
                                 <div className="p-6">
                                     <div className="flex items-start justify-between mb-4">
                                         <div>
-                                            <h3 className="font-serif text-xl text-navy">
+                                            <h3 className="font-serif text-xl text-forest">
                                                 {course.title}
                                             </h3>
-                                            <p className="text-charcoal-light text-sm">
+                                            <p className="text-charcoal/60 text-sm">
                                                 Duración: {course.duration}
                                             </p>
                                         </div>
-                                        <span className="badge badge-gold">
+                                        <span className="px-3 py-1 bg-gold/20 border border-gold/40 text-gold text-sm">
                                             {course.nextDate}
                                         </span>
                                     </div>
 
-                                    <p className="text-charcoal-light mb-4">
+                                    <p className="text-charcoal/70 mb-4">
                                         {course.description}
                                     </p>
 
                                     <div className="mb-6">
-                                        <p className="text-sm font-medium text-navy mb-2">Temario:</p>
+                                        <p className="text-sm font-medium text-forest mb-2">Temario:</p>
                                         <ul className="grid grid-cols-2 gap-2">
                                             {course.topics.map((topic, i) => (
-                                                <li key={i} className="text-sm text-charcoal-light flex items-center gap-2">
+                                                <li key={i} className="text-sm text-charcoal/60 flex items-center gap-2">
                                                     <span className="text-gold">•</span>
                                                     {topic}
                                                 </li>
@@ -139,14 +142,14 @@ export default function Academy() {
                                     </div>
 
                                     {course.video && (
-                                        <div className="mb-6 p-4 bg-slate-50 rounded-xl">
-                                            <p className="text-sm font-medium text-navy mb-3 flex items-center gap-2">
+                                        <div className="mb-6 p-4 bg-cream border border-kraft/30">
+                                            <p className="text-sm font-medium text-forest mb-3 flex items-center gap-2">
                                                 <span className="text-gold">▶</span>
                                                 {course.videoTitle || 'Video Tutorial'}
                                             </p>
                                             <video
                                                 controls
-                                                className="w-full rounded-lg shadow-md"
+                                                className="w-full"
                                                 poster=""
                                             >
                                                 <source src={course.video} type="video/mp4" />
@@ -155,12 +158,12 @@ export default function Academy() {
                                         </div>
                                     )}
 
-                                    <div className="flex items-center justify-between pt-4 border-t border-charcoal/10">
+                                    <div className="flex items-center justify-between pt-4 border-t border-kraft/30">
                                         <div>
                                             <p className="text-2xl font-serif text-gold font-semibold">
                                                 ${course.price.toLocaleString()}
                                             </p>
-                                            <p className="text-xs text-charcoal-light">MXN / persona</p>
+                                            <p className="text-xs text-charcoal/50">MXN / persona</p>
                                         </div>
                                         <a
                                             href={`https://wa.me/525527271067?text=Hola! Quiero información sobre el curso: ${course.title}`}
@@ -179,10 +182,10 @@ export default function Academy() {
             </section>
 
             {/* Instructor */}
-            <section className="section bg-navy">
+            <section className="section section-forest">
                 <div className="container-luxury">
                     <div className="grid lg:grid-cols-2 gap-12 items-center">
-                        <div className="aspect-square max-w-md mx-auto lg:mx-0 rounded-3xl overflow-hidden">
+                        <div className="aspect-square max-w-md mx-auto lg:mx-0 overflow-hidden">
                             <img
                                 src="/gaby-elizalde-instructora.jpg"
                                 alt="Maestra Gabriela Elizalde"
@@ -190,13 +193,13 @@ export default function Academy() {
                             />
                         </div>
                         <div>
-                            <span className="badge bg-gold/20 text-gold border-gold/30 mb-4">
+                            <span className="inline-block px-4 py-2 bg-gold/20 border border-gold/40 text-gold text-sm font-medium mb-4">
                                 INSTRUCTORA PRINCIPAL
                             </span>
-                            <h2 className="font-serif text-3xl text-white mb-4">
+                            <h2 className="font-serif text-3xl text-cream mb-4">
                                 Maestra Gabriela Elizalde
                             </h2>
-                            <p className="text-white/70 leading-relaxed mb-6">
+                            <p className="text-cream/70 leading-relaxed mb-6">
                                 Con más de 50 años en la industria de la belleza, la Maestra Gaby es
                                 pionera en técnicas de cejas y pestañas en México. Ha formado a más de
                                 5,000 profesionales y desarrollado patentes que revolucionaron el mercado
@@ -209,8 +212,8 @@ export default function Academy() {
                                     'Formadora de formadores',
                                     'Referente en el gremio nacional',
                                 ].map((item, i) => (
-                                    <li key={i} className="flex items-center gap-3 text-white/80">
-                                        <span className="w-6 h-6 rounded-full bg-gold/20 flex items-center justify-center text-gold text-sm">✓</span>
+                                    <li key={i} className="flex items-center gap-3 text-cream/80">
+                                        <span className="w-6 h-6 bg-gold/30 flex items-center justify-center text-gold text-sm">✓</span>
                                         {item}
                                     </li>
                                 ))}
@@ -219,7 +222,7 @@ export default function Academy() {
                                 href="https://youtube.com/@JDenismexico"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="btn bg-red-600 text-white hover:bg-red-700"
+                                className="btn bg-red-600 text-white border-red-600 hover:bg-red-700"
                             >
                                 ▶️ Ver Tutoriales en YouTube
                             </a>
@@ -229,10 +232,10 @@ export default function Academy() {
             </section>
 
             {/* CTA */}
-            <section className="section bg-cream">
+            <section className="section section-cream">
                 <div className="container-luxury text-center">
-                    <h2 className="section-title mb-4">¿Dudas sobre nuestros cursos?</h2>
-                    <p className="text-charcoal-light max-w-xl mx-auto mb-8">
+                    <h2 className="font-serif text-3xl text-forest mb-4">¿Dudas sobre nuestros cursos?</h2>
+                    <p className="text-charcoal/60 max-w-xl mx-auto mb-8">
                         Contáctanos por WhatsApp para recibir asesoría personalizada sobre
                         el programa ideal para tu nivel.
                     </p>
@@ -241,7 +244,7 @@ export default function Academy() {
                             href="https://wa.me/525527271067"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="btn bg-green-500 text-white hover:bg-green-600"
+                            className="btn bg-green-600 text-white border-green-600 hover:bg-green-700"
                         >
                             💬 WhatsApp Directo
                         </a>

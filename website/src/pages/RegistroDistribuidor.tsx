@@ -61,21 +61,21 @@ export default function RegistroDistribuidor() {
 
     if (success) {
         return (
-            <div className="min-h-screen bg-noir flex items-center justify-center px-4">
+            <div className="min-h-screen bg-forest flex items-center justify-center px-4">
                 <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     className="text-center max-w-lg"
                 >
-                    <div className="w-20 h-20 bg-rose-gold/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <span className="text-4xl">✓</span>
+                    <div className="w-20 h-20 bg-gold/20 flex items-center justify-center mx-auto mb-6">
+                        <span className="text-4xl text-gold">✓</span>
                     </div>
-                    <h1 className="font-serif text-3xl text-champagne mb-4">¡Solicitud Enviada!</h1>
-                    <p className="text-pearl/60 mb-8">
+                    <h1 className="font-serif text-3xl text-cream mb-4">¡Solicitud Enviada!</h1>
+                    <p className="text-cream/70 mb-8">
                         Gracias por tu interés en ser distribuidor J. Denis.
                         Nuestro equipo revisará tu solicitud y te contactará en un plazo de 24-48 horas hábiles.
                     </p>
-                    <Link to="/" className="btn btn-primary">
+                    <Link to="/" className="btn btn-secondary">
                         Volver al Inicio
                     </Link>
                 </motion.div>
@@ -84,11 +84,11 @@ export default function RegistroDistribuidor() {
     }
 
     return (
-        <div className="min-h-screen bg-noir">
+        <div className="min-h-screen bg-cream">
             {/* Hero Section */}
-            <section className="relative py-24 lg:py-32 overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-rose-gold/10 via-noir to-charcoal" />
-                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-rose-gold/50 to-transparent" />
+            <section className="relative pt-32 pb-16 overflow-hidden bg-forest">
+                <div className="absolute inset-0 botanical-pattern opacity-20" />
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
 
                 <div className="container-luxury relative z-10">
                     <motion.div
@@ -96,13 +96,13 @@ export default function RegistroDistribuidor() {
                         animate={{ opacity: 1, y: 0 }}
                         className="max-w-3xl mx-auto text-center"
                     >
-                        <span className="inline-block px-4 py-2 bg-rose-gold/10 border border-rose-gold/30 rounded-full text-rose-gold text-sm font-medium mb-6">
+                        <span className="inline-block px-4 py-2 bg-gold/20 border border-gold/40 text-gold text-sm font-medium mb-6">
                             Únete a la Red de Distribuidores
                         </span>
-                        <h1 className="font-serif text-4xl lg:text-5xl text-champagne mb-6 leading-tight">
-                            Conviértete en Distribuidor <span className="text-rose-gold">J. Denis</span>
+                        <h1 className="font-serif text-4xl lg:text-5xl text-cream mb-6 leading-tight">
+                            Conviértete en Distribuidor <span className="text-gold">J. Denis</span>
                         </h1>
-                        <p className="text-pearl/60 text-lg mb-8">
+                        <p className="text-cream/70 text-lg mb-8">
                             Proveedores de productos cosméticos profesionales para cejas y pestañas.
                             Accede a precios mayoreo, capacitación gratuita y el respaldo de 25 años de experiencia.
                         </p>
@@ -111,7 +111,7 @@ export default function RegistroDistribuidor() {
             </section>
 
             {/* Benefits + Form Grid */}
-            <section className="section section-noir -mt-8">
+            <section className="section section-cream -mt-8">
                 <div className="container-luxury">
                     <div className="grid lg:grid-cols-2 gap-12">
                         {/* Benefits Column */}
@@ -120,7 +120,7 @@ export default function RegistroDistribuidor() {
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
                         >
-                            <h2 className="font-serif text-2xl text-champagne mb-8">
+                            <h2 className="font-serif text-2xl text-forest mb-8">
                                 ¿Por qué ser Distribuidor J. Denis?
                             </h2>
 
@@ -158,12 +158,12 @@ export default function RegistroDistribuidor() {
                                         whileInView={{ opacity: 1, y: 0 }}
                                         viewport={{ once: true }}
                                         transition={{ delay: i * 0.1 }}
-                                        className="flex gap-4 p-4 rounded-lg bg-charcoal/50 border border-pearl/5 hover:border-rose-gold/20 transition-colors"
+                                        className="flex gap-4 p-4 bg-white border border-kraft/30 hover:border-gold/50 transition-colors"
                                     >
                                         <span className="text-2xl">{benefit.icon}</span>
                                         <div>
-                                            <h3 className="font-medium text-champagne mb-1">{benefit.title}</h3>
-                                            <p className="text-pearl/50 text-sm">{benefit.desc}</p>
+                                            <h3 className="font-medium text-forest mb-1">{benefit.title}</h3>
+                                            <p className="text-charcoal/60 text-sm">{benefit.desc}</p>
                                         </div>
                                     </motion.div>
                                 ))}
@@ -176,8 +176,8 @@ export default function RegistroDistribuidor() {
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
                         >
-                            <div className="bg-charcoal/30 border border-pearl/10 rounded-lg p-8">
-                                <h2 className="font-serif text-2xl text-champagne mb-6">
+                            <div className="bg-white border border-kraft/30 p-8">
+                                <h2 className="font-serif text-2xl text-forest mb-6">
                                     Solicita tu Registro
                                 </h2>
 
@@ -297,8 +297,8 @@ export default function RegistroDistribuidor() {
                                                 <label
                                                     key={interest}
                                                     className={`px-4 py-2 rounded-full border cursor-pointer transition-colors ${formData.interests.includes(interest)
-                                                            ? 'bg-rose-gold/20 border-rose-gold text-rose-gold'
-                                                            : 'border-pearl/20 text-pearl/60 hover:border-pearl/40'
+                                                        ? 'bg-rose-gold/20 border-rose-gold text-rose-gold'
+                                                        : 'border-pearl/20 text-pearl/60 hover:border-pearl/40'
                                                         }`}
                                                 >
                                                     <input
