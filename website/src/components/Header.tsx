@@ -31,8 +31,8 @@ export default function Header() {
     return (
         <>
             <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled
-                ? 'bg-noir/98 backdrop-blur-md shadow-luxury-lg py-3 border-b border-rose-gold/20'
-                : 'bg-gradient-to-b from-noir via-noir/95 to-transparent py-5'
+                ? 'bg-forest shadow-botanical py-3 border-b border-gold/20'
+                : 'bg-forest py-5'
                 }`}>
                 <div className="container-luxury">
                     <div className="flex items-center justify-between">
@@ -40,10 +40,13 @@ export default function Header() {
                         <Link to="/" className="flex items-center gap-3">
                             <motion.div
                                 whileHover={{ scale: 1.02 }}
-                                className="logo"
+                                className="font-serif text-2xl text-cream tracking-wide"
                             >
-                                J. DENIS
+                                J. Denis
                             </motion.div>
+                            <span className="hidden sm:inline text-cream/50 text-xs tracking-[0.2em] uppercase">
+                                Desde 1998
+                            </span>
                         </Link>
 
                         {/* Navigation */}
@@ -52,7 +55,10 @@ export default function Header() {
                                 <Link
                                     key={link.path}
                                     to={link.path}
-                                    className={`nav-link ${location.pathname === link.path ? 'active' : ''}`}
+                                    className={`text-sm tracking-wider transition-colors ${location.pathname === link.path
+                                        ? 'text-gold'
+                                        : 'text-cream/70 hover:text-gold'
+                                        }`}
                                 >
                                     {link.label}
                                 </Link>
@@ -66,13 +72,13 @@ export default function Header() {
                                 <div className="hidden sm:flex items-center gap-4">
                                     <Link
                                         to="/mi-cuenta"
-                                        className="text-xs tracking-wider uppercase text-pearl/70 hover:text-rose-gold transition-colors"
+                                        className="text-xs tracking-wider uppercase text-cream/70 hover:text-gold transition-colors"
                                     >
                                         {user?.fullName?.split(' ')[0]}
                                     </Link>
                                     <button
                                         onClick={logout}
-                                        className="text-xs text-pearl/50 hover:text-rose-gold transition-colors"
+                                        className="text-xs text-cream/50 hover:text-gold transition-colors"
                                     >
                                         Salir
                                     </button>
@@ -80,7 +86,7 @@ export default function Header() {
                             ) : (
                                 <Link
                                     to="/login"
-                                    className="hidden sm:block text-xs tracking-wider uppercase text-pearl/70 hover:text-rose-gold transition-colors"
+                                    className="hidden sm:block text-xs tracking-wider uppercase text-cream/70 hover:text-gold transition-colors"
                                 >
                                     Acceso B2B
                                 </Link>
@@ -91,7 +97,7 @@ export default function Header() {
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                                 onClick={openCart}
-                                className="relative p-2 text-pearl/70 hover:text-rose-gold transition-colors"
+                                className="relative p-2 text-cream/70 hover:text-gold transition-colors"
                             >
                                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
@@ -101,7 +107,7 @@ export default function Header() {
                                     <motion.span
                                         initial={{ scale: 0 }}
                                         animate={{ scale: 1 }}
-                                        className="absolute -top-1 -right-1 w-5 h-5 bg-rose-gold text-noir text-xs rounded-full flex items-center justify-center font-semibold"
+                                        className="absolute -top-1 -right-1 w-5 h-5 bg-gold text-forest text-xs rounded-full flex items-center justify-center font-semibold"
                                     >
                                         {count}
                                     </motion.span>
@@ -110,7 +116,7 @@ export default function Header() {
 
                             {/* Mobile Menu Toggle */}
                             <button
-                                className="md:hidden p-2 text-pearl/70"
+                                className="md:hidden p-2 text-cream/70"
                                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                             >
                                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -133,7 +139,7 @@ export default function Header() {
                     opacity: mobileMenuOpen ? 1 : 0,
                     y: mobileMenuOpen ? 0 : -20
                 }}
-                className={`fixed inset-0 z-40 bg-noir/98 backdrop-blur-lg md:hidden ${mobileMenuOpen ? 'pointer-events-auto' : 'pointer-events-none'
+                className={`fixed inset-0 z-40 bg-forest/98 backdrop-blur-lg md:hidden ${mobileMenuOpen ? 'pointer-events-auto' : 'pointer-events-none'
                     }`}
                 style={{ paddingTop: '100px' }}
             >
@@ -144,24 +150,24 @@ export default function Header() {
                             to={link.path}
                             onClick={() => setMobileMenuOpen(false)}
                             className={`text-lg font-serif tracking-wider ${location.pathname === link.path
-                                ? 'text-rose-gold'
-                                : 'text-pearl/70 hover:text-rose-gold'
+                                ? 'text-gold'
+                                : 'text-cream/70 hover:text-gold'
                                 } transition-colors`}
                         >
                             {link.label}
                         </Link>
                     ))}
-                    <div className="w-16 h-px bg-rose-gold/30 my-4" />
+                    <div className="w-16 h-px bg-gold/30 my-4" />
                     {isAuthenticated ? (
                         <>
                             <Link
                                 to="/mi-cuenta"
                                 onClick={() => setMobileMenuOpen(false)}
-                                className="text-pearl/70 hover:text-rose-gold"
+                                className="text-cream/70 hover:text-gold"
                             >
                                 Mi Cuenta
                             </Link>
-                            <button onClick={() => { logout(); setMobileMenuOpen(false); }} className="text-pearl/50">
+                            <button onClick={() => { logout(); setMobileMenuOpen(false); }} className="text-cream/50">
                                 Cerrar Sesión
                             </button>
                         </>
@@ -169,7 +175,7 @@ export default function Header() {
                         <Link
                             to="/login"
                             onClick={() => setMobileMenuOpen(false)}
-                            className="btn btn-outline"
+                            className="btn btn-outline-light"
                         >
                             Acceso B2B
                         </Link>

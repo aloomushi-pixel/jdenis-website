@@ -1,12 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Nunito+Sans:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Lato:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* ========================================
-   J.DENIS - SOFT LUXURY THEME
-   Elegancia Legacy con Colores Suaves
+   J.DENIS - BOTANICAL APOTHECARY THEME
+   Elegancia Natural + Ciencia Botánica
    ======================================== */
 
 @layer base {
@@ -15,189 +15,82 @@
   }
 
   body {
-    @apply bg-cream text-ink font-sans antialiased;
+    @apply bg-cream text-charcoal font-sans antialiased;
   }
 
   h1,
   h2,
   h3,
   h4 {
-    @apply font-serif text-mauve;
-  }
-
-  /* Elegant Scrollbar */
-  ::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  ::-webkit-scrollbar-track {
-    @apply bg-blush;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    @apply bg-rose rounded-full;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    @apply bg-rose-deep;
-  }
-
-  /* Selection */
-  ::selection {
-    @apply bg-rose/30 text-mauve-dark;
+    @apply font-serif text-forest;
   }
 }
 
 @layer components {
-  /* ========================================
-     BUTTONS - SOFT ROUNDED STYLE
-     ======================================== */
 
+  /* ===== CONTAINER ===== */
+  .container-luxury {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* ===== BUTTONS ===== */
   .btn {
-    @apply inline-flex items-center justify-center gap-2 px-6 py-3 font-medium transition-all duration-300;
-    @apply text-sm tracking-wide rounded-pill;
+    @apply inline-flex items-center justify-center px-8 py-3 text-sm tracking-[0.15em] uppercase font-medium transition-all duration-300 border;
   }
 
   .btn-primary {
-    @apply bg-gradient-to-r from-rose to-rose-deep text-white;
-    @apply hover:shadow-soft-hover hover:-translate-y-1;
-    @apply active:scale-[0.98];
+    @apply bg-forest text-cream border-forest hover:bg-forest-light;
   }
 
   .btn-secondary {
-    @apply bg-white text-mauve border-2 border-rose;
-    @apply hover:bg-rose hover:text-white;
+    @apply bg-gold text-forest border-gold hover:bg-gold-light;
   }
 
   .btn-outline {
-    @apply border-2 border-rose text-mauve bg-transparent rounded-pill;
-    @apply hover:bg-rose hover:text-white;
+    @apply bg-transparent text-forest border-forest hover:bg-forest hover:text-cream;
   }
 
-  .btn-ghost {
-    @apply text-mauve hover:text-rose-deep;
+  .btn-outline-light {
+    @apply bg-transparent text-cream border-cream hover:bg-cream hover:text-forest;
   }
 
-  /* ========================================
-     PRODUCT CARDS - SOFT ROUNDED
-     ======================================== */
-
-  .product-card {
-    @apply bg-white relative overflow-hidden transition-all duration-400 rounded-soft;
-    @apply hover:-translate-y-3 hover:shadow-card-hover;
-  }
-
-  .product-card-image {
-    @apply w-full aspect-square object-cover bg-blush rounded-t-soft;
-  }
-
-  .product-card-body {
-    @apply p-6 text-center;
-  }
-
-  .product-card-title {
-    @apply font-serif text-lg text-mauve font-normal mb-2;
-  }
-
-  .product-card-price {
-    @apply text-rose-deep font-semibold text-xl;
-  }
-
-  /* ========================================
-     NAVIGATION - SOFT GLASS
-     ======================================== */
-
-  .nav-header {
-    @apply fixed top-0 w-full z-50;
-    @apply bg-cream/90;
-    @apply backdrop-blur-md;
-    @apply transition-all duration-300;
-  }
-
-  .nav-header.scrolled {
-    @apply bg-cream shadow-soft;
-  }
-
-  .nav-link {
-    @apply text-ink text-sm font-medium;
-    @apply transition-all duration-300;
-    @apply hover:text-rose-deep;
-  }
-
-  .nav-link.active {
-    @apply text-rose-deep;
-  }
-
-  .logo {
-    @apply font-serif text-2xl font-normal text-mauve;
-  }
-
-  /* ========================================
-     HERO SECTION - SOFT GRADIENTS
-     ======================================== */
-
+  /* ===== HERO ===== */
   .hero {
-    @apply relative min-h-screen flex items-center justify-center text-center;
-    background:
-      radial-gradient(circle at 80% 20%, rgba(232, 196, 196, 0.4) 0%, transparent 50%),
-      radial-gradient(circle at 20% 80%, rgba(212, 165, 165, 0.2) 0%, transparent 40%),
-      #fefcfb;
-    @apply overflow-hidden;
-  }
-
-  .hero::before {
-    content: '';
-    @apply absolute w-[600px] h-[600px] rounded-full;
-    @apply border border-rose/30;
-    @apply animate-pulse-soft;
+    @apply relative min-h-screen flex items-center justify-center overflow-hidden;
+    background: linear-gradient(135deg, #1a2f23 0%, #2d4a3a 50%, #1a2f23 100%);
   }
 
   .hero-content {
-    @apply relative z-10 max-w-4xl px-6;
+    @apply relative z-10 text-center max-w-4xl mx-auto px-4;
   }
 
   .hero-badge {
-    @apply inline-block px-6 py-2 bg-rose rounded-pill;
-    @apply text-sm font-semibold text-mauve;
-    @apply mb-8;
+    @apply inline-block px-4 py-2 bg-gold/20 border border-gold/40 text-gold text-xs tracking-[0.2em] uppercase mb-6;
   }
 
   .hero-title {
-    @apply font-serif text-4xl md:text-5xl lg:text-6xl font-normal;
-    @apply leading-tight text-mauve mb-6;
+    @apply font-serif text-4xl md:text-5xl lg:text-6xl text-cream leading-tight mb-6;
   }
 
   .hero-subtitle {
-    @apply text-lg text-ink/80 font-light leading-relaxed;
-    @apply max-w-xl mx-auto mb-10;
+    @apply text-cream/70 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed;
   }
 
-  /* ========================================
-     SECTIONS
-     ======================================== */
-
+  /* ===== SECTIONS ===== */
   .section {
     @apply py-20 lg:py-28;
-  }
-
-  .section-blush {
-    @apply bg-blush;
   }
 
   .section-cream {
     @apply bg-cream;
   }
 
-  .section-dark {
-    @apply bg-blush;
+  .section-forest {
+    @apply bg-forest;
   }
 
-  .section-noir {
-    @apply bg-cream;
-  }
-
-  .container-luxury {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  .section-kraft {
+    @apply bg-kraft/20;
   }
 
   .section-header {
@@ -205,124 +98,81 @@
   }
 
   .section-badge {
-    @apply text-rose-deep text-sm font-semibold tracking-wide mb-2;
+    @apply inline-block px-4 py-2 bg-gold/10 border border-gold/30 text-gold text-xs tracking-[0.2em] uppercase mb-4;
   }
 
   .section-title {
-    @apply font-serif text-3xl lg:text-4xl text-mauve;
+    @apply font-serif text-3xl md:text-4xl text-forest mb-4;
+  }
+
+  .section-title-light {
+    @apply font-serif text-3xl md:text-4xl text-cream mb-4;
   }
 
   .section-subtitle {
-    @apply text-ink/70 text-lg max-w-2xl mx-auto mt-4;
+    @apply text-charcoal/60 text-lg max-w-2xl mx-auto;
   }
 
-  /* ========================================
-     FORMS - SOFT ROUNDED INPUTS
-     ======================================== */
-
-  .input {
-    @apply w-full px-5 py-4 bg-white border-2 border-rose/30 rounded-2xl;
-    @apply text-ink placeholder:text-ink/40;
-    @apply focus:outline-none focus:border-rose focus:ring-2 focus:ring-rose/20;
-    @apply transition-all duration-300;
+  /* ===== PRODUCT CARDS ===== */
+  .product-card {
+    @apply relative bg-cream border border-cream-dark overflow-hidden transition-all duration-300;
   }
 
-  .label {
-    @apply block text-sm font-medium text-mauve mb-2;
+  .product-card:hover {
+    @apply shadow-card-hover border-gold/30;
   }
 
-  /* ========================================
-     BADGES
-     ======================================== */
-
-  .badge {
-    @apply inline-flex items-center px-4 py-1.5 text-sm font-medium rounded-pill;
+  .product-card-image {
+    @apply w-full aspect-square object-cover;
   }
 
-  .badge-gold {
-    @apply bg-rose/20 text-rose-deep;
+  .product-card-body {
+    @apply p-5 text-center;
   }
 
-  .badge-rose {
-    @apply bg-rose/20 text-rose-deep;
+  .product-card-title {
+    @apply font-serif text-lg text-forest;
   }
 
-  .badge-success {
-    @apply bg-green-100 text-green-700;
+  .product-card-price {
+    @apply text-gold font-semibold text-lg;
   }
 
-  /* ========================================
-     CART DRAWER - SOFT STYLE
-     ======================================== */
-
-  .cart-drawer {
-    @apply fixed inset-y-0 right-0 w-full max-w-md bg-cream shadow-soft-xl z-50;
-    @apply transform transition-transform duration-400 rounded-l-4xl;
-  }
-
-  .cart-drawer.closed {
-    @apply translate-x-full;
-  }
-
-  .cart-item {
-    @apply flex gap-4 p-5 border-b border-rose/10;
-  }
-
-  /* ========================================
-     TESTIMONIAL CARDS
-     ======================================== */
-
+  /* ===== TESTIMONIALS ===== */
   .testimonial-card {
-    @apply bg-white p-8 relative rounded-soft shadow-card;
-    @apply before:content-['"'] before:absolute before:top-4 before:left-6;
-    @apply before:text-6xl before:text-rose/30 before:font-serif;
+    @apply relative p-8 bg-cream border border-cream-dark transition-all duration-300;
   }
 
-  /* ========================================
-     FOOTER
-     ======================================== */
-
-  .footer {
-    @apply bg-rose py-12;
+  .testimonial-card:hover {
+    @apply shadow-card border-gold/20;
   }
 
-  .footer-link {
-    @apply text-mauve-dark text-sm hover:text-white transition-colors;
+  /* ===== LEGACY STRIP ===== */
+  .legacy-strip {
+    @apply bg-forest py-12 border-y border-gold/20;
   }
 
-  /* ========================================
-     UTILITY CLASSES
-     ======================================== */
-
-  .rose-gradient {
-    @apply bg-gradient-to-r from-rose to-rose-deep bg-clip-text text-transparent;
+  .legacy-card {
+    @apply text-center p-6 border border-gold/10 bg-forest-light/30;
   }
 
-  .glass {
-    @apply bg-cream/80 backdrop-blur-md border border-rose/10 rounded-soft;
+  /* ===== FORMS ===== */
+  .form-input {
+    @apply w-full px-4 py-3 bg-cream border border-cream-dark text-charcoal focus:border-gold focus:outline-none transition-colors;
   }
 
-  .shine {
-    @apply relative overflow-hidden;
+  .form-label {
+    @apply block text-charcoal/70 text-sm mb-2;
   }
 
-  .shine::after {
-    content: '';
-    @apply absolute inset-0 -translate-x-full;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-    @apply transition-transform duration-500;
+  /* ===== GOLD GRADIENT TEXT ===== */
+  .gold-gradient {
+    @apply text-gold;
   }
 
-  .shine:hover::after {
-    @apply translate-x-full;
-  }
-
-  /* ========================================
-     FLOATING CARDS
-     ======================================== */
-
-  .floating-card {
-    @apply bg-white p-6 rounded-2xl shadow-card;
+  /* ===== BOTANICAL DECORATIONS ===== */
+  .botanical-pattern {
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 5C30 5 35 15 30 25C25 15 30 5 30 5Z' fill='%231a2f23' opacity='0.03'/%3E%3C/svg%3E");
   }
 }
 
@@ -331,15 +181,10 @@
     text-wrap: balance;
   }
 
-  .animate-in {
-    animation: fadeIn 0.6s ease-out forwards;
-  }
-
-  .rounded-soft {
-    border-radius: 24px;
-  }
-
-  .rounded-pill {
-    border-radius: 50px;
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 }
