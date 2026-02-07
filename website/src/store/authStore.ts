@@ -138,6 +138,12 @@ export const useAuthStore = create<AuthState>()(
                 set({ user: null, isAuthenticated: false, loading: false });
             },
         }),
-        { name: 'jdenis-auth' }
+        {
+            name: 'jdenis-auth',
+            partialize: (state) => ({
+                user: state.user,
+                isAuthenticated: state.isAuthenticated,
+            }),
+        }
     )
 );

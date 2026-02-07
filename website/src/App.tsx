@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import CartDrawer from './components/CartDrawer';
 import Footer from './components/Footer';
@@ -17,8 +18,15 @@ import MyAccount from './pages/MyAccount';
 import ProductDetail from './pages/ProductDetail';
 import RegistroDistribuidor from './pages/RegistroDistribuidor';
 import Shop from './pages/Shop';
+import { useAuthStore } from './store/authStore';
 
 function App() {
+  const checkSession = useAuthStore((s) => s.checkSession);
+
+  useEffect(() => {
+    checkSession();
+  }, [checkSession]);
+
   return (
     <BrowserRouter>
       <div className="flex flex-col min-h-screen">
