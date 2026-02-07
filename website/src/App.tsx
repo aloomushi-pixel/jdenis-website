@@ -7,8 +7,16 @@ import AdminLayout from './components/layouts/AdminLayout';
 import About from './pages/About';
 import Academy from './pages/Academy';
 import AdminDashboard from './pages/admin/Dashboard';
+import EventLog from './pages/admin/EventLog';
 import AdminOrders from './pages/admin/Orders';
+import PackagingRecords from './pages/admin/PackagingRecords';
+import ProductionOrders from './pages/admin/ProductionOrders';
 import AdminProducts from './pages/admin/Products';
+import PurchaseOrders from './pages/admin/PurchaseOrders';
+import ResourceManager from './pages/admin/ResourceManager';
+import SalesOrders from './pages/admin/SalesOrders';
+import TransportAssignments from './pages/admin/TransportAssignments';
+import UserManager from './pages/admin/UserManager';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
 import Checkout from './pages/Checkout';
@@ -45,11 +53,19 @@ function App() {
             <Route path="/blog/:slug" element={<BlogPost />} />
             <Route path="/registro-distribuidor" element={<RegistroDistribuidor />} />
 
-            {/* Admin Routes */}
+            {/* Admin / ERP Routes */}
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<AdminDashboard />} />
               <Route path="products" element={<AdminProducts />} />
               <Route path="orders" element={<AdminOrders />} />
+              <Route path="users" element={<UserManager />} />
+              <Route path="resources" element={<ResourceManager />} />
+              <Route path="production" element={<ProductionOrders />} />
+              <Route path="purchases" element={<PurchaseOrders />} />
+              <Route path="sales" element={<SalesOrders />} />
+              <Route path="transport" element={<TransportAssignments />} />
+              <Route path="packaging" element={<PackagingRecords />} />
+              <Route path="event-log" element={<EventLog />} />
             </Route>
           </Routes>
         </main>
