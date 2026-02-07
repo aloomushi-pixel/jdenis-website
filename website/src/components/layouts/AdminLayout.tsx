@@ -25,8 +25,7 @@ export default function AdminLayout() {
     const menuItems = [
         { path: '/admin', label: 'Dashboard', icon: '📊' },
         { path: '/admin/products', label: 'Productos', icon: '📦' },
-        { path: '/admin/orders', label: 'Ordenes', icon: 'shopping_cart' },
-        { path: '/admin/users', label: 'Usuarios', icon: '👥' },
+        { path: '/admin/orders', label: 'Pedidos', icon: '🛒' },
     ];
 
     return (
