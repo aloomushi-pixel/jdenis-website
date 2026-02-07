@@ -6,6 +6,8 @@ import AdminLayout from './components/layouts/AdminLayout';
 import About from './pages/About';
 import Academy from './pages/Academy';
 import AdminDashboard from './pages/admin/Dashboard';
+import AdminOrders from './pages/admin/Orders';
+import AdminProducts from './pages/admin/Products';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
 import Checkout from './pages/Checkout';
@@ -38,7 +40,8 @@ function App() {
             {/* Admin Routes */}
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<AdminDashboard />} />
-              {/* Future routes: products, orders */}
+              <Route path="products" element={<AdminProducts />} />
+              <Route path="orders" element={<AdminOrders />} />
             </Route>
           </Routes>
         </main>
