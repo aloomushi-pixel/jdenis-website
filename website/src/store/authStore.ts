@@ -1,11 +1,16 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+
+
+import { supabase } from '../lib/supabase';
+
 interface User {
     id: string;
     email: string;
     fullName: string;
     role: string;
+    avatar_url?: string;
 }
 
 interface AuthState {
@@ -13,11 +18,11 @@ interface AuthState {
     token: string | null;
     isAuthenticated: boolean;
     login: (email: string, password: string) => Promise<boolean>;
+    loginWithOAuth: (provider: 'google' | 'facebook') => Promise<void>;
     register: (data: { email: string; password: string; fullName: string }) => Promise<boolean>;
-    logout: () => void;
+    logout: () => Promise<void>;
+    checkSession: () => Promise<void>;
 }
-
-const API_URL = 'http://localhost:4000/api';
 
 export const useAuthStore = create<AuthState>()(
     persist(
@@ -26,51 +31,90 @@ export const useAuthStore = create<AuthState>()(
             token: null,
             isAuthenticated: false,
 
-            login: async (email: string, password: string) => {
-                try {
-                    const res = await fetch(`${API_URL}/auth/login`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email, password }),
-                    });
-
-                    if (!res.ok) return false;
-
-                    const data = await res.json();
+            checkSession: async () => {
+                const { data: { session } } = await supabase.auth.getSession();
+                if (session?.user) {
                     set({
-                        user: data.user,
-                        token: data.token,
-                        isAuthenticated: true,
+                        user: {
+                            id: session.user.id,
+                            email: session.user.email!,
+                            fullName: session.user.user_metadata.full_name || session.user.email?.split('@')[0],
+                            role: session.user.user_metadata.role || 'CLIENTE',
+                            avatar_url: session.user.user_metadata.avatar_url
+                        },
+                        token: session.access_token,
+                        isAuthenticated: true
                     });
-                    return true;
-                } catch {
-                    return false;
+                } else {
+                    set({ user: null, token: null, isAuthenticated: false });
                 }
+            },
+
+            login: async (email, password) => {
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email,
+                    password,
+                });
+
+                if (error || !data.user) return false;
+
+                set({
+                    user: {
+                        id: data.user.id,
+                        email: data.user.email!,
+                        fullName: data.user.user_metadata.full_name || email.split('@')[0],
+                        role: data.user.user_metadata.role || 'CLIENTE',
+                    },
+                    token: data.session.access_token,
+                    isAuthenticated: true,
+                });
+                return true;
+            },
+
+            loginWithOAuth: async (provider) => {
+                const { error } = await supabase.auth.signInWithOAuth({
+                    provider,
+                    options: {
+                        redirectTo: `${window.location.origin}/mi-cuenta`
+                    }
+                });
+                if (error) console.error('OAuth Error:', error);
             },
 
             register: async (data) => {
-                try {
-                    const res = await fetch(`${API_URL}/auth/register`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ ...data, role: 'CLIENTE' }),
-                    });
+                const { data: result, error } = await supabase.auth.signUp({
+                    email: data.email,
+                    password: data.password,
+                    options: {
+                        data: {
+                            full_name: data.fullName,
+                            role: 'CLIENTE',
+                        },
+                    },
+                });
 
-                    if (!res.ok) return false;
+                if (error || !result.user) return false;
 
-                    const result = await res.json();
+                // Note: If email confirmation is enabled, user won't be signed in automatically
+                // But for now we assume they are or we handle it.
+                if (result.session) {
                     set({
-                        user: result.user,
-                        token: result.token,
+                        user: {
+                            id: result.user.id,
+                            email: result.user.email!,
+                            fullName: data.fullName,
+                            role: 'CLIENTE',
+                        },
+                        token: result.session.access_token,
                         isAuthenticated: true,
                     });
                     return true;
-                } catch {
-                    return false;
                 }
+                return true; // Registration successful, maybe waiting for email
             },
 
-            logout: () => {
+            logout: async () => {
+                await supabase.auth.signOut();
                 set({ user: null, token: null, isAuthenticated: false });
             },
         }),
