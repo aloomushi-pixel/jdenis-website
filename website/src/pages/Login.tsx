@@ -34,26 +34,15 @@ export default function Login() {
                     setLoading(false);
                     return;
                 }
-                const success = await register({
-                    email: formData.email,
-                    password: formData.password,
-                    fullName: formData.fullName,
-                });
-                if (success) {
-                    navigate('/mi-cuenta');
-                } else {
-                    setError('Error al crear cuenta. Intenta de nuevo.');
-                }
+                await register(formData.email, formData.password, formData.fullName);
+                navigate('/mi-cuenta');
             } else {
-                const success = await login(formData.email, formData.password);
-                if (success) {
-                    navigate('/mi-cuenta');
-                } else {
-                    setError('Email o contraseña incorrectos');
-                }
+                await login(formData.email, formData.password);
+                navigate('/mi-cuenta');
             }
-        } catch {
-            setError('Error de conexión. Intenta más tarde.');
+        } catch (err) {
+            console.error(err);
+            setError('Error de autenticación. Verifica tus credenciales.');
         } finally {
             setLoading(false);
         }

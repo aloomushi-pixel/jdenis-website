@@ -32,6 +32,12 @@ function App() {
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogPost />} />
             <Route path="/registro-distribuidor" element={<RegistroDistribuidor />} />
+
+            {/* Admin Routes */}
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<AdminDashboard />} />
+              {/* Future routes: products, orders */}
+            </Route>
           </Routes>
         </main>
         <Footer />

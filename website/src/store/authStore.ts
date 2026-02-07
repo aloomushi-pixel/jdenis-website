@@ -1,25 +1,24 @@
+
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-
-
-
 import { supabase } from '../lib/supabase';
 
 interface User {
     id: string;
     email: string;
     fullName: string;
+    name?: string; // Alias for compatibility
     role: string;
     avatar_url?: string;
 }
 
 interface AuthState {
     user: User | null;
-    token: string | null;
     isAuthenticated: boolean;
-    login: (email: string, password: string) => Promise<boolean>;
+    loading: boolean;
+    login: (email: string, password: string) => Promise<void>;
     loginWithOAuth: (provider: 'google' | 'facebook') => Promise<void>;
-    register: (data: { email: string; password: string; fullName: string }) => Promise<boolean>;
+    register: (email: string, password: string, fullName: string) => Promise<void>;
     logout: () => Promise<void>;
     checkSession: () => Promise<void>;
 }
@@ -28,47 +27,63 @@ export const useAuthStore = create<AuthState>()(
     persist(
         (set) => ({
             user: null,
-            token: null,
             isAuthenticated: false,
+            loading: true,
 
             checkSession: async () => {
-                const { data: { session } } = await supabase.auth.getSession();
-                if (session?.user) {
-                    set({
-                        user: {
-                            id: session.user.id,
-                            email: session.user.email!,
-                            fullName: session.user.user_metadata.full_name || session.user.email?.split('@')[0],
-                            role: session.user.user_metadata.role || 'CLIENTE',
-                            avatar_url: session.user.user_metadata.avatar_url
-                        },
-                        token: session.access_token,
-                        isAuthenticated: true
-                    });
-                } else {
-                    set({ user: null, token: null, isAuthenticated: false });
+                try {
+                    set({ loading: true });
+                    const { data: { session } } = await supabase.auth.getSession();
+                    if (session?.user) {
+                        set({
+                            user: {
+                                id: session.user.id,
+                                email: session.user.email!,
+                                fullName: session.user.user_metadata.full_name || session.user.email?.split('@')[0],
+                                name: session.user.user_metadata.full_name || session.user.email?.split('@')[0],
+                                role: session.user.user_metadata.role || 'CLIENTE',
+                                avatar_url: session.user.user_metadata.avatar_url
+                            },
+                            isAuthenticated: true
+                        });
+                    } else {
+                        set({ user: null, isAuthenticated: false });
+                    }
+                } catch (error) {
+                    console.error('Session check failed', error);
+                } finally {
+                    set({ loading: false });
                 }
             },
 
             login: async (email, password) => {
-                const { data, error } = await supabase.auth.signInWithPassword({
-                    email,
-                    password,
-                });
+                set({ loading: true });
+                try {
+                    const { data, error } = await supabase.auth.signInWithPassword({
+                        email,
+                        password,
+                    });
 
-                if (error || !data.user) return false;
+                    if (error) throw error;
+                    if (!data.user) throw new Error('No user returned');
 
-                set({
-                    user: {
-                        id: data.user.id,
-                        email: data.user.email!,
-                        fullName: data.user.user_metadata.full_name || email.split('@')[0],
-                        role: data.user.user_metadata.role || 'CLIENTE',
-                    },
-                    token: data.session.access_token,
-                    isAuthenticated: true,
-                });
-                return true;
+                    set({
+                        user: {
+                            id: data.user.id,
+                            email: data.user.email!,
+                            fullName: data.user.user_metadata.full_name || email.split('@')[0],
+                            name: data.user.user_metadata.full_name || email.split('@')[0],
+                            role: data.user.user_metadata.role || 'CLIENTE',
+                        },
+                        isAuthenticated: true,
+                    });
+                } catch (error) {
+                    console.error('Login error:', error);
+                    // allow component to handle error visual feedback if needed, 
+                    // ideally we'd expose error state in store too
+                } finally {
+                    set({ loading: false });
+                }
             },
 
             loginWithOAuth: async (provider) => {
@@ -81,41 +96,46 @@ export const useAuthStore = create<AuthState>()(
                 if (error) console.error('OAuth Error:', error);
             },
 
-            register: async (data) => {
-                const { data: result, error } = await supabase.auth.signUp({
-                    email: data.email,
-                    password: data.password,
-                    options: {
-                        data: {
-                            full_name: data.fullName,
-                            role: 'CLIENTE',
+            register: async (email, password, fullName) => {
+                set({ loading: true });
+                try {
+                    const { data: result, error } = await supabase.auth.signUp({
+                        email,
+                        password,
+                        options: {
+                            data: {
+                                full_name: fullName,
+                                role: 'CLIENTE',
+                            },
                         },
-                    },
-                });
-
-                if (error || !result.user) return false;
-
-                // Note: If email confirmation is enabled, user won't be signed in automatically
-                // But for now we assume they are or we handle it.
-                if (result.session) {
-                    set({
-                        user: {
-                            id: result.user.id,
-                            email: result.user.email!,
-                            fullName: data.fullName,
-                            role: 'CLIENTE',
-                        },
-                        token: result.session.access_token,
-                        isAuthenticated: true,
                     });
-                    return true;
+
+                    if (error) throw error;
+                    if (!result.user) throw new Error('No user returned');
+
+                    if (result.session) {
+                        set({
+                            user: {
+                                id: result.user.id,
+                                email: result.user.email!,
+                                fullName: fullName,
+                                name: fullName,
+                                role: 'CLIENTE',
+                            },
+                            isAuthenticated: true,
+                        });
+                    }
+                } catch (error) {
+                    console.error('Registration error:', error);
+                } finally {
+                    set({ loading: false });
                 }
-                return true; // Registration successful, maybe waiting for email
             },
 
             logout: async () => {
+                set({ loading: true });
                 await supabase.auth.signOut();
-                set({ user: null, token: null, isAuthenticated: false });
+                set({ user: null, isAuthenticated: false, loading: false });
             },
         }),
         { name: 'jdenis-auth' }
