@@ -9,6 +9,12 @@ export interface Product {
     category: string;
     description?: string;
     stock?: number;
+    benefits?: string[];
+    includes?: string[];
+    performance?: string;
+    specifications?: string[];
+    gallery?: string[];
+    relatedCategories?: string[];
 }
 
 export interface CartItem extends Product {

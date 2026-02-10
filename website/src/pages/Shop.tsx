@@ -1,39 +1,29 @@
 import { motion } from 'framer-motion';
 import { useEffect, useMemo, useState } from 'react';
 import ProductCard from '../components/ProductCard';
-import { getCategories, getProducts, type Product, type ProductCategory } from '../lib/supabase';
+import type { Product as CartProduct } from '../store/cartStore';
+import { products as localProducts, categories as localCategories } from '../data/products';
 
 export default function Shop() {
     const [activeCategory, setActiveCategory] = useState('all');
     const [sortBy, setSortBy] = useState('name');
     const [searchQuery, setSearchQuery] = useState('');
-    const [products, setProducts] = useState<Product[]>([]);
-    const [categories, setCategories] = useState<ProductCategory[]>([]);
+    const [products, setProducts] = useState<CartProduct[]>([]);
     const [loading, setLoading] = useState(true);
 
+    // Use local products as the primary and always-available data source
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const [productsData, categoriesData] = await Promise.all([
-                    getProducts(),
-                    getCategories()
-                ]);
-                setProducts(productsData || []);
-                setCategories(categoriesData || []);
-            } catch (error) {
-                console.error('Error fetching shop data:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchData();
+        setProducts(localProducts);
+        setLoading(false);
     }, []);
 
     const filteredProducts = useMemo(() => {
         let result = products;
 
         if (activeCategory !== 'all') {
-            result = result.filter(p => p.category === activeCategory);
+            const cat = localCategories.find(c => c.id === activeCategory);
+            const catName = cat ? cat.name : activeCategory;
+            result = result.filter(p => p.category === catName || p.category.toLowerCase() === activeCategory.toLowerCase());
         }
 
         if (searchQuery) {
@@ -133,11 +123,11 @@ export default function Shop() {
                                         <span className="mr-3">📋</span>
                                         Ver Todo
                                     </button>
-                                    {categories.map((cat) => (
+                                    {localCategories.filter(c => c.id !== 'all').map((cat) => (
                                         <button
                                             key={cat.id}
-                                            onClick={() => setActiveCategory(cat.slug)}
-                                            className={`w-full text-left px-4 py-3 text-sm tracking-wider transition-all ${activeCategory === cat.slug
+                                            onClick={() => setActiveCategory(cat.id)}
+                                            className={`w-full text-left px-4 py-3 text-sm tracking-wider transition-all ${activeCategory === cat.id
                                                 ? 'bg-gold text-forest font-medium'
                                                 : 'text-charcoal/70 hover:bg-kraft/20 hover:text-forest'
                                                 }`}
@@ -177,11 +167,11 @@ export default function Shop() {
                                     >
                                         Ver Todo
                                     </button>
-                                    {categories.map((cat) => (
+                                    {localCategories.filter(c => c.id !== 'all').map((cat) => (
                                         <button
                                             key={cat.id}
-                                            onClick={() => setActiveCategory(cat.slug)}
-                                            className={`flex-shrink-0 px-4 py-2 text-sm rounded-full border transition-all flex items-center gap-2 ${activeCategory === cat.slug
+                                            onClick={() => setActiveCategory(cat.id)}
+                                            className={`flex-shrink-0 px-4 py-2 text-sm rounded-full border transition-all flex items-center gap-2 ${activeCategory === cat.id
                                                 ? 'bg-gold text-forest border-gold font-medium shadow-sm'
                                                 : 'bg-white border-kraft/30 text-charcoal/70'
                                                 }`}
@@ -215,12 +205,7 @@ export default function Shop() {
                                 {filteredProducts.map((product, index) => (
                                     <ProductCard
                                         key={product.id}
-                                        product={{
-                                            ...product,
-                                            image: product.image_url || '/products/placeholder.png',
-                                            description: product.description || '',
-                                            stock: product.stock ?? 0
-                                        }}
+                                        product={product}
                                         index={index}
                                     />
                                 ))}
