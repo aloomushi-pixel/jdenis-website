@@ -114,7 +114,7 @@ export const products: Product[] = [
         id: 'peine-lash-lifting',
         name: 'Peine para Lash Lifting',
         price: 50,
-        image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/peine-1-cbfef99ba2e2c1ffee16671827009653-480-0.webp',
+        image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/p31-c7c6e6930d4fa2037915872659858026-1024-1024.webp',
         category: 'Lash Lifting',
         description: 'Peine profesional diseñado específicamente para procedimientos de lash lifting. Permite separar y distribuir las pestañas de forma uniforme sobre el pad.',
         specifications: [
@@ -128,7 +128,7 @@ export const products: Product[] = [
         id: 'pad-rosas-micro-canales',
         name: 'Pad Rosas con Micro Canales',
         price: 150,
-        image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/pad-rosas-1-c7f4a32f7f51eb57e616671826084553-480-0.webp',
+        image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/r31-2113caa06848677a7f15872659444717-1024-1024.webp',
         category: 'Lash Lifting',
         description: 'Pads de silicón premium con micro canales que facilitan la separación y elevación de las pestañas. Tecnología avanzada para resultados uniformes y profesionales.',
         benefits: [
@@ -143,7 +143,7 @@ export const products: Product[] = [
         id: 'pad-nube',
         name: 'Pad Nube',
         price: 150,
-        image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/nube-1-25dda3b2ee46c314c616671831262253-480-0.webp',
+        image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/captura-de-pantalla-2019-02-09-a-las-20-04-021-39c0aa667e05a80ed715497643400355-1024-1024.webp',
         category: 'Lash Lifting',
         description: 'Pad ultra suave con forma de nube para lash lifting. Diseño ergonómico que se adapta a la curvatura natural del párpado para resultados perfectos.',
         benefits: [
@@ -157,7 +157,7 @@ export const products: Product[] = [
         id: 'pad-anime',
         name: 'Pad Anime',
         price: 250,
-        image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/anime-1-d6b8cc0893cf59f3bc16671831963577-480-0.webp',
+        image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/anime-05-6e0e314c9e7228afe817410095004166-1024-1024.webp',
         category: 'Lash Lifting',
         description: 'Pad especial estilo Anime para crear un efecto de pestañas ultra abiertas y dramáticas. Ideal para looks artísticos y dramáticos.',
         benefits: [
@@ -343,7 +343,7 @@ export const products: Product[] = [
         id: 'chocolate-pigmento-cejas',
         name: 'Chocolate Pigmento para Cejas',
         price: 200,
-        image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/chocolate-1-6e893e1e47866fdd8d16671826662073-480-0.webp',
+        image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/sin-titulo-4_mesa-de-trabajo-111-c242d37fa4b290473b16687990494212-1024-1024.webp',
         category: 'Pigmentos',
         description: 'Pigmento tono chocolate para cejas. Color cálido y natural que se adapta a diversos tonos de piel y cabello. Ideal para un look natural y sofisticado.',
         specifications: [
@@ -385,7 +385,7 @@ export const products: Product[] = [
         id: 'rulos-desechables-m',
         name: 'Rulos Desechables Curva Media M',
         price: 50,
-        image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/rulo-m-1-e5ee6b5f2d59b3e6b916671828513493-480-0.webp',
+        image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/sin-titulo-1-041-c63eba028c157f5cb716669736468826-1024-1024.webp',
         category: 'Lash Curling',
         description: 'Rulos desechables de curva media tamaño M. Ideales para crear una curvatura natural y elegante en pestañas de longitud media.',
         specifications: [
@@ -399,7 +399,7 @@ export const products: Product[] = [
         id: 'rulos-desechables-ch',
         name: 'Rulos Desechables Curva Corta CH',
         price: 50,
-        image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/rulo-ch-1-05ce67b94b5b6fbed816671829186123-480-0.webp',
+        image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/sin-titulo-1-071-f0552b059105e2a53d16669736033613-1024-1024.webp',
         category: 'Lash Curling',
         description: 'Rulos desechables de curva corta tamaño CH. Ideales para pestañas cortas o para crear una curvatura más dramática.',
         specifications: [
@@ -413,7 +413,7 @@ export const products: Product[] = [
         id: 'rulos-desechables-g',
         name: 'Rulos Desechables Curva Amplia G',
         price: 50,
-        image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/rulo-g-1-f9e38e4a131c9b3f5116671829753517-480-0.webp',
+        image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/sin-titulo-1_mesa-de-trabajo-11-f490e5702841a57b1616669735647217-1024-1024.webp',
         category: 'Lash Curling',
         description: 'Rulos desechables de curva amplia tamaño G. Perfectos para pestañas largas o para un lifting más sutil y natural.',
         specifications: [
@@ -427,7 +427,7 @@ export const products: Product[] = [
         id: 'rulos-adhesivos-curva-g',
         name: 'Rulos Adhesivos Curva G',
         price: 70,
-        image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/adhesivos-g-1-ff254e7f91b2e7a51016671830444333-480-0.webp',
+        image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/53-rulos-adhesivos-031-2ade2563ab84da548d15314940318959-1024-1024.webp',
         category: 'Lash Curling',
         description: 'Rulos con adhesivo integrado curva G. Se adhieren directamente al párpado sin necesidad de adhesivo adicional. Reutilizables.',
         specifications: [
@@ -511,7 +511,7 @@ export const products: Product[] = [
         id: 'extensiones-grupo-pro',
         name: 'Extensiones en Grupo PRO',
         price: 360,
-        image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/grupo-pro-1-9ff7e0eae1f45fde4816671824416237-480-0.webp',
+        image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/sin-titulo-21_mesa-de-trabajo-11-285849cb951c114fde15856909430891-1024-1024.webp',
         category: 'Extensiones',
         description: 'Extensiones de pestañas en grupo para aplicación profesional. Pre-formadas para una aplicación rápida y uniforme con efecto natural.',
         benefits: [
@@ -526,7 +526,7 @@ export const products: Product[] = [
         id: 'base-pestanas',
         name: 'Base para Pestañas',
         price: 50,
-        image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/base-1-b3dfe63e90d794c2b316671832684497-480-0.webp',
+        image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/base-031-a0f3cbfe23723e3c4f16691451059225-1024-1024.webp',
         category: 'Extensiones',
         description: 'Base protectora para pestañas. Prepara las pestañas naturales antes de la aplicación de extensiones, mejorando la adherencia y protegiendo la fibra natural.',
         specifications: [
@@ -674,7 +674,7 @@ export const products: Product[] = [
         id: 'piedra-jade',
         name: 'Piedra de Jade',
         price: 80,
-        image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/jadestone-1-a69ceade6eee8cd3fc16671833392617-480-0.webp',
+        image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/piedra-jade-011-d010fed6068f57234f15494015022538-1024-1024.webp',
         category: 'Herramientas',
         description: 'Piedra de jade natural para depositar adhesivo durante la aplicación de extensiones de pestañas. Mantiene la temperatura del adhesivo estable.',
         specifications: [
@@ -689,7 +689,7 @@ export const products: Product[] = [
         id: 'maniqui-microblading',
         name: 'Maniquí Microblading',
         price: 300,
-        image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/maniqui-1-c8e3dba554bd3e1ca216671834046247-480-0.webp',
+        image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/h64fbe6378cc249cd88ae27bcf74d9993y1-108b75012dae3f992515856923521717-1024-1024.webp',
         category: 'Herramientas',
         description: 'Maniquí de práctica para perfeccionar la técnica de microblading. Piel realista para entrenar trazos y técnica antes de trabajar con clientes.',
         benefits: [
@@ -704,7 +704,7 @@ export const products: Product[] = [
         id: 'papel-termico',
         name: 'Papel Térmico',
         price: 35,
-        image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/termico-1-dd2e4f1234dc8e75e916671834723863-480-0.webp',
+        image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/papel-termico-1-cf28baf56f9440056117582324679872-1024-1024.webp',
         category: 'Herramientas',
         description: 'Papel térmico para citas y recibos. Rollo compatible con impresoras térmicas estándar.',
         specifications: [
@@ -806,7 +806,7 @@ export const products: Product[] = [
         id: 'limpiador-impurezas',
         name: 'Limpiador de Impurezas - Piel Mixta y Grasa',
         price: 90,
-        image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/limpiador-1-2bb97df9e70d40285516671826942693-480-0.webp',
+        image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/limpiador-de-impurezas-piel-mixta-y-piel-grasa-0e0ffdaf9bc06584a917561449421922-1024-1024.webp',
         category: 'Higiene',
         description: 'Limpiador especializado para pieles mixtas y grasas. Elimina impurezas y exceso de grasa preparando la piel para procedimientos de cejas y pestañas.',
         benefits: [
