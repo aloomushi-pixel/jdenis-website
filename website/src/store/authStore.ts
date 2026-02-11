@@ -79,8 +79,7 @@ export const useAuthStore = create<AuthState>()(
                     });
                 } catch (error) {
                     console.error('Login error:', error);
-                    // allow component to handle error visual feedback if needed, 
-                    // ideally we'd expose error state in store too
+                    throw error;
                 } finally {
                     set({ loading: false });
                 }
