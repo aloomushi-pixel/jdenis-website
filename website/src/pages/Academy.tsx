@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { Calendar, MapPin, Radio } from 'lucide-react';
 
 const courses = [
     {
@@ -7,42 +8,68 @@ const courses = [
         title: 'Lash Lifting Profesional',
         duration: '2 días',
         price: 4500,
-        description: 'Domina la técnica de levantamiento de pestañas con certificación oficial.',
-        topics: ['Anatomía del ojo', 'Selección de rodillos', 'Tiempos de procesamiento', 'Casos especiales'],
-        nextDate: '15 de Febrero 2025',
+        description: 'Domina la técnica de levantamiento de pestañas con certificación oficial. Incluye práctica con Cisteamina Estabilizada.',
+        topics: ['Anatomía del ojo', 'Selección de rodillos', 'Tiempos de procesamiento', 'Uso de Cisteamina'],
+        nextDate: '3 de Marzo 2026',
     },
     {
         id: 2,
+        title: 'Lifting Coreano (Korean Lash Lift)',
+        duration: '1 día',
+        price: 3800,
+        description: 'Técnica avanzada de lifting con rizo abierto y natural. Incluye combo Cisteamina + Shot 1.5 Hidratante.',
+        topics: ['Filosofía K-Beauty', 'Selección de molde plano', 'Combo Cisteamina + Shot 1.5', 'Rizo tipo J y L'],
+        nextDate: '5 de Marzo 2026',
+    },
+    {
+        id: 3,
         title: 'Extensiones de Pestañas Clásicas',
         duration: '3 días',
         price: 6500,
         description: 'Aprende la técnica 1:1 para extensiones naturales y duraderas.',
         topics: ['Selección de curvaturas', 'Aplicación de adhesivo', 'Diseño de mirada', 'Retiros seguros'],
-        nextDate: '22 de Febrero 2025',
+        nextDate: '10 de Marzo 2026',
         video: '/videos/Mejora_de_video_con_pestañas_fijas.mp4',
         videoTitle: 'Tutorial: Extensiones Clásicas Paso a Paso',
     },
     {
-        id: 3,
+        id: 4,
         title: 'Volumen Ruso Avanzado',
         duration: '2 días',
         price: 5500,
         description: 'Técnica de abanicos 2D a 6D para efectos dramáticos.',
         topics: ['Creación de abanicos', 'Volumen Mega', 'Corrección de errores', 'Diseño personalizado'],
-        nextDate: '1 de Marzo 2025',
+        nextDate: '17 de Marzo 2026',
         video: '/videos/Modelo_Con_Pestañas_Naturales.mp4',
         videoTitle: 'Tutorial: Pestañas Naturales con Volumen Ruso',
     },
     {
-        id: 4,
+        id: 5,
         title: 'Brow Henna & Laminado',
         duration: '1 día',
         price: 3500,
-        description: 'Coloración y moldeado profesional de cejas.',
+        description: 'Coloración y moldeado profesional de cejas. Los creadores del laminado de cejas en México.',
         topics: ['Preparación de henna', 'Mapeo de cejas', 'Laminado paso a paso', 'Aftercare'],
-        nextDate: '8 de Marzo 2025',
+        nextDate: '24 de Marzo 2026',
         video: '/videos/Video_con_logo_J_DENIS.mp4',
         videoTitle: 'Técnica Brow Henna J. Denis',
+    },
+];
+
+const events = [
+    {
+        title: 'Beauty Coat 2026',
+        date: '15-16 de Febrero 2026',
+        location: 'Centro de Convenciones, CDMX',
+        description: 'J. Denis estará presente con Stands #64 y #72. Demostraciones en vivo de Cisteamina Estabilizada y Shot 1.5.',
+        type: 'congreso' as const,
+    },
+    {
+        title: 'Sesión en Vivo: Demo de Productos',
+        date: '23 de Febrero 2026, 11:00 AM',
+        location: 'Instagram @jdenismx',
+        description: 'La Maestra Gaby resuelve dudas en directo. Demo del combo Cisteamina + Shot 1.5 y apertura de preguntas.',
+        type: 'live' as const,
     },
 ];
 
@@ -172,6 +199,49 @@ export default function Academy() {
                                         >
                                             Inscribirme
                                         </a>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Events */}
+            <section className="section section-kraft">
+                <div className="container-luxury">
+                    <h2 className="font-serif text-3xl text-forest text-center mb-12">Próximos Eventos</h2>
+
+                    <div className="grid md:grid-cols-2 gap-8">
+                        {events.map((event, index) => (
+                            <motion.div
+                                key={index}
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: index * 0.1 }}
+                                className="bg-white border border-kraft/30 overflow-hidden hover:border-gold/50 transition-all p-6"
+                            >
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className={`p-2 ${event.type === 'live' ? 'bg-red-500/10 text-red-500' : 'bg-gold/20 text-gold'}`}>
+                                        {event.type === 'live' ? <Radio className="w-5 h-5" /> : <Calendar className="w-5 h-5" />}
+                                    </div>
+                                    <span className={`text-sm font-medium ${event.type === 'live' ? 'text-red-500' : 'text-gold'}`}>
+                                        {event.type === 'live' ? '🔴 EN VIVO' : '📍 PRESENCIAL'}
+                                    </span>
+                                </div>
+
+                                <h3 className="font-serif text-xl text-forest mb-2">{event.title}</h3>
+                                <p className="text-charcoal/70 text-sm mb-4">{event.description}</p>
+
+                                <div className="space-y-2 pt-4 border-t border-kraft/30">
+                                    <div className="flex items-center gap-2 text-sm text-charcoal/60">
+                                        <Calendar className="w-4 h-4 text-gold" />
+                                        {event.date}
+                                    </div>
+                                    <div className="flex items-center gap-2 text-sm text-charcoal/60">
+                                        <MapPin className="w-4 h-4 text-gold" />
+                                        {event.location}
                                     </div>
                                 </div>
                             </motion.div>

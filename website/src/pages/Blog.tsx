@@ -1,4 +1,4 @@
-import { ArrowRight, BookOpen, Clock, Eye, Leaf, Sparkles } from 'lucide-react';
+import { ArrowRight, BookOpen, Clock, Droplets, Eye, FlaskConical, Leaf, Sparkles, Star, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface BlogArticle {
@@ -13,13 +13,54 @@ interface BlogArticle {
 
 const blogArticles: BlogArticle[] = [
     {
+        id: 'cisteamina-estabilizada',
+        title: 'Cisteamina Estabilizada: La Revolución del Lifting Seguro',
+        excerpt: 'Descubre por qué la cisteamina estabilizada reemplaza al ácido tioglicólico como el activo estrella en lifting de pestañas. Más suave, más efectiva y con resultados superiores.',
+        category: 'Innovación',
+        readTime: '7 min',
+        icon: <FlaskConical className="w-6 h-6" />,
+        featured: true
+    },
+    {
+        id: 'shot-hidratante-1-5',
+        title: 'Shot 1.5 Hidratante: El Secreto del Paso 2',
+        excerpt: 'El nuevo Shot 1.5 Hidratante de J. Denis hidrata y refuerza los puentes de disulfuro durante el lifting. Aprende cuándo y cómo aplicarlo para resultados espectaculares.',
+        category: 'Producto Estrella',
+        readTime: '6 min',
+        icon: <Droplets className="w-6 h-6" />,
+        featured: true
+    },
+    {
+        id: 'historia-laminado-cejas',
+        title: 'Historia del Laminado de Cejas en México',
+        excerpt: 'J. Denis: los creadores del laminado de cejas en México. Una trayectoria de más de 25 años innovando en la industria de la belleza profesional.',
+        category: 'Historia',
+        readTime: '8 min',
+        icon: <Star className="w-6 h-6" />,
+    },
+    {
+        id: 'lifting-coreano-vs-clasico',
+        title: 'Lifting Coreano vs. Lifting Clásico',
+        excerpt: 'Compara las dos técnicas más populares de lifting de pestañas. ¿Cuál es mejor para tu tipo de cliente? Resultados, tiempos y diferencias clave.',
+        category: 'Comparativa',
+        readTime: '9 min',
+        icon: <Zap className="w-6 h-6" />,
+    },
+    {
+        id: 'glue-less-powder',
+        title: 'Glue Less Powder: Adhesivo sin Pegamento',
+        excerpt: 'La tecnología de fijación sin pegamento que está revolucionando la aplicación de pestañas. Más limpio, más cómodo y con mejor retención.',
+        category: 'Innovación',
+        readTime: '5 min',
+        icon: <Sparkles className="w-6 h-6" />,
+    },
+    {
         id: 'semaforo-salud-capilar',
         title: 'Semáforo de Salud Capilar',
         excerpt: 'Aprende a diagnosticar el estado de tus pestañas antes de un lifting. ¿Verde, amarillo o rojo? Identifica si estás lista para el tratamiento.',
         category: 'Guía de Diagnóstico',
         readTime: '8 min',
         icon: <Eye className="w-6 h-6" />,
-        featured: true
     },
     {
         id: 'laminado-vs-microblading',
@@ -28,7 +69,6 @@ const blogArticles: BlogArticle[] = [
         category: 'Comparativa',
         readTime: '10 min',
         icon: <Sparkles className="w-6 h-6" />,
-        featured: true
     },
     {
         id: 'pad-nube-vs-plano',
