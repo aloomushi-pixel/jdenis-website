@@ -444,6 +444,20 @@ function PadContent() {
 function CisteaminaContent() {
     return (
         <div className="space-y-8">
+            {/* Hero Product Image */}
+            <div className="rounded-2xl overflow-hidden border border-slate-700 bg-white">
+                <div className="aspect-video flex items-center justify-center p-8">
+                    <img
+                        src="https://acdn-us.mitiendanube.com/stores/694/809/products/captura-de-pantalla-2022-10-27-a-las-22-07-361-25ed0e1a59714d490e16669266380337-480-0.webp"
+                        alt="Kit Cisteamina Estabilizada J. Denis - Lash & Brow Lifting"
+                        className="max-h-64 object-contain"
+                    />
+                </div>
+                <div className="bg-slate-800 px-6 py-3 text-center">
+                    <p className="text-sm text-gray-400">Kit Lash Lifting Profesional con Cisteamina Estabilizada — J. Denis</p>
+                </div>
+            </div>
+
             <blockquote className="border-l-4 border-teal-500 pl-6 italic text-gray-300 text-xl">
                 "La cisteamina no solo es más segura que el ácido tioglicólico—produce resultados que antes eran imposibles."
             </blockquote>
@@ -541,6 +555,20 @@ function CisteaminaContent() {
 function ShotHidratanteContent() {
     return (
         <div className="space-y-8">
+            {/* Hero Product Image */}
+            <div className="rounded-2xl overflow-hidden border border-slate-700 bg-white">
+                <div className="aspect-video flex items-center justify-center p-8">
+                    <img
+                        src="/products/crema-fijadora-paso2.png"
+                        alt="Shot 1.5 Hidratante Inter-Finish J. Denis"
+                        className="max-h-64 object-contain"
+                    />
+                </div>
+                <div className="bg-slate-800 px-6 py-3 text-center">
+                    <p className="text-sm text-gray-400">Crema Fijadora (Paso 2) — El Shot 1.5 se aplica entre el Paso 1 y este paso</p>
+                </div>
+            </div>
+
             <blockquote className="border-l-4 border-cyan-500 pl-6 italic text-gray-300 text-xl">
                 "Entre el paso 1 y el paso 2, existe un momento crucial. Ahí es donde el Shot 1.5 transforma el resultado."
             </blockquote>
@@ -616,6 +644,34 @@ function ShotHidratanteContent() {
 function HistoriaLaminadoContent() {
     return (
         <div className="space-y-8">
+            {/* Hero Product Images */}
+            <div className="grid md:grid-cols-2 gap-4">
+                <div className="rounded-2xl overflow-hidden border border-slate-700 bg-white">
+                    <div className="aspect-square flex items-center justify-center p-6">
+                        <img
+                            src="https://acdn-us.mitiendanube.com/stores/694/809/products/diseno-021-ca4a861d525c316b2d16669243762302-480-0.webp"
+                            alt="Kit Laminado de Cejas J. Denis"
+                            className="max-h-48 object-contain"
+                        />
+                    </div>
+                    <div className="bg-slate-800 px-4 py-2 text-center">
+                        <p className="text-xs text-gray-400">Laminado de Cejas J. Denis</p>
+                    </div>
+                </div>
+                <div className="rounded-2xl overflow-hidden border border-slate-700 bg-white">
+                    <div className="aspect-square flex items-center justify-center p-6">
+                        <img
+                            src="https://acdn-us.mitiendanube.com/stores/694/809/products/brow-henna-061-fbdb257619cce9e95d16669249148944-480-0.webp"
+                            alt="Kit Brow Henna Completo J. Denis"
+                            className="max-h-48 object-contain"
+                        />
+                    </div>
+                    <div className="bg-slate-800 px-4 py-2 text-center">
+                        <p className="text-xs text-gray-400">Brow Henna Completo — 90 aplicaciones</p>
+                    </div>
+                </div>
+            </div>
+
             <blockquote className="border-l-4 border-amber-500 pl-6 italic text-gray-300 text-xl">
                 "Antes de que el laminado de cejas existiera en México, existía J. Denis."
             </blockquote>
@@ -698,6 +754,20 @@ function HistoriaLaminadoContent() {
 function LiftingCoreanoContent() {
     return (
         <div className="space-y-8">
+            {/* Hero Product Image */}
+            <div className="rounded-2xl overflow-hidden border border-slate-700 bg-white">
+                <div className="aspect-video flex items-center justify-center p-8">
+                    <img
+                        src="https://acdn-us.mitiendanube.com/stores/694/809/products/blue_mesa-de-trabajo-11-9092542207219bc30316691308859785-480-0.webp"
+                        alt="BLUE Lash Lifting J. Denis - Técnica Coreana"
+                        className="max-h-64 object-contain"
+                    />
+                </div>
+                <div className="bg-slate-800 px-6 py-3 text-center">
+                    <p className="text-sm text-gray-400">Kit BLUE Lash Lifting — Compatible con técnica Lifting Coreano</p>
+                </div>
+            </div>
+
             <blockquote className="border-l-4 border-rose-500 pl-6 italic text-gray-300 text-xl">
                 "No es solo un lifting. Es una filosofía diferente de cómo la pestaña debe lucir."
             </blockquote>
@@ -797,6 +867,20 @@ function LiftingCoreanoContent() {
 function GlueLessPowderContent() {
     return (
         <div className="space-y-8">
+            {/* Hero Product Image */}
+            <div className="rounded-2xl overflow-hidden border border-slate-700 bg-white">
+                <div className="aspect-video flex items-center justify-center p-8">
+                    <img
+                        src="/products/adhesivo-pads-lifting.png"
+                        alt="Glue Less Powder - Adhesivo en Polvo J. Denis"
+                        className="max-h-64 object-contain"
+                    />
+                </div>
+                <div className="bg-slate-800 px-6 py-3 text-center">
+                    <p className="text-sm text-gray-400">Adhesivo para Pads Lifting — Sistema Glue Less Powder J. Denis</p>
+                </div>
+            </div>
+
             <blockquote className="border-l-4 border-violet-500 pl-6 italic text-gray-300 text-xl">
                 "Sin pegamento, sin residuos, sin complicaciones. Solo fijación perfecta."
             </blockquote>

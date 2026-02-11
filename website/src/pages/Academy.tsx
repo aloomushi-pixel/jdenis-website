@@ -1,74 +1,88 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Calendar, MapPin, Radio } from 'lucide-react';
+import { Calendar, MapPin, Radio, Monitor } from 'lucide-react';
 
 const courses = [
+    // ── PRESENCIALES (basados en redes sociales) ──
     {
         id: 1,
-        title: 'Lash Lifting Profesional',
+        title: 'Lash Lifting con Cisteamina',
         duration: '2 días',
         price: 4500,
-        description: 'Domina la técnica de levantamiento de pestañas con certificación oficial. Incluye práctica con Cisteamina Estabilizada.',
-        topics: ['Anatomía del ojo', 'Selección de rodillos', 'Tiempos de procesamiento', 'Uso de Cisteamina'],
+        description: 'Domina la técnica de lifting con Cisteamina Estabilizada. El sistema más seguro del mercado, sin ácido tioglicólico. Incluye práctica con modelo real.',
+        topics: ['Cisteamina vs. Tioglicólico', 'Shot 1.5 Hidratante', 'Selección de pads', 'Práctica con modelo'],
         nextDate: '3 de Marzo 2026',
+        badge: 'presencial',
     },
     {
         id: 2,
         title: 'Lifting Coreano (Korean Lash Lift)',
         duration: '1 día',
         price: 3800,
-        description: 'Técnica avanzada de lifting con rizo abierto y natural. Incluye combo Cisteamina + Shot 1.5 Hidratante.',
-        topics: ['Filosofía K-Beauty', 'Selección de molde plano', 'Combo Cisteamina + Shot 1.5', 'Rizo tipo J y L'],
+        description: 'La técnica de 51K reproducciones en nuestro directo. Rizo abierto y natural con Cisteamina + Shot 1.5. Incluye kit de práctica.',
+        topics: ['Filosofía K-Beauty', 'Molde plano vs. nube', 'Combo Cisteamina + Shot 1.5', 'Rizo tipo J y L'],
         nextDate: '5 de Marzo 2026',
+        badge: 'presencial',
     },
     {
         id: 3,
-        title: 'Extensiones de Pestañas Clásicas',
-        duration: '3 días',
-        price: 6500,
-        description: 'Aprende la técnica 1:1 para extensiones naturales y duraderas.',
-        topics: ['Selección de curvaturas', 'Aplicación de adhesivo', 'Diseño de mirada', 'Retiros seguros'],
+        title: 'Laminado de Cejas Profesional',
+        duration: '1 día',
+        price: 3500,
+        description: 'Aprende de los creadores del laminado de cejas en México. Técnica completa de moldeo, fijación y coloración con Brow Henna.',
+        topics: ['Mapeo y diseño de cejas', 'Laminado paso a paso', 'Brow Henna tono a tono', 'Aftercare'],
         nextDate: '10 de Marzo 2026',
-        video: '/videos/Mejora_de_video_con_pestañas_fijas.mp4',
-        videoTitle: 'Tutorial: Extensiones Clásicas Paso a Paso',
+        badge: 'presencial',
+        video: '/videos/Video_con_logo_J_DENIS.mp4',
+        videoTitle: 'Técnica Brow Henna J. Denis',
     },
+
+    // ── EN LÍNEA / EN VIVO (basados en Facebook Lives) ──
     {
         id: 4,
-        title: 'Volumen Ruso Avanzado',
-        duration: '2 días',
-        price: 5500,
-        description: 'Técnica de abanicos 2D a 6D para efectos dramáticos.',
-        topics: ['Creación de abanicos', 'Volumen Mega', 'Corrección de errores', 'Diseño personalizado'],
-        nextDate: '17 de Marzo 2026',
-        video: '/videos/Modelo_Con_Pestañas_Naturales.mp4',
-        videoTitle: 'Tutorial: Pestañas Naturales con Volumen Ruso',
+        title: 'Business Pro 2026 by Gaby Cisneros',
+        duration: '2 horas',
+        price: 0,
+        description: '¡GRATIS! "Evolución de los Colorantes en Cejas" impartido por Gabriela Elizalde, CEO de J. Denis. Acceso vía WhatsApp.',
+        topics: ['Historia de los colorantes', 'Henna vs. tinturas tópicas', 'Tendencias 2026', 'Sesión de preguntas'],
+        nextDate: '23 de Febrero 2026, 6:00 PM',
+        badge: 'online',
     },
     {
         id: 5,
-        title: 'Brow Henna & Laminado',
-        duration: '1 día',
-        price: 3500,
-        description: 'Coloración y moldeado profesional de cejas. Los creadores del laminado de cejas en México.',
-        topics: ['Preparación de henna', 'Mapeo de cejas', 'Laminado paso a paso', 'Aftercare'],
-        nextDate: '24 de Marzo 2026',
-        video: '/videos/Video_con_logo_J_DENIS.mp4',
-        videoTitle: 'Técnica Brow Henna J. Denis',
+        title: 'Masterclass: Lifting Coreano & Cisteamina',
+        duration: '1.5 horas',
+        price: 0,
+        description: '¡GRATIS! Reprise del Live más visto (+51K reproducciones). La Maestra Gaby explica paso a paso el nuevo sistema de lifting coreano con Cisteamina.',
+        topics: ['¿Qué es Cisteamina?', 'Etanolamina explicada', 'Demo en vivo del combo', 'Resolución de dudas'],
+        nextDate: 'Disponible en replay',
+        badge: 'replay',
+    },
+    {
+        id: 6,
+        title: 'Glue Less Powder: Técnica sin Adhesivo',
+        duration: '45 min',
+        price: 0,
+        description: '¡GRATIS! Aprende a utilizar el revolucionario adhesivo en polvo para lifting de pestañas. Ideal para pieles sensibles.',
+        topics: ['Aplicación del polvo', 'Ventajas vs. adhesivo líquido', 'Pieles sensibles', 'Tips de la Maestra Gaby'],
+        nextDate: 'Disponible en replay',
+        badge: 'replay',
     },
 ];
 
 const events = [
     {
-        title: 'Beauty Coat 2026',
+        title: 'A la Belleza Profesional',
         date: '15-16 de Febrero 2026',
-        location: 'Centro de Convenciones, CDMX',
-        description: 'J. Denis estará presente con Stands #64 y #72. Demostraciones en vivo de Cisteamina Estabilizada y Shot 1.5.',
+        location: 'Stands #64 y #72, Centro de Convenciones, CDMX',
+        description: 'J. Denis estará presente con demostraciones en vivo de Cisteamina Estabilizada, Shot 1.5 y el nuevo sistema Glue Less Powder.',
         type: 'congreso' as const,
     },
     {
-        title: 'Sesión en Vivo: Demo de Productos',
-        date: '23 de Febrero 2026, 11:00 AM',
-        location: 'Instagram @jdenismx',
-        description: 'La Maestra Gaby resuelve dudas en directo. Demo del combo Cisteamina + Shot 1.5 y apertura de preguntas.',
+        title: 'Business Pro 2026 — Gaby Cisneros',
+        date: '23 de Febrero 2026, 6:00 PM',
+        location: 'Online vía WhatsApp (acceso gratuito)',
+        description: '"Evolución de los Colorantes en Cejas" por la CEO Gabriela Elizalde. Sigue elevando tu conocimiento profesional desde donde estés.',
         type: 'live' as const,
     },
 ];
@@ -139,6 +153,23 @@ export default function Academy() {
                                 <div className="p-6">
                                     <div className="flex items-start justify-between mb-4">
                                         <div>
+                                            <div className="flex items-center gap-2 mb-1">
+                                                {course.badge === 'online' && (
+                                                    <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded-full flex items-center gap-1">
+                                                        <Monitor className="w-3 h-3" /> ONLINE
+                                                    </span>
+                                                )}
+                                                {course.badge === 'replay' && (
+                                                    <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs font-medium rounded-full flex items-center gap-1">
+                                                        <Radio className="w-3 h-3" /> REPLAY
+                                                    </span>
+                                                )}
+                                                {course.badge === 'presencial' && (
+                                                    <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-medium rounded-full">
+                                                        📍 PRESENCIAL
+                                                    </span>
+                                                )}
+                                            </div>
                                             <h3 className="font-serif text-xl text-forest">
                                                 {course.title}
                                             </h3>
@@ -146,7 +177,7 @@ export default function Academy() {
                                                 Duración: {course.duration}
                                             </p>
                                         </div>
-                                        <span className="px-3 py-1 bg-gold/20 border border-gold/40 text-gold text-sm">
+                                        <span className="px-3 py-1 bg-gold/20 border border-gold/40 text-gold text-sm shrink-0">
                                             {course.nextDate}
                                         </span>
                                     </div>
@@ -186,10 +217,18 @@ export default function Academy() {
 
                                     <div className="flex items-center justify-between pt-4 border-t border-kraft/30">
                                         <div>
-                                            <p className="text-2xl font-serif text-gold font-semibold">
-                                                ${course.price.toLocaleString()}
-                                            </p>
-                                            <p className="text-xs text-charcoal/50">MXN / persona</p>
+                                            {course.price > 0 ? (
+                                                <>
+                                                    <p className="text-2xl font-serif text-gold font-semibold">
+                                                        ${course.price.toLocaleString()}
+                                                    </p>
+                                                    <p className="text-xs text-charcoal/50">MXN / persona</p>
+                                                </>
+                                            ) : (
+                                                <p className="text-2xl font-serif text-emerald-600 font-semibold">
+                                                    GRATIS
+                                                </p>
+                                            )}
                                         </div>
                                         <a
                                             href={`https://wa.me/525527271067?text=Hola! Quiero información sobre el curso: ${course.title}`}
@@ -197,7 +236,7 @@ export default function Academy() {
                                             rel="noopener noreferrer"
                                             className="btn btn-primary"
                                         >
-                                            Inscribirme
+                                            {course.badge === 'presencial' ? 'Inscribirme' : course.badge === 'replay' ? 'Ver Replay' : 'Acceso Gratuito'}
                                         </a>
                                     </div>
                                 </div>
