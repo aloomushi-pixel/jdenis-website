@@ -444,17 +444,19 @@ function PadContent() {
 function CisteaminaContent() {
     return (
         <div className="space-y-8">
-            {/* Hero Product Image */}
-            <div className="rounded-2xl overflow-hidden border border-slate-700 bg-white">
-                <div className="aspect-video flex items-center justify-center p-8">
-                    <img
-                        src="https://acdn-us.mitiendanube.com/stores/694/809/products/captura-de-pantalla-2022-10-27-a-las-22-07-361-25ed0e1a59714d490e16669266380337-480-0.webp"
-                        alt="Kit Cisteamina Estabilizada J. Denis - Lash & Brow Lifting"
-                        className="max-h-64 object-contain"
+            {/* YouTube Video */}
+            <div className="rounded-2xl overflow-hidden border border-slate-700">
+                <div className="aspect-video">
+                    <iframe
+                        src="https://www.youtube.com/embed/6xHqS2KhLSg"
+                        title="LIVE INFORMATIVO | ¿QUÉ ES CISTEAMINA Y ETANOLAMINA? - J. Denis"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        className="w-full h-full"
                     />
                 </div>
                 <div className="bg-slate-800 px-6 py-3 text-center">
-                    <p className="text-sm text-gray-400">Kit Lash Lifting Profesional con Cisteamina Estabilizada — J. Denis</p>
+                    <p className="text-sm text-gray-400">🎥 LIVE INFORMATIVO: ¿Qué es Cisteamina y Etanolamina? — J. Denis México</p>
                 </div>
             </div>
 
@@ -555,17 +557,19 @@ function CisteaminaContent() {
 function ShotHidratanteContent() {
     return (
         <div className="space-y-8">
-            {/* Hero Product Image */}
-            <div className="rounded-2xl overflow-hidden border border-slate-700 bg-white">
-                <div className="aspect-video flex items-center justify-center p-8">
-                    <img
-                        src="/products/crema-fijadora-paso2.png"
-                        alt="Shot 1.5 Hidratante Inter-Finish J. Denis"
-                        className="max-h-64 object-contain"
+            {/* YouTube Video */}
+            <div className="rounded-2xl overflow-hidden border border-slate-700">
+                <div className="aspect-video">
+                    <iframe
+                        src="https://www.youtube.com/embed/ANGTSbaUgXM"
+                        title="EVOLUCIÓN DE PRODUCTOS PARA LIFTING Y TÉCNICAS DE APLICACIÓN - J. Denis"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        className="w-full h-full"
                     />
                 </div>
                 <div className="bg-slate-800 px-6 py-3 text-center">
-                    <p className="text-sm text-gray-400">Crema Fijadora (Paso 2) — El Shot 1.5 se aplica entre el Paso 1 y este paso</p>
+                    <p className="text-sm text-gray-400">🎥 Evolución de Productos para Lifting y Técnicas de Aplicación — J. Denis</p>
                 </div>
             </div>
 
@@ -644,31 +648,19 @@ function ShotHidratanteContent() {
 function HistoriaLaminadoContent() {
     return (
         <div className="space-y-8">
-            {/* Hero Product Images */}
-            <div className="grid md:grid-cols-2 gap-4">
-                <div className="rounded-2xl overflow-hidden border border-slate-700 bg-white">
-                    <div className="aspect-square flex items-center justify-center p-6">
-                        <img
-                            src="https://acdn-us.mitiendanube.com/stores/694/809/products/diseno-021-ca4a861d525c316b2d16669243762302-480-0.webp"
-                            alt="Kit Laminado de Cejas J. Denis"
-                            className="max-h-48 object-contain"
-                        />
-                    </div>
-                    <div className="bg-slate-800 px-4 py-2 text-center">
-                        <p className="text-xs text-gray-400">Laminado de Cejas J. Denis</p>
-                    </div>
+            {/* YouTube Video */}
+            <div className="rounded-2xl overflow-hidden border border-slate-700">
+                <div className="aspect-video">
+                    <iframe
+                        src="https://www.youtube.com/embed/Oe2G3l77nmI"
+                        title="Brow Lifting Laminado de Ceja J.Denis"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        className="w-full h-full"
+                    />
                 </div>
-                <div className="rounded-2xl overflow-hidden border border-slate-700 bg-white">
-                    <div className="aspect-square flex items-center justify-center p-6">
-                        <img
-                            src="https://acdn-us.mitiendanube.com/stores/694/809/products/brow-henna-061-fbdb257619cce9e95d16669249148944-480-0.webp"
-                            alt="Kit Brow Henna Completo J. Denis"
-                            className="max-h-48 object-contain"
-                        />
-                    </div>
-                    <div className="bg-slate-800 px-4 py-2 text-center">
-                        <p className="text-xs text-gray-400">Brow Henna Completo — 90 aplicaciones</p>
-                    </div>
+                <div className="bg-slate-800 px-6 py-3 text-center">
+                    <p className="text-sm text-gray-400">🎥 Brow Lifting — Laminado de Cejas por J. Denis México</p>
                 </div>
             </div>
 
@@ -754,17 +746,19 @@ function HistoriaLaminadoContent() {
 function LiftingCoreanoContent() {
     return (
         <div className="space-y-8">
-            {/* Hero Product Image */}
-            <div className="rounded-2xl overflow-hidden border border-slate-700 bg-white">
-                <div className="aspect-video flex items-center justify-center p-8">
-                    <img
-                        src="https://acdn-us.mitiendanube.com/stores/694/809/products/blue_mesa-de-trabajo-11-9092542207219bc30316691308859785-480-0.webp"
-                        alt="BLUE Lash Lifting J. Denis - Técnica Coreana"
-                        className="max-h-64 object-contain"
+            {/* YouTube Video */}
+            <div className="rounded-2xl overflow-hidden border border-slate-700">
+                <div className="aspect-video">
+                    <iframe
+                        src="https://www.youtube.com/embed/ZSCdSSjicBU"
+                        title="✨ Técnica Coreana versión J.DENIS ✨"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        className="w-full h-full"
                     />
                 </div>
                 <div className="bg-slate-800 px-6 py-3 text-center">
-                    <p className="text-sm text-gray-400">Kit BLUE Lash Lifting — Compatible con técnica Lifting Coreano</p>
+                    <p className="text-sm text-gray-400">🎥 ✨ Técnica Coreana versión J.DENIS ✨ — Lifting Coreano paso a paso</p>
                 </div>
             </div>
 
@@ -867,17 +861,19 @@ function LiftingCoreanoContent() {
 function GlueLessPowderContent() {
     return (
         <div className="space-y-8">
-            {/* Hero Product Image */}
-            <div className="rounded-2xl overflow-hidden border border-slate-700 bg-white">
-                <div className="aspect-video flex items-center justify-center p-8">
-                    <img
-                        src="/products/adhesivo-pads-lifting.png"
-                        alt="Glue Less Powder - Adhesivo en Polvo J. Denis"
-                        className="max-h-64 object-contain"
+            {/* YouTube Video */}
+            <div className="rounded-2xl overflow-hidden border border-slate-700">
+                <div className="aspect-video">
+                    <iframe
+                        src="https://www.youtube.com/embed/WeZHAEXMEOQ"
+                        title="Evolución de los adhesivos para Lash Lifting de J.Denis"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        className="w-full h-full"
                     />
                 </div>
                 <div className="bg-slate-800 px-6 py-3 text-center">
-                    <p className="text-sm text-gray-400">Adhesivo para Pads Lifting — Sistema Glue Less Powder J. Denis</p>
+                    <p className="text-sm text-gray-400">🎥 Evolución de los Adhesivos para Lash Lifting — J. Denis México</p>
                 </div>
             </div>
 

@@ -13,6 +13,7 @@ const courses = [
         topics: ['Cisteamina vs. Tioglicólico', 'Shot 1.5 Hidratante', 'Selección de pads', 'Práctica con modelo'],
         nextDate: '3 de Marzo 2026',
         badge: 'presencial',
+        link: 'https://wa.me/525565116087?text=Hola! Quiero inscribirme al curso: Lash Lifting con Cisteamina',
     },
     {
         id: 2,
@@ -23,6 +24,7 @@ const courses = [
         topics: ['Filosofía K-Beauty', 'Molde plano vs. nube', 'Combo Cisteamina + Shot 1.5', 'Rizo tipo J y L'],
         nextDate: '5 de Marzo 2026',
         badge: 'presencial',
+        link: 'https://wa.me/525565116087?text=Hola! Quiero inscribirme al curso: Lifting Coreano',
     },
     {
         id: 3,
@@ -33,6 +35,7 @@ const courses = [
         topics: ['Mapeo y diseño de cejas', 'Laminado paso a paso', 'Brow Henna tono a tono', 'Aftercare'],
         nextDate: '10 de Marzo 2026',
         badge: 'presencial',
+        link: 'https://wa.me/525565116087?text=Hola! Quiero inscribirme al curso: Laminado de Cejas Profesional',
         video: '/videos/Video_con_logo_J_DENIS.mp4',
         videoTitle: 'Técnica Brow Henna J. Denis',
     },
@@ -47,6 +50,7 @@ const courses = [
         topics: ['Historia de los colorantes', 'Henna vs. tinturas tópicas', 'Tendencias 2026', 'Sesión de preguntas'],
         nextDate: '23 de Febrero 2026, 6:00 PM',
         badge: 'online',
+        link: 'https://www.youtube.com/watch?v=nC4FVE2RZmo',
     },
     {
         id: 5,
@@ -57,6 +61,7 @@ const courses = [
         topics: ['¿Qué es Cisteamina?', 'Etanolamina explicada', 'Demo en vivo del combo', 'Resolución de dudas'],
         nextDate: 'Disponible en replay',
         badge: 'replay',
+        link: 'https://www.youtube.com/watch?v=jeUk-RibCec',
     },
     {
         id: 6,
@@ -67,6 +72,7 @@ const courses = [
         topics: ['Aplicación del polvo', 'Ventajas vs. adhesivo líquido', 'Pieles sensibles', 'Tips de la Maestra Gaby'],
         nextDate: 'Disponible en replay',
         badge: 'replay',
+        link: 'https://www.youtube.com/watch?v=WeZHAEXMEOQ',
     },
 ];
 
@@ -231,7 +237,7 @@ export default function Academy() {
                                             )}
                                         </div>
                                         <a
-                                            href={`https://wa.me/525527271067?text=Hola! Quiero información sobre el curso: ${course.title}`}
+                                            href={course.link}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="btn btn-primary"
