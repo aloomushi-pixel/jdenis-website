@@ -50,7 +50,7 @@ const courses = [
         topics: ['Historia de los colorantes', 'Henna vs. tinturas tópicas', 'Tendencias 2026', 'Sesión de preguntas'],
         nextDate: '23 de Febrero 2026, 6:00 PM',
         badge: 'online',
-        link: 'https://www.youtube.com/watch?v=nC4FVE2RZmo',
+        link: 'https://chat.whatsapp.com/DEZ2b9q50qpDLM98AHcN8o?mode=gi_t',
     },
     {
         id: 5,
