@@ -65,7 +65,7 @@ export default function About() {
                         >
                             <div className="aspect-[4/3] overflow-hidden">
                                 <img
-                                    src="/gaby-elizalde-fundadora.jpg"
+                                    src="/gaby-elizalde-instructora.jpg"
                                     alt="Maestra Gabriela Elizalde, Fundadora de J. Denis"
                                     className="w-full h-full object-cover"
                                 />
