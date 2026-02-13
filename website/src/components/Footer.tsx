@@ -40,11 +40,11 @@ export default function Footer() {
                         <h4 className="text-xs tracking-[0.2em] uppercase text-gold mb-6">Tienda</h4>
                         <ul className="space-y-3">
                             {[
-                                { to: '/tienda?cat=lifting', label: 'Lash Lifting & Rizado' },
+                                { to: '/tienda?cat=lash-lifting', label: 'Lash Lifting & Rizado' },
                                 { to: '/tienda?cat=cejas', label: 'Cejas & Henna' },
                                 { to: '/tienda?cat=extensiones', label: 'Extensiones' },
                                 { to: '/tienda?cat=herramientas', label: 'Herramientas' },
-                                { to: '/tienda?cat=cuidado', label: 'Cuidado e Higiene' },
+                                { to: '/tienda?cat=higiene', label: 'Cuidado e Higiene' },
                             ].map((link, i) => (
                                 <li key={i}>
                                     <Link to={link.to} className="text-sm text-cream/50 hover:text-gold transition-colors">{link.label}</Link>

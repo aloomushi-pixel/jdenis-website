@@ -1,11 +1,13 @@
 import { motion } from 'framer-motion';
 import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import type { Product as CartProduct } from '../store/cartStore';
 import { products as localProducts, categories as localCategories } from '../data/products';
 
 export default function Shop() {
-    const [activeCategory, setActiveCategory] = useState('all');
+    const [searchParams] = useSearchParams();
+    const [activeCategory, setActiveCategory] = useState(searchParams.get('cat') || 'all');
     const [sortBy, setSortBy] = useState('name');
     const [searchQuery, setSearchQuery] = useState('');
     const [products, setProducts] = useState<CartProduct[]>([]);
@@ -16,6 +18,12 @@ export default function Shop() {
         setProducts(localProducts);
         setLoading(false);
     }, []);
+
+    // Sync category filter with URL ?cat= param
+    useEffect(() => {
+        const cat = searchParams.get('cat');
+        if (cat) setActiveCategory(cat);
+    }, [searchParams]);
 
     const filteredProducts = useMemo(() => {
         let result = products;
