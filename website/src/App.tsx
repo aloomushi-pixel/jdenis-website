@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
 import CartDrawer from './components/CartDrawer';
 import Footer from './components/Footer';
 import Header from './components/Header';
@@ -29,6 +29,14 @@ import RegistroDistribuidor from './pages/RegistroDistribuidor';
 import Shop from './pages/Shop';
 import { useAuthStore } from './store/authStore';
 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
+
 function App() {
   const checkSession = useAuthStore((s) => s.checkSession);
 
@@ -38,6 +46,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <div className="flex flex-col min-h-screen">
         <Header />
         <main className="flex-1">
