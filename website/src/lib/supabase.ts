@@ -487,3 +487,126 @@ export async function clearCart(cartId: string) {
     if (error) throw error;
     return true;
 }
+
+// =============================================
+// WEBSITE ORDERS FUNCTIONS
+// =============================================
+
+export interface WebsiteOrderItem {
+    product_id: string;
+    name: string;
+    quantity: number;
+    price: number;
+}
+
+export async function createWebsiteOrder(userId: string, userEmail: string, items: WebsiteOrderItem[], total: number) {
+    const { data, error } = await supabase
+        .from('website_orders')
+        .insert({
+            user_id: userId,
+            user_email: userEmail,
+            items: JSON.stringify(items),
+            total,
+            status: 'completed',
+        })
+        .select()
+        .single();
+
+    if (error) throw error;
+    return data;
+}
+
+export async function hasUserPurchasedProduct(userId: string, productId: string): Promise<boolean> {
+    const { data, error } = await supabase
+        .from('website_orders')
+        .select('id, items')
+        .eq('user_id', userId);
+
+    if (error || !data) return false;
+
+    return data.some((order: { items: string | WebsiteOrderItem[] }) => {
+        const items: WebsiteOrderItem[] = typeof order.items === 'string'
+            ? JSON.parse(order.items)
+            : order.items;
+        return items.some(item => item.product_id === productId);
+    });
+}
+
+// =============================================
+// PRODUCT REVIEWS FUNCTIONS
+// =============================================
+
+export interface ProductReview {
+    id: string;
+    product_id: string;
+    user_id: string;
+    user_name: string;
+    rating: number;
+    comment: string;
+    status: 'pending' | 'approved' | 'rejected';
+    created_at: string;
+    updated_at: string;
+}
+
+export async function getApprovedReviews(productId: string): Promise<ProductReview[]> {
+    const { data, error } = await supabase
+        .from('product_reviews')
+        .select('*')
+        .eq('product_id', productId)
+        .eq('status', 'approved')
+        .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return (data || []) as ProductReview[];
+}
+
+export async function submitReview(
+    productId: string,
+    userId: string,
+    userName: string,
+    rating: number,
+    comment: string
+): Promise<ProductReview> {
+    const { data, error } = await supabase
+        .from('product_reviews')
+        .insert({
+            product_id: productId,
+            user_id: userId,
+            user_name: userName,
+            rating,
+            comment,
+            status: 'pending',
+        })
+        .select()
+        .single();
+
+    if (error) throw error;
+    return data as ProductReview;
+}
+
+export async function getAllReviews(statusFilter?: string): Promise<ProductReview[]> {
+    let query = supabase
+        .from('product_reviews')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (statusFilter && statusFilter !== 'all') {
+        query = query.eq('status', statusFilter);
+    }
+
+    const { data, error } = await query;
+    if (error) throw error;
+    return (data || []) as ProductReview[];
+}
+
+export async function moderateReview(reviewId: string, status: 'approved' | 'rejected') {
+    const { data, error } = await supabase
+        .from('product_reviews')
+        .update({ status, updated_at: new Date().toISOString() })
+        .eq('id', reviewId)
+        .select()
+        .single();
+
+    if (error) throw error;
+    return data;
+}

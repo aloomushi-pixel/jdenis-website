@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useCartStore } from '../store/cartStore';
 import { useAuthStore } from '../store/authStore';
+import { createWebsiteOrder } from '../lib/supabase';
 
 export default function Checkout() {
     const navigate = useNavigate();
@@ -34,10 +35,21 @@ export default function Checkout() {
         e.preventDefault();
         setLoading(true);
 
-        // Simular procesamiento
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        try {
+            // Save order to Supabase for purchase verification
+            if (isAuthenticated && user) {
+                const orderItems = items.map(item => ({
+                    product_id: item.id,
+                    name: item.name,
+                    quantity: item.quantity,
+                    price: item.price,
+                }));
+                await createWebsiteOrder(user.id, user.email, orderItems, grandTotal);
+            }
+        } catch (err) {
+            console.error('Error saving order:', err);
+        }
 
-        // Aquí iría la integración real con backend
         clearCart();
         navigate('/mi-cuenta?pedido=exito');
     };

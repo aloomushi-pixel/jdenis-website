@@ -24,6 +24,7 @@ const menuItems: MenuItem[] = [
     { path: '/admin/event-log', label: 'Log de Eventos', icon: '📝', roles: ['ADMIN', 'EJECUTIVO'] },
     { path: '/admin/products', label: 'Productos B2B', icon: '🏷️', roles: ['ADMIN', 'EJECUTIVO'] },
     { path: '/admin/orders', label: 'Pedidos B2B', icon: '🧾', roles: ['ADMIN', 'EJECUTIVO'] },
+    { path: '/admin/reviews', label: 'Reseñas', icon: '⭐', roles: ['ADMIN'] },
 ];
 
 const ERP_ROLES: UserRole[] = ['ADMIN', 'EJECUTIVO', 'FABRICA', 'ALMACEN_MP', 'ALMACEN_PF', 'TRANSPORTISTA'];

@@ -17,6 +17,7 @@ import ResourceManager from './pages/admin/ResourceManager';
 import SalesOrders from './pages/admin/SalesOrders';
 import TransportAssignments from './pages/admin/TransportAssignments';
 import UserManager from './pages/admin/UserManager';
+import ReviewModeration from './pages/admin/ReviewModeration';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
 import Checkout from './pages/Checkout';
@@ -66,6 +67,7 @@ function App() {
               <Route path="transport" element={<TransportAssignments />} />
               <Route path="packaging" element={<PackagingRecords />} />
               <Route path="event-log" element={<EventLog />} />
+              <Route path="reviews" element={<ReviewModeration />} />
             </Route>
           </Routes>
         </main>

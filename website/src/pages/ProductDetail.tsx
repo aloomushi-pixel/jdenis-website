@@ -2,10 +2,11 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
+import ReviewSection from '../components/ReviewSection';
 import { getProductById, getRelatedProducts } from '../data/products';
 import { useCartStore } from '../store/cartStore';
 
-type DetailTab = 'benefits' | 'includes' | 'specs';
+type DetailTab = 'benefits' | 'includes' | 'specs' | 'reviews';
 
 export default function ProductDetail() {
     const { id } = useParams<{ id: string }>();
@@ -163,7 +164,7 @@ export default function ProductDetail() {
                 </div>
 
                 {/* Detail Tabs Section */}
-                {hasDetailContent && (
+                {(hasDetailContent || true) && (
                     <motion.section
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -197,6 +198,12 @@ export default function ProductDetail() {
                                     onClick={() => setActiveTab('specs')}
                                 />
                             )}
+                            <TabButton
+                                label="Reseñas"
+                                icon="⭐"
+                                isActive={activeTab === 'reviews'}
+                                onClick={() => setActiveTab('reviews')}
+                            />
                         </div>
 
                         {/* Tab Content */}
@@ -292,6 +299,11 @@ export default function ProductDetail() {
                                         </div>
                                     )}
                                 </motion.div>
+                            )}
+
+                            {/* Reviews */}
+                            {activeTab === 'reviews' && (
+                                <ReviewSection productId={product.id} productName={product.name} />
                             )}
                         </div>
                     </motion.section>
