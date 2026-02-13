@@ -34,13 +34,18 @@ export default function Shop() {
             );
         }
 
-        if (sortBy === 'price-low') {
-            result = [...result].sort((a, b) => a.price - b.price);
-        } else if (sortBy === 'price-high') {
-            result = [...result].sort((a, b) => b.price - a.price);
-        } else {
-            result = [...result].sort((a, b) => a.name.localeCompare(b.name));
-        }
+        // Sort: featured products always first, then by selected criteria
+        result = [...result].sort((a, b) => {
+            // Featured products come first
+            const aFeat = a.isFeatured ? 1 : 0;
+            const bFeat = b.isFeatured ? 1 : 0;
+            if (aFeat !== bFeat) return bFeat - aFeat;
+
+            // Then sort by selected criteria
+            if (sortBy === 'price-low') return a.price - b.price;
+            if (sortBy === 'price-high') return b.price - a.price;
+            return a.name.localeCompare(b.name);
+        });
 
         return result;
     }, [products, activeCategory, sortBy, searchQuery]);
