@@ -28,7 +28,7 @@ export default function MyAccount() {
 
     if (!isAuthenticated) {
         return (
-            <div className="min-h-screen bg-cream flex items-center justify-center">
+            <div className="min-h-screen bg-cream pt-32 flex items-center justify-center">
                 <div className="text-center">
                     <h2 className="section-title mb-4">Acceso Requerido</h2>
                     <Link to="/login" className="btn btn-primary">
@@ -46,7 +46,7 @@ export default function MyAccount() {
     };
 
     return (
-        <div className="min-h-screen bg-cream py-12">
+        <div className="min-h-screen bg-cream pt-32 pb-12">
             <div className="container-luxury">
                 {/* Success Message */}
                 {showSuccess && (
@@ -85,8 +85,8 @@ export default function MyAccount() {
                                         key={item.id}
                                         onClick={() => setActiveTab(item.id)}
                                         className={`w-full text-left px-4 py-3 rounded-lg transition-all flex items-center gap-3 ${activeTab === item.id
-                                                ? 'bg-gold text-white'
-                                                : 'hover:bg-blush text-charcoal'
+                                            ? 'bg-gold text-white'
+                                            : 'hover:bg-blush text-charcoal'
                                             }`}
                                     >
                                         <span>{item.icon}</span>
