@@ -1,38 +1,41 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Calendar, MapPin, Radio, Monitor } from 'lucide-react';
+import { Calendar, MapPin, Radio, Monitor, Shield } from 'lucide-react';
 
 const courses = [
     // ── PRESENCIALES (basados en redes sociales) ──
     {
         id: 1,
-        title: 'Lash Lifting con Cisteamina',
+        title: 'Lash Lifting con Cisteamina — Curso Certificado DC-3',
         duration: '2 días',
         price: 4500,
-        description: 'Domina la técnica de lifting con Cisteamina Estabilizada. El sistema más seguro del mercado, sin ácido tioglicólico. Incluye práctica con modelo real.',
-        topics: ['Cisteamina vs. Tioglicólico', 'Shot 1.5 Hidratante', 'Selección de pads', 'Práctica con modelo'],
+        description: 'Curso certificado ante la STPS con constancia DC-3 incluida. Domina la técnica de lifting con Cisteamina Estabilizada: el sistema más seguro del mercado. Capacitación oficial válida para cumplimiento de normas laborales.',
+        topics: ['Cisteamina vs. Tioglicólico', 'Shot 1.5 Hidratante', 'Selección de pads', 'Práctica con modelo', 'Constancia DC-3 / STPS'],
+        dc3: true,
         nextDate: '3 de Marzo 2026',
         badge: 'presencial',
         link: 'https://wa.me/525565116087?text=Hola! Quiero inscribirme al curso: Lash Lifting con Cisteamina',
     },
     {
         id: 2,
-        title: 'Lifting Coreano (Korean Lash Lift)',
+        title: 'Lifting Coreano (Korean Lash Lift) — Certificación STPS',
         duration: '1 día',
         price: 3800,
-        description: 'La técnica de 51K reproducciones en nuestro directo. Rizo abierto y natural con Cisteamina + Shot 1.5. Incluye kit de práctica.',
-        topics: ['Filosofía K-Beauty', 'Molde plano vs. nube', 'Combo Cisteamina + Shot 1.5', 'Rizo tipo J y L'],
+        description: 'Curso con validez oficial DC-3 ante la STPS. Aprende la técnica coreana de 51K reproducciones: rizo abierto y natural con Cisteamina + Shot 1.5. Incluye constancia DC-3 y kit de práctica.',
+        topics: ['Filosofía K-Beauty', 'Molde plano vs. nube', 'Combo Cisteamina + Shot 1.5', 'Rizo tipo J y L', 'Constancia DC-3 / STPS'],
+        dc3: true,
         nextDate: '5 de Marzo 2026',
         badge: 'presencial',
         link: 'https://wa.me/525565116087?text=Hola! Quiero inscribirme al curso: Lifting Coreano',
     },
     {
         id: 3,
-        title: 'Laminado de Cejas Profesional',
+        title: 'Laminado de Cejas Profesional — Constancia DC-3',
         duration: '1 día',
         price: 3500,
-        description: 'Aprende de los creadores del laminado de cejas en México. Técnica completa de moldeo, fijación y coloración con Brow Henna.',
-        topics: ['Mapeo y diseño de cejas', 'Laminado paso a paso', 'Brow Henna tono a tono', 'Aftercare'],
+        description: 'Capacitación certificada STPS con constancia DC-3. Aprende de los creadores del laminado de cejas en México. Técnica completa de moldeo, fijación y coloración con Brow Henna. Cumple normativa laboral.',
+        topics: ['Mapeo y diseño de cejas', 'Laminado paso a paso', 'Brow Henna tono a tono', 'Aftercare', 'Constancia DC-3 / STPS'],
+        dc3: true,
         nextDate: '10 de Marzo 2026',
         badge: 'presencial',
         link: 'https://wa.me/525565116087?text=Hola! Quiero inscribirme al curso: Laminado de Cejas Profesional',
@@ -107,19 +110,24 @@ export default function Academy() {
                         animate={{ opacity: 1 }}
                         className="inline-block px-4 py-2 bg-gold/20 border border-gold/40 text-gold text-sm font-medium mb-4"
                     >
-                        ACADEMIA J. DENIS
+                        ACADEMIA J. DENIS · CERTIFICACIÓN DC-3 / STPS
                     </motion.span>
                     <motion.h1
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         className="font-serif text-4xl lg:text-5xl text-cream mb-4"
                     >
-                        Formación Profesional
+                        Formación Profesional con Validez DC-3
                     </motion.h1>
                     <p className="text-cream/70 max-w-2xl mx-auto">
-                        Aprende de la Maestra Gabriela Elizalde y su equipo de especialistas
-                        con más de 50 años de experiencia combinada.
+                        Cursos certificados ante la STPS con constancia DC-3 incluida.
+                        Aprende de la Maestra Gabriela Elizalde, agente capacitador externo
+                        con más de 50 años de experiencia y 5,000+ profesionales formados.
                     </p>
+                    <div className="flex items-center justify-center gap-2 mt-4 text-emerald-400 text-sm font-medium">
+                        <Shield className="w-4 h-4" />
+                        <span>Constancias DC-3 con validez oficial ante la Secretaría del Trabajo y Previsión Social</span>
+                    </div>
                 </div>
             </section>
 
@@ -128,10 +136,10 @@ export default function Academy() {
                 <div className="container-luxury">
                     <div className="grid md:grid-cols-4 gap-6 text-center">
                         {[
-                            'Certificación Oficial',
-                            'Grupos Reducidos',
-                            'Kit de Productos Incluido',
-                            'Sede Lindavista, CDMX',
+                            '📜 Constancia DC-3 / STPS',
+                            '👥 Grupos Reducidos',
+                            '🧴 Kit de Productos Incluido',
+                            '📍 Sede Lindavista, CDMX',
                         ].map((item, i) => (
                             <div key={i} className="flex items-center justify-center">
                                 <span className="font-medium text-forest">{item}</span>
@@ -144,7 +152,8 @@ export default function Academy() {
             {/* Courses */}
             <section className="section section-cream">
                 <div className="container-luxury">
-                    <h2 className="font-serif text-3xl text-forest text-center mb-12">Próximos Cursos</h2>
+                    <h2 className="font-serif text-3xl text-forest text-center mb-4">Cursos con Certificación DC-3</h2>
+                    <p className="text-charcoal/60 text-center max-w-2xl mx-auto mb-12">Todos nuestros cursos presenciales incluyen constancia DC-3 con validez ante la STPS, cumpliendo la normativa de capacitación laboral en México.</p>
 
                     <div className="grid md:grid-cols-2 gap-8">
                         {courses.map((course, index) => (
@@ -171,9 +180,16 @@ export default function Academy() {
                                                     </span>
                                                 )}
                                                 {course.badge === 'presencial' && (
-                                                    <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-medium rounded-full">
-                                                        📍 PRESENCIAL
-                                                    </span>
+                                                    <>
+                                                        <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-medium rounded-full">
+                                                            📍 PRESENCIAL
+                                                        </span>
+                                                        {(course as any).dc3 && (
+                                                            <span className="px-2 py-0.5 bg-amber-50 text-amber-700 text-xs font-medium rounded-full border border-amber-200">
+                                                                📜 DC-3 / STPS
+                                                            </span>
+                                                        )}
+                                                    </>
                                                 )}
                                             </div>
                                             <h3 className="font-serif text-xl text-forest">
@@ -322,6 +338,8 @@ export default function Academy() {
                             <ul className="space-y-3 mb-8">
                                 {[
                                     'Fundadora de J. Denis (1998)',
+                                    'Agente capacitador certificado ante STPS',
+                                    'Más de 5,000 constancias DC-3 emitidas',
                                     'Creadora de técnicas patentadas',
                                     'Formadora de formadores',
                                     'Referente en el gremio nacional',
@@ -348,10 +366,11 @@ export default function Academy() {
             {/* CTA */}
             <section className="section section-cream">
                 <div className="container-luxury text-center">
-                    <h2 className="font-serif text-3xl text-forest mb-4">¿Dudas sobre nuestros cursos?</h2>
+                    <h2 className="font-serif text-3xl text-forest mb-4">¿Necesitas tu Constancia DC-3?</h2>
                     <p className="text-charcoal/60 max-w-xl mx-auto mb-8">
-                        Contáctanos por WhatsApp para recibir asesoría personalizada sobre
-                        el programa ideal para tu nivel.
+                        Contáctanos por WhatsApp para recibir asesoría sobre nuestros cursos
+                        certificados ante la STPS. Obtén tu constancia DC-3 y cumple con
+                        la normativa de capacitación laboral en estética profesional.
                     </p>
                     <div className="flex flex-wrap justify-center gap-4">
                         <a

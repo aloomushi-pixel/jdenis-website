@@ -64,6 +64,27 @@ const blogContent: Record<string, {
         readTime: '5 min',
         gradient: 'from-blue-500 to-indigo-600',
         content: <PadContent />
+    },
+    'que-es-constancia-dc3-stps': {
+        title: '¿Qué es la Constancia DC-3 y por qué la necesitas como profesional de belleza?',
+        category: 'Certificación STPS',
+        readTime: '10 min',
+        gradient: 'from-emerald-500 to-teal-600',
+        content: <DC3STPSContent />
+    },
+    'como-obtener-dc3-lash-lifting': {
+        title: 'Cómo obtener tu DC-3 en Lash Lifting y Laminado de Cejas',
+        category: 'Guía DC-3',
+        readTime: '8 min',
+        gradient: 'from-amber-500 to-yellow-600',
+        content: <ComoObtenerDC3Content />
+    },
+    'capacitacion-stps-estetica-salon': {
+        title: 'Capacitación STPS en Estética: Normas y Beneficios para tu Salón',
+        category: 'Normativa STPS',
+        readTime: '12 min',
+        gradient: 'from-blue-600 to-indigo-700',
+        content: <CapacitacionSTPSContent />
     }
 };
 
@@ -954,6 +975,360 @@ function GlueLessPowderContent() {
                 <p className="text-xl font-bold text-white">
                     Menos complicaciones, más resultados. Así es J. Denis. ✨
                 </p>
+            </div>
+        </div>
+    );
+}
+
+// === DC-3 / STPS ARTICLE CONTENT COMPONENTS ===
+
+function DC3STPSContent() {
+    return (
+        <div className="space-y-8">
+            <section>
+                <h2 className="text-2xl font-bold text-white mb-4">¿Qué es la Constancia DC-3?</h2>
+                <p className="text-gray-300 leading-relaxed mb-4">
+                    La <strong className="text-white">Constancia de Competencias o Habilidades Laborales DC-3</strong> es un documento oficial emitido en México que certifica que un trabajador ha recibido capacitación en una habilidad específica. Es regulada por la <strong className="text-white">Secretaría del Trabajo y Previsión Social (STPS)</strong> y forma parte del marco legal de capacitación laboral establecido en la Ley Federal del Trabajo.
+                </p>
+                <p className="text-gray-300 leading-relaxed">
+                    Para las profesionales de la belleza, la constancia DC-3 certifica tus competencias en técnicas como <strong className="text-white">lash lifting, laminado de cejas, extensiones de pestañas</strong> y otras especialidades, dándote un respaldo oficial ante empleadores, clientes y autoridades.
+                </p>
+            </section>
+
+            <section className="p-6 rounded-2xl bg-emerald-500/10 border border-emerald-500/30">
+                <h3 className="text-xl font-bold text-emerald-400 mb-4">📜 ¿Qué significa DC-3?</h3>
+                <p className="text-gray-300 mb-3">
+                    DC-3 es la clave del formato oficial de la STPS. Las siglas significan:
+                </p>
+                <ul className="space-y-2">
+                    <li className="flex items-start gap-3 text-gray-300">
+                        <span className="text-emerald-400 font-bold">DC</span>
+                        <span>= <strong className="text-white">Documentos de Capacitación</strong></span>
+                    </li>
+                    <li className="flex items-start gap-3 text-gray-300">
+                        <span className="text-emerald-400 font-bold">3</span>
+                        <span>= <strong className="text-white">Número de formato</strong> (Constancia de Competencias)</span>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h2 className="text-2xl font-bold text-white mb-4">¿Por qué es importante para profesionales de belleza?</h2>
+                <div className="grid md:grid-cols-2 gap-4">
+                    {[
+                        { title: 'Validez Legal', desc: 'Cumple con los artículos 153-A al 153-X de la Ley Federal del Trabajo sobre capacitación laboral.' },
+                        { title: 'Credibilidad Profesional', desc: 'Demuestra ante clientes y empleadores que estás certificada en técnicas específicas.' },
+                        { title: 'Requisito Laboral', desc: 'Muchos salones y spas requieren constancias DC-3 para contratar profesionales.' },
+                        { title: 'Protección para tu Negocio', desc: 'Si tienes empleadas, la DC-3 cumple con la obligación patronal de capacitación.' },
+                    ].map((item, i) => (
+                        <div key={i} className="p-4 rounded-xl bg-white/5 border border-white/10">
+                            <h4 className="font-bold text-white mb-2">{item.title}</h4>
+                            <p className="text-gray-400 text-sm">{item.desc}</p>
+                        </div>
+                    ))}
+                </div>
+            </section>
+
+            <section>
+                <h2 className="text-2xl font-bold text-white mb-4">¿Quién puede emitir una Constancia DC-3?</h2>
+                <p className="text-gray-300 leading-relaxed mb-4">
+                    Solo los <strong className="text-white">Agentes Capacitadores Externos</strong> registrados ante la STPS pueden emitir constancias DC-3 válidas. Estos agentes son personas físicas o morales que han acreditado sus programas de capacitación ante la Secretaría.
+                </p>
+                <div className="p-6 rounded-2xl bg-amber-500/10 border border-amber-500/30">
+                    <h3 className="text-xl font-bold text-amber-400 mb-3">⭐ J. Denis: Agente Capacitador Certificado</h3>
+                    <p className="text-gray-300">
+                        La <strong className="text-white">Maestra Gabriela Elizalde</strong>, fundadora de J. Denis, está registrada como agente capacitador externo ante la STPS. Con más de 50 años de experiencia y más de 5,000 profesionales formados, nuestros cursos presenciales incluyen la constancia DC-3 con validez oficial.
+                    </p>
+                </div>
+            </section>
+
+            <section>
+                <h2 className="text-2xl font-bold text-white mb-4">¿Qué cursos de J. Denis incluyen DC-3?</h2>
+                <div className="space-y-3">
+                    {[
+                        { curso: 'Lash Lifting con Cisteamina', duracion: '2 días', dc3: true },
+                        { curso: 'Lifting Coreano (Korean Lash Lift)', duracion: '1 día', dc3: true },
+                        { curso: 'Laminado de Cejas Profesional', duracion: '1 día', dc3: true },
+                    ].map((item, i) => (
+                        <div key={i} className="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/10">
+                            <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0" />
+                            <div>
+                                <p className="text-white font-medium">{item.curso}</p>
+                                <p className="text-gray-400 text-sm">Duración: {item.duracion} • Constancia DC-3 incluida</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </section>
+
+            <section>
+                <h2 className="text-2xl font-bold text-white mb-4">Preguntas Frecuentes sobre la DC-3</h2>
+                <div className="space-y-4">
+                    {[
+                        { q: '¿La constancia DC-3 tiene vigencia?', a: 'No tiene fecha de vencimiento. Sin embargo, se recomienda actualizarse periódicamente para mantenerse al día con nuevas técnicas y tecnologías.' },
+                        { q: '¿Necesito la DC-3 si soy independiente?', a: 'Aunque no es obligatoria legalmente para independientes, la DC-3 aumenta tu credibilidad profesional y puede ser requisito para trabajar en ciertos establecimientos.' },
+                        { q: '¿Es lo mismo que un diploma?', a: 'No. Un diploma es un reconocimiento de la institución educativa. La DC-3 es un documento oficial ante la STPS con validez legal en todo México.' },
+                        { q: '¿Puedo tramitarla en línea?', a: 'La capacitación se imparte presencialmente. La constancia es emitida por el agente capacitador registrado (como J. Denis) y tiene validez ante la STPS.' },
+                    ].map((item, i) => (
+                        <div key={i} className="p-4 rounded-xl bg-white/5 border border-white/10">
+                            <p className="text-white font-bold mb-2">{item.q}</p>
+                            <p className="text-gray-400 text-sm">{item.a}</p>
+                        </div>
+                    ))}
+                </div>
+            </section>
+
+            <div className="p-6 rounded-xl bg-gradient-to-r from-emerald-900/50 to-teal-900/50 border border-emerald-500/30 text-center">
+                <p className="text-xl font-bold text-white mb-2">
+                    📜 Obtén tu Constancia DC-3 con J. Denis
+                </p>
+                <p className="text-gray-300 text-sm mb-4">Cursos presenciales con validez oficial ante la STPS en CDMX</p>
+                <Link to="/academia" className="inline-block px-6 py-3 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 transition-colors">
+                    Ver Cursos Certificados
+                </Link>
+            </div>
+        </div>
+    );
+}
+
+function ComoObtenerDC3Content() {
+    return (
+        <div className="space-y-8">
+            <section>
+                <h2 className="text-2xl font-bold text-white mb-4">Tu camino hacia la certificación DC-3 en estética</h2>
+                <p className="text-gray-300 leading-relaxed mb-4">
+                    Si te dedicas al <strong className="text-white">lash lifting, laminado de cejas o extensiones de pestañas</strong>, obtener tu constancia DC-3 ante la STPS es una de las mejores inversiones para tu carrera. Aquí te explicamos paso a paso cómo conseguirla con J. Denis.
+                </p>
+            </section>
+
+            <section>
+                <h2 className="text-2xl font-bold text-white mb-4">Paso 1: Elige tu curso certificado</h2>
+                <p className="text-gray-300 leading-relaxed mb-4">
+                    J. Denis ofrece tres cursos presenciales con constancia DC-3 incluida:
+                </p>
+                <div className="space-y-3">
+                    {[
+                        { nombre: 'Lash Lifting con Cisteamina', precio: '$4,500 MXN', dias: '2 días', ideal: 'Profesionales que quieren dominar el lifting con el activo más seguro del mercado' },
+                        { nombre: 'Lifting Coreano', precio: '$3,800 MXN', dias: '1 día', ideal: 'Quienes buscan la técnica de rizo abierto y natural estilo K-Beauty' },
+                        { nombre: 'Laminado de Cejas', precio: '$3,500 MXN', dias: '1 día', ideal: 'Especialistas en diseño de cejas que quieren certificar su técnica' },
+                    ].map((curso, i) => (
+                        <div key={i} className="p-4 rounded-xl bg-white/5 border border-white/10">
+                            <div className="flex items-start justify-between mb-2">
+                                <h4 className="text-white font-bold">{curso.nombre}</h4>
+                                <span className="text-amber-400 font-bold">{curso.precio}</span>
+                            </div>
+                            <p className="text-gray-400 text-sm">Duración: {curso.dias} • {curso.ideal}</p>
+                        </div>
+                    ))}
+                </div>
+            </section>
+
+            <section>
+                <h2 className="text-2xl font-bold text-white mb-4">Paso 2: Inscríbete y asiste</h2>
+                <div className="space-y-4">
+                    {[
+                        { paso: 'Contacta por WhatsApp', detalle: 'Escríbenos al 55 6511 6087 para reservar tu lugar. Los grupos son reducidos para garantizar atención personalizada.' },
+                        { paso: 'Asiste a la sede en Lindavista, CDMX', detalle: 'Los cursos son 100% presenciales e incluyen práctica con modelo real y kit de productos J. Denis.' },
+                        { paso: 'Completa la evaluación práctica', detalle: 'Al finalizar, demostrarás tus competencias ante la Maestra Gabriela Elizalde.' },
+                    ].map((item, i) => (
+                        <div key={i} className="flex items-start gap-4">
+                            <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center shrink-0">
+                                <span className="text-amber-400 font-bold text-sm">{i + 1}</span>
+                            </div>
+                            <div>
+                                <h4 className="text-white font-bold">{item.paso}</h4>
+                                <p className="text-gray-400 text-sm">{item.detalle}</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </section>
+
+            <section>
+                <h2 className="text-2xl font-bold text-white mb-4">Paso 3: Recibe tu Constancia DC-3</h2>
+                <p className="text-gray-300 leading-relaxed mb-4">
+                    Al completar exitosamente el curso, recibirás:
+                </p>
+                <div className="grid md:grid-cols-2 gap-4">
+                    {[
+                        { icon: '📜', titulo: 'Constancia DC-3', desc: 'Documento oficial de la STPS que certifica tus competencias en la técnica cursada' },
+                        { icon: '🎓', titulo: 'Diploma J. Denis', desc: 'Reconocimiento de la academia con más de 25 años formando profesionales' },
+                        { icon: '🧴', titulo: 'Kit de Productos', desc: 'Productos profesionales J. Denis para iniciar tu práctica inmediatamente' },
+                        { icon: '📱', titulo: 'Grupo de Soporte', desc: 'Acceso a comunidad de egresadas para resolver dudas post-curso' },
+                    ].map((item, i) => (
+                        <div key={i} className="p-4 rounded-xl bg-white/5 border border-white/10 text-center">
+                            <p className="text-3xl mb-2">{item.icon}</p>
+                            <h4 className="text-white font-bold mb-1">{item.titulo}</h4>
+                            <p className="text-gray-400 text-sm">{item.desc}</p>
+                        </div>
+                    ))}
+                </div>
+            </section>
+
+            <section>
+                <h2 className="text-2xl font-bold text-white mb-4">Requisitos para obtener la DC-3</h2>
+                <div className="space-y-3">
+                    {[
+                        'Asistir al 100% del curso presencial',
+                        'Completar la práctica con modelo real',
+                        'Aprobar la evaluación de competencias',
+                        'Presentar identificación oficial vigente (INE o pasaporte)',
+                        'Proporcionar CURP para el registro ante STPS',
+                    ].map((req, i) => (
+                        <div key={i} className="flex items-center gap-3 text-gray-300">
+                            <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0" />
+                            <span>{req}</span>
+                        </div>
+                    ))}
+                </div>
+            </section>
+
+            <section className="p-6 rounded-2xl bg-emerald-500/10 border border-emerald-500/30">
+                <h3 className="text-xl font-bold text-emerald-400 mb-4">¿Por qué elegir J. Denis para tu DC-3?</h3>
+                <ul className="space-y-3">
+                    {[
+                        'Más de 5,000 constancias DC-3 emitidas',
+                        'Agente capacitador registrado ante STPS',
+                        'La Maestra Gaby Elizalde: 50+ años de experiencia',
+                        'Creadores del laminado de cejas en México',
+                        'Pioneros en Cisteamina Estabilizada',
+                    ].map((item, i) => (
+                        <li key={i} className="flex items-center gap-3 text-gray-300">
+                            <Star className="w-4 h-4 text-amber-400 shrink-0" />
+                            <span>{item}</span>
+                        </li>
+                    ))}
+                </ul>
+            </section>
+
+            <div className="p-6 rounded-xl bg-gradient-to-r from-amber-900/50 to-yellow-900/50 border border-amber-500/30 text-center">
+                <p className="text-xl font-bold text-white mb-2">
+                    🎓 Certifícate con los líderes de la industria
+                </p>
+                <p className="text-gray-300 text-sm mb-4">Próximos cursos con constancia DC-3 en Lindavista, CDMX</p>
+                <Link to="/academia" className="inline-block px-6 py-3 bg-amber-600 text-white font-medium rounded-lg hover:bg-amber-700 transition-colors">
+                    Ver Fechas Disponibles
+                </Link>
+            </div>
+        </div>
+    );
+}
+
+function CapacitacionSTPSContent() {
+    return (
+        <div className="space-y-8">
+            <section>
+                <h2 className="text-2xl font-bold text-white mb-4">¿Qué dice la ley sobre capacitación en salones de belleza?</h2>
+                <p className="text-gray-300 leading-relaxed mb-4">
+                    La <strong className="text-white">Ley Federal del Trabajo</strong> en sus artículos 153-A al 153-X establece que <strong className="text-white">todo patrón tiene la obligación de proporcionar capacitación a sus trabajadores</strong>. Esto aplica directamente a los salones de belleza, spas, clínicas estéticas y estudios de pestañas.
+                </p>
+                <p className="text-gray-300 leading-relaxed">
+                    La <strong className="text-white">STPS (Secretaría del Trabajo y Previsión Social)</strong> supervisa el cumplimiento de estas normas y exige que la capacitación sea documentada mediante constancias DC-3 emitidas por agentes capacitadores registrados.
+                </p>
+            </section>
+
+            <section className="p-6 rounded-2xl bg-red-500/10 border border-red-500/30">
+                <h3 className="text-xl font-bold text-red-400 mb-4">⚠️ ¿Qué pasa si no capacitas a tu personal?</h3>
+                <div className="space-y-3">
+                    {[
+                        'Multas de 50 a 5,000 UMA por trabajador (entre $5,000 y $500,000 MXN aproximadamente)',
+                        'No poder comprobar competencias del personal ante una inspección',
+                        'Responsabilidad legal en caso de accidente o reacción alérgica de un cliente',
+                        'Imposibilidad de registrar planes de capacitación ante la STPS',
+                    ].map((item, i) => (
+                        <div key={i} className="flex items-start gap-3 text-gray-300">
+                            <XCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
+                            <span>{item}</span>
+                        </div>
+                    ))}
+                </div>
+            </section>
+
+            <section>
+                <h2 className="text-2xl font-bold text-white mb-4">Beneficios de capacitar con constancia DC-3</h2>
+                <div className="grid md:grid-cols-2 gap-4">
+                    {[
+                        { titulo: 'Cumplimiento Legal', desc: 'Evitas multas y estás preparada para inspecciones de la STPS' },
+                        { titulo: 'Mejor Servicio', desc: 'Personal capacitado = menos errores, más satisfacción del cliente' },
+                        { titulo: 'Diferenciación', desc: 'Tu salón se posiciona como profesional certificado' },
+                        { titulo: 'Protección Legal', desc: 'En caso de reclamo, la DC-3 comprueba que tu personal está capacitado' },
+                        { titulo: 'Retención de Talento', desc: 'Las profesionales valoran empleadores que invierten en su formación' },
+                        { titulo: 'Acceso a Créditos', desc: 'Algunas instituciones valoran el cumplimiento de normas laborales' },
+                    ].map((item, i) => (
+                        <div key={i} className="p-4 rounded-xl bg-white/5 border border-white/10">
+                            <h4 className="text-white font-bold mb-2">{item.titulo}</h4>
+                            <p className="text-gray-400 text-sm">{item.desc}</p>
+                        </div>
+                    ))}
+                </div>
+            </section>
+
+            <section>
+                <h2 className="text-2xl font-bold text-white mb-4">¿Qué temas de capacitación necesita un salón?</h2>
+                <p className="text-gray-300 leading-relaxed mb-4">
+                    La STPS recomienda que la capacitación sea específica a las funciones del trabajador. Para salones de belleza y estudios de pestañas, los temas más relevantes son:
+                </p>
+                <div className="space-y-3">
+                    {[
+                        { tema: 'Lash Lifting y Permanente de Pestañas', tipo: 'Técnica especializada' },
+                        { tema: 'Laminado y Diseño de Cejas', tipo: 'Técnica especializada' },
+                        { tema: 'Química Cosmética Aplicada', tipo: 'Conocimiento teórico' },
+                        { tema: 'Higiene y Seguridad en el Trabajo', tipo: 'Normativa básica' },
+                        { tema: 'Manejo de Productos Químicos', tipo: 'Seguridad' },
+                        { tema: 'Atención al Cliente', tipo: 'Competencia transversal' },
+                    ].map((item, i) => (
+                        <div key={i} className="flex items-center justify-between p-3 rounded-lg bg-white/5">
+                            <span className="text-white">{item.tema}</span>
+                            <span className="text-xs text-gray-500 bg-white/5 px-2 py-1 rounded">{item.tipo}</span>
+                        </div>
+                    ))}
+                </div>
+            </section>
+
+            <section>
+                <h2 className="text-2xl font-bold text-white mb-4">Cómo J. Denis ayuda a tu salón</h2>
+                <p className="text-gray-300 leading-relaxed mb-4">
+                    Como <strong className="text-white">agente capacitador registrado ante la STPS</strong>, J. Denis ofrece cursos presenciales diseñados para profesionales que necesitan certificar sus habilidades con validez oficial.
+                </p>
+                <div className="space-y-4">
+                    {[
+                        { icon: '📜', beneficio: 'Constancia DC-3 por cada trabajadora que complete el curso' },
+                        { icon: '👩‍🏫', beneficio: 'Formación impartida por la Maestra Gaby Elizalde (50+ años de experiencia)' },
+                        { icon: '🧴', beneficio: 'Kit de productos profesionales incluido en cada curso' },
+                        { icon: '📄', beneficio: 'Documentación lista para presentar ante inspecciones STPS' },
+                    ].map((item, i) => (
+                        <div key={i} className="flex items-center gap-4 text-gray-300">
+                            <span className="text-2xl">{item.icon}</span>
+                            <span>{item.beneficio}</span>
+                        </div>
+                    ))}
+                </div>
+            </section>
+
+            <section>
+                <h2 className="text-2xl font-bold text-white mb-4">Preguntas Frecuentes</h2>
+                <div className="space-y-4">
+                    {[
+                        { q: '¿Cuántas constancias DC-3 necesito por empleada?', a: 'Una por cada habilidad o técnica certificada. Si una empleada realiza lash lifting y laminado de cejas, necesitaría dos constancias DC-3.' },
+                        { q: '¿Cuestan lo mismo los cursos para teams de salón?', a: 'Ofrecemos precios especiales para grupos de 3 o más personas del mismo salón. Contáctanos por WhatsApp para cotizar.' },
+                        { q: '¿La capacitación se puede hacer en mi salón?', a: 'Actualmente los cursos se imparten en nuestra sede de Lindavista, CDMX, para garantizar las condiciones óptimas de práctica.' },
+                    ].map((item, i) => (
+                        <div key={i} className="p-4 rounded-xl bg-white/5 border border-white/10">
+                            <p className="text-white font-bold mb-2">{item.q}</p>
+                            <p className="text-gray-400 text-sm">{item.a}</p>
+                        </div>
+                    ))}
+                </div>
+            </section>
+
+            <div className="p-6 rounded-xl bg-gradient-to-r from-blue-900/50 to-indigo-900/50 border border-blue-500/30 text-center">
+                <p className="text-xl font-bold text-white mb-2">
+                    🏢 Capacita a tu equipo con validez DC-3
+                </p>
+                <p className="text-gray-300 text-sm mb-4">Cumple con la normativa STPS y eleva el nivel de tu salón</p>
+                <Link to="/academia" className="inline-block px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                    Conocer Cursos Certificados
+                </Link>
             </div>
         </div>
     );

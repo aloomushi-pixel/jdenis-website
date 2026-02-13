@@ -1,4 +1,4 @@
-import { ArrowRight, BookOpen, Clock, Droplets, Eye, ExternalLink, FlaskConical, Leaf, Newspaper, Sparkles, Star, Zap } from 'lucide-react';
+import { ArrowRight, BookOpen, Clock, Droplets, Eye, ExternalLink, FileText, FlaskConical, Leaf, Newspaper, Shield, Sparkles, Star, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface BlogArticle {
@@ -108,6 +108,32 @@ const blogArticles: BlogArticle[] = [
         category: 'Tutorial Técnico',
         readTime: '5 min',
         icon: <BookOpen className="w-6 h-6" />
+    },
+    {
+        id: 'que-es-constancia-dc3-stps',
+        title: '¿Qué es la Constancia DC-3 y por qué la necesitas como profesional de belleza?',
+        excerpt: 'La constancia DC-3 es el documento oficial que la STPS emite para certificar la capacitación laboral en México. Descubre por qué es esencial para tu carrera en estética profesional y cómo obtenerla.',
+        category: 'Certificación STPS',
+        readTime: '10 min',
+        icon: <Shield className="w-6 h-6" />,
+        featured: true
+    },
+    {
+        id: 'como-obtener-dc3-lash-lifting',
+        title: 'Cómo obtener tu DC-3 en Lash Lifting y Laminado de Cejas',
+        excerpt: 'Guía paso a paso para obtener tu constancia DC-3 en técnicas de lash lifting y laminado de cejas. Requisitos, proceso y beneficios de certificarte ante la STPS con J. Denis.',
+        category: 'Guía DC-3',
+        readTime: '8 min',
+        icon: <FileText className="w-6 h-6" />,
+        featured: true
+    },
+    {
+        id: 'capacitacion-stps-estetica-salon',
+        title: 'Capacitación STPS en Estética: Normas y Beneficios para tu Salón',
+        excerpt: '¿Sabías que la STPS exige capacitación formal para empleados de salones de belleza? Conoce las normas, los beneficios legales y cómo cumplir con la formación certificada DC-3.',
+        category: 'Normativa STPS',
+        readTime: '12 min',
+        icon: <Shield className="w-6 h-6" />
     }
 ];
 
@@ -124,13 +150,14 @@ export default function Blog() {
                 <div className="container-luxury relative z-10">
                     <div className="text-center max-w-3xl mx-auto">
                         <span className="inline-block px-4 py-2 bg-gold/20 border border-gold/40 text-gold text-sm font-medium mb-6">
-                            Conocimiento Botánico
+                            Conocimiento Botánico · Capacitación Certificada DC-3 / STPS
                         </span>
                         <h1 className="font-serif text-4xl md:text-6xl text-cream mb-6">
                             Blog <span className="text-gold">J. Denis</span>
                         </h1>
                         <p className="text-lg text-cream/70 leading-relaxed">
-                            Educación profesional en química cosmética. Aprende a cuidar tu mirada con conocimiento científico y técnicas de vanguardia.
+                            Educación profesional en química cosmética, certificación STPS y técnicas de vanguardia.
+                            Artículos sobre constancia DC-3, capacitación laboral en belleza y formación certificada.
                         </p>
                     </div>
                 </div>
