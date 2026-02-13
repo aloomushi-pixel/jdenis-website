@@ -15,6 +15,7 @@ export interface Product {
     specifications?: string[];
     gallery?: string[];
     relatedCategories?: string[];
+    isFeatured?: boolean;
 }
 
 export interface CartItem extends Product {

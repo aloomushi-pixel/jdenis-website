@@ -49,6 +49,13 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
                         </span>
                     </button>
 
+                    {/* Featured Badge */}
+                    {product.isFeatured && (
+                        <div className="absolute top-2 left-2 z-10 bg-gradient-to-r from-gold to-gold-light text-forest text-[10px] sm:text-xs font-bold px-2 py-0.5 sm:px-2.5 sm:py-1 tracking-wider uppercase shadow-lg animate-pulse" style={{ animationDuration: '3s' }}>
+                            ⭐ Destacado
+                        </div>
+                    )}
+
                     {/* Stock Badge */}
                     {product.stock && product.stock < 10 && (
                         <div className="absolute top-2 right-2 bg-forest/80 backdrop-blur-sm px-1.5 py-0.5 text-[10px] text-gold tracking-wider">

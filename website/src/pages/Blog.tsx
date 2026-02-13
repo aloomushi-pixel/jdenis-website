@@ -1,4 +1,4 @@
-import { ArrowRight, BookOpen, Clock, Droplets, Eye, FlaskConical, Leaf, Sparkles, Star, Zap } from 'lucide-react';
+import { ArrowRight, BookOpen, Clock, Droplets, Eye, ExternalLink, FlaskConical, Leaf, Newspaper, Sparkles, Star, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface BlogArticle {
@@ -10,6 +10,37 @@ interface BlogArticle {
     icon: React.ReactNode;
     featured?: boolean;
 }
+
+interface NewsItem {
+    id: string;
+    title: string;
+    date: string;
+    excerpt: string;
+    image: string;
+    instagramUrl: string;
+    tag: string;
+}
+
+const newsItems: NewsItem[] = [
+    {
+        id: 'shot-hidratante-inter-finish',
+        title: '✨ Nuevo Shot Hidratante 1.5 Inter-Finish',
+        date: '28 de Enero, 2026',
+        excerpt: 'El paso intermedio y final que transformará tus procedimientos de lifting en cejas y pestañas. Hidrata profundamente, refuerza la CMC de los puentes de disulfuro, cierra y fortalece la cutícula, y aporta un acabado profesional.',
+        image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/captura-de-pantalla-2022-10-27-a-las-22-07-361-25ed0e1a59714d490e16669266380337-480-0.webp',
+        instagramUrl: 'https://www.instagram.com/p/DUEq52GkhXa/',
+        tag: 'Nuevo Lanzamiento',
+    },
+    {
+        id: 'kit-cisteamina-estabilizada',
+        title: '✨ Kit de Cisteamina Estabilizada — ¡Ya Disponible!',
+        date: '28 de Enero, 2026',
+        excerpt: 'La evolución del laminado de cejas y lifting de pestañas. Sistema profesional de 4 pasos: Cisteamina Estabilizada, Fijador Neutralizante, Botox Fortalecedor Nutritivo y Control de pH. Resultados visibles, pelo más fuerte y flexible.',
+        image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/blue_mesa-de-trabajo-11-9092542207219bc30316691308859785-480-0.webp',
+        instagramUrl: 'https://www.instagram.com/p/DUEcLiXk009/',
+        tag: 'Nuevo Producto',
+    },
+];
 
 const blogArticles: BlogArticle[] = [
     {
@@ -105,8 +136,68 @@ export default function Blog() {
                 </div>
             </section>
 
-            {/* Featured Articles */}
+            {/* NEWS SECTION */}
             <section className="section section-cream">
+                <div className="container-luxury">
+                    <div className="section-header text-left">
+                        <h2 className="section-title flex items-center gap-3">
+                            <Newspaper className="w-7 h-7 text-gold" />
+                            Noticias
+                        </h2>
+                        <p className="text-charcoal/60 mt-2">Últimas novedades de la marca J. Denis</p>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-8">
+                        {newsItems.map((news) => (
+                            <a
+                                key={news.id}
+                                href={news.instagramUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="group relative overflow-hidden bg-white border border-kraft/30 hover:border-gold/50 transition-all duration-500 hover:shadow-xl"
+                            >
+                                {/* Tag */}
+                                <div className="absolute top-4 left-4 z-10 px-3 py-1 bg-gradient-to-r from-gold to-gold-light text-forest text-xs font-bold tracking-wider uppercase shadow-md">
+                                    {news.tag}
+                                </div>
+
+                                {/* Image */}
+                                <div className="aspect-video overflow-hidden bg-cream-dark">
+                                    <img
+                                        src={news.image}
+                                        alt={news.title}
+                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                    />
+                                </div>
+
+                                {/* Content */}
+                                <div className="p-6">
+                                    <div className="flex items-center gap-2 text-charcoal/50 text-sm mb-3">
+                                        <Clock className="w-4 h-4" />
+                                        {news.date}
+                                    </div>
+
+                                    <h3 className="font-serif text-xl text-forest mb-3 group-hover:text-gold transition-colors leading-tight">
+                                        {news.title}
+                                    </h3>
+
+                                    <p className="text-charcoal/70 text-sm mb-4 line-clamp-3 leading-relaxed">
+                                        {news.excerpt}
+                                    </p>
+
+                                    <div className="flex items-center gap-2 text-gold font-medium text-sm group-hover:gap-3 transition-all">
+                                        Ver en Instagram
+                                        <ExternalLink className="w-4 h-4" />
+                                    </div>
+                                </div>
+                            </a>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Featured Articles */}
+            <section className="section section-kraft">
                 <div className="container-luxury">
                     <div className="section-header text-left">
                         <h2 className="section-title flex items-center gap-3">

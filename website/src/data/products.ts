@@ -40,6 +40,7 @@ export const products: Product[] = [
         ],
         performance: 'Hasta 35 aplicaciones',
         relatedCategories: ['Lash Lifting', 'Tratamientos'],
+        isFeatured: true,
     },
     {
         id: 'blue-lash-lifting',
@@ -65,6 +66,7 @@ export const products: Product[] = [
         ],
         performance: 'Hasta 60 aplicaciones',
         relatedCategories: ['Lash Lifting'],
+        isFeatured: true,
     },
     {
         id: 'crema-lifting-paso-1',
@@ -202,6 +204,7 @@ export const products: Product[] = [
         ],
         performance: 'Hasta 90 aplicaciones totales (30 por tono)',
         relatedCategories: ['Brow Henna', 'Diseño de Cejas'],
+        isFeatured: true,
     },
     {
         id: 'activador-henna',
@@ -284,6 +287,7 @@ export const products: Product[] = [
             'Cepillos para cejas',
         ],
         relatedCategories: ['Diseño de Cejas', 'Brow Henna'],
+        isFeatured: true,
     },
 
     // ═══════════════════════════════════════════════════════════════════
@@ -380,6 +384,7 @@ export const products: Product[] = [
         ],
         performance: 'Hasta 30 aplicaciones',
         relatedCategories: ['Lash Curling', 'Lash Lifting'],
+        isFeatured: true,
     },
     {
         id: 'rulos-desechables-m',
@@ -636,6 +641,7 @@ export const products: Product[] = [
         ],
         performance: 'Resultados visibles en 4 semanas',
         relatedCategories: ['Tratamientos'],
+        isFeatured: true,
     },
 
     // ═══════════════════════════════════════════════════════════════════

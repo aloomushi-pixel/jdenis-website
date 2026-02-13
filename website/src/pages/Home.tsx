@@ -8,11 +8,17 @@ export default function Home() {
         <div className="min-h-screen bg-cream">
             {/* HERO SECTION - BOTANICAL APOTHECARY */}
             <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
-                {/* Background Image */}
-                <div
-                    className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-                    style={{ backgroundImage: 'url(/hero-products.jpg)' }}
-                />
+                {/* Background Video */}
+                <video
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    poster="/hero-products.jpg"
+                    className="absolute inset-0 w-full h-full object-cover"
+                >
+                    <source src="/videos/Video_con_logo_J_DENIS.mp4" type="video/mp4" />
+                </video>
                 {/* Stronger overlay for text readability */}
                 <div className="absolute inset-0 bg-black/50" />
                 <div className="absolute inset-0 bg-gradient-to-t from-forest/90 via-forest/50 to-transparent" />
