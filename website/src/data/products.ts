@@ -11,7 +11,7 @@ export const products: Product[] = [
         id: 'kit-lash-lifting-profesional',
         name: 'Kit Lash Lifting Profesional J.Denis',
         price: 850,
-        image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/captura-de-pantalla-2022-10-27-a-las-22-07-361-25ed0e1a59714d490e16669266380337-480-0.webp',
+        image: '/products/kit-lash-lifting-cdn.png',
         category: 'Lash Lifting',
         description: 'Realza la belleza natural de tus pestañas. Eleva, alisa y engrosa tus pestañas desde la base, logrando un efecto de mayor longitud y curvatura de manera natural. Su fórmula hipoalergénica es segura y suave, proporcionando resultados duraderos.',
         benefits: [
@@ -46,7 +46,7 @@ export const products: Product[] = [
         id: 'blue-lash-lifting',
         name: 'BLUE Lash Lifting',
         price: 500,
-        image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/blue_mesa-de-trabajo-11-9092542207219bc30316691308859785-480-0.webp',
+        image: '/products/blue-lash-lifting-cdn.png',
         category: 'Lash Lifting',
         description: 'Kit profesional de Lash Lifting BLUE con rendimiento extendido. Incluye pads de silicón reutilizables y geles de alta calidad para un lifting perfecto.',
         benefits: [
@@ -145,7 +145,7 @@ export const products: Product[] = [
         id: 'pad-nube',
         name: 'Pad Nube',
         price: 150,
-        image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/captura-de-pantalla-2019-02-09-a-las-20-04-021-39c0aa667e05a80ed715497643400355-1024-1024.webp',
+        image: '/products/pad-nube-cdn.png',
         category: 'Lash Lifting',
         description: 'Pad ultra suave con forma de nube para lash lifting. Diseño ergonómico que se adapta a la curvatura natural del párpado para resultados perfectos.',
         benefits: [
@@ -178,7 +178,7 @@ export const products: Product[] = [
         id: 'kit-brow-henna',
         name: 'Brow Henna',
         price: 1200,
-        image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/brow-henna-061-fbdb257619cce9e95d16669249148944-480-0.webp',
+        image: '/products/brow-henna-cdn.png',
         category: 'Brow Henna',
         description: 'Una alternativa natural para sombrear las cejas. Derivado de la planta de Henna, en 30 minutos deja un efecto de tatuaje en la piel y recubre el vello de las cejas dando una apariencia de mayor abundancia. No contiene amoniaco, plomo, ni peróxido.',
         benefits: [
