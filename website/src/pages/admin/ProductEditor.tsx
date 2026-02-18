@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { getVariantCount, getVariantGroup, variantGroups } from '../../data/products';
 import type { Product } from '../../store/cartStore';
 import * as XLSX from 'xlsx';
@@ -625,313 +625,324 @@ export default function ProductEditor() {
                                 const isEdited = !!edits[product.id];
                                 const rowSaveStatus = saveStatus[product.id];
                                 return (
-                                    <tr
-                                        key={product.id}
-                                        className={`hover:bg-indigo-50/30 transition-colors ${isEdited ? 'bg-amber-50/40' : ''} ${rowSaveStatus === 'saving' ? 'opacity-70' : ''}`}
-                                    >
-                                        <td className="px-3 py-2 text-xs text-gray-400">
-                                            <span className="flex items-center gap-1">
-                                                {index + 1}
-                                                {rowSaveStatus === 'saving' && <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" title="Guardando..." />}
-                                                {rowSaveStatus === 'saved' && <span className="text-green-500" title="Guardado">✓</span>}
-                                                {rowSaveStatus === 'error' && <span className="text-red-500" title="Error al guardar">✗</span>}
-                                            </span>
-                                        </td>
-                                        <td className="px-3 py-2">
-                                            <button
-                                                onClick={() => setImageEditorId(imageEditorId === product.id ? null : product.id)}
-                                                className={`relative group w-9 h-9 rounded cursor-pointer overflow-hidden border-2 transition-colors ${imageEditorId === product.id ? 'border-indigo-500 shadow-md' : 'border-transparent hover:border-indigo-300'
-                                                    } ${edits[product.id] && ('image' in (edits[product.id] || {}) || 'gallery' in (edits[product.id] || {})) ? 'ring-2 ring-amber-300' : ''}`}
-                                                title="Click para editar imagen y galería"
-                                            >
-                                                <img
-                                                    src={String(getVal(product, 'image'))}
-                                                    alt=""
-                                                    className="w-full h-full object-cover bg-gray-100"
-                                                    loading="lazy"
-                                                    onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><rect fill="%23f3f4f6" width="32" height="32"/><text x="50%25" y="50%25" fill="%239ca3af" font-size="8" text-anchor="middle" dy=".3em">?</text></svg>'; }}
-                                                />
-                                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
-                                                    <svg className="w-4 h-4 text-white opacity-0 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.41a2.25 2.25 0 013.182 0l2.909 2.91m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg>
-                                                </div>
-                                            </button>
-                                        </td>
-                                        <td className="px-3 py-2 text-[11px] text-gray-500 font-mono">{product.id}</td>
-                                        <td className="px-3 py-2 min-w-[180px]">
-                                            <EditableCell product={product} field="name" className="text-sm font-medium text-gray-900" />
-                                        </td>
-                                        <td className="px-3 py-2 text-right min-w-[100px]">
-                                            <EditableCell product={product} field="price" type="currency" className="text-sm font-semibold text-blue-800" />
-                                        </td>
-                                        <td className="px-3 py-2 text-right min-w-[100px]">
-                                            <EditableCell product={product} field="originalPrice" type="currency" className={`text-sm font-semibold ${getVal(product, 'originalPrice') ? 'text-red-600' : 'text-gray-300'}`} />
-                                        </td>
-                                        <td className="px-3 py-2 text-right min-w-[110px]">
-                                            <EditableCell product={product} field="distributorPrice" type="currency" className="text-sm font-semibold text-purple-800" />
-                                        </td>
-                                        <td className="px-3 py-2 min-w-[130px]">
-                                            <EditableCell product={product} field="promotion" className="text-xs text-green-700" />
-                                        </td>
-                                        <td className="px-3 py-2">
-                                            <EditableCell product={product} field="category" className="text-xs text-gray-600" />
-                                        </td>
-                                        <td className="px-3 py-2 text-center">
-                                            {vc > 1 ? (
+                                    <React.Fragment key={product.id}>
+                                        <tr
+                                            className={`hover:bg-indigo-50/30 transition-colors ${isEdited ? 'bg-amber-50/40' : ''} ${rowSaveStatus === 'saving' ? 'opacity-70' : ''}`}
+                                        >
+                                            <td className="px-3 py-2 text-xs text-gray-400">
+                                                <span className="flex items-center gap-1">
+                                                    {index + 1}
+                                                    {rowSaveStatus === 'saving' && <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" title="Guardando..." />}
+                                                    {rowSaveStatus === 'saved' && <span className="text-green-500" title="Guardado">✓</span>}
+                                                    {rowSaveStatus === 'error' && <span className="text-red-500" title="Error al guardar">✗</span>}
+                                                </span>
+                                            </td>
+                                            <td className="px-3 py-2">
                                                 <button
-                                                    onClick={() => setExpandedVariantGroup(expandedVariantGroup === product.id ? null : product.id)}
-                                                    className={`px-1.5 py-0.5 rounded-full text-[10px] font-medium transition-colors cursor-pointer ${expandedVariantGroup === product.id
-                                                        ? 'bg-indigo-600 text-white'
-                                                        : 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200'
-                                                        }`}
-                                                    title="Click para ver/editar variantes"
-                                                >{vc}</button>
-                                            ) : (
-                                                <span className="text-gray-300 text-[10px]">—</span>
-                                            )}
-                                        </td>
-                                        <td className="px-3 py-2 text-center">
-                                            <button
-                                                onClick={() => toggleFeatured(product)}
-                                                className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all cursor-pointer ${getVal(product, 'isFeatured')
-                                                    ? 'bg-amber-100 hover:bg-amber-200 text-amber-500 shadow-sm'
-                                                    : 'bg-gray-50 hover:bg-gray-100 text-gray-300'
-                                                    } ${edits[product.id] && 'isFeatured' in (edits[product.id] || {}) ? 'ring-2 ring-amber-300' : ''}`}
-                                                title={getVal(product, 'isFeatured') ? 'Quitar de destacados' : 'Marcar como destacado'}
-                                            >
-                                                {getVal(product, 'isFeatured') ? '⭐' : '☆'}
-                                            </button>
-                                        </td>
-                                        <td className="px-3 py-2 max-w-[200px]">
-                                            <EditableCell product={product} field="description" className="text-[11px] text-gray-500 line-clamp-1" />
-                                        </td>
-                                    </tr>
+                                                    onClick={() => setImageEditorId(imageEditorId === product.id ? null : product.id)}
+                                                    className={`relative group w-9 h-9 rounded cursor-pointer overflow-hidden border-2 transition-colors ${imageEditorId === product.id ? 'border-indigo-500 shadow-md' : 'border-transparent hover:border-indigo-300'
+                                                        } ${edits[product.id] && ('image' in (edits[product.id] || {}) || 'gallery' in (edits[product.id] || {})) ? 'ring-2 ring-amber-300' : ''}`}
+                                                    title="Click para editar imagen y galería"
+                                                >
+                                                    <img
+                                                        src={String(getVal(product, 'image'))}
+                                                        alt=""
+                                                        className="w-full h-full object-cover bg-gray-100"
+                                                        loading="lazy"
+                                                        onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><rect fill="%23f3f4f6" width="32" height="32"/><text x="50%25" y="50%25" fill="%239ca3af" font-size="8" text-anchor="middle" dy=".3em">?</text></svg>'; }}
+                                                    />
+                                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+                                                        <svg className="w-4 h-4 text-white opacity-0 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.41a2.25 2.25 0 013.182 0l2.909 2.91m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg>
+                                                    </div>
+                                                </button>
+                                            </td>
+                                            <td className="px-3 py-2 text-[11px] text-gray-500 font-mono">{product.id}</td>
+                                            <td className="px-3 py-2 min-w-[180px]">
+                                                <EditableCell product={product} field="name" className="text-sm font-medium text-gray-900" />
+                                            </td>
+                                            <td className="px-3 py-2 text-right min-w-[100px]">
+                                                <EditableCell product={product} field="price" type="currency" className="text-sm font-semibold text-blue-800" />
+                                            </td>
+                                            <td className="px-3 py-2 text-right min-w-[100px]">
+                                                <EditableCell product={product} field="originalPrice" type="currency" className={`text-sm font-semibold ${getVal(product, 'originalPrice') ? 'text-red-600' : 'text-gray-300'}`} />
+                                            </td>
+                                            <td className="px-3 py-2 text-right min-w-[110px]">
+                                                <EditableCell product={product} field="distributorPrice" type="currency" className="text-sm font-semibold text-purple-800" />
+                                            </td>
+                                            <td className="px-3 py-2 min-w-[130px]">
+                                                <EditableCell product={product} field="promotion" className="text-xs text-green-700" />
+                                            </td>
+                                            <td className="px-3 py-2">
+                                                <EditableCell product={product} field="category" className="text-xs text-gray-600" />
+                                            </td>
+                                            <td className="px-3 py-2 text-center">
+                                                {vc > 1 ? (
+                                                    <button
+                                                        onClick={() => setExpandedVariantGroup(expandedVariantGroup === product.id ? null : product.id)}
+                                                        className={`px-1.5 py-0.5 rounded-full text-[10px] font-medium transition-colors cursor-pointer ${expandedVariantGroup === product.id
+                                                            ? 'bg-indigo-600 text-white'
+                                                            : 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200'
+                                                            }`}
+                                                        title="Click para ver/editar variantes"
+                                                    >{vc}</button>
+                                                ) : (
+                                                    <span className="text-gray-300 text-[10px]">—</span>
+                                                )}
+                                            </td>
+                                            <td className="px-3 py-2 text-center">
+                                                <button
+                                                    onClick={() => toggleFeatured(product)}
+                                                    className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all cursor-pointer ${getVal(product, 'isFeatured')
+                                                        ? 'bg-amber-100 hover:bg-amber-200 text-amber-500 shadow-sm'
+                                                        : 'bg-gray-50 hover:bg-gray-100 text-gray-300'
+                                                        } ${edits[product.id] && 'isFeatured' in (edits[product.id] || {}) ? 'ring-2 ring-amber-300' : ''}`}
+                                                    title={getVal(product, 'isFeatured') ? 'Quitar de destacados' : 'Marcar como destacado'}
+                                                >
+                                                    {getVal(product, 'isFeatured') ? '⭐' : '☆'}
+                                                </button>
+                                            </td>
+                                            <td className="px-3 py-2 max-w-[200px]">
+                                                <EditableCell product={product} field="description" className="text-[11px] text-gray-500 line-clamp-1" />
+                                            </td>
+                                        </tr>
+                                        {/* Inline Image Editor — appears right below this product */}
+                                        {
+                                            imageEditorId === product.id && (() => {
+                                                const editedProduct = getProduct(product);
+                                                const currentImage = String(getVal(editedProduct, 'image') || '');
+                                                const currentGallery = (edits[product.id]?.gallery ?? product.gallery ?? []) as string[];
+
+                                                const updateImage = (url: string) => {
+                                                    setEdits(prev => ({
+                                                        ...prev,
+                                                        [product.id]: { ...prev[product.id], image: url },
+                                                    }));
+                                                    setHasChanges(true);
+                                                };
+
+                                                const addGalleryImage = () => {
+                                                    if (!newGalleryUrl.trim()) return;
+                                                    const updated = [...currentGallery, newGalleryUrl.trim()];
+                                                    setEdits(prev => ({
+                                                        ...prev,
+                                                        [product.id]: { ...prev[product.id], gallery: updated },
+                                                    }));
+                                                    setHasChanges(true);
+                                                    setNewGalleryUrl('');
+                                                };
+
+                                                const removeGalleryImage = (idx: number) => {
+                                                    const updated = currentGallery.filter((_, i) => i !== idx);
+                                                    setEdits(prev => ({
+                                                        ...prev,
+                                                        [product.id]: { ...prev[product.id], gallery: updated },
+                                                    }));
+                                                    setHasChanges(true);
+                                                };
+
+                                                return (
+                                                    <tr>
+                                                        <td colSpan={12} className="p-0">
+                                                            <motion.div
+                                                                initial={{ opacity: 0, height: 0 }}
+                                                                animate={{ opacity: 1, height: 'auto' }}
+                                                                exit={{ opacity: 0, height: 0 }}
+                                                                className="bg-gradient-to-r from-indigo-50 to-blue-50 border-x-4 border-indigo-300 p-5"
+                                                            >
+                                                                <div className="flex items-center justify-between mb-4">
+                                                                    <div>
+                                                                        <h3 className="text-lg font-bold text-gray-800">
+                                                                            📷 Imágenes — {editedProduct.name}
+                                                                        </h3>
+                                                                        <p className="text-xs text-gray-500 mt-0.5">ID: {product.id}</p>
+                                                                    </div>
+                                                                    <button
+                                                                        onClick={() => setImageEditorId(null)}
+                                                                        className="p-2 hover:bg-white/60 rounded-lg text-gray-500 transition-colors"
+                                                                    >✕</button>
+                                                                </div>
+
+                                                                {/* Main Image */}
+                                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                                    <div>
+                                                                        <label className="block text-sm font-semibold text-gray-700 mb-2">Imagen Principal</label>
+                                                                        <div className="flex gap-2 mb-3">
+                                                                            <input
+                                                                                type="text"
+                                                                                value={editingCell?.id === product.id && editingCell?.field === 'image' ? editValue : currentImage}
+                                                                                onFocus={() => {
+                                                                                    setEditingCell({ id: product.id, field: 'image' });
+                                                                                    setEditValue(currentImage);
+                                                                                }}
+                                                                                onChange={(e) => setEditValue(e.target.value)}
+                                                                                onBlur={() => {
+                                                                                    if (editValue !== currentImage) {
+                                                                                        updateImage(editValue);
+                                                                                    }
+                                                                                    setEditingCell(null);
+                                                                                }}
+                                                                                onKeyDown={(e) => {
+                                                                                    if (e.key === 'Enter') {
+                                                                                        updateImage(editValue);
+                                                                                        setEditingCell(null);
+                                                                                    }
+                                                                                }}
+                                                                                placeholder="URL de la imagen principal..."
+                                                                                className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono text-xs bg-white"
+                                                                            />
+                                                                        </div>
+                                                                        <div className="w-40 h-40 rounded-xl border border-gray-200 overflow-hidden bg-white shadow-sm">
+                                                                            <img
+                                                                                src={currentImage}
+                                                                                alt="Vista previa"
+                                                                                className="w-full h-full object-contain"
+                                                                                onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160"><rect fill="%23f3f4f6" width="160" height="160" rx="12"/><text x="50%25" y="50%25" fill="%239ca3af" font-size="12" text-anchor="middle" dy=".3em">Sin imagen</text></svg>'; }}
+                                                                            />
+                                                                        </div>
+                                                                    </div>
+
+                                                                    {/* Gallery */}
+                                                                    <div>
+                                                                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                                                            Galería ({currentGallery.length} imágenes)
+                                                                        </label>
+                                                                        <div className="flex gap-2 mb-3">
+                                                                            <input
+                                                                                type="text"
+                                                                                value={newGalleryUrl}
+                                                                                onChange={(e) => setNewGalleryUrl(e.target.value)}
+                                                                                onKeyDown={(e) => { if (e.key === 'Enter') addGalleryImage(); }}
+                                                                                placeholder="Pegar URL de imagen para agregar..."
+                                                                                className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono text-xs bg-white"
+                                                                            />
+                                                                            <button
+                                                                                onClick={addGalleryImage}
+                                                                                disabled={!newGalleryUrl.trim()}
+                                                                                className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                                                                            >+ Agregar</button>
+                                                                        </div>
+
+                                                                        {currentGallery.length === 0 ? (
+                                                                            <div className="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center text-gray-400 text-sm bg-white/50">
+                                                                                Sin imágenes en la galería. Pega una URL arriba para agregar.
+                                                                            </div>
+                                                                        ) : (
+                                                                            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-48 overflow-y-auto">
+                                                                                {currentGallery.map((url, idx) => (
+                                                                                    <div key={idx} className="relative group rounded-lg overflow-hidden border border-gray-200 aspect-square bg-white">
+                                                                                        <img
+                                                                                            src={url}
+                                                                                            alt={`Galería ${idx + 1}`}
+                                                                                            className="w-full h-full object-cover"
+                                                                                            onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80"><rect fill="%23fef2f2" width="80" height="80"/><text x="50%25" y="50%25" fill="%23ef4444" font-size="10" text-anchor="middle" dy=".3em">Error</text></svg>'; }}
+                                                                                        />
+                                                                                        <button
+                                                                                            onClick={() => removeGalleryImage(idx)}
+                                                                                            className="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                                                                                            title="Eliminar imagen"
+                                                                                        >✕</button>
+                                                                                        <span className="absolute bottom-1 left-1 px-1 py-0.5 bg-black/50 text-white text-[9px] rounded">
+                                                                                            {idx + 1}
+                                                                                        </span>
+                                                                                    </div>
+                                                                                ))}
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
+                                                                </div>
+                                                            </motion.div>
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            })()
+                                        }
+                                        {/* Inline Variant Detail — appears right below this product */}
+                                        {
+                                            expandedVariantGroup === product.id && (() => {
+                                                const group = getVariantGroup(product.id);
+                                                if (!group) return null;
+                                                return (
+                                                    <tr>
+                                                        <td colSpan={12} className="p-0">
+                                                            <motion.div
+                                                                initial={{ opacity: 0, height: 0 }}
+                                                                animate={{ opacity: 1, height: 'auto' }}
+                                                                exit={{ opacity: 0, height: 0 }}
+                                                                className="bg-indigo-50 border-x-4 border-indigo-300 p-5"
+                                                            >
+                                                                <div className="flex items-center justify-between mb-4">
+                                                                    <div>
+                                                                        <h3 className="text-lg font-bold text-gray-800">{group.parentName}</h3>
+                                                                        <p className="text-sm text-gray-500">
+                                                                            Atributos: <span className="font-medium text-indigo-700">{group.attributeNames.join(' / ')}</span>
+                                                                            &nbsp;·&nbsp;{group.variants.length} variantes
+                                                                        </p>
+                                                                    </div>
+                                                                    <button
+                                                                        onClick={() => setExpandedVariantGroup(null)}
+                                                                        className="p-2 hover:bg-indigo-100 rounded-lg text-gray-500 transition-colors"
+                                                                    >✕</button>
+                                                                </div>
+                                                                <div className="overflow-x-auto">
+                                                                    <table className="w-full text-sm">
+                                                                        <thead>
+                                                                            <tr className="border-b border-indigo-200">
+                                                                                <th className="text-left px-3 py-2 text-xs font-semibold text-indigo-600">ID</th>
+                                                                                <th className="text-left px-3 py-2 text-xs font-semibold text-indigo-600">Nombre</th>
+                                                                                {group.attributeNames.map(attr => (
+                                                                                    <th key={attr} className="text-left px-3 py-2 text-xs font-semibold text-indigo-600">{attr}</th>
+                                                                                ))}
+                                                                                <th className="text-right px-3 py-2 text-xs font-semibold text-indigo-600">P. Cliente</th>
+                                                                                <th className="text-right px-3 py-2 text-xs font-semibold text-indigo-600">P. Distribuidor</th>
+                                                                                <th className="text-left px-3 py-2 text-xs font-semibold text-indigo-600">Promoción</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody className="divide-y divide-indigo-100">
+                                                                            {group.variants.map(v => {
+                                                                                const vProduct = products.find(p => p.id === v.productId);
+                                                                                if (!vProduct) return null;
+                                                                                const editedVProduct = getProduct(vProduct);
+                                                                                return (
+                                                                                    <tr key={v.productId} className="hover:bg-indigo-100/50">
+                                                                                        <td className="px-3 py-2 text-xs font-mono text-gray-500">{v.productId}</td>
+                                                                                        <td className="px-3 py-2">
+                                                                                            <EditableCell product={editedVProduct} field="name" className="text-sm text-gray-900" />
+                                                                                        </td>
+                                                                                        {group.attributeNames.map(attr => (
+                                                                                            <td key={attr} className="px-3 py-2">
+                                                                                                <span className="px-2 py-0.5 bg-white border border-indigo-200 rounded text-xs">
+                                                                                                    {v.attributes[attr] || '—'}
+                                                                                                </span>
+                                                                                            </td>
+                                                                                        ))}
+                                                                                        <td className="px-3 py-2 text-right">
+                                                                                            <EditableCell product={editedVProduct} field="price" type="currency" className="text-sm font-semibold text-blue-800" />
+                                                                                        </td>
+                                                                                        <td className="px-3 py-2 text-right">
+                                                                                            <EditableCell product={editedVProduct} field="distributorPrice" type="currency" className="text-sm font-semibold text-purple-800" />
+                                                                                        </td>
+                                                                                        <td className="px-3 py-2">
+                                                                                            <EditableCell product={editedVProduct} field="promotion" className="text-xs text-green-700" />
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                );
+                                                                            })}
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </motion.div>
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            })()
+                                        }
+                                    </React.Fragment>
                                 );
                             })}
                         </tbody>
                     </table>
                 </div>
             </div>
-
-            {/* Image Editor Panel */}
-            {imageEditorId && (() => {
-                const product = products.find(p => p.id === imageEditorId);
-                if (!product) return null;
-                const editedProduct = getProduct(product);
-                const currentImage = String(getVal(editedProduct, 'image') || '');
-                const currentGallery = (edits[product.id]?.gallery ?? product.gallery ?? []) as string[];
-
-                const updateImage = (url: string) => {
-                    setEdits(prev => ({
-                        ...prev,
-                        [product.id]: { ...prev[product.id], image: url },
-                    }));
-                    setHasChanges(true);
-                };
-
-                const addGalleryImage = () => {
-                    if (!newGalleryUrl.trim()) return;
-                    const updated = [...currentGallery, newGalleryUrl.trim()];
-                    setEdits(prev => ({
-                        ...prev,
-                        [product.id]: { ...prev[product.id], gallery: updated },
-                    }));
-                    setHasChanges(true);
-                    setNewGalleryUrl('');
-                };
-
-                const removeGalleryImage = (idx: number) => {
-                    const updated = currentGallery.filter((_, i) => i !== idx);
-                    setEdits(prev => ({
-                        ...prev,
-                        [product.id]: { ...prev[product.id], gallery: updated },
-                    }));
-                    setHasChanges(true);
-                };
-
-                return (
-                    <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        className="mt-4 bg-white border-2 border-indigo-200 rounded-xl p-5 mb-2 shadow-lg"
-                    >
-                        <div className="flex items-center justify-between mb-4">
-                            <div>
-                                <h3 className="text-lg font-bold text-gray-800">
-                                    📷 Imágenes — {editedProduct.name}
-                                </h3>
-                                <p className="text-xs text-gray-500 mt-0.5">ID: {product.id}</p>
-                            </div>
-                            <button
-                                onClick={() => setImageEditorId(null)}
-                                className="p-2 hover:bg-gray-100 rounded-lg text-gray-500 transition-colors"
-                            >✕</button>
-                        </div>
-
-                        {/* Main Image */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-700 mb-2">Imagen Principal</label>
-                                <div className="flex gap-2 mb-3">
-                                    <input
-                                        type="text"
-                                        value={editingCell?.id === product.id && editingCell?.field === 'image' ? editValue : currentImage}
-                                        onFocus={() => {
-                                            setEditingCell({ id: product.id, field: 'image' });
-                                            setEditValue(currentImage);
-                                        }}
-                                        onChange={(e) => setEditValue(e.target.value)}
-                                        onBlur={() => {
-                                            if (editValue !== currentImage) {
-                                                updateImage(editValue);
-                                            }
-                                            setEditingCell(null);
-                                        }}
-                                        onKeyDown={(e) => {
-                                            if (e.key === 'Enter') {
-                                                updateImage(editValue);
-                                                setEditingCell(null);
-                                            }
-                                        }}
-                                        placeholder="URL de la imagen principal..."
-                                        className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono text-xs"
-                                    />
-                                </div>
-                                <div className="w-48 h-48 rounded-xl border border-gray-200 overflow-hidden bg-gray-50">
-                                    <img
-                                        src={currentImage}
-                                        alt="Vista previa"
-                                        className="w-full h-full object-contain"
-                                        onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192"><rect fill="%23f3f4f6" width="192" height="192" rx="12"/><text x="50%25" y="50%25" fill="%239ca3af" font-size="14" text-anchor="middle" dy=".3em">Sin imagen</text></svg>'; }}
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Gallery */}
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                    Galería ({currentGallery.length} imágenes)
-                                </label>
-                                <div className="flex gap-2 mb-3">
-                                    <input
-                                        type="text"
-                                        value={newGalleryUrl}
-                                        onChange={(e) => setNewGalleryUrl(e.target.value)}
-                                        onKeyDown={(e) => { if (e.key === 'Enter') addGalleryImage(); }}
-                                        placeholder="Pegar URL de imagen para agregar..."
-                                        className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono text-xs"
-                                    />
-                                    <button
-                                        onClick={addGalleryImage}
-                                        disabled={!newGalleryUrl.trim()}
-                                        className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-                                    >+ Agregar</button>
-                                </div>
-
-                                {currentGallery.length === 0 ? (
-                                    <div className="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center text-gray-400 text-sm">
-                                        Sin imágenes en la galería. Pega una URL arriba para agregar.
-                                    </div>
-                                ) : (
-                                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-60 overflow-y-auto">
-                                        {currentGallery.map((url, idx) => (
-                                            <div key={idx} className="relative group rounded-lg overflow-hidden border border-gray-200 aspect-square">
-                                                <img
-                                                    src={url}
-                                                    alt={`Galería ${idx + 1}`}
-                                                    className="w-full h-full object-cover"
-                                                    onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80"><rect fill="%23fef2f2" width="80" height="80"/><text x="50%25" y="50%25" fill="%23ef4444" font-size="10" text-anchor="middle" dy=".3em">Error</text></svg>'; }}
-                                                />
-                                                <button
-                                                    onClick={() => removeGalleryImage(idx)}
-                                                    className="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
-                                                    title="Eliminar imagen"
-                                                >✕</button>
-                                                <span className="absolute bottom-1 left-1 px-1 py-0.5 bg-black/50 text-white text-[9px] rounded">
-                                                    {idx + 1}
-                                                </span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </motion.div>
-                );
-            })()}
-
-            {/* Variant Detail Panel (shown when clicking a variant badge) */}
-            {expandedVariantGroup && (() => {
-                const group = getVariantGroup(expandedVariantGroup);
-                if (!group) return null;
-                return (
-                    <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        className="mt-4 bg-indigo-50 border-2 border-indigo-200 rounded-xl p-5 mb-2"
-                    >
-                        <div className="flex items-center justify-between mb-4">
-                            <div>
-                                <h3 className="text-lg font-bold text-gray-800">{group.parentName}</h3>
-                                <p className="text-sm text-gray-500">
-                                    Atributos: <span className="font-medium text-indigo-700">{group.attributeNames.join(' / ')}</span>
-                                    &nbsp;·&nbsp;{group.variants.length} variantes
-                                </p>
-                            </div>
-                            <button
-                                onClick={() => setExpandedVariantGroup(null)}
-                                className="p-2 hover:bg-indigo-100 rounded-lg text-gray-500 transition-colors"
-                            >✕</button>
-                        </div>
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-sm">
-                                <thead>
-                                    <tr className="border-b border-indigo-200">
-                                        <th className="text-left px-3 py-2 text-xs font-semibold text-indigo-600">ID</th>
-                                        <th className="text-left px-3 py-2 text-xs font-semibold text-indigo-600">Nombre</th>
-                                        {group.attributeNames.map(attr => (
-                                            <th key={attr} className="text-left px-3 py-2 text-xs font-semibold text-indigo-600">{attr}</th>
-                                        ))}
-                                        <th className="text-right px-3 py-2 text-xs font-semibold text-indigo-600">P. Cliente</th>
-                                        <th className="text-right px-3 py-2 text-xs font-semibold text-indigo-600">P. Distribuidor</th>
-                                        <th className="text-left px-3 py-2 text-xs font-semibold text-indigo-600">Promoción</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-indigo-100">
-                                    {group.variants.map(v => {
-                                        const vProduct = products.find(p => p.id === v.productId);
-                                        if (!vProduct) return null;
-                                        const editedProduct = getProduct(vProduct);
-                                        return (
-                                            <tr key={v.productId} className="hover:bg-indigo-100/50">
-                                                <td className="px-3 py-2 text-xs font-mono text-gray-500">{v.productId}</td>
-                                                <td className="px-3 py-2">
-                                                    <EditableCell product={editedProduct} field="name" className="text-sm text-gray-900" />
-                                                </td>
-                                                {group.attributeNames.map(attr => (
-                                                    <td key={attr} className="px-3 py-2">
-                                                        <span className="px-2 py-0.5 bg-white border border-indigo-200 rounded text-xs">
-                                                            {v.attributes[attr] || '—'}
-                                                        </span>
-                                                    </td>
-                                                ))}
-                                                <td className="px-3 py-2 text-right">
-                                                    <EditableCell product={editedProduct} field="price" type="currency" className="text-sm font-semibold text-blue-800" />
-                                                </td>
-                                                <td className="px-3 py-2 text-right">
-                                                    <EditableCell product={editedProduct} field="distributorPrice" type="currency" className="text-sm font-semibold text-purple-800" />
-                                                </td>
-                                                <td className="px-3 py-2">
-                                                    <EditableCell product={editedProduct} field="promotion" className="text-xs text-green-700" />
-                                                </td>
-                                            </tr>
-                                        );
-                                    })}
-                                </tbody>
-                            </table>
-                        </div>
-                    </motion.div>
-                );
-            })()}
 
             {/* Variant Groups Summary */}
             <div className="mt-6 bg-white rounded-xl shadow-sm p-6">
