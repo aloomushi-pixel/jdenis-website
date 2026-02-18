@@ -1,7 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import ProductCard from '../components/ProductCard';
 import { bestsellers } from '../data/products';
 import { getReels, type SocialReel } from '../lib/supabase';
 
@@ -156,30 +155,118 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* BESTSELLERS - CREAM SECTION */}
-            <section className="section section-cream">
-                <div className="container-luxury">
-                    <div className="section-header">
+            {/* BESTSELLERS - EDITORIAL GALLERY */}
+            <section className="py-20 relative overflow-hidden bg-gradient-to-b from-cream via-cream-dark/30 to-cream">
+                {/* Decorative accents */}
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
+                <div className="absolute top-1/2 right-0 w-64 h-64 bg-gold/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+                <div className="absolute top-1/3 left-0 w-48 h-48 bg-forest/5 rounded-full blur-3xl -translate-x-1/2" />
+
+                <div className="container-luxury relative z-10">
+                    <div className="section-header mb-12">
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                         >
-                            <span className="section-badge">Productos Signature</span>
-                            <h2 className="section-title">Los Favoritos de las Profesionales</h2>
-                            <p className="section-subtitle">
-                                Fórmulas exclusivas desarrolladas con la más alta calidad científica
+                            <span className="section-badge">Los Más Buscados</span>
+                            <h2 className="section-title">Favoritos de la Marca</h2>
+                            <p className="section-subtitle max-w-2xl mx-auto">
+                                Los productos que nos dieron la fama — resultados de salón en casa,
+                                calidad profesional a precio accesible
                             </p>
                         </motion.div>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {bestsellers.map((product, index) => (
-                            <ProductCard key={product.id} product={product} index={index} />
-                        ))}
+                    {/* Bento Gallery Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
+                        {bestsellers.map((product, index) => {
+                            const isHero = index < 2;
+                            const rankLabels = [
+                                '#1 Más Vendido',
+                                '#2 Top Favorito',
+                                '#3 Imprescindible',
+                                '#4 Profesional',
+                                '#5 Trending',
+                                '#6 Básico Pro',
+                            ];
+                            return (
+                                <motion.div
+                                    key={product.id}
+                                    initial={{ opacity: 0, y: 30 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: index * 0.08, duration: 0.5 }}
+                                    className={isHero ? 'sm:col-span-1 lg:row-span-2' : ''}
+                                >
+                                    <Link
+                                        to={`/producto/${product.id}`}
+                                        className="group relative block overflow-hidden bg-white shadow-sm hover:shadow-xl transition-all duration-500 h-full"
+                                    >
+                                        {/* Image Container */}
+                                        <div className={`relative overflow-hidden bg-cream-dark ${isHero ? 'aspect-[3/4]' : 'aspect-square'}`}>
+                                            <img
+                                                src={product.image}
+                                                alt={product.name}
+                                                loading="lazy"
+                                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                            />
+                                            {/* Gradient overlay */}
+                                            <div className="absolute inset-0 bg-gradient-to-t from-forest/80 via-forest/20 to-transparent opacity-60 group-hover:opacity-70 transition-opacity duration-500" />
+
+                                            {/* Rank Badge */}
+                                            <div className="absolute top-3 left-3 z-10">
+                                                <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold tracking-wider uppercase shadow-lg ${index === 0
+                                                    ? 'bg-gradient-to-r from-gold to-gold-light text-forest'
+                                                    : 'bg-white/90 backdrop-blur-sm text-forest'
+                                                    }`}>
+                                                    {index === 0 && (
+                                                        <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
+                                                    )}
+                                                    {rankLabels[index]}
+                                                </span>
+                                            </div>
+
+                                            {/* Category pill */}
+                                            <div className="absolute top-3 right-3 z-10">
+                                                <span className="px-2.5 py-1 text-[10px] font-medium tracking-wider uppercase bg-black/30 backdrop-blur-sm text-white/90 rounded-full">
+                                                    {product.category}
+                                                </span>
+                                            </div>
+
+                                            {/* Product info overlay at bottom */}
+                                            <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5 z-10">
+                                                <h3 className={`font-serif text-white leading-tight mb-2 group-hover:text-gold transition-colors duration-300 ${isHero ? 'text-xl sm:text-2xl' : 'text-base sm:text-lg'
+                                                    }`}>
+                                                    {product.name}
+                                                </h3>
+                                                <div className="flex items-center justify-between">
+                                                    <p className="text-gold font-semibold text-lg">
+                                                        ${product.price.toLocaleString()} <span className="text-cream/50 text-xs font-normal">MXN</span>
+                                                    </p>
+                                                    <span className="inline-flex items-center gap-1 text-cream/70 text-xs group-hover:text-gold transition-colors">
+                                                        Ver más
+                                                        <svg className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                                                        </svg>
+                                                    </span>
+                                                </div>
+                                                {/* Short description for hero cards */}
+                                                {isHero && product.description && (
+                                                    <p className="text-cream/50 text-xs leading-relaxed mt-2 line-clamp-2 hidden sm:block">
+                                                        {product.description}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </Link>
+                                </motion.div>
+                            );
+                        })}
                     </div>
 
-                    <div className="text-center mt-12">
+                    <div className="text-center mt-14">
                         <Link to="/tienda" className="btn btn-outline">
                             Ver Todo el Catálogo
                         </Link>

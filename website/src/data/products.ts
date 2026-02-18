@@ -989,7 +989,18 @@ export const categories = [
     { id: 'microblading', name: 'Microblading', icon: 'M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10' },
 ];
 
-export const bestsellers = products.slice(0, 4);
+// Curated bestsellers based on market study — ordered by popularity
+const bestsellersIds = [
+    'laminado-cejas',           // #1 Kit de Planchado y Diseño de Cejas
+    'jade-rizado-pestanas',     // #2 Kit JADE Rizado Permanente de Pestañas
+    'chocolate-pigmento-cejas', // #3 Pigmento para Cejas - Chocolate
+    'pigmento-pestanas',        // #4 Pigmento para Pestañas (Negro)
+    'tratamiento-alargador',    // #5 Gel/Tratamiento Reestructurante y Alargador
+    'adhesivo-supreme-g4',      // #6 Adhesivo de Pestañas Supreme G4
+];
+export const bestsellers = bestsellersIds
+    .map(id => products.find(p => p.id === id)!)
+    .filter(Boolean);
 
 export function getProductById(id: string): Product | undefined {
     return products.find(p => p.id === id);
