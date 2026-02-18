@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Calendar, MapPin, Radio, Monitor, Shield } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { getAcademyCourses, getAcademyEvents, type AcademyCourse, type AcademyEvent } from '../lib/supabase';
+import ImageGallery from '../components/ImageGallery';
 
 export default function Academy() {
     const [courses, setCourses] = useState<AcademyCourse[]>([]);
@@ -177,23 +178,11 @@ export default function Academy() {
 
                                     {/* Course Images Gallery */}
                                     {course.images && course.images.length > 0 && (
-                                        <div className="mb-6">
-                                            <p className="text-sm font-medium text-forest mb-3 flex items-center gap-2">
-                                                <span className="text-gold">📸</span>
-                                                Información del Curso
-                                            </p>
-                                            <div className={`grid ${course.images.length === 1 ? 'grid-cols-1' : 'grid-cols-2'} gap-3`}>
-                                                {course.images.map((img, i) => (
-                                                    <a key={i} href={img} target="_blank" rel="noopener noreferrer" className="block overflow-hidden border border-kraft/30 hover:border-gold/50 transition-all">
-                                                        <img
-                                                            src={img}
-                                                            alt={`${course.title} - Información ${i + 1}`}
-                                                            className="w-full h-auto object-cover hover:scale-105 transition-transform duration-300"
-                                                        />
-                                                    </a>
-                                                ))}
-                                            </div>
-                                        </div>
+                                        <ImageGallery
+                                            images={course.images}
+                                            title="Galería del Curso"
+                                            variant="academy"
+                                        />
                                     )}
 
                                     <div className="flex items-center justify-between pt-4 border-t border-kraft/30">
@@ -253,6 +242,15 @@ export default function Academy() {
 
                                 <h3 className="font-serif text-xl text-forest mb-2">{event.title}</h3>
                                 <p className="text-charcoal/70 text-sm mb-4">{event.description}</p>
+
+                                {/* Event Images */}
+                                {event.images && event.images.length > 0 && (
+                                    <ImageGallery
+                                        images={event.images}
+                                        title="Galería del Evento"
+                                        variant="event"
+                                    />
+                                )}
 
                                 <div className="space-y-2 pt-4 border-t border-kraft/30">
                                     <div className="flex items-center gap-2 text-sm text-charcoal/60">
