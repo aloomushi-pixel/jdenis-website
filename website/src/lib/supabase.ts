@@ -907,3 +907,99 @@ export async function deleteDistributorPrice(id: string) {
     const { error } = await supabase.from('distributor_prices').delete().eq('id', id);
     if (error) throw error;
 }
+
+// =============================================
+// MERCADO PAGO FUNCTIONS
+// =============================================
+
+export interface MercadoPagoCheckoutRequest {
+    items: Array<{
+        id: string;
+        name: string;
+        price: number;
+        quantity: number;
+        image?: string;
+    }>;
+    buyer: {
+        userId?: string;
+        fullName: string;
+        email: string;
+        phone: string;
+    };
+    shipping: {
+        address: string;
+        city: string;
+        state: string;
+        zip: string;
+    };
+    total: number;
+    shipping_cost?: number;
+}
+
+export interface MercadoPagoCheckoutResponse {
+    checkout_url: string;
+    preference_id: string;
+    order_id: string;
+}
+
+export async function createMercadoPagoCheckout(
+    data: MercadoPagoCheckoutRequest
+): Promise<MercadoPagoCheckoutResponse> {
+    const response = await supabase.functions.invoke('mercadopago-checkout', {
+        body: data,
+    });
+
+    if (response.error) {
+        throw new Error(response.error.message || 'Error creating checkout');
+    }
+
+    return response.data as MercadoPagoCheckoutResponse;
+}
+
+// =============================================
+// PRODUCT VARIANT GROUPS FUNCTIONS
+// =============================================
+
+export interface ProductVariantGroup {
+    id: string;
+    parent_id: string;
+    parent_name: string;
+    attribute_names: string[];
+    variants: { productId: string; attributes: Record<string, string> }[];
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+export async function getProductVariantGroups(): Promise<ProductVariantGroup[]> {
+    const { data, error } = await supabase
+        .from('product_variants')
+        .select('*')
+        .order('parent_name', { ascending: true });
+    if (error) throw error;
+    return (data || []) as ProductVariantGroup[];
+}
+
+export async function createProductVariantGroup(
+    groupData: Omit<ProductVariantGroup, 'id' | 'created_at' | 'updated_at'>
+): Promise<ProductVariantGroup> {
+    const { data, error } = await supabase.from('product_variants').insert([groupData]).select().single();
+    if (error) throw error;
+    return data as ProductVariantGroup;
+}
+
+export async function updateProductVariantGroup(
+    id: string, updates: Partial<ProductVariantGroup>
+): Promise<ProductVariantGroup> {
+    const { data, error } = await supabase
+        .from('product_variants')
+        .update({ ...updates, updated_at: new Date().toISOString() })
+        .eq('id', id).select().single();
+    if (error) throw error;
+    return data as ProductVariantGroup;
+}
+
+export async function deleteProductVariantGroup(id: string) {
+    const { error } = await supabase.from('product_variants').delete().eq('id', id);
+    if (error) throw error;
+}

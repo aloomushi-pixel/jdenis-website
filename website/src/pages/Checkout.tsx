@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useCartStore } from '../store/cartStore';
 import { useAuthStore } from '../store/authStore';
-import { createWebsiteOrder } from '../lib/supabase';
+import { createWebsiteOrder, createMercadoPagoCheckout } from '../lib/supabase';
 
 export default function Checkout() {
     const navigate = useNavigate();
@@ -11,6 +11,7 @@ export default function Checkout() {
     const { isAuthenticated, user } = useAuthStore();
     const [paymentMethod, setPaymentMethod] = useState('card');
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     const SHIPPING_COST = 200;
     const subtotal = total();
@@ -34,9 +35,43 @@ export default function Checkout() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
+        setError(null);
 
         try {
-            // Save order to Supabase for purchase verification
+            // Mercado Pago payments (card + mercadopago)
+            if (paymentMethod === 'card' || paymentMethod === 'mercadopago') {
+                const checkoutData = {
+                    items: items.map(item => ({
+                        id: item.id,
+                        name: item.name,
+                        price: item.price,
+                        quantity: item.quantity,
+                        image: item.image,
+                    })),
+                    buyer: {
+                        userId: user?.id,
+                        fullName: formData.fullName,
+                        email: formData.email,
+                        phone: formData.phone,
+                    },
+                    shipping: {
+                        address: formData.address,
+                        city: formData.city,
+                        state: formData.state,
+                        zip: formData.zip,
+                    },
+                    total: grandTotal,
+                    shipping_cost: SHIPPING_COST,
+                };
+
+                const result = await createMercadoPagoCheckout(checkoutData);
+
+                // Redirect to Mercado Pago checkout
+                window.location.href = result.checkout_url;
+                return;
+            }
+
+            // Depósito bancario / OXXO — keep existing flow
             if (isAuthenticated && user) {
                 const orderItems = items.map(item => ({
                     product_id: item.id,
@@ -46,12 +81,14 @@ export default function Checkout() {
                 }));
                 await createWebsiteOrder(user.id, user.email, orderItems, grandTotal);
             }
-        } catch (err) {
-            console.error('Error saving order:', err);
-        }
 
-        clearCart();
-        navigate('/mi-cuenta?pedido=exito');
+            clearCart();
+            navigate('/mi-cuenta?pedido=exito');
+        } catch (err) {
+            console.error('Error processing payment:', err);
+            setError(err instanceof Error ? err.message : 'Error al procesar el pago. Intenta de nuevo.');
+            setLoading(false);
+        }
     };
 
     if (items.length === 0) {
@@ -247,12 +284,23 @@ export default function Checkout() {
                                 />
                             </div>
 
+                            {error && (
+                                <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-red-700 text-sm">
+                                    {error}
+                                </div>
+                            )}
+
                             <button
                                 type="submit"
                                 disabled={loading}
                                 className="btn btn-primary w-full py-4 text-lg disabled:opacity-50"
                             >
-                                {loading ? 'Procesando...' : `Confirmar Pedido - $${grandTotal.toLocaleString()} MXN`}
+                                {loading
+                                    ? 'Procesando...'
+                                    : (paymentMethod === 'card' || paymentMethod === 'mercadopago')
+                                        ? `Pagar con Mercado Pago - $${grandTotal.toLocaleString()} MXN`
+                                        : `Confirmar Pedido - $${grandTotal.toLocaleString()} MXN`
+                                }
                             </button>
                         </form>
                     </div>

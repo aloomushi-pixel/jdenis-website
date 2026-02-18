@@ -32,6 +32,7 @@ import MyAccount from './pages/MyAccount';
 import ProductDetail from './pages/ProductDetail';
 import RegistroDistribuidor from './pages/RegistroDistribuidor';
 import Shop from './pages/Shop';
+import PaymentResult from './pages/PaymentResult';
 import AvisoPrivacidad from './pages/AvisoPrivacidad';
 import { useAuthStore } from './store/authStore';
 
@@ -69,6 +70,7 @@ function App() {
             <Route path="/blog/:slug" element={<BlogPost />} />
             <Route path="/registro-distribuidor" element={<RegistroDistribuidor />} />
             <Route path="/aviso-de-privacidad" element={<AvisoPrivacidad />} />
+            <Route path="/pago-resultado" element={<PaymentResult />} />
 
             {/* Admin / ERP Routes */}
             <Route path="/admin" element={<AdminLayout />}>
