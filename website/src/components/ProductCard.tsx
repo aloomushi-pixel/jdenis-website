@@ -1,21 +1,29 @@
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import type { Product } from '../store/cartStore';
 import { useCartStore } from '../store/cartStore';
 
 interface ProductCardProps {
     product: Product;
     index?: number;
+    variantCount?: number;
 }
 
-export default function ProductCard({ product, index = 0 }: ProductCardProps) {
+export default function ProductCard({ product, index = 0, variantCount = 0 }: ProductCardProps) {
     const { addItem, openCart } = useCartStore();
+    const navigate = useNavigate();
+    const hasVariants = variantCount > 1;
 
     const handleAddToCart = (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
-        addItem(product);
-        openCart();
+        if (hasVariants) {
+            // Redirect to product detail to select variant
+            navigate(`/producto/${product.id}`);
+        } else {
+            addItem(product);
+            openCart();
+        }
     };
 
     return (
@@ -45,8 +53,14 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
                         absolute bottom-0 left-0 right-0 w-full lg:w-auto lg:rounded-sm hover:bg-gold-light"
                     >
                         <span className="flex items-center justify-center gap-2">
-                            <span className="hidden sm:inline">Agregar</span>
-                            <span className="sm:hidden">Agregar +</span>
+                            {hasVariants ? (
+                                <span>Ver Opciones</span>
+                            ) : (
+                                <>
+                                    <span className="hidden sm:inline">Agregar</span>
+                                    <span className="sm:hidden">Agregar +</span>
+                                </>
+                            )}
                         </span>
                     </button>
 
@@ -57,8 +71,16 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
                         </div>
                     )}
 
+                    {/* Variant Count Badge */}
+                    {hasVariants && (
+                        <div className="absolute top-2 right-2 z-10 px-2 py-0.5 text-[10px] sm:text-xs font-semibold tracking-wider rounded-sm"
+                            style={{ background: '#1C50EF', color: '#FFFFFF' }}>
+                            {variantCount} opciones
+                        </div>
+                    )}
+
                     {/* Stock Badge */}
-                    {product.stock && product.stock < 10 && (
+                    {!hasVariants && product.stock && product.stock < 10 && (
                         <div className="absolute top-2 right-2 bg-forest/80 backdrop-blur-sm px-1.5 py-0.5 text-[10px] text-gold tracking-wider">
                             Últimos {product.stock}
                         </div>
@@ -74,7 +96,11 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
                     </h3>
                     <div className="flex items-center justify-between mt-2 pt-2 border-t border-kraft/20">
                         <p className="product-card-price text-sm sm:text-base font-semibold text-forest">
-                            ${product.price.toLocaleString()}
+                            {hasVariants ? (
+                                <span>Desde ${product.price.toLocaleString()}</span>
+                            ) : (
+                                <span>${product.price.toLocaleString()}</span>
+                            )}
                         </p>
                     </div>
                 </div>
@@ -82,3 +108,4 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
         </motion.div>
     );
 }
+

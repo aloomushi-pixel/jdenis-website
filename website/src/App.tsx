@@ -21,6 +21,7 @@ import ReviewModeration from './pages/admin/ReviewModeration';
 import AcademyManager from './pages/admin/AcademyManager';
 import BlogManager from './pages/admin/BlogManager';
 import ReelsManager from './pages/admin/ReelsManager';
+import PromotionsManager from './pages/admin/PromotionsManager';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
 import Checkout from './pages/Checkout';
@@ -85,6 +86,7 @@ function App() {
               <Route path="academy" element={<AcademyManager />} />
               <Route path="blog" element={<BlogManager />} />
               <Route path="reels" element={<ReelsManager />} />
+              <Route path="pricing" element={<PromotionsManager />} />
             </Route>
           </Routes>
         </main>

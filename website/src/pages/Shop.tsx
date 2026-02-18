@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import type { Product as CartProduct } from '../store/cartStore';
-import { products as localProducts, categories as localCategories } from '../data/products';
+import { categories as localCategories, getDisplayProducts, getVariantCount } from '../data/products';
 
 export default function Shop() {
     const [searchParams] = useSearchParams();
@@ -15,7 +15,7 @@ export default function Shop() {
 
     // Use local products as the primary and always-available data source
     useEffect(() => {
-        setProducts(localProducts);
+        setProducts(getDisplayProducts());
         setLoading(false);
     }, []);
 
@@ -220,6 +220,7 @@ export default function Shop() {
                                         key={product.id}
                                         product={product}
                                         index={index}
+                                        variantCount={getVariantCount(product.id)}
                                     />
                                 ))}
                             </div>

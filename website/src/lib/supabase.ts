@@ -816,3 +816,94 @@ export async function deleteReel(id: string) {
     const { error } = await supabase.from('social_reels').delete().eq('id', id);
     if (error) throw error;
 }
+
+// =============================================
+// PROMOTIONS FUNCTIONS
+// =============================================
+
+export interface Promotion {
+    id: string;
+    name: string;
+    description: string | null;
+    discount_type: 'percentage' | 'fixed_amount';
+    discount_value: number;
+    min_purchase: number;
+    applicable_products: string[];
+    applicable_categories: string[];
+    start_date: string;
+    end_date: string;
+    is_active: boolean;
+    code: string | null;
+    max_uses: number | null;
+    current_uses: number;
+    created_at: string;
+    updated_at: string;
+}
+
+export async function getPromotions(): Promise<Promotion[]> {
+    const { data, error } = await supabase
+        .from('promotions')
+        .select('*')
+        .order('created_at', { ascending: false });
+    if (error) throw error;
+    return (data || []) as Promotion[];
+}
+
+export async function createPromotion(promoData: Omit<Promotion, 'id' | 'created_at' | 'updated_at' | 'current_uses'>): Promise<Promotion> {
+    const { data, error } = await supabase.from('promotions').insert([promoData]).select().single();
+    if (error) throw error;
+    return data as Promotion;
+}
+
+export async function updatePromotion(id: string, updates: Partial<Promotion>): Promise<Promotion> {
+    const { data, error } = await supabase.from('promotions').update({ ...updates, updated_at: new Date().toISOString() }).eq('id', id).select().single();
+    if (error) throw error;
+    return data as Promotion;
+}
+
+export async function deletePromotion(id: string) {
+    const { error } = await supabase.from('promotions').delete().eq('id', id);
+    if (error) throw error;
+}
+
+// =============================================
+// DISTRIBUTOR PRICES FUNCTIONS
+// =============================================
+
+export interface DistributorPrice {
+    id: string;
+    product_id: string;
+    product_name: string;
+    regular_price: number;
+    distributor_price: number;
+    min_quantity: number;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+export async function getDistributorPrices(): Promise<DistributorPrice[]> {
+    const { data, error } = await supabase
+        .from('distributor_prices')
+        .select('*')
+        .order('product_name', { ascending: true });
+    if (error) throw error;
+    return (data || []) as DistributorPrice[];
+}
+
+export async function createDistributorPrice(priceData: Omit<DistributorPrice, 'id' | 'created_at' | 'updated_at'>): Promise<DistributorPrice> {
+    const { data, error } = await supabase.from('distributor_prices').insert([priceData]).select().single();
+    if (error) throw error;
+    return data as DistributorPrice;
+}
+
+export async function updateDistributorPrice(id: string, updates: Partial<DistributorPrice>): Promise<DistributorPrice> {
+    const { data, error } = await supabase.from('distributor_prices').update({ ...updates, updated_at: new Date().toISOString() }).eq('id', id).select().single();
+    if (error) throw error;
+    return data as DistributorPrice;
+}
+
+export async function deleteDistributorPrice(id: string) {
+    const { error } = await supabase.from('distributor_prices').delete().eq('id', id);
+    if (error) throw error;
+}

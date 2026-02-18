@@ -3,7 +3,8 @@ import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import ReviewSection from '../components/ReviewSection';
-import { getProductById, getRelatedProducts } from '../data/products';
+import VariantSelector from '../components/VariantSelector';
+import { getProductById, getRelatedProducts, getVariantCount, getVariantGroup } from '../data/products';
 import { useCartStore } from '../store/cartStore';
 
 type DetailTab = 'benefits' | 'includes' | 'specs' | 'reviews';
@@ -11,8 +12,13 @@ type DetailTab = 'benefits' | 'includes' | 'specs' | 'reviews';
 export default function ProductDetail() {
     const { id } = useParams<{ id: string }>();
     const { addItem, openCart } = useCartStore();
-    const product = getProductById(id || '');
+    const initialProduct = getProductById(id || '');
     const [activeTab, setActiveTab] = useState<DetailTab>('benefits');
+    const [currentProductId, setCurrentProductId] = useState(id || '');
+
+    // Get the currently displayed product (may differ from URL if variant was selected)
+    const product = getProductById(currentProductId) || initialProduct;
+    const variantGroup = product ? getVariantGroup(product.id) : undefined;
 
     if (!product) {
         return (
@@ -31,6 +37,12 @@ export default function ProductDetail() {
     const handleAddToCart = () => {
         addItem(product);
         openCart();
+    };
+
+    const handleVariantChange = (newProductId: string) => {
+        setCurrentProductId(newProductId);
+        // Update URL without navigation
+        window.history.replaceState(null, '', `/producto/${newProductId}`);
     };
 
     const relatedProducts = getRelatedProducts(product, 8);
@@ -90,8 +102,18 @@ export default function ProductDetail() {
                             {product.category}
                         </span>
                         <h1 className="font-serif text-2xl sm:text-3xl lg:text-4xl text-forest mb-3 leading-tight">
-                            {product.name}
+                            {variantGroup ? variantGroup.parentName : product.name}
                         </h1>
+
+                        {/* Variant Selector */}
+                        {variantGroup && (
+                            <VariantSelector
+                                group={variantGroup}
+                                currentProductId={product.id}
+                                onVariantChange={handleVariantChange}
+                            />
+                        )}
+
                         <p className="text-2xl sm:text-3xl font-bold mb-4"
                             style={{ color: '#1C50EF' }}>
                             ${product.price.toLocaleString()} <span className="text-base font-normal text-charcoal/40">MXN</span>
@@ -342,6 +364,7 @@ export default function ProductDetail() {
                                             <ProductCard
                                                 product={p}
                                                 index={index}
+                                                variantCount={getVariantCount(p.id)}
                                             />
                                         </div>
                                     ))}

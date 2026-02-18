@@ -1037,3 +1037,208 @@ export function getRelatedProducts(product: Product, limit: number = 8): Product
 
     return unique.slice(0, limit);
 }
+
+// ═══════════════════════════════════════════════════════════════════
+// VARIANT GROUPS — Products that are the same model with different attributes
+// ═══════════════════════════════════════════════════════════════════
+
+export interface VariantGroup {
+    parentId: string;
+    parentName: string;
+    attributeNames: string[];
+    variants: {
+        productId: string;
+        attributes: Record<string, string>;
+    }[];
+}
+
+export const variantGroups: VariantGroup[] = [
+    // 1. Extensiones Mink (Curva C / D)
+    {
+        parentId: 'pestana-mink-curva-c',
+        parentName: 'Extensiones Mink J.Denis',
+        attributeNames: ['Curva'],
+        variants: [
+            { productId: 'pestana-mink-curva-c', attributes: { Curva: 'C' } },
+            { productId: 'pestana-mink-curva-d', attributes: { Curva: 'D' } },
+        ],
+    },
+    // 2. Extensiones Individuales Mixtas
+    {
+        parentId: 'curva-b-010-combo',
+        parentName: 'Extensiones Individuales Mixtas',
+        attributeNames: ['Curva', 'Grosor'],
+        variants: [
+            { productId: 'curva-b-010-combo', attributes: { Curva: 'B', Grosor: '0.10' } },
+            { productId: 'curva-c-010-combo', attributes: { Curva: 'C', Grosor: '0.10' } },
+            { productId: 'curva-l-010-combo', attributes: { Curva: 'L', Grosor: '0.10' } },
+            { productId: 'curva-l-015-combo', attributes: { Curva: 'L', Grosor: '0.15' } },
+            { productId: 'curva-lc-010-combo', attributes: { Curva: 'LC', Grosor: '0.10' } },
+            { productId: 'curva-lc-015-combo', attributes: { Curva: 'LC', Grosor: '0.15' } },
+            { productId: 'curva-cc-015-combo', attributes: { Curva: 'CC', Grosor: '0.15' } },
+        ],
+    },
+    // 3. Extensiones Easy Fan
+    {
+        parentId: 'easy-fan-curva-c',
+        parentName: 'Extensiones Easy Fan J.Denis',
+        attributeNames: ['Curva', 'Grosor'],
+        variants: [
+            { productId: 'easy-fan-curva-c', attributes: { Curva: 'C', Grosor: 'Mixta' } },
+            { productId: 'easy-fan-curva-d-005', attributes: { Curva: 'D', Grosor: '0.05' } },
+            { productId: 'easy-fan-curva-d-007', attributes: { Curva: 'D', Grosor: '0.07' } },
+        ],
+    },
+    // 4. Abanicos Pre-hechos
+    {
+        parentId: 'abanicos-3d-c-007',
+        parentName: 'Abanicos Pre-hechos J.Denis',
+        attributeNames: ['Dimensión', 'Curva', 'Grosor', 'Largo'],
+        variants: [
+            { productId: 'abanicos-3d-c-007', attributes: { 'Dimensión': '3D', Curva: 'C', Grosor: '0.07', Largo: 'Mixta' } },
+            { productId: 'abanicos-2d-b-015-10', attributes: { 'Dimensión': '2D', Curva: 'B', Grosor: '0.15', Largo: '10mm' } },
+            { productId: 'abanicos-2d-b-015-12', attributes: { 'Dimensión': '2D', Curva: 'B', Grosor: '0.15', Largo: '12mm' } },
+            { productId: 'abanicos-2d-c-015-10', attributes: { 'Dimensión': '2D', Curva: 'C', Grosor: '0.15', Largo: '10mm' } },
+            { productId: 'abanicos-2d-j-015-10', attributes: { 'Dimensión': '2D', Curva: 'J', Grosor: '0.15', Largo: '10mm' } },
+            { productId: 'abanicos-2d-j-015-12', attributes: { 'Dimensión': '2D', Curva: 'J', Grosor: '0.15', Largo: '12mm' } },
+            { productId: 'abanicos-4d-b-015-10', attributes: { 'Dimensión': '4D', Curva: 'B', Grosor: '0.15', Largo: '10mm' } },
+            { productId: 'abanicos-4d-b-015-12', attributes: { 'Dimensión': '4D', Curva: 'B', Grosor: '0.15', Largo: '12mm' } },
+            { productId: 'abanicos-4d-c-005', attributes: { 'Dimensión': '4D', Curva: 'C', Grosor: '0.05', Largo: 'Mixta' } },
+            { productId: 'abanicos-4d-c-007', attributes: { 'Dimensión': '4D', Curva: 'C', Grosor: '0.07', Largo: 'Mixta' } },
+            { productId: 'abanicos-4d-d-005', attributes: { 'Dimensión': '4D', Curva: 'D', Grosor: '0.05', Largo: 'Mixta' } },
+            { productId: 'abanicos-4d-d-007', attributes: { 'Dimensión': '4D', Curva: 'D', Grosor: '0.07', Largo: 'Mixta' } },
+            { productId: 'abanicos-5d-b-015-10', attributes: { 'Dimensión': '5D', Curva: 'B', Grosor: '0.15', Largo: '10mm' } },
+            { productId: 'abanicos-5d-j-015-10', attributes: { 'Dimensión': '5D', Curva: 'J', Grosor: '0.15', Largo: '10mm' } },
+            { productId: 'abanicos-5d-c-005', attributes: { 'Dimensión': '5D', Curva: 'C', Grosor: '0.05', Largo: 'Mixta' } },
+            { productId: 'abanicos-5d-c-007', attributes: { 'Dimensión': '5D', Curva: 'C', Grosor: '0.07', Largo: 'Mixta' } },
+            { productId: 'abanicos-5d-d-005', attributes: { 'Dimensión': '5D', Curva: 'D', Grosor: '0.05', Largo: 'Mixta' } },
+            { productId: 'abanicos-5d-d-007', attributes: { 'Dimensión': '5D', Curva: 'D', Grosor: '0.07', Largo: 'Mixta' } },
+        ],
+    },
+    // 5. Extensiones en Colores
+    {
+        parentId: 'pestana-c-colores',
+        parentName: 'Extensiones en Colores J.Denis',
+        attributeNames: ['Curva'],
+        variants: [
+            { productId: 'pestana-c-colores', attributes: { Curva: 'C' } },
+            { productId: 'pestana-d-colores', attributes: { Curva: 'D' } },
+        ],
+    },
+    // 6. Rulos Desechables
+    {
+        parentId: 'rulos-desechables-m',
+        parentName: 'Rulos Desechables J.Denis',
+        attributeNames: ['Tamaño'],
+        variants: [
+            { productId: 'rulos-desechables-ch', attributes: { 'Tamaño': 'CH (Corta)' } },
+            { productId: 'rulos-desechables-m', attributes: { 'Tamaño': 'M (Media)' } },
+            { productId: 'rulos-desechables-g', attributes: { 'Tamaño': 'G (Amplia)' } },
+        ],
+    },
+    // 7. Rulos Adhesivos
+    {
+        parentId: 'rulos-adhesivos-curva-g',
+        parentName: 'Rulos Adhesivos J.Denis',
+        attributeNames: ['Curva'],
+        variants: [
+            { productId: 'rulos-adhesivos-curva-g', attributes: { Curva: 'G' } },
+            { productId: 'rulos-adhesivos-m-ch', attributes: { Curva: 'M/CH' } },
+        ],
+    },
+    // 8. Tintura Tópica
+    {
+        parentId: 'tintura-topica-castano-medio',
+        parentName: 'Tintura Tópica J.Denis',
+        attributeNames: ['Tono'],
+        variants: [
+            { productId: 'tintura-topica-castano-medio', attributes: { Tono: 'Castaño Medio' } },
+            { productId: 'tintura-topica-castano-oscuro', attributes: { Tono: 'Castaño Oscuro' } },
+            { productId: 'tintura-topica-negro', attributes: { Tono: 'Negro' } },
+        ],
+    },
+    // 9. Pestañas en Grupo / Racimo
+    {
+        parentId: 'pestana-grupo-racimo',
+        parentName: 'Pestañas en Grupo o Racimo',
+        attributeNames: ['Color'],
+        variants: [
+            { productId: 'pestana-grupo-racimo', attributes: { Color: 'Negro' } },
+            { productId: 'pestana-grupo-racimo-azul', attributes: { Color: 'Azul' } },
+            { productId: 'pestana-grupo-racimo-cafe', attributes: { Color: 'Café' } },
+        ],
+    },
+    // 10. Crema Lash Lifting (Paso 1 y 2)
+    {
+        parentId: 'crema-lifting-paso-1',
+        parentName: 'Crema Lash Lifting J.Denis',
+        attributeNames: ['Paso'],
+        variants: [
+            { productId: 'crema-lifting-paso-1', attributes: { Paso: '1 – Ondulante' } },
+            { productId: 'crema-fijadora-paso-2', attributes: { Paso: '2 – Fijadora' } },
+        ],
+    },
+    // 11. Limpiador de Impurezas
+    {
+        parentId: 'limpiador-impurezas',
+        parentName: 'Limpiador de Impurezas J.Denis',
+        attributeNames: ['Tipo de Piel'],
+        variants: [
+            { productId: 'limpiador-impurezas', attributes: { 'Tipo de Piel': 'Mixta / Grasa' } },
+            { productId: 'limpiador-piel-normal-seca', attributes: { 'Tipo de Piel': 'Normal / Seca' } },
+        ],
+    },
+    // 12. Adhesivo Bálsamo
+    {
+        parentId: 'adhesivo-balsamo-20gr',
+        parentName: 'Adhesivo Bálsamo J.Denis',
+        attributeNames: ['Presentación'],
+        variants: [
+            { productId: 'adhesivo-balsamo-20gr', attributes: { 'Presentación': '20 gr' } },
+            { productId: 'adhesivo-balsamo-butter-30gr', attributes: { 'Presentación': 'Butter 30 gr' } },
+        ],
+    },
+];
+
+// Index for fast lookups: productId -> VariantGroup
+const variantIndex = new Map<string, VariantGroup>();
+for (const group of variantGroups) {
+    for (const v of group.variants) {
+        variantIndex.set(v.productId, group);
+    }
+}
+
+/**
+ * Returns the VariantGroup a product belongs to, or undefined if it's standalone.
+ */
+export function getVariantGroup(productId: string): VariantGroup | undefined {
+    return variantIndex.get(productId);
+}
+
+/**
+ * Returns a de-duplicated list of products for the shop grid.
+ * For each VariantGroup, only the parent (first) product is shown.
+ * Sets `name` of the representative to the parentName for cleaner display.
+ */
+export function getDisplayProducts(): Product[] {
+    const hiddenIds = new Set<string>();
+
+    for (const group of variantGroups) {
+        // Hide all variant IDs except the parentId
+        for (const v of group.variants) {
+            if (v.productId !== group.parentId) {
+                hiddenIds.add(v.productId);
+            }
+        }
+    }
+
+    return products.filter(p => !hiddenIds.has(p.id));
+}
+
+/**
+ * Returns the number of variants for a product's group, or 0 if standalone.
+ */
+export function getVariantCount(productId: string): number {
+    const group = variantIndex.get(productId);
+    return group ? group.variants.length : 0;
+}
