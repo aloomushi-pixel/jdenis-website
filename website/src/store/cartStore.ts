@@ -17,6 +17,7 @@ export interface Product {
     performance?: string;
     specifications?: string[];
     gallery?: string[];
+    video?: string;
     relatedCategories?: string[];
     isFeatured?: boolean;
 }

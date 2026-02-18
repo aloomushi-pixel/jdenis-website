@@ -850,135 +850,225 @@ export default function ProductEditor() {
                                                                         )}
                                                                     </div>
                                                                 </div>
-                                                            </motion.div>
-                                                        </td>
-                                                    </tr>
-                                                );
-                                            })()
-                                        }
-                                        {/* Inline Variant Detail — appears right below this product */}
-                                        {
-                                            expandedVariantGroup === product.id && (() => {
-                                                const group = getVariantGroup(product.id);
-                                                if (!group) return null;
-                                                return (
-                                                    <tr>
-                                                        <td colSpan={12} className="p-0">
-                                                            <motion.div
-                                                                initial={{ opacity: 0, height: 0 }}
-                                                                animate={{ opacity: 1, height: 'auto' }}
-                                                                exit={{ opacity: 0, height: 0 }}
-                                                                className="bg-indigo-50 border-x-4 border-indigo-300 p-5"
-                                                            >
-                                                                <div className="flex items-center justify-between mb-4">
-                                                                    <div>
-                                                                        <h3 className="text-lg font-bold text-gray-800">{group.parentName}</h3>
-                                                                        <p className="text-sm text-gray-500">
-                                                                            Atributos: <span className="font-medium text-indigo-700">{group.attributeNames.join(' / ')}</span>
-                                                                            &nbsp;·&nbsp;{group.variants.length} variantes
-                                                                        </p>
-                                                                    </div>
-                                                                    <button
-                                                                        onClick={() => setExpandedVariantGroup(null)}
-                                                                        className="p-2 hover:bg-indigo-100 rounded-lg text-gray-500 transition-colors"
-                                                                    >✕</button>
-                                                                </div>
-                                                                <div className="overflow-x-auto">
-                                                                    <table className="w-full text-sm">
-                                                                        <thead>
-                                                                            <tr className="border-b border-indigo-200">
-                                                                                <th className="text-left px-3 py-2 text-xs font-semibold text-indigo-600">ID</th>
-                                                                                <th className="text-left px-3 py-2 text-xs font-semibold text-indigo-600">Nombre</th>
-                                                                                {group.attributeNames.map(attr => (
-                                                                                    <th key={attr} className="text-left px-3 py-2 text-xs font-semibold text-indigo-600">{attr}</th>
-                                                                                ))}
-                                                                                <th className="text-right px-3 py-2 text-xs font-semibold text-indigo-600">P. Cliente</th>
-                                                                                <th className="text-right px-3 py-2 text-xs font-semibold text-indigo-600">P. Distribuidor</th>
-                                                                                <th className="text-left px-3 py-2 text-xs font-semibold text-indigo-600">Promoción</th>
-                                                                            </tr>
-                                                                        </thead>
-                                                                        <tbody className="divide-y divide-indigo-100">
-                                                                            {group.variants.map(v => {
-                                                                                const vProduct = products.find(p => p.id === v.productId);
-                                                                                if (!vProduct) return null;
-                                                                                const editedVProduct = getProduct(vProduct);
-                                                                                return (
-                                                                                    <tr key={v.productId} className="hover:bg-indigo-100/50">
-                                                                                        <td className="px-3 py-2 text-xs font-mono text-gray-500">{v.productId}</td>
-                                                                                        <td className="px-3 py-2">
-                                                                                            <EditableCell product={editedVProduct} field="name" className="text-sm text-gray-900" />
-                                                                                        </td>
-                                                                                        {group.attributeNames.map(attr => (
-                                                                                            <td key={attr} className="px-3 py-2">
-                                                                                                <span className="px-2 py-0.5 bg-white border border-indigo-200 rounded text-xs">
-                                                                                                    {v.attributes[attr] || '—'}
-                                                                                                </span>
-                                                                                            </td>
-                                                                                        ))}
-                                                                                        <td className="px-3 py-2 text-right">
-                                                                                            <EditableCell product={editedVProduct} field="price" type="currency" className="text-sm font-semibold text-blue-800" />
-                                                                                        </td>
-                                                                                        <td className="px-3 py-2 text-right">
-                                                                                            <EditableCell product={editedVProduct} field="distributorPrice" type="currency" className="text-sm font-semibold text-purple-800" />
-                                                                                        </td>
-                                                                                        <td className="px-3 py-2">
-                                                                                            <EditableCell product={editedVProduct} field="promotion" className="text-xs text-green-700" />
-                                                                                        </td>
-                                                                                    </tr>
-                                                                                );
-                                                                            })}
-                                                                        </tbody>
-                                                                    </table>
-                                                                </div>
-                                                            </motion.div>
-                                                        </td>
-                                                    </tr>
-                                                );
-                                            })()
-                                        }
-                                    </React.Fragment>
-                                );
-                            })}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+                                                            </div>
 
-            {/* Variant Groups Summary */}
-            <div className="mt-6 bg-white rounded-xl shadow-sm p-6">
-                <h2 className="text-lg font-bold text-gray-800 mb-4">Grupos de Variantes ({totalVariantGroups})</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {variantGroups.map((g) => (
-                        <button
-                            key={g.parentId}
-                            onClick={() => {
-                                setExpandedVariantGroup(expandedVariantGroup === g.parentId ? null : g.parentId);
-                                window.scrollTo({ top: 0, behavior: 'smooth' });
-                            }}
-                            className={`border rounded-lg p-4 text-left transition-colors cursor-pointer ${expandedVariantGroup === g.parentId
-                                ? 'border-indigo-400 bg-indigo-50 shadow-md'
-                                : 'border-gray-100 hover:border-indigo-200'
-                                }`}
-                        >
-                            <h3 className="font-semibold text-sm text-gray-800">{g.parentName}</h3>
-                            <div className="flex items-center gap-2 mt-1">
-                                <span className="text-xs text-gray-500">{g.attributeNames.join(' / ')}</span>
-                                <span className="px-1.5 py-0.5 bg-indigo-100 text-indigo-700 rounded text-xs font-medium">{g.variants.length} variantes</span>
-                            </div>
-                            <div className="mt-2 flex flex-wrap gap-1">
-                                {g.variants.slice(0, 6).map(v => (
-                                    <span key={v.productId} className="px-1.5 py-0.5 bg-gray-50 text-gray-600 rounded text-[10px]">
-                                        {Object.values(v.attributes).join(' · ')}
-                                    </span>
-                                ))}
-                                {g.variants.length > 6 && (
-                                    <span className="px-1.5 py-0.5 text-gray-400 text-[10px]">+{g.variants.length - 6} más</span>
-                                )}
-                            </div>
-                        </button>
-                    ))}
-                </div>
+                                                            {/* Video Section */}
+                                                            <div className="mt-6 pt-5 border-t border-indigo-200/60">
+                                                                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                                                    🎬 Video de uso del producto
+                                                                </label>
+                                                                {(() => {
+                                                                    const currentVideo = String(edits[product.id]?.video ?? product.video ?? '');
+                                                                    const updateVideo = (url: string) => {
+                                                                        setEdits(prev => ({
+                                                                            ...prev,
+                                                                            [product.id]: { ...prev[product.id], video: url || undefined },
+                                                                        }));
+                                                                        setHasChanges(true);
+                                                                    };
+                                                                    return (
+                                                                        <div className="space-y-3">
+                                                                            <div className="flex gap-2">
+                                                                                <input
+                                                                                    type="text"
+                                                                                    value={editingCell?.id === product.id && editingCell?.field === 'video' ? editValue : currentVideo}
+                                                                                    onFocus={() => {
+                                                                                        setEditingCell({ id: product.id, field: 'video' });
+                                                                                        setEditValue(currentVideo);
+                                                                                    }}
+                                                                                    onChange={(e) => setEditValue(e.target.value)}
+                                                                                    onBlur={() => {
+                                                                                        if (editValue !== currentVideo) {
+                                                                                            updateVideo(editValue);
+                                                                                        }
+                                                                                        setEditingCell(null);
+                                                                                    }}
+                                                                                    onKeyDown={(e) => {
+                                                                                        if (e.key === 'Enter') {
+                                                                                            updateVideo(editValue);
+                                                                                            setEditingCell(null);
+                                                                                        }
+                                                                                    }}
+                                                                                    placeholder="URL del video (YouTube, Vimeo, MP4, etc.)..."
+                                                                                    className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono text-xs bg-white"
+                                                                                />
+                                                                                {currentVideo && (
+                                                                                    <button
+                                                                                        onClick={() => updateVideo('')}
+                                                                                        className="px-3 py-2 bg-red-50 text-red-600 rounded-lg text-sm font-medium hover:bg-red-100 transition-colors"
+                                                                                        title="Eliminar video"
+                                                                                    >🗑️</button>
+                                                                                )}
+                                                                            </div>
+                                                                            {currentVideo ? (
+                                                                                <div className="rounded-xl overflow-hidden border border-gray-200 bg-black shadow-sm">
+                                                                                    {currentVideo.includes('youtube.com') || currentVideo.includes('youtu.be') ? (
+                                                                                        <iframe
+                                                                                            src={currentVideo.replace('watch?v=', 'embed/').replace('youtu.be/', 'youtube.com/embed/')}
+                                                                                            className="w-full aspect-video"
+                                                                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                                                            allowFullScreen
+                                                                                            title="Video preview"
+                                                                                        />
+                                                                                    ) : currentVideo.includes('vimeo.com') ? (
+                                                                                        <iframe
+                                                                                            src={currentVideo.replace('vimeo.com/', 'player.vimeo.com/video/')}
+                                                                                            className="w-full aspect-video"
+                                                                                            allow="autoplay; fullscreen; picture-in-picture"
+                                                                                            allowFullScreen
+                                                                                            title="Video preview"
+                                                                                        />
+                                                                                    ) : (
+                                                                                        <video
+                                                                                            src={currentVideo}
+                                                                                            controls
+                                                                                            className="w-full aspect-video"
+                                                                                            preload="metadata"
+                                                                                        >
+                                                                                            Tu navegador no soporta video HTML5.
+                                                                                        </video>
+                                                                                    )}
+                                                                                </div>
+                                                                            ) : (
+                                                                                <div className="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center text-gray-400 text-sm bg-white/50">
+                                                                                    <div className="text-3xl mb-2">🎥</div>
+                                                                                    Sin video. Pega una URL de YouTube, Vimeo o MP4 arriba.
+                                                                                </div>
+                                                                            )}
+                                                                        </div>
+                                                                    );
+                                                                })()}
+                                                            </div>
+
+                                                        </motion.div>
+                                                    </td>
+                                                    </tr>
+                                );
+                            })()
+                            }
+                            {/* Inline Variant Detail — appears right below this product */}
+                            {
+                                expandedVariantGroup === product.id && (() => {
+                                    const group = getVariantGroup(product.id);
+                                    if (!group) return null;
+                                    return (
+                                        <tr>
+                                            <td colSpan={12} className="p-0">
+                                                <motion.div
+                                                    initial={{ opacity: 0, height: 0 }}
+                                                    animate={{ opacity: 1, height: 'auto' }}
+                                                    exit={{ opacity: 0, height: 0 }}
+                                                    className="bg-indigo-50 border-x-4 border-indigo-300 p-5"
+                                                >
+                                                    <div className="flex items-center justify-between mb-4">
+                                                        <div>
+                                                            <h3 className="text-lg font-bold text-gray-800">{group.parentName}</h3>
+                                                            <p className="text-sm text-gray-500">
+                                                                Atributos: <span className="font-medium text-indigo-700">{group.attributeNames.join(' / ')}</span>
+                                                                &nbsp;·&nbsp;{group.variants.length} variantes
+                                                            </p>
+                                                        </div>
+                                                        <button
+                                                            onClick={() => setExpandedVariantGroup(null)}
+                                                            className="p-2 hover:bg-indigo-100 rounded-lg text-gray-500 transition-colors"
+                                                        >✕</button>
+                                                    </div>
+                                                    <div className="overflow-x-auto">
+                                                        <table className="w-full text-sm">
+                                                            <thead>
+                                                                <tr className="border-b border-indigo-200">
+                                                                    <th className="text-left px-3 py-2 text-xs font-semibold text-indigo-600">ID</th>
+                                                                    <th className="text-left px-3 py-2 text-xs font-semibold text-indigo-600">Nombre</th>
+                                                                    {group.attributeNames.map(attr => (
+                                                                        <th key={attr} className="text-left px-3 py-2 text-xs font-semibold text-indigo-600">{attr}</th>
+                                                                    ))}
+                                                                    <th className="text-right px-3 py-2 text-xs font-semibold text-indigo-600">P. Cliente</th>
+                                                                    <th className="text-right px-3 py-2 text-xs font-semibold text-indigo-600">P. Distribuidor</th>
+                                                                    <th className="text-left px-3 py-2 text-xs font-semibold text-indigo-600">Promoción</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody className="divide-y divide-indigo-100">
+                                                                {group.variants.map(v => {
+                                                                    const vProduct = products.find(p => p.id === v.productId);
+                                                                    if (!vProduct) return null;
+                                                                    const editedVProduct = getProduct(vProduct);
+                                                                    return (
+                                                                        <tr key={v.productId} className="hover:bg-indigo-100/50">
+                                                                            <td className="px-3 py-2 text-xs font-mono text-gray-500">{v.productId}</td>
+                                                                            <td className="px-3 py-2">
+                                                                                <EditableCell product={editedVProduct} field="name" className="text-sm text-gray-900" />
+                                                                            </td>
+                                                                            {group.attributeNames.map(attr => (
+                                                                                <td key={attr} className="px-3 py-2">
+                                                                                    <span className="px-2 py-0.5 bg-white border border-indigo-200 rounded text-xs">
+                                                                                        {v.attributes[attr] || '—'}
+                                                                                    </span>
+                                                                                </td>
+                                                                            ))}
+                                                                            <td className="px-3 py-2 text-right">
+                                                                                <EditableCell product={editedVProduct} field="price" type="currency" className="text-sm font-semibold text-blue-800" />
+                                                                            </td>
+                                                                            <td className="px-3 py-2 text-right">
+                                                                                <EditableCell product={editedVProduct} field="distributorPrice" type="currency" className="text-sm font-semibold text-purple-800" />
+                                                                            </td>
+                                                                            <td className="px-3 py-2">
+                                                                                <EditableCell product={editedVProduct} field="promotion" className="text-xs text-green-700" />
+                                                                            </td>
+                                                                        </tr>
+                                                                    );
+                                                                })}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </motion.div>
+                                            </td>
+                                        </tr>
+                                    );
+                                })()
+                            }
+                        </React.Fragment>
+                        );
+                            })}
+                    </tbody>
+                </table>
             </div>
         </div>
+
+            {/* Variant Groups Summary */ }
+    <div className="mt-6 bg-white rounded-xl shadow-sm p-6">
+        <h2 className="text-lg font-bold text-gray-800 mb-4">Grupos de Variantes ({totalVariantGroups})</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            {variantGroups.map((g) => (
+                <button
+                    key={g.parentId}
+                    onClick={() => {
+                        setExpandedVariantGroup(expandedVariantGroup === g.parentId ? null : g.parentId);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className={`border rounded-lg p-4 text-left transition-colors cursor-pointer ${expandedVariantGroup === g.parentId
+                        ? 'border-indigo-400 bg-indigo-50 shadow-md'
+                        : 'border-gray-100 hover:border-indigo-200'
+                        }`}
+                >
+                    <h3 className="font-semibold text-sm text-gray-800">{g.parentName}</h3>
+                    <div className="flex items-center gap-2 mt-1">
+                        <span className="text-xs text-gray-500">{g.attributeNames.join(' / ')}</span>
+                        <span className="px-1.5 py-0.5 bg-indigo-100 text-indigo-700 rounded text-xs font-medium">{g.variants.length} variantes</span>
+                    </div>
+                    <div className="mt-2 flex flex-wrap gap-1">
+                        {g.variants.slice(0, 6).map(v => (
+                            <span key={v.productId} className="px-1.5 py-0.5 bg-gray-50 text-gray-600 rounded text-[10px]">
+                                {Object.values(v.attributes).join(' · ')}
+                            </span>
+                        ))}
+                        {g.variants.length > 6 && (
+                            <span className="px-1.5 py-0.5 text-gray-400 text-[10px]">+{g.variants.length - 6} más</span>
+                        )}
+                    </div>
+                </button>
+            ))}
+        </div>
+    </div>
+        </div >
     );
 }
