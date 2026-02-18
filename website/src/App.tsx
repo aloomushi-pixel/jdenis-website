@@ -22,6 +22,7 @@ import AcademyManager from './pages/admin/AcademyManager';
 import BlogManager from './pages/admin/BlogManager';
 import ReelsManager from './pages/admin/ReelsManager';
 import PromotionsManager from './pages/admin/PromotionsManager';
+import ProductEditor from './pages/admin/ProductEditor';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
 import Checkout from './pages/Checkout';
@@ -87,6 +88,7 @@ function App() {
               <Route path="blog" element={<BlogManager />} />
               <Route path="reels" element={<ReelsManager />} />
               <Route path="pricing" element={<PromotionsManager />} />
+              <Route path="catalog" element={<ProductEditor />} />
             </Route>
           </Routes>
         </main>
