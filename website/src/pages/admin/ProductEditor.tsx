@@ -1,8 +1,9 @@
 import { motion } from 'framer-motion';
 import { useMemo, useRef, useState } from 'react';
-import { products, getVariantCount, getVariantGroup, variantGroups } from '../../data/products';
+import { getVariantCount, getVariantGroup, variantGroups } from '../../data/products';
 import type { Product } from '../../store/cartStore';
 import * as XLSX from 'xlsx';
+import { useProducts } from '../../hooks/useProducts';
 
 // ═══════════════════════════════════════════
 // Excel row <-> Product mapping
@@ -42,6 +43,11 @@ export default function ProductEditor() {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     // ═══════════════════════════════════════════
+    // Supabase integration via useProducts hook
+    // ═══════════════════════════════════════════
+    const { products, loading: supabaseLoading, error: supabaseError, saveProduct, saveStatus, synced } = useProducts();
+
+    // ═══════════════════════════════════════════
     // Editable state: product overrides stored in memory
     // ═══════════════════════════════════════════
     const [edits, setEdits] = useState<Record<string, Partial<Product>>>({});
@@ -72,7 +78,7 @@ export default function ProductEditor() {
         setTimeout(() => editInputRef.current?.focus(), 50);
     };
 
-    // Save edit
+    // Save edit — persists to Supabase for synced fields
     const saveEdit = () => {
         if (!editingCell) return;
         const { id, field } = editingCell;
@@ -88,16 +94,32 @@ export default function ProductEditor() {
         }));
         setEditingCell(null);
         setHasChanges(true);
+
+        // Auto-save to Supabase for supported fields
+        const supabaseFields = ['name', 'price', 'originalPrice', 'isFeatured', 'stock', 'category'];
+        if (supabaseFields.includes(field)) {
+            saveProduct(id, field, value).then(ok => {
+                if (ok) showNotification('success', `✅ "${field}" guardado en tienda`);
+                else showNotification('error', `❌ Error al guardar "${field}"`);
+            });
+        }
     };
 
-    // Toggle featured
+    // Toggle featured — persists to Supabase
     const toggleFeatured = (product: Product) => {
         const current = getVal(product, 'isFeatured') as boolean | undefined;
+        const newValue = !current;
         setEdits(prev => ({
             ...prev,
-            [product.id]: { ...prev[product.id], isFeatured: !current },
+            [product.id]: { ...prev[product.id], isFeatured: newValue },
         }));
         setHasChanges(true);
+
+        // Auto-save to Supabase
+        saveProduct(product.id, 'isFeatured', newValue).then(ok => {
+            if (ok) showNotification('success', `✅ Destacado ${newValue ? 'activado' : 'desactivado'}`);
+            else showNotification('error', '❌ Error al guardar destacado');
+        });
     };
 
     // Cancel edit
@@ -116,7 +138,7 @@ export default function ProductEditor() {
     const uniqueCategories = useMemo(() => {
         const cats = new Set(products.map(p => p.category));
         return Array.from(cats).sort();
-    }, []);
+    }, [products]);
 
     // Apply edits to products for display
     const getProduct = (p: Product): Product => {
@@ -373,6 +395,21 @@ export default function ProductEditor() {
                                 · {editedCount} productos editados
                             </span>
                         )}
+                        {synced && (
+                            <span className="ml-2 text-green-600 font-medium">
+                                · ☁️ Sincronizado con tienda
+                            </span>
+                        )}
+                        {supabaseLoading && (
+                            <span className="ml-2 text-blue-600 font-medium animate-pulse">
+                                · ⏳ Cargando datos...
+                            </span>
+                        )}
+                        {supabaseError && (
+                            <span className="ml-2 text-red-500 font-medium">
+                                · ⚠️ Modo offline
+                            </span>
+                        )}
                     </p>
                 </div>
                 <div className="flex items-center gap-2 flex-wrap">
@@ -586,12 +623,20 @@ export default function ProductEditor() {
                             {filteredProducts.map((product, index) => {
                                 const vc = getVariantCount(product.id);
                                 const isEdited = !!edits[product.id];
+                                const rowSaveStatus = saveStatus[product.id];
                                 return (
                                     <tr
                                         key={product.id}
-                                        className={`hover:bg-indigo-50/30 transition-colors ${isEdited ? 'bg-amber-50/40' : ''}`}
+                                        className={`hover:bg-indigo-50/30 transition-colors ${isEdited ? 'bg-amber-50/40' : ''} ${rowSaveStatus === 'saving' ? 'opacity-70' : ''}`}
                                     >
-                                        <td className="px-3 py-2 text-xs text-gray-400">{index + 1}</td>
+                                        <td className="px-3 py-2 text-xs text-gray-400">
+                                            <span className="flex items-center gap-1">
+                                                {index + 1}
+                                                {rowSaveStatus === 'saving' && <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" title="Guardando..." />}
+                                                {rowSaveStatus === 'saved' && <span className="text-green-500" title="Guardado">✓</span>}
+                                                {rowSaveStatus === 'error' && <span className="text-red-500" title="Error al guardar">✗</span>}
+                                            </span>
+                                        </td>
                                         <td className="px-3 py-2">
                                             <button
                                                 onClick={() => setImageEditorId(imageEditorId === product.id ? null : product.id)}

@@ -4,11 +4,12 @@ import { useSearchParams } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import type { Product as CartProduct } from '../store/cartStore';
 import { categories as localCategories, getDisplayProducts, getVariantCount } from '../data/products';
+import { useProducts } from '../hooks/useProducts';
 
-// Price boundaries (computed once)
-const ALL_PRODUCTS = getDisplayProducts();
+// Price boundaries (fallback, will be recalculated with Supabase data)
+const FALLBACK_PRODUCTS = getDisplayProducts();
 const PRICE_MIN = 0;
-const PRICE_MAX = Math.ceil(Math.max(...ALL_PRODUCTS.map(p => p.price)) / 100) * 100;
+const FALLBACK_PRICE_MAX = Math.ceil(Math.max(...FALLBACK_PRODUCTS.map(p => p.price)) / 100) * 100;
 
 // Sort options
 const sortOptions = [
@@ -29,14 +30,24 @@ export default function Shop() {
     const [loading, setLoading] = useState(true);
 
     // Advanced filters
-    const [priceRange, setPriceRange] = useState<[number, number]>([PRICE_MIN, PRICE_MAX]);
+    const [priceRange, setPriceRange] = useState<[number, number]>([PRICE_MIN, FALLBACK_PRICE_MAX]);
     const [showOffersOnly, setShowOffersOnly] = useState(false);
     const [showMobileFilters, setShowMobileFilters] = useState(false);
 
+    // Supabase-backed product data (merges local + cloud overrides)
+    const { displayProducts: mergedProducts, loading: supabaseLoading } = useProducts();
+
     useEffect(() => {
-        setProducts(getDisplayProducts());
-        setLoading(false);
-    }, []);
+        // Use merged products (Supabase overrides applied to local base)
+        setProducts(mergedProducts);
+        if (!supabaseLoading) setLoading(false);
+
+        // Recalculate price range if needed
+        if (mergedProducts.length > 0) {
+            const maxPrice = Math.ceil(Math.max(...mergedProducts.map(p => p.price)) / 100) * 100;
+            setPriceRange(prev => [prev[0], Math.max(prev[1], maxPrice)]);
+        }
+    }, [mergedProducts, supabaseLoading]);
 
     useEffect(() => {
         const cat = searchParams.get('cat');
@@ -57,7 +68,7 @@ export default function Shop() {
     const hasActiveFilters = useMemo(() => {
         return (
             priceRange[0] > PRICE_MIN ||
-            priceRange[1] < PRICE_MAX ||
+            priceRange[1] < FALLBACK_PRICE_MAX ||
             showOffersOnly ||
             searchQuery.length > 0 ||
             activeCategory !== 'all'
@@ -65,7 +76,7 @@ export default function Shop() {
     }, [priceRange, showOffersOnly, searchQuery, activeCategory]);
 
     const clearAllFilters = () => {
-        setPriceRange([PRICE_MIN, PRICE_MAX]);
+        setPriceRange([PRICE_MIN, FALLBACK_PRICE_MAX]);
         setShowOffersOnly(false);
         setSearchQuery('');
         setActiveCategory('all');
@@ -145,10 +156,10 @@ export default function Shop() {
                 onRemove: () => setSearchQuery(''),
             });
         }
-        if (priceRange[0] > PRICE_MIN || priceRange[1] < PRICE_MAX) {
+        if (priceRange[0] > PRICE_MIN || priceRange[1] < FALLBACK_PRICE_MAX) {
             chips.push({
                 label: `$${priceRange[0]} – $${priceRange[1].toLocaleString()}`,
-                onRemove: () => setPriceRange([PRICE_MIN, PRICE_MAX]),
+                onRemove: () => setPriceRange([PRICE_MIN, FALLBACK_PRICE_MAX]),
             });
         }
         if (showOffersOnly) {
@@ -347,7 +358,7 @@ export default function Shop() {
                                 {/* Filter button (opens panel) */}
                                 <button
                                     onClick={() => setShowMobileFilters(true)}
-                                    className={`flex items-center gap-1.5 px-3 py-2 text-sm rounded-lg border transition-all ${(priceRange[0] > PRICE_MIN || priceRange[1] < PRICE_MAX)
+                                    className={`flex items-center gap-1.5 px-3 py-2 text-sm rounded-lg border transition-all ${(priceRange[0] > PRICE_MIN || priceRange[1] < FALLBACK_PRICE_MAX)
                                         ? 'bg-gold/10 border-gold/40 text-forest'
                                         : 'bg-white border-kraft/30 text-charcoal/70 hover:border-gold/40'
                                         }`}
@@ -356,7 +367,7 @@ export default function Shop() {
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
                                     </svg>
                                     <span className="hidden sm:inline">Filtros</span>
-                                    {(priceRange[0] > PRICE_MIN || priceRange[1] < PRICE_MAX) && (
+                                    {(priceRange[0] > PRICE_MIN || priceRange[1] < FALLBACK_PRICE_MAX) && (
                                         <span className="w-2 h-2 bg-gold rounded-full" />
                                     )}
                                 </button>
@@ -461,9 +472,9 @@ export default function Shop() {
                                             <input
                                                 type="number"
                                                 min={priceRange[0]}
-                                                max={PRICE_MAX}
+                                                max={FALLBACK_PRICE_MAX}
                                                 value={priceRange[1]}
-                                                onChange={(e) => setPriceRange([priceRange[0], Math.min(PRICE_MAX, Number(e.target.value))])}
+                                                onChange={(e) => setPriceRange([priceRange[0], Math.min(FALLBACK_PRICE_MAX, Number(e.target.value))])}
                                                 className="w-full pl-5 pr-2 py-2.5 border border-kraft/30 text-sm text-forest bg-cream focus:outline-none focus:border-gold rounded-lg"
                                                 placeholder="Max"
                                             />
@@ -474,14 +485,14 @@ export default function Shop() {
                                         <div
                                             className="absolute h-full bg-gradient-to-r from-gold to-gold-light rounded-full transition-all duration-300"
                                             style={{
-                                                left: `${(priceRange[0] / PRICE_MAX) * 100}%`,
-                                                right: `${100 - (priceRange[1] / PRICE_MAX) * 100}%`,
+                                                left: `${(priceRange[0] / FALLBACK_PRICE_MAX) * 100}%`,
+                                                right: `${100 - (priceRange[1] / FALLBACK_PRICE_MAX) * 100}%`,
                                             }}
                                         />
                                     </div>
                                     <div className="flex justify-between mt-1">
                                         <span className="text-[10px] text-charcoal/40">${PRICE_MIN}</span>
-                                        <span className="text-[10px] text-charcoal/40">${PRICE_MAX.toLocaleString()}</span>
+                                        <span className="text-[10px] text-charcoal/40">${FALLBACK_PRICE_MAX.toLocaleString()}</span>
                                     </div>
                                 </div>
 

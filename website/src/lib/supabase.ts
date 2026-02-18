@@ -1040,3 +1040,58 @@ export async function deleteProductVariantGroup(id: string) {
     const { error } = await supabase.from('product_variants').delete().eq('id', id);
     if (error) throw error;
 }
+
+// =============================================
+// PRODUCT CATALOG OVERRIDES (Editor → Store Sync)
+// =============================================
+
+export interface ProductOverride {
+    slug: string;
+    name: string;
+    price: number;
+    compare_at_price: number | null;
+    is_featured: boolean | null;
+    stock: number | null;
+    category: string;
+    is_active: boolean | null;
+}
+
+/**
+ * Fetches all product overrides from Supabase.
+ * These are merged with local products.ts data to provide the final product list.
+ */
+export async function getAllProductOverrides(): Promise<ProductOverride[]> {
+    const { data, error } = await supabase
+        .from('products')
+        .select('slug, name, price, compare_at_price, is_featured, stock, category, is_active')
+        .order('name', { ascending: true });
+
+    if (error) throw error;
+    return (data || []) as ProductOverride[];
+}
+
+/**
+ * Updates a product's editable fields in Supabase by slug.
+ * Used by ProductEditor to persist changes.
+ */
+export async function updateProductCatalog(
+    slug: string,
+    updates: Partial<{
+        name: string;
+        price: number;
+        compare_at_price: number | null;
+        is_featured: boolean;
+        stock: number;
+        category: string;
+    }>
+): Promise<ProductOverride> {
+    const { data, error } = await supabase
+        .from('products')
+        .update({ ...updates, updated_at: new Date().toISOString() })
+        .eq('slug', slug)
+        .select('slug, name, price, compare_at_price, is_featured, stock, category, is_active')
+        .single();
+
+    if (error) throw error;
+    return data as ProductOverride;
+}
