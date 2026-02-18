@@ -1198,6 +1198,79 @@ export const variantGroups: VariantGroup[] = [
             { productId: 'adhesivo-balsamo-butter-30gr', attributes: { 'Presentación': 'Butter 30 gr' } },
         ],
     },
+    // 13. Pinzas Profesionales
+    {
+        parentId: 'pinza-pestanas-tira',
+        parentName: 'Pinzas Profesionales J.Denis',
+        attributeNames: ['Modelo'],
+        variants: [
+            { productId: 'pinza-pestanas-tira', attributes: { Modelo: 'Pestañas de Tira' } },
+            { productId: 'pinza-depilar', attributes: { Modelo: 'Depilar' } },
+            { productId: 'pinza-punta-larga', attributes: { Modelo: 'Punta Larga' } },
+            { productId: 'pinza-abanicos-sin-punta', attributes: { Modelo: 'Abanicos sin Punta' } },
+            { productId: 'pinza-punta-m12', attributes: { Modelo: 'Punta M-12' } },
+            { productId: 'pinza-colocar-m18', attributes: { Modelo: 'Colocar M-18' } },
+            { productId: 'pinza-ele-m19', attributes: { Modelo: 'Ele M-19' } },
+            { productId: 'pinza-md14-punta', attributes: { Modelo: 'MD 14 en Punta' } },
+            { productId: 'pinza-md14-ele', attributes: { Modelo: 'MD 14 en Ele' } },
+        ],
+    },
+    // 14. Pads de Lash Lifting
+    {
+        parentId: 'pad-rosas-micro-canales',
+        parentName: 'Pads para Lash Lifting J.Denis',
+        attributeNames: ['Diseño'],
+        variants: [
+            { productId: 'pad-rosas-micro-canales', attributes: { 'Diseño': 'Rosas con Micro Canales' } },
+            { productId: 'pad-nube', attributes: { 'Diseño': 'Nube' } },
+            { productId: 'pad-anime', attributes: { 'Diseño': 'Anime' } },
+            { productId: 'pad-curva-c', attributes: { 'Diseño': 'Curva C' } },
+            { productId: 'pad-rosa-sin-canales', attributes: { 'Diseño': 'Rosa sin Canales' } },
+            { productId: 'pad-superior-inferior', attributes: { 'Diseño': 'Superior e Inferior' } },
+            { productId: 'pad-colors-8p', attributes: { 'Diseño': 'Colors 8p' } },
+            { productId: 'pad-colors-6p', attributes: { 'Diseño': 'Colors 6p' } },
+            { productId: 'pad-oso', attributes: { 'Diseño': 'Oso' } },
+            { productId: 'pad-corrector-reversion', attributes: { 'Diseño': 'Corrector (Reversión)' } },
+            { productId: 'pad-2-en-1', attributes: { 'Diseño': '2 en 1' } },
+            { productId: 'pad-mariposa', attributes: { 'Diseño': 'Mariposa' } },
+            { productId: 'pad-elevacion-l', attributes: { 'Diseño': 'Elevación L' } },
+            { productId: 'pad-ld-simetricos', attributes: { 'Diseño': 'LD Simétricos' } },
+        ],
+    },
+    // 15. Pestañas de Tira
+    {
+        parentId: 'pestana-americana-tira',
+        parentName: 'Pestañas de Tira J.Denis',
+        attributeNames: ['Tipo'],
+        variants: [
+            { productId: 'pestana-americana-tira', attributes: { Tipo: 'Americana' } },
+            { productId: 'pestana-europea-tira', attributes: { Tipo: 'Europea' } },
+            { productId: 'pestana-decorada-tira', attributes: { Tipo: 'Decorada' } },
+        ],
+    },
+    // 16. Mini Cepillos para Lifting/Laminado
+    {
+        parentId: 'mini-cepillo-laminado',
+        parentName: 'Mini Cepillos J.Denis',
+        attributeNames: ['Uso'],
+        variants: [
+            { productId: 'mini-cepillo-laminado', attributes: { Uso: 'Laminado (1 pza)' } },
+            { productId: 'mini-cepillo-lash-lifting', attributes: { Uso: 'Lash Lifting (1 pza)' } },
+            { productId: '50-cepillo-mini-laminado', attributes: { Uso: 'Laminado (50 pzas)' } },
+        ],
+    },
+    // 17. Cepillos para Pestañas
+    {
+        parentId: 'cepillos-pestanas-50',
+        parentName: 'Cepillos para Pestañas J.Denis',
+        attributeNames: ['Presentación'],
+        variants: [
+            { productId: 'cepillos-pestanas-50', attributes: { 'Presentación': '50 pzas Estándar' } },
+            { productId: 'cepillo-largo-100', attributes: { 'Presentación': '100 pzas Largo' } },
+            { productId: 'cepillo-con-guarda', attributes: { 'Presentación': 'Con Guarda' } },
+            { productId: '50-cepillos-pestanas', attributes: { 'Presentación': '50 pzas Pro' } },
+        ],
+    },
 ];
 
 // Index for fast lookups: productId -> VariantGroup
