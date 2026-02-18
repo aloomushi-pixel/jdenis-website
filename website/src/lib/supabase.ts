@@ -741,6 +741,8 @@ export interface BlogPost {
     tags: string[] | null;
     published: boolean;
     published_at: string | null;
+    post_type: 'article' | 'news';
+    tag: string | null;
     created_at: string;
     updated_at: string;
 }
@@ -772,6 +774,41 @@ export async function updateBlogPost(id: string, updates: Partial<BlogPost>): Pr
 }
 
 export async function deleteBlogPost(id: string) {
+    const { error } = await supabase.from('blog_posts').delete().eq('id', id);
+    if (error) throw error;
+}
+
+// =============================================
+// NEWS POSTS FUNCTIONS
+// =============================================
+
+export async function getNewsPosts(publishedOnly = true): Promise<BlogPost[]> {
+    let query = supabase.from('blog_posts').select('*').eq('post_type', 'news').order('published_at', { ascending: false, nullsFirst: false });
+    if (publishedOnly) query = query.eq('published', true);
+    const { data, error } = await query;
+    if (error) throw error;
+    return (data || []) as BlogPost[];
+}
+
+export async function getNewsPost(slug: string): Promise<BlogPost> {
+    const { data, error } = await supabase.from('blog_posts').select('*').eq('slug', slug).eq('post_type', 'news').single();
+    if (error) throw error;
+    return data as BlogPost;
+}
+
+export async function createNewsPost(postData: Omit<BlogPost, 'id' | 'created_at' | 'updated_at' | 'post_type'>): Promise<BlogPost> {
+    const { data, error } = await supabase.from('blog_posts').insert([{ ...postData, post_type: 'news' }]).select().single();
+    if (error) throw error;
+    return data as BlogPost;
+}
+
+export async function updateNewsPost(id: string, updates: Partial<BlogPost>): Promise<BlogPost> {
+    const { data, error } = await supabase.from('blog_posts').update({ ...updates, updated_at: new Date().toISOString() }).eq('id', id).select().single();
+    if (error) throw error;
+    return data as BlogPost;
+}
+
+export async function deleteNewsPost(id: string) {
     const { error } = await supabase.from('blog_posts').delete().eq('id', id);
     if (error) throw error;
 }
