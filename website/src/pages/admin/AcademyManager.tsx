@@ -254,6 +254,7 @@ function FormModal({ type, initialData, onClose, onSuccess }: {
     const [saving, setSaving] = useState(false);
     const [uploading, setUploading] = useState(false);
     const [newImageUrl, setNewImageUrl] = useState('');
+    const [newTopic, setNewTopic] = useState('');
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [formData, setFormData] = useState<any>(initialData || {
         title: '',
@@ -503,6 +504,73 @@ function FormModal({ type, initialData, onClose, onSuccess }: {
                             className="w-full px-3 py-2 border rounded-lg"
                         />
                     </div>
+
+                    {/* ====== SECCIÓN DE TEMARIO (solo cursos) ====== */}
+                    {isCourse && (
+                        <div className="border-t pt-4">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">📋 Temario</label>
+
+                            {/* Lista de temas actuales */}
+                            {formData.topics && formData.topics.length > 0 && (
+                                <div className="flex flex-wrap gap-2 mb-3">
+                                    {formData.topics.map((topic: string, i: number) => (
+                                        <span
+                                            key={i}
+                                            className="inline-flex items-center gap-1 px-3 py-1.5 bg-indigo-50 text-indigo-700 rounded-full text-sm border border-indigo-200"
+                                        >
+                                            {topic}
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    const updated = [...formData.topics];
+                                                    updated.splice(i, 1);
+                                                    setFormData({ ...formData, topics: updated });
+                                                }}
+                                                className="ml-1 text-indigo-400 hover:text-red-500 transition-colors"
+                                            >
+                                                <X className="w-3.5 h-3.5" />
+                                            </button>
+                                        </span>
+                                    ))}
+                                </div>
+                            )}
+
+                            {/* Input para agregar nuevo tema */}
+                            <div className="flex gap-2">
+                                <input
+                                    type="text"
+                                    placeholder="Ej: Tricología, Anatomía, Fisiología..."
+                                    value={newTopic}
+                                    onChange={(e) => setNewTopic(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            e.preventDefault();
+                                            if (newTopic.trim()) {
+                                                setFormData({ ...formData, topics: [...(formData.topics || []), newTopic.trim()] });
+                                                setNewTopic('');
+                                            }
+                                        }
+                                    }}
+                                    className="flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        if (newTopic.trim()) {
+                                            setFormData({ ...formData, topics: [...(formData.topics || []), newTopic.trim()] });
+                                            setNewTopic('');
+                                        }
+                                    }}
+                                    className="px-3 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm flex items-center gap-1"
+                                >
+                                    <Plus className="w-4 h-4" /> Agregar
+                                </button>
+                            </div>
+                            <p className="text-xs text-gray-400 mt-1">
+                                Escribe un tema y presiona Enter o haz clic en Agregar.
+                            </p>
+                        </div>
+                    )}
 
                     {/* ====== SECCIÓN DE IMÁGENES ====== */}
                     <div className="border-t pt-4">

@@ -98,6 +98,9 @@ export default function Footer() {
                     <p className="text-cream/30 text-xs tracking-wider">
                         © {new Date().getFullYear()} J. Denis — Cosmética Profesional Mexicana
                     </p>
+                    <Link to="/aviso-de-privacidad" className="text-cream/30 text-xs hover:text-gold transition-colors">
+                        Aviso de Privacidad
+                    </Link>
                     <p className="text-cream/30 text-xs">
                         Hecho con 🌿 en México 🇲🇽
                     </p>
