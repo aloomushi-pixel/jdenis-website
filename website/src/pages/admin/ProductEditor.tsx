@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useMemo, useRef, useState } from 'react';
-import { products, getVariantCount, variantGroups } from '../../data/products';
+import { products, getVariantCount, getVariantGroup, variantGroups } from '../../data/products';
 import type { Product } from '../../store/cartStore';
 import * as XLSX from 'xlsx';
 
@@ -48,6 +48,7 @@ export default function ProductEditor() {
     const [editValue, setEditValue] = useState('');
     const editInputRef = useRef<HTMLInputElement>(null);
     const [hasChanges, setHasChanges] = useState(false);
+    const [expandedVariantGroup, setExpandedVariantGroup] = useState<string | null>(null);
 
     const showNotification = (type: 'success' | 'error' | 'info', msg: string) => {
         setNotification({ type, msg });
@@ -83,6 +84,16 @@ export default function ProductEditor() {
             [id]: { ...prev[id], [field]: value },
         }));
         setEditingCell(null);
+        setHasChanges(true);
+    };
+
+    // Toggle featured
+    const toggleFeatured = (product: Product) => {
+        const current = getVal(product, 'isFeatured') as boolean | undefined;
+        setEdits(prev => ({
+            ...prev,
+            [product.id]: { ...prev[product.id], isFeatured: !current },
+        }));
         setHasChanges(true);
     };
 
@@ -599,13 +610,29 @@ export default function ProductEditor() {
                                         </td>
                                         <td className="px-3 py-2 text-center">
                                             {vc > 1 ? (
-                                                <span className="px-1.5 py-0.5 bg-indigo-100 text-indigo-700 rounded-full text-[10px] font-medium">{vc}</span>
+                                                <button
+                                                    onClick={() => setExpandedVariantGroup(expandedVariantGroup === product.id ? null : product.id)}
+                                                    className={`px-1.5 py-0.5 rounded-full text-[10px] font-medium transition-colors cursor-pointer ${expandedVariantGroup === product.id
+                                                        ? 'bg-indigo-600 text-white'
+                                                        : 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200'
+                                                        }`}
+                                                    title="Click para ver/editar variantes"
+                                                >{vc}</button>
                                             ) : (
                                                 <span className="text-gray-300 text-[10px]">—</span>
                                             )}
                                         </td>
                                         <td className="px-3 py-2 text-center">
-                                            {product.isFeatured ? <span className="text-amber-500 text-xs">⭐</span> : <span className="text-gray-300 text-[10px]">—</span>}
+                                            <button
+                                                onClick={() => toggleFeatured(product)}
+                                                className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all cursor-pointer ${getVal(product, 'isFeatured')
+                                                    ? 'bg-amber-100 hover:bg-amber-200 text-amber-500 shadow-sm'
+                                                    : 'bg-gray-50 hover:bg-gray-100 text-gray-300'
+                                                    } ${edits[product.id] && 'isFeatured' in (edits[product.id] || {}) ? 'ring-2 ring-amber-300' : ''}`}
+                                                title={getVal(product, 'isFeatured') ? 'Quitar de destacados' : 'Marcar como destacado'}
+                                            >
+                                                {getVal(product, 'isFeatured') ? '⭐' : '☆'}
+                                            </button>
                                         </td>
                                         <td className="px-3 py-2 max-w-[200px]">
                                             <EditableCell product={product} field="description" className="text-[11px] text-gray-500 line-clamp-1" />
@@ -618,12 +645,96 @@ export default function ProductEditor() {
                 </div>
             </div>
 
+            {/* Variant Detail Panel (shown when clicking a variant badge) */}
+            {expandedVariantGroup && (() => {
+                const group = getVariantGroup(expandedVariantGroup);
+                if (!group) return null;
+                return (
+                    <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        className="mt-4 bg-indigo-50 border-2 border-indigo-200 rounded-xl p-5 mb-2"
+                    >
+                        <div className="flex items-center justify-between mb-4">
+                            <div>
+                                <h3 className="text-lg font-bold text-gray-800">{group.parentName}</h3>
+                                <p className="text-sm text-gray-500">
+                                    Atributos: <span className="font-medium text-indigo-700">{group.attributeNames.join(' / ')}</span>
+                                    &nbsp;·&nbsp;{group.variants.length} variantes
+                                </p>
+                            </div>
+                            <button
+                                onClick={() => setExpandedVariantGroup(null)}
+                                className="p-2 hover:bg-indigo-100 rounded-lg text-gray-500 transition-colors"
+                            >✕</button>
+                        </div>
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-sm">
+                                <thead>
+                                    <tr className="border-b border-indigo-200">
+                                        <th className="text-left px-3 py-2 text-xs font-semibold text-indigo-600">ID</th>
+                                        <th className="text-left px-3 py-2 text-xs font-semibold text-indigo-600">Nombre</th>
+                                        {group.attributeNames.map(attr => (
+                                            <th key={attr} className="text-left px-3 py-2 text-xs font-semibold text-indigo-600">{attr}</th>
+                                        ))}
+                                        <th className="text-right px-3 py-2 text-xs font-semibold text-indigo-600">P. Cliente</th>
+                                        <th className="text-right px-3 py-2 text-xs font-semibold text-indigo-600">P. Distribuidor</th>
+                                        <th className="text-left px-3 py-2 text-xs font-semibold text-indigo-600">Promoción</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-indigo-100">
+                                    {group.variants.map(v => {
+                                        const vProduct = products.find(p => p.id === v.productId);
+                                        if (!vProduct) return null;
+                                        const editedProduct = getProduct(vProduct);
+                                        return (
+                                            <tr key={v.productId} className="hover:bg-indigo-100/50">
+                                                <td className="px-3 py-2 text-xs font-mono text-gray-500">{v.productId}</td>
+                                                <td className="px-3 py-2">
+                                                    <EditableCell product={editedProduct} field="name" className="text-sm text-gray-900" />
+                                                </td>
+                                                {group.attributeNames.map(attr => (
+                                                    <td key={attr} className="px-3 py-2">
+                                                        <span className="px-2 py-0.5 bg-white border border-indigo-200 rounded text-xs">
+                                                            {v.attributes[attr] || '—'}
+                                                        </span>
+                                                    </td>
+                                                ))}
+                                                <td className="px-3 py-2 text-right">
+                                                    <EditableCell product={editedProduct} field="price" type="currency" className="text-sm font-semibold text-blue-800" />
+                                                </td>
+                                                <td className="px-3 py-2 text-right">
+                                                    <EditableCell product={editedProduct} field="distributorPrice" type="currency" className="text-sm font-semibold text-purple-800" />
+                                                </td>
+                                                <td className="px-3 py-2">
+                                                    <EditableCell product={editedProduct} field="promotion" className="text-xs text-green-700" />
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+                    </motion.div>
+                );
+            })()}
+
             {/* Variant Groups Summary */}
             <div className="mt-6 bg-white rounded-xl shadow-sm p-6">
                 <h2 className="text-lg font-bold text-gray-800 mb-4">Grupos de Variantes ({totalVariantGroups})</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                     {variantGroups.map((g) => (
-                        <div key={g.parentId} className="border border-gray-100 rounded-lg p-4 hover:border-indigo-200 transition-colors">
+                        <button
+                            key={g.parentId}
+                            onClick={() => {
+                                setExpandedVariantGroup(expandedVariantGroup === g.parentId ? null : g.parentId);
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                            }}
+                            className={`border rounded-lg p-4 text-left transition-colors cursor-pointer ${expandedVariantGroup === g.parentId
+                                ? 'border-indigo-400 bg-indigo-50 shadow-md'
+                                : 'border-gray-100 hover:border-indigo-200'
+                                }`}
+                        >
                             <h3 className="font-semibold text-sm text-gray-800">{g.parentName}</h3>
                             <div className="flex items-center gap-2 mt-1">
                                 <span className="text-xs text-gray-500">{g.attributeNames.join(' / ')}</span>
@@ -639,7 +750,7 @@ export default function ProductEditor() {
                                     <span className="px-1.5 py-0.5 text-gray-400 text-[10px]">+{g.variants.length - 6} más</span>
                                 )}
                             </div>
-                        </div>
+                        </button>
                     ))}
                 </div>
             </div>
