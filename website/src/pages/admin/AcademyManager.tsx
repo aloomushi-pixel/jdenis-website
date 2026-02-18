@@ -251,6 +251,7 @@ function FormModal({ type, initialData, onClose, onSuccess }: {
     const isCourse = type === 'courses';
 
     const [saving, setSaving] = useState(false);
+    const [newImageUrl, setNewImageUrl] = useState('');
     const [formData, setFormData] = useState<any>(initialData || {
         title: '',
         duration: '',
@@ -264,11 +265,24 @@ function FormModal({ type, initialData, onClose, onSuccess }: {
         video: '',
         video_title: '',
         active: true,
+        images: [],
         // Events
         date: '',
         location: '',
         type: 'congreso'
     });
+
+    const addImage = () => {
+        if (!newImageUrl.trim()) return;
+        setFormData({ ...formData, images: [...(formData.images || []), newImageUrl.trim()] });
+        setNewImageUrl('');
+    };
+
+    const removeImage = (index: number) => {
+        const updated = [...(formData.images || [])];
+        updated.splice(index, 1);
+        setFormData({ ...formData, images: updated });
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -465,6 +479,59 @@ function FormModal({ type, initialData, onClose, onSuccess }: {
                             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                             className="w-full px-3 py-2 border rounded-lg"
                         />
+                    </div>
+
+                    {/* ====== SECCIÓN DE IMÁGENES ====== */}
+                    <div className="border-t pt-4">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">📸 Imágenes</label>
+
+                        {/* Galería de imágenes existentes */}
+                        {formData.images && formData.images.length > 0 && (
+                            <div className="grid grid-cols-3 gap-3 mb-3">
+                                {formData.images.map((img: string, i: number) => (
+                                    <div key={i} className="relative group">
+                                        <img
+                                            src={img}
+                                            alt={`Imagen ${i + 1}`}
+                                            className="w-full h-24 object-cover rounded-lg border border-gray-200"
+                                            onError={(e) => {
+                                                (e.target as HTMLImageElement).src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="%23f3f4f6" width="100" height="100"/><text x="50" y="55" text-anchor="middle" fill="%239ca3af" font-size="12">Error</text></svg>';
+                                            }}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => removeImage(i)}
+                                            className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity shadow-md hover:bg-red-600"
+                                        >
+                                            ✕
+                                        </button>
+                                        <p className="text-[10px] text-gray-400 mt-1 truncate">{img}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        {/* Input para agregar nueva imagen */}
+                        <div className="flex gap-2">
+                            <input
+                                type="text"
+                                placeholder="URL de la imagen (ej: /images/academy/foto.jpg)"
+                                value={newImageUrl}
+                                onChange={(e) => setNewImageUrl(e.target.value)}
+                                onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addImage(); } }}
+                                className="flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            />
+                            <button
+                                type="button"
+                                onClick={addImage}
+                                className="px-3 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-sm flex items-center gap-1"
+                            >
+                                <Plus className="w-4 h-4" /> Agregar
+                            </button>
+                        </div>
+                        <p className="text-xs text-gray-400 mt-1">
+                            Agrega URLs de imágenes. Pueden ser rutas locales (/images/...) o URLs externas.
+                        </p>
                     </div>
 
                     <div className="flex justify-end gap-3 pt-4">

@@ -672,6 +672,7 @@ export interface AcademyEvent {
     description: string;
     type: 'congreso' | 'live';
     active: boolean;
+    images: string[];
     created_at: string;
     updated_at: string;
 }
