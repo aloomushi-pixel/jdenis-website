@@ -7,10 +7,40 @@ import { getReels, type SocialReel } from '../lib/supabase';
 
 export default function Home() {
     const [reels, setReels] = useState<SocialReel[]>([]);
+    const [thumbs, setThumbs] = useState<Record<string, string>>({});
 
     useEffect(() => {
         getReels(true).then(setReels).catch(console.error);
     }, []);
+
+    // Fetch oEmbed thumbnails for TikTok/Instagram reels
+    useEffect(() => {
+        if (reels.length === 0) return;
+        const fetchThumbs = async () => {
+            const map: Record<string, string> = {};
+            await Promise.all(reels.map(async (reel) => {
+                // Skip if already has thumbnail_url or is YouTube (handled statically)
+                if (reel.thumbnail_url || reel.platform === 'youtube') return;
+                try {
+                    if (reel.platform === 'tiktok') {
+                        const res = await fetch(`https://www.tiktok.com/oembed?url=${encodeURIComponent(reel.url)}`);
+                        if (res.ok) {
+                            const data = await res.json();
+                            if (data.thumbnail_url) map[reel.id] = data.thumbnail_url;
+                        }
+                    } else if (reel.platform === 'instagram') {
+                        const res = await fetch(`https://graph.facebook.com/v18.0/instagram_oembed?url=${encodeURIComponent(reel.url)}&access_token=public`);
+                        if (res.ok) {
+                            const data = await res.json();
+                            if (data.thumbnail_url) map[reel.id] = data.thumbnail_url;
+                        }
+                    }
+                } catch { /* silently skip failed fetches */ }
+            }));
+            if (Object.keys(map).length > 0) setThumbs(map);
+        };
+        fetchThumbs();
+    }, [reels]);
 
     const platformStyles: Record<string, { gradient: string; icon: React.ReactNode; label: string }> = {
         youtube: { gradient: 'from-red-600 to-red-800', icon: <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>, label: 'YouTube' },
@@ -20,6 +50,7 @@ export default function Home() {
 
     function getThumbnailUrl(reel: SocialReel): string | null {
         if (reel.thumbnail_url) return reel.thumbnail_url;
+        if (thumbs[reel.id]) return thumbs[reel.id];
         if (reel.platform === 'youtube') {
             const match = reel.url.match(/(?:shorts\/|watch\?v=|youtu\.be\/)([\w-]{11})/);
             if (match) return `https://img.youtube.com/vi/${match[1]}/hqdefault.jpg`;
@@ -237,7 +268,7 @@ export default function Home() {
                                     #J.DENIS
                                 </span>
                                 <h2 className="font-serif text-3xl md:text-4xl text-cream mb-4">
-                                    Nuestros Reels & TikToks
+                                    Reels y TikToks
                                 </h2>
                                 <p className="text-cream/60 text-lg max-w-2xl mx-auto">
                                     Tutoriales, tips y tendencias en cejas y pestañas

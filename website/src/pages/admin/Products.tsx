@@ -152,13 +152,13 @@ export default function AdminProducts() {
                                                     disabled={saving}
                                                     className="text-green-600 hover:text-green-800 text-sm font-medium"
                                                 >
-                                                    ✓
+                                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
                                                 </button>
                                                 <button
                                                     onClick={() => setEditingStock(null)}
                                                     className="text-red-500 hover:text-red-700 text-sm"
                                                 >
-                                                    ✕
+                                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                                                 </button>
                                             </div>
                                         ) : (
@@ -168,8 +168,8 @@ export default function AdminProducts() {
                                                     setStockValue(product.stock || 0);
                                                 }}
                                                 className={`font-medium text-sm px-3 py-1 rounded ${(product.stock || 0) < 10
-                                                        ? 'bg-red-50 text-red-600'
-                                                        : 'bg-green-50 text-green-600'
+                                                    ? 'bg-red-50 text-red-600'
+                                                    : 'bg-green-50 text-green-600'
                                                     } hover:opacity-80 transition-opacity`}
                                             >
                                                 {product.stock ?? 0}
@@ -178,8 +178,8 @@ export default function AdminProducts() {
                                     </td>
                                     <td className="px-6 py-4 text-center">
                                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${product.is_active
-                                                ? 'bg-green-100 text-green-700'
-                                                : 'bg-gray-100 text-gray-500'
+                                            ? 'bg-green-100 text-green-700'
+                                            : 'bg-gray-100 text-gray-500'
                                             }`}>
                                             {product.is_active ? 'Activo' : 'Inactivo'}
                                         </span>
