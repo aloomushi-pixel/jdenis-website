@@ -13,6 +13,10 @@ export default function ProductCard({ product, index = 0, variantCount = 0 }: Pr
     const { addItem, openCart } = useCartStore();
     const navigate = useNavigate();
     const hasVariants = variantCount > 1;
+    const isOnSale = product.originalPrice && product.originalPrice > product.price;
+    const discountPercent = isOnSale
+        ? Math.round(((product.originalPrice! - product.price) / product.originalPrice!) * 100)
+        : 0;
 
     const handleAddToCart = (e: React.MouseEvent) => {
         e.preventDefault();
@@ -64,12 +68,16 @@ export default function ProductCard({ product, index = 0, variantCount = 0 }: Pr
                         </span>
                     </button>
 
-                    {/* Featured Badge */}
-                    {product.isFeatured && (
+                    {/* Discount Badge — takes priority over Featured */}
+                    {isOnSale ? (
+                        <div className="absolute top-2 left-2 z-10 bg-gradient-to-r from-red-500 to-red-600 text-white text-[10px] sm:text-xs font-bold px-2 py-0.5 sm:px-2.5 sm:py-1 tracking-wider uppercase shadow-lg rounded-sm">
+                            -{discountPercent}% OFF
+                        </div>
+                    ) : product.isFeatured ? (
                         <div className="absolute top-2 left-2 z-10 bg-gradient-to-r from-gold to-gold-light text-forest text-[10px] sm:text-xs font-bold px-2 py-0.5 sm:px-2.5 sm:py-1 tracking-wider uppercase shadow-lg animate-pulse" style={{ animationDuration: '3s' }}>
                             ⭐ Destacado
                         </div>
-                    )}
+                    ) : null}
 
                     {/* Variant Count Badge */}
                     {hasVariants && (
@@ -95,13 +103,20 @@ export default function ProductCard({ product, index = 0, variantCount = 0 }: Pr
                         {product.name}
                     </h3>
                     <div className="flex items-center justify-between mt-2 pt-2 border-t border-kraft/20">
-                        <p className="product-card-price text-sm sm:text-base font-semibold text-forest">
-                            {hasVariants ? (
-                                <span>Desde ${product.price.toLocaleString()}</span>
-                            ) : (
-                                <span>${product.price.toLocaleString()}</span>
+                        <div className="flex items-center gap-2">
+                            <p className={`product-card-price text-sm sm:text-base font-semibold ${isOnSale ? 'text-red-600' : 'text-forest'}`}>
+                                {hasVariants ? (
+                                    <span>Desde ${product.price.toLocaleString()}</span>
+                                ) : (
+                                    <span>${product.price.toLocaleString()}</span>
+                                )}
+                            </p>
+                            {isOnSale && (
+                                <span className="text-[10px] sm:text-xs text-charcoal/40 line-through">
+                                    ${product.originalPrice!.toLocaleString()}
+                                </span>
                             )}
-                        </p>
+                        </div>
                     </div>
                 </div>
             </Link>

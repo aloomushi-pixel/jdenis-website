@@ -11,7 +11,7 @@ import EventLog from './pages/admin/EventLog';
 import AdminOrders from './pages/admin/Orders';
 import PackagingRecords from './pages/admin/PackagingRecords';
 import ProductionOrders from './pages/admin/ProductionOrders';
-import AdminProducts from './pages/admin/Products';
+
 import PurchaseOrders from './pages/admin/PurchaseOrders';
 import ResourceManager from './pages/admin/ResourceManager';
 import SalesOrders from './pages/admin/SalesOrders';
@@ -21,7 +21,7 @@ import ReviewModeration from './pages/admin/ReviewModeration';
 import AcademyManager from './pages/admin/AcademyManager';
 import BlogManager from './pages/admin/BlogManager';
 import ReelsManager from './pages/admin/ReelsManager';
-import PromotionsManager from './pages/admin/PromotionsManager';
+
 import ProductEditor from './pages/admin/ProductEditor';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
@@ -75,7 +75,7 @@ function App() {
             {/* Admin / ERP Routes */}
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<AdminDashboard />} />
-              <Route path="products" element={<AdminProducts />} />
+
               <Route path="orders" element={<AdminOrders />} />
               <Route path="users" element={<UserManager />} />
               <Route path="resources" element={<ResourceManager />} />
@@ -89,7 +89,7 @@ function App() {
               <Route path="academy" element={<AcademyManager />} />
               <Route path="blog" element={<BlogManager />} />
               <Route path="reels" element={<ReelsManager />} />
-              <Route path="pricing" element={<PromotionsManager />} />
+
               <Route path="catalog" element={<ProductEditor />} />
             </Route>
           </Routes>
