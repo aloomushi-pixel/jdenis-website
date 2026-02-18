@@ -48,6 +48,11 @@ export default function Shop() {
         return products.filter(p => p.originalPrice && p.originalPrice > p.price);
     }, [products]);
 
+    // Featured products
+    const featuredProducts = useMemo(() => {
+        return products.filter(p => p.isFeatured);
+    }, [products]);
+
     // Check if any advanced filter is active
     const hasActiveFilters = useMemo(() => {
         return (
@@ -222,34 +227,34 @@ export default function Shop() {
             </section>
 
             {/* ═══════════════════════════════════════════════════
-                PROMO BANNER SECTION — Products with discounts
+                FEATURED PRODUCTS SECTION — Highlighted products
                ═══════════════════════════════════════════════════ */}
-            {promoProducts.length > 0 && (
+            {featuredProducts.length > 0 && (
                 <section className="py-8 md:py-12 bg-gradient-to-b from-forest/5 to-cream">
                     <div className="container-luxury">
                         <div className="flex items-center justify-between mb-6">
                             <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 bg-red-500/10 rounded-full flex items-center justify-center">
-                                    <span className="text-lg">🔥</span>
+                                <div className="w-8 h-8 bg-gold/10 rounded-full flex items-center justify-center">
+                                    <span className="text-lg">⭐</span>
                                 </div>
                                 <div>
-                                    <h2 className="font-serif text-xl md:text-2xl text-forest">Promociones</h2>
-                                    <p className="text-xs text-charcoal/50 mt-0.5">Precios especiales por tiempo limitado</p>
+                                    <h2 className="font-serif text-xl md:text-2xl text-forest">Productos Destacados</h2>
+                                    <p className="text-xs text-charcoal/50 mt-0.5">Los favoritos de nuestros profesionales</p>
                                 </div>
                             </div>
                             <button
-                                onClick={() => { setShowOffersOnly(true); window.scrollTo({ top: document.getElementById('shop-grid')?.offsetTop ? document.getElementById('shop-grid')!.offsetTop - 100 : 500, behavior: 'smooth' }); }}
+                                onClick={() => { setSortBy('featured'); window.scrollTo({ top: document.getElementById('shop-grid')?.offsetTop ? document.getElementById('shop-grid')!.offsetTop - 100 : 500, behavior: 'smooth' }); }}
                                 className="hidden md:flex items-center gap-1.5 text-sm text-gold hover:text-gold-light transition-colors font-medium"
                             >
-                                Ver todas
+                                Ver todos
                                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
                             </button>
                         </div>
 
-                        {/* Horizontal scroll of promo products */}
+                        {/* Horizontal scroll of featured products */}
                         <div className="-mx-4 px-4 overflow-x-auto scrollbar-hide">
                             <div className="flex gap-4 pb-2" style={{ minWidth: 'max-content' }}>
-                                {promoProducts.slice(0, 8).map((product, index) => (
+                                {featuredProducts.slice(0, 8).map((product, index) => (
                                     <div key={product.id} className="w-[160px] sm:w-[200px] md:w-[220px] flex-shrink-0">
                                         <ProductCard
                                             product={product}
@@ -343,8 +348,8 @@ export default function Shop() {
                                 <button
                                     onClick={() => setShowMobileFilters(true)}
                                     className={`flex items-center gap-1.5 px-3 py-2 text-sm rounded-lg border transition-all ${(priceRange[0] > PRICE_MIN || priceRange[1] < PRICE_MAX)
-                                            ? 'bg-gold/10 border-gold/40 text-forest'
-                                            : 'bg-white border-kraft/30 text-charcoal/70 hover:border-gold/40'
+                                        ? 'bg-gold/10 border-gold/40 text-forest'
+                                        : 'bg-white border-kraft/30 text-charcoal/70 hover:border-gold/40'
                                         }`}
                                 >
                                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -509,8 +514,8 @@ export default function Shop() {
                                                 key={opt.value}
                                                 onClick={() => setSortBy(opt.value)}
                                                 className={`text-left px-3 py-2.5 text-sm rounded-lg border transition-all ${sortBy === opt.value
-                                                        ? 'bg-gold/10 border-gold/40 text-forest font-medium'
-                                                        : 'bg-white border-kraft/20 text-charcoal/70 hover:border-kraft/40'
+                                                    ? 'bg-gold/10 border-gold/40 text-forest font-medium'
+                                                    : 'bg-white border-kraft/20 text-charcoal/70 hover:border-kraft/40'
                                                     }`}
                                             >
                                                 {opt.label}
