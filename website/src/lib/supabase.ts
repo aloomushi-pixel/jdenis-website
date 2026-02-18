@@ -775,3 +775,44 @@ export async function deleteBlogPost(id: string) {
     const { error } = await supabase.from('blog_posts').delete().eq('id', id);
     if (error) throw error;
 }
+
+// =============================================
+// SOCIAL REELS FUNCTIONS
+// =============================================
+
+export interface SocialReel {
+    id: string;
+    title: string;
+    url: string;
+    platform: 'youtube' | 'tiktok' | 'instagram';
+    thumbnail_url: string | null;
+    sort_order: number;
+    active: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+export async function getReels(activeOnly = true): Promise<SocialReel[]> {
+    let query = supabase.from('social_reels').select('*').order('sort_order', { ascending: true });
+    if (activeOnly) query = query.eq('active', true);
+    const { data, error } = await query;
+    if (error) throw error;
+    return (data || []) as SocialReel[];
+}
+
+export async function createReel(reelData: Omit<SocialReel, 'id' | 'created_at' | 'updated_at'>): Promise<SocialReel> {
+    const { data, error } = await supabase.from('social_reels').insert([reelData]).select().single();
+    if (error) throw error;
+    return data as SocialReel;
+}
+
+export async function updateReel(id: string, updates: Partial<SocialReel>): Promise<SocialReel> {
+    const { data, error } = await supabase.from('social_reels').update({ ...updates, updated_at: new Date().toISOString() }).eq('id', id).select().single();
+    if (error) throw error;
+    return data as SocialReel;
+}
+
+export async function deleteReel(id: string) {
+    const { error } = await supabase.from('social_reels').delete().eq('id', id);
+    if (error) throw error;
+}

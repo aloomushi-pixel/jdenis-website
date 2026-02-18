@@ -1,4 +1,5 @@
-import { ArrowRight, BookOpen, Clock, Droplets, Eye, ExternalLink, FileText, FlaskConical, Leaf, Newspaper, Shield, Sparkles, Star, Zap } from 'lucide-react';
+import { useState } from 'react';
+import { ArrowRight, BookOpen, Clock, Droplets, Eye, ExternalLink, FileText, FlaskConical, Leaf, Newspaper, Search, Shield, Sparkles, Star, X, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface BlogArticle {
@@ -137,8 +138,25 @@ const blogArticles: BlogArticle[] = [
     }
 ];
 
+// Extract unique categories
+const allCategories = [...new Set(blogArticles.map(a => a.category))];
+
 export default function Blog() {
-    const featuredArticles = blogArticles.filter(a => a.featured);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [activeCategory, setActiveCategory] = useState<string | null>(null);
+
+    // Filter logic
+    const filterArticle = (article: BlogArticle) => {
+        const matchesSearch = searchTerm === '' ||
+            article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            article.excerpt.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesCategory = !activeCategory || article.category === activeCategory;
+        return matchesSearch && matchesCategory;
+    };
+
+    const filteredArticles = blogArticles.filter(filterArticle);
+    const filteredFeatured = blogArticles.filter(a => a.featured).filter(filterArticle);
+    const hasActiveFilters = searchTerm !== '' || activeCategory !== null;
 
     return (
         <div className="min-h-screen bg-cream">
@@ -155,125 +173,174 @@ export default function Blog() {
                         <h1 className="font-serif text-4xl md:text-6xl text-cream mb-6">
                             Blog <span className="text-gold">J. Denis</span>
                         </h1>
-                        <p className="text-lg text-cream/70 leading-relaxed">
+                        <p className="text-lg text-cream/70 leading-relaxed mb-10">
                             Educación profesional en química cosmética, certificación STPS y técnicas de vanguardia.
                             Artículos sobre constancia DC-3, capacitación laboral en belleza y formación certificada.
                         </p>
-                    </div>
-                </div>
-            </section>
 
-            {/* NEWS SECTION */}
-            <section className="section section-cream">
-                <div className="container-luxury">
-                    <div className="section-header text-left">
-                        <h2 className="section-title flex items-center gap-3">
-                            <Newspaper className="w-7 h-7 text-gold" />
-                            Noticias
-                        </h2>
-                        <p className="text-charcoal/60 mt-2">Últimas novedades de la marca J. Denis</p>
-                    </div>
+                        {/* Search Bar */}
+                        <div className="relative max-w-xl mx-auto mb-8">
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-cream/40" />
+                            <input
+                                type="text"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                placeholder="Buscar artículos..."
+                                className="w-full pl-12 pr-12 py-4 bg-forest-light/80 backdrop-blur border border-gold/30 text-cream placeholder:text-cream/40 focus:outline-none focus:border-gold transition-colors text-base"
+                            />
+                            {searchTerm && (
+                                <button
+                                    onClick={() => setSearchTerm('')}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-cream/40 hover:text-cream transition-colors"
+                                >
+                                    <X className="w-5 h-5" />
+                                </button>
+                            )}
+                        </div>
 
-                    <div className="grid md:grid-cols-2 gap-8">
-                        {newsItems.map((news) => (
-                            <a
-                                key={news.id}
-                                href={news.instagramUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="group relative overflow-hidden bg-white border border-kraft/30 hover:border-gold/50 transition-all duration-500 hover:shadow-xl"
+                        {/* Category Pills */}
+                        <div className="flex flex-wrap justify-center gap-2">
+                            <button
+                                onClick={() => setActiveCategory(null)}
+                                className={`px-4 py-2 text-sm font-medium border transition-all duration-300 ${!activeCategory
+                                        ? 'bg-gold text-forest border-gold'
+                                        : 'bg-transparent text-cream/70 border-cream/20 hover:border-gold/50 hover:text-cream'
+                                    }`}
                             >
-                                {/* Tag */}
-                                <div className="absolute top-4 left-4 z-10 px-3 py-1 bg-gradient-to-r from-gold to-gold-light text-forest text-xs font-bold tracking-wider uppercase shadow-md">
-                                    {news.tag}
-                                </div>
-
-                                {/* Image */}
-                                <div className="aspect-video overflow-hidden bg-cream-dark">
-                                    <img
-                                        src={news.image}
-                                        alt={news.title}
-                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                    />
-                                </div>
-
-                                {/* Content */}
-                                <div className="p-6">
-                                    <div className="flex items-center gap-2 text-charcoal/50 text-sm mb-3">
-                                        <Clock className="w-4 h-4" />
-                                        {news.date}
-                                    </div>
-
-                                    <h3 className="font-serif text-xl text-forest mb-3 group-hover:text-gold transition-colors leading-tight">
-                                        {news.title}
-                                    </h3>
-
-                                    <p className="text-charcoal/70 text-sm mb-4 line-clamp-3 leading-relaxed">
-                                        {news.excerpt}
-                                    </p>
-
-                                    <div className="flex items-center gap-2 text-gold font-medium text-sm group-hover:gap-3 transition-all">
-                                        Ver en Instagram
-                                        <ExternalLink className="w-4 h-4" />
-                                    </div>
-                                </div>
-                            </a>
-                        ))}
+                                Todas
+                            </button>
+                            {allCategories.map((cat) => (
+                                <button
+                                    key={cat}
+                                    onClick={() => setActiveCategory(activeCategory === cat ? null : cat)}
+                                    className={`px-4 py-2 text-sm font-medium border transition-all duration-300 ${activeCategory === cat
+                                            ? 'bg-gold text-forest border-gold'
+                                            : 'bg-transparent text-cream/70 border-cream/20 hover:border-gold/50 hover:text-cream'
+                                        }`}
+                                >
+                                    {cat}
+                                </button>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </section>
+
+            {/* NEWS SECTION — only show when no filters active */}
+            {!hasActiveFilters && (
+                <section className="section section-cream">
+                    <div className="container-luxury">
+                        <div className="section-header text-left">
+                            <h2 className="section-title flex items-center gap-3">
+                                <Newspaper className="w-7 h-7 text-gold" />
+                                Noticias
+                            </h2>
+                            <p className="text-charcoal/60 mt-2">Últimas novedades de la marca J. Denis</p>
+                        </div>
+
+                        <div className="grid md:grid-cols-2 gap-8">
+                            {newsItems.map((news) => (
+                                <a
+                                    key={news.id}
+                                    href={news.instagramUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="group relative overflow-hidden bg-white border border-kraft/30 hover:border-gold/50 transition-all duration-500 hover:shadow-xl"
+                                >
+                                    {/* Tag */}
+                                    <div className="absolute top-4 left-4 z-10 px-3 py-1 bg-gradient-to-r from-gold to-gold-light text-forest text-xs font-bold tracking-wider uppercase shadow-md">
+                                        {news.tag}
+                                    </div>
+
+                                    {/* Image */}
+                                    <div className="aspect-video overflow-hidden bg-cream-dark">
+                                        <img
+                                            src={news.image}
+                                            alt={news.title}
+                                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                        />
+                                    </div>
+
+                                    {/* Content */}
+                                    <div className="p-6">
+                                        <div className="flex items-center gap-2 text-charcoal/50 text-sm mb-3">
+                                            <Clock className="w-4 h-4" />
+                                            {news.date}
+                                        </div>
+
+                                        <h3 className="font-serif text-xl text-forest mb-3 group-hover:text-gold transition-colors leading-tight">
+                                            {news.title}
+                                        </h3>
+
+                                        <p className="text-charcoal/70 text-sm mb-4 line-clamp-3 leading-relaxed">
+                                            {news.excerpt}
+                                        </p>
+
+                                        <div className="flex items-center gap-2 text-gold font-medium text-sm group-hover:gap-3 transition-all">
+                                            Ver en Instagram
+                                            <ExternalLink className="w-4 h-4" />
+                                        </div>
+                                    </div>
+                                </a>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            )}
 
             {/* Featured Articles */}
-            <section className="section section-kraft">
-                <div className="container-luxury">
-                    <div className="section-header text-left">
-                        <h2 className="section-title flex items-center gap-3">
-                            <Leaf className="w-7 h-7 text-gold" />
-                            Artículos Destacados
-                        </h2>
-                    </div>
+            {filteredFeatured.length > 0 && (
+                <section className="section section-kraft">
+                    <div className="container-luxury">
+                        <div className="section-header text-left">
+                            <h2 className="section-title flex items-center gap-3">
+                                <Leaf className="w-7 h-7 text-gold" />
+                                Artículos Destacados
+                            </h2>
+                        </div>
 
-                    <div className="grid md:grid-cols-2 gap-8">
-                        {featuredArticles.map((article) => (
-                            <Link
-                                key={article.id}
-                                to={`/blog/${article.id}`}
-                                className="group relative overflow-hidden bg-white border border-kraft/30 hover:border-gold/50 transition-all duration-500"
-                            >
-                                <div className="absolute inset-0 bg-gradient-to-br from-forest/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                        <div className="grid md:grid-cols-2 gap-8">
+                            {filteredFeatured.map((article) => (
+                                <Link
+                                    key={article.id}
+                                    to={`/blog/${article.id}`}
+                                    className="group relative overflow-hidden bg-white border border-kraft/30 hover:border-gold/50 transition-all duration-500"
+                                >
+                                    <div className="absolute inset-0 bg-gradient-to-br from-forest/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-                                <div className="relative p-8">
-                                    <div className="flex items-center gap-4 mb-6">
-                                        <div className="p-3 bg-forest text-gold">
-                                            {article.icon}
-                                        </div>
-                                        <div>
-                                            <span className="text-sm text-gold font-medium">{article.category}</span>
-                                            <div className="flex items-center gap-2 text-charcoal/50 text-sm">
-                                                <Clock className="w-4 h-4" />
-                                                {article.readTime} de lectura
+                                    <div className="relative p-8">
+                                        <div className="flex items-center gap-4 mb-6">
+                                            <div className="p-3 bg-forest text-gold">
+                                                {article.icon}
+                                            </div>
+                                            <div>
+                                                <span className="text-sm text-gold font-medium">{article.category}</span>
+                                                <div className="flex items-center gap-2 text-charcoal/50 text-sm">
+                                                    <Clock className="w-4 h-4" />
+                                                    {article.readTime} de lectura
+                                                </div>
                                             </div>
                                         </div>
+
+                                        <h3 className="font-serif text-2xl text-forest mb-4 group-hover:text-gold transition-colors">
+                                            {article.title}
+                                        </h3>
+
+                                        <p className="text-charcoal/70 mb-6 line-clamp-3">
+                                            {article.excerpt}
+                                        </p>
+
+                                        <div className="flex items-center gap-2 text-gold font-medium group-hover:gap-4 transition-all">
+                                            Leer artículo
+                                            <ArrowRight className="w-5 h-5" />
+                                        </div>
                                     </div>
-
-                                    <h3 className="font-serif text-2xl text-forest mb-4 group-hover:text-gold transition-colors">
-                                        {article.title}
-                                    </h3>
-
-                                    <p className="text-charcoal/70 mb-6 line-clamp-3">
-                                        {article.excerpt}
-                                    </p>
-
-                                    <div className="flex items-center gap-2 text-gold font-medium group-hover:gap-4 transition-all">
-                                        Leer artículo
-                                        <ArrowRight className="w-5 h-5" />
-                                    </div>
-                                </div>
-                            </Link>
-                        ))}
+                                </Link>
+                            ))}
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
+            )}
 
             {/* All Articles */}
             <section className="section section-kraft">
@@ -281,44 +348,58 @@ export default function Blog() {
                     <div className="section-header text-left">
                         <h2 className="section-title flex items-center gap-3">
                             <BookOpen className="w-7 h-7 text-gold" />
-                            Todos los Artículos
+                            {hasActiveFilters ? `Resultados (${filteredArticles.length})` : 'Todos los Artículos'}
                         </h2>
                     </div>
 
-                    <div className="grid md:grid-cols-3 gap-6">
-                        {blogArticles.map((article) => (
-                            <Link
-                                key={article.id}
-                                to={`/blog/${article.id}`}
-                                className="group p-6 bg-cream border border-kraft/30 hover:border-gold/50 transition-all duration-300"
-                            >
-                                <div className="flex items-center gap-3 mb-4">
-                                    <div className="p-2 bg-forest text-gold">
-                                        {article.icon}
+                    {filteredArticles.length > 0 ? (
+                        <div className="grid md:grid-cols-3 gap-6">
+                            {filteredArticles.map((article) => (
+                                <Link
+                                    key={article.id}
+                                    to={`/blog/${article.id}`}
+                                    className="group p-6 bg-cream border border-kraft/30 hover:border-gold/50 transition-all duration-300"
+                                >
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <div className="p-2 bg-forest text-gold">
+                                            {article.icon}
+                                        </div>
+                                        <span className="text-sm text-charcoal/60">{article.category}</span>
                                     </div>
-                                    <span className="text-sm text-charcoal/60">{article.category}</span>
-                                </div>
 
-                                <h3 className="font-serif text-lg text-forest mb-2 group-hover:text-gold transition-colors">
-                                    {article.title}
-                                </h3>
+                                    <h3 className="font-serif text-lg text-forest mb-2 group-hover:text-gold transition-colors">
+                                        {article.title}
+                                    </h3>
 
-                                <p className="text-charcoal/60 text-sm mb-4 line-clamp-2">
-                                    {article.excerpt}
-                                </p>
+                                    <p className="text-charcoal/60 text-sm mb-4 line-clamp-2">
+                                        {article.excerpt}
+                                    </p>
 
-                                <div className="flex items-center justify-between text-sm">
-                                    <span className="text-charcoal/40 flex items-center gap-1">
-                                        <Clock className="w-4 h-4" />
-                                        {article.readTime}
-                                    </span>
-                                    <span className="text-gold group-hover:text-forest transition-colors">
-                                        Leer más →
-                                    </span>
-                                </div>
-                            </Link>
-                        ))}
-                    </div>
+                                    <div className="flex items-center justify-between text-sm">
+                                        <span className="text-charcoal/40 flex items-center gap-1">
+                                            <Clock className="w-4 h-4" />
+                                            {article.readTime}
+                                        </span>
+                                        <span className="text-gold group-hover:text-forest transition-colors">
+                                            Leer más →
+                                        </span>
+                                    </div>
+                                </Link>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-center py-16">
+                            <Search className="w-12 h-12 text-charcoal/20 mx-auto mb-4" />
+                            <p className="text-charcoal/50 text-lg mb-2">No se encontraron artículos</p>
+                            <p className="text-charcoal/40 text-sm mb-6">Intenta con otros términos de búsqueda o selecciona otra categoría</p>
+                            <button
+                                onClick={() => { setSearchTerm(''); setActiveCategory(null); }}
+                                className="px-6 py-2 bg-forest text-cream text-sm font-medium hover:bg-forest-light transition-colors"
+                            >
+                                Limpiar filtros
+                            </button>
+                        </div>
+                    )}
                 </div>
             </section>
 

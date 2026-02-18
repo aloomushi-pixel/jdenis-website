@@ -1,9 +1,23 @@
 import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import { bestsellers } from '../data/products';
+import { getReels, type SocialReel } from '../lib/supabase';
 
 export default function Home() {
+    const [reels, setReels] = useState<SocialReel[]>([]);
+
+    useEffect(() => {
+        getReels(true).then(setReels).catch(console.error);
+    }, []);
+
+    const platformStyles: Record<string, { gradient: string; icon: string; label: string }> = {
+        youtube: { gradient: 'from-red-600 to-red-800', icon: '▶️', label: 'YouTube' },
+        tiktok: { gradient: 'from-[#00f2ea] via-[#ff0050] to-[#7c3aed]', icon: '🎵', label: 'TikTok' },
+        instagram: { gradient: 'from-[#f09433] via-[#e6683c] to-[#bc1888]', icon: '📸', label: 'Instagram' },
+    };
+
     return (
         <div className="min-h-screen bg-cream">
             {/* HERO SECTION - BOTANICAL APOTHECARY */}
@@ -191,6 +205,85 @@ export default function Home() {
                     </div>
                 </div>
             </section>
+
+            {/* REELS & TIKTOKS GALLERY */}
+            {reels.length > 0 && (
+                <section className="py-20 relative overflow-hidden bg-forest">
+                    {/* Dynamic glow overlay */}
+                    <div className="absolute inset-0 opacity-30">
+                        <div className="absolute top-0 left-1/4 w-80 h-80 bg-gold/40 rounded-full blur-3xl" />
+                        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-gold/20 rounded-full blur-3xl" />
+                    </div>
+                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
+
+                    <div className="container-luxury relative z-10">
+                        <div className="section-header">
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                            >
+                                <span className="inline-block px-4 py-2 bg-gold/20 border border-gold/40 text-gold text-xs tracking-[0.2em] uppercase mb-4">
+                                    Síguenos
+                                </span>
+                                <h2 className="font-serif text-3xl md:text-4xl text-cream mb-4">
+                                    Nuestros Reels & TikToks
+                                </h2>
+                                <p className="text-cream/60 text-lg max-w-2xl mx-auto">
+                                    Tutoriales, tips y tendencias en cejas y pestañas
+                                </p>
+                            </motion.div>
+                        </div>
+
+                        {/* Horizontal scrollable carousel */}
+                        <div className="flex gap-5 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory -mx-4 px-4">
+                            {reels.map((reel, i) => {
+                                const style = platformStyles[reel.platform] || platformStyles.instagram;
+                                return (
+                                    <motion.a
+                                        key={reel.id}
+                                        href={reel.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        initial={{ opacity: 0, y: 30 }}
+                                        whileInView={{ opacity: 1, y: 0 }}
+                                        viewport={{ once: true }}
+                                        transition={{ delay: i * 0.1 }}
+                                        className="group flex-shrink-0 snap-start w-[200px] sm:w-[220px]"
+                                    >
+                                        <div className={`relative aspect-[9/16] rounded-2xl overflow-hidden bg-gradient-to-br ${style.gradient} shadow-lg group-hover:shadow-2xl transition-all duration-300 group-hover:scale-[1.03]`}>
+                                            {/* Shimmer overlay */}
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
+
+                                            {/* Play button */}
+                                            <div className="absolute inset-0 flex items-center justify-center">
+                                                <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30 group-hover:bg-white/30 group-hover:scale-110 transition-all duration-300">
+                                                    <span className="text-3xl ml-1">{style.icon}</span>
+                                                </div>
+                                            </div>
+
+                                            {/* Platform badge */}
+                                            <div className="absolute top-3 left-3">
+                                                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold text-white bg-black/40 backdrop-blur-sm">
+                                                    {style.icon} {style.label}
+                                                </span>
+                                            </div>
+
+                                            {/* Title at bottom */}
+                                            <div className="absolute bottom-0 left-0 right-0 p-3">
+                                                <p className="text-white text-xs font-medium leading-snug line-clamp-2">
+                                                    {reel.title}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </motion.a>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </section>
+            )}
 
             {/* TESTIMONIALS - CREAM SECTION */}
             <section className="section section-cream">
