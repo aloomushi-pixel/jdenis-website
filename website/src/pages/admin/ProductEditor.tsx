@@ -12,6 +12,7 @@ function productToRow(p: Product) {
         ID: p.id,
         Nombre: p.name,
         'Precio Cliente': p.price,
+        'Precio Original': p.originalPrice ?? '',
         'Precio Distribuidor': p.distributorPrice ?? '',
         'Promoción': p.promotion ?? '',
         'Categoría': p.category,
@@ -77,7 +78,7 @@ export default function ProductEditor() {
         const { id, field } = editingCell;
 
         let value: string | number | undefined = editValue;
-        if (['price', 'distributorPrice', 'stock'].includes(field)) {
+        if (['price', 'originalPrice', 'distributorPrice', 'stock'].includes(field)) {
             value = editValue === '' ? undefined : Number(editValue);
         }
 
@@ -235,6 +236,9 @@ export default function ProductEditor() {
             const patch: Partial<Product> = {};
             if (row['Nombre'] !== undefined) patch.name = String(row['Nombre']);
             if (row['Precio Cliente'] !== undefined) patch.price = Number(row['Precio Cliente']);
+            if (row['Precio Original'] !== undefined && row['Precio Original'] !== '') {
+                patch.originalPrice = Number(row['Precio Original']);
+            }
             if (row['Precio Distribuidor'] !== undefined && row['Precio Distribuidor'] !== '') {
                 patch.distributorPrice = Number(row['Precio Distribuidor']);
             }
@@ -558,6 +562,9 @@ export default function ProductEditor() {
                                 >
                                     <span className="text-blue-700">💰 P. Cliente</span> <SortIcon col="price" />
                                 </th>
+                                <th className="text-right px-3 py-3 text-[10px] font-semibold text-gray-500 uppercase tracking-wider min-w-[100px]">
+                                    <span className="text-red-600">🔥 P. Original</span>
+                                </th>
                                 <th className="text-right px-3 py-3 text-[10px] font-semibold text-gray-500 uppercase tracking-wider min-w-[110px]">
                                     <span className="text-purple-700">🏷️ P. Distribuidor</span>
                                 </th>
@@ -610,6 +617,9 @@ export default function ProductEditor() {
                                         </td>
                                         <td className="px-3 py-2 text-right min-w-[100px]">
                                             <EditableCell product={product} field="price" type="currency" className="text-sm font-semibold text-blue-800" />
+                                        </td>
+                                        <td className="px-3 py-2 text-right min-w-[100px]">
+                                            <EditableCell product={product} field="originalPrice" type="currency" className={`text-sm font-semibold ${getVal(product, 'originalPrice') ? 'text-red-600' : 'text-gray-300'}`} />
                                         </td>
                                         <td className="px-3 py-2 text-right min-w-[110px]">
                                             <EditableCell product={product} field="distributorPrice" type="currency" className="text-sm font-semibold text-purple-800" />

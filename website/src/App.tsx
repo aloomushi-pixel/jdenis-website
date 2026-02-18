@@ -25,6 +25,7 @@ import ReelsManager from './pages/admin/ReelsManager';
 import ProductEditor from './pages/admin/ProductEditor';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
+import NewsPost from './pages/NewsPost';
 import Checkout from './pages/Checkout';
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -68,6 +69,7 @@ function App() {
             <Route path="/academia" element={<Academy />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogPost />} />
+            <Route path="/noticias/:slug" element={<NewsPost />} />
             <Route path="/registro-distribuidor" element={<RegistroDistribuidor />} />
             <Route path="/aviso-de-privacidad" element={<AvisoPrivacidad />} />
             <Route path="/pago-resultado" element={<PaymentResult />} />
