@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
@@ -8,6 +8,8 @@ import { getReels, type SocialReel } from '../lib/supabase';
 export default function Home() {
     const [reels, setReels] = useState<SocialReel[]>([]);
     const [thumbs, setThumbs] = useState<Record<string, string>>({});
+    const [currentReel, setCurrentReel] = useState(0);
+    const [isReelPaused, setIsReelPaused] = useState(false);
 
     useEffect(() => {
         getReels(true).then(setReels).catch(console.error);
@@ -41,6 +43,15 @@ export default function Home() {
         };
         fetchThumbs();
     }, [reels]);
+
+    // Auto-rotate reels every 3 seconds
+    useEffect(() => {
+        if (reels.length <= 1 || isReelPaused) return;
+        const timer = setInterval(() => {
+            setCurrentReel(prev => (prev + 1) % reels.length);
+        }, 3000);
+        return () => clearInterval(timer);
+    }, [reels.length, isReelPaused]);
 
     const platformStyles: Record<string, { gradient: string; icon: React.ReactNode; label: string }> = {
         youtube: { gradient: 'from-red-600 to-red-800', icon: <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>, label: 'YouTube' },
@@ -276,60 +287,100 @@ export default function Home() {
                             </motion.div>
                         </div>
 
-                        {/* Horizontal scrollable carousel */}
-                        <div className="flex gap-5 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory -mx-4 px-4">
-                            {reels.map((reel, i) => {
-                                const style = platformStyles[reel.platform] || platformStyles.instagram;
-                                const thumb = getThumbnailUrl(reel);
-                                return (
-                                    <motion.a
-                                        key={reel.id}
-                                        href={reel.url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        initial={{ opacity: 0, y: 30 }}
-                                        whileInView={{ opacity: 1, y: 0 }}
-                                        viewport={{ once: true }}
-                                        transition={{ delay: i * 0.1 }}
-                                        className="group flex-shrink-0 snap-start w-[200px] sm:w-[220px]"
-                                    >
-                                        <div className={`relative aspect-[9/16] rounded-2xl overflow-hidden bg-gradient-to-br ${style.gradient} shadow-lg group-hover:shadow-2xl transition-all duration-300 group-hover:scale-[1.03]`}>
-                                            {/* Thumbnail image */}
-                                            {thumb && (
-                                                <img
-                                                    src={thumb}
-                                                    alt={reel.title}
-                                                    className="absolute inset-0 w-full h-full object-cover"
-                                                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                                                />
-                                            )}
-                                            {/* Gradient overlay */}
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/30" />
+                        {/* Auto-rotating centered carousel */}
+                        <div
+                            className="flex flex-col items-center"
+                            onMouseEnter={() => setIsReelPaused(true)}
+                            onMouseLeave={() => setIsReelPaused(false)}
+                        >
+                            <div className="relative w-[260px] sm:w-[280px] md:w-[300px] aspect-[9/16]">
+                                <AnimatePresence mode="wait">
+                                    {reels.length > 0 && (() => {
+                                        const reel = reels[currentReel];
+                                        const style = platformStyles[reel.platform] || platformStyles.instagram;
+                                        const thumb = getThumbnailUrl(reel);
+                                        return (
+                                            <motion.a
+                                                key={reel.id}
+                                                href={reel.url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                initial={{ opacity: 0, scale: 0.9, rotateY: -15 }}
+                                                animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+                                                exit={{ opacity: 0, scale: 0.9, rotateY: 15 }}
+                                                transition={{ duration: 0.5, ease: 'easeInOut' }}
+                                                className="group absolute inset-0"
+                                            >
+                                                <div className={`relative w-full h-full rounded-2xl overflow-hidden bg-gradient-to-br ${style.gradient} shadow-2xl ring-2 ring-gold/30`}>
+                                                    {/* Thumbnail image */}
+                                                    {thumb && (
+                                                        <img
+                                                            src={thumb}
+                                                            alt={reel.title}
+                                                            className="absolute inset-0 w-full h-full object-cover"
+                                                            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                                                        />
+                                                    )}
+                                                    {/* Gradient overlay */}
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-black/20" />
 
-                                            {/* Play button */}
-                                            <div className="absolute inset-0 flex items-center justify-center">
-                                                <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30 group-hover:bg-white/30 group-hover:scale-110 transition-all duration-300 text-white">
-                                                    {style.icon}
+                                                    {/* Play button */}
+                                                    <div className="absolute inset-0 flex items-center justify-center">
+                                                        <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30 group-hover:bg-white/30 group-hover:scale-110 transition-all duration-300 text-white">
+                                                            {style.icon}
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Platform badge */}
+                                                    <div className="absolute top-3 left-3">
+                                                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold text-white bg-black/40 backdrop-blur-sm">
+                                                            <span className="w-3 h-3">{style.icon}</span> {style.label}
+                                                        </span>
+                                                    </div>
+
+                                                    {/* Title at bottom */}
+                                                    <div className="absolute bottom-0 left-0 right-0 p-4">
+                                                        <p className="text-white text-sm font-medium leading-snug line-clamp-2">
+                                                            {reel.title}
+                                                        </p>
+                                                    </div>
+
+                                                    {/* Progress bar */}
+                                                    <div className="absolute top-0 left-0 right-0 h-1 bg-white/10">
+                                                        <motion.div
+                                                            className="h-full bg-gold"
+                                                            initial={{ width: '0%' }}
+                                                            animate={{ width: isReelPaused ? undefined : '100%' }}
+                                                            transition={{ duration: 3, ease: 'linear' }}
+                                                            key={`progress-${currentReel}`}
+                                                        />
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            </motion.a>
+                                        );
+                                    })()}
+                                </AnimatePresence>
+                            </div>
 
-                                            {/* Platform badge */}
-                                            <div className="absolute top-3 left-3">
-                                                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold text-white bg-black/40 backdrop-blur-sm">
-                                                    <span className="w-3 h-3">{style.icon}</span> {style.label}
-                                                </span>
-                                            </div>
+                            {/* Navigation dots */}
+                            <div className="flex items-center gap-2 mt-6">
+                                {reels.map((_, i) => (
+                                    <button
+                                        key={i}
+                                        onClick={() => setCurrentReel(i)}
+                                        className={`transition-all duration-300 rounded-full ${i === currentReel
+                                            ? 'w-8 h-2 bg-gold'
+                                            : 'w-2 h-2 bg-cream/30 hover:bg-cream/50'
+                                            }`}
+                                        aria-label={`Ver reel ${i + 1}`}
+                                    />
+                                ))}
+                            </div>
 
-                                            {/* Title at bottom */}
-                                            <div className="absolute bottom-0 left-0 right-0 p-3">
-                                                <p className="text-white text-xs font-medium leading-snug line-clamp-2">
-                                                    {reel.title}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </motion.a>
-                                );
-                            })}
+                            {/* Counter */}
+                            <p className="text-cream/40 text-xs mt-3 tracking-wider">
+                                {currentReel + 1} / {reels.length}
+                            </p>
                         </div>
                     </div>
                 </section>
