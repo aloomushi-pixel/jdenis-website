@@ -100,6 +100,8 @@ export default function AdminDashboard() {
         { label: 'Nuevo Pedido Venta', icon: '💰', path: '/admin/sales' },
         { label: 'Gestionar Recursos', icon: '📦', path: '/admin/resources' },
         { label: 'Ver Log de Eventos', icon: '📝', path: '/admin/event-log' },
+        { label: 'Gestionar Academia', icon: '🎓', path: '/admin/academy' },
+        { label: 'Gestionar Blog', icon: '✍️', path: '/admin/blog' },
     ];
 
     return (

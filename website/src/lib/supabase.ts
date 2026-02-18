@@ -610,3 +610,145 @@ export async function moderateReview(reviewId: string, status: 'approved' | 'rej
     if (error) throw error;
     return data;
 }
+
+
+// =============================================
+// ACADEMY COURSES FUNCTIONS
+// =============================================
+
+export interface AcademyCourse {
+    id: string;
+    title: string;
+    duration: string;
+    price: number;
+    description: string;
+    topics: string[];
+    badge: 'presencial' | 'online' | 'replay';
+    next_date: string;
+    link: string;
+    dc3: boolean;
+    video: string | null;
+    video_title: string | null;
+    active: boolean;
+    images: string[];
+    created_at: string;
+    updated_at: string;
+}
+
+export async function getAcademyCourses(activeOnly = true): Promise<AcademyCourse[]> {
+    let query = supabase.from('academy_courses').select('*').order('created_at', { ascending: false });
+    if (activeOnly) query = query.eq('active', true);
+    const { data, error } = await query;
+    if (error) throw error;
+    return (data || []) as AcademyCourse[];
+}
+
+export async function createCourse(courseData: Omit<AcademyCourse, 'id' | 'created_at' | 'updated_at'>): Promise<AcademyCourse> {
+    const { data, error } = await supabase.from('academy_courses').insert([courseData]).select().single();
+    if (error) throw error;
+    return data as AcademyCourse;
+}
+
+export async function updateCourse(id: string, updates: Partial<AcademyCourse>): Promise<AcademyCourse> {
+    const { data, error } = await supabase.from('academy_courses').update({ ...updates, updated_at: new Date().toISOString() }).eq('id', id).select().single();
+    if (error) throw error;
+    return data as AcademyCourse;
+}
+
+export async function deleteCourse(id: string) {
+    const { error } = await supabase.from('academy_courses').update({ active: false, updated_at: new Date().toISOString() }).eq('id', id);
+    if (error) throw error;
+}
+
+// =============================================
+// ACADEMY EVENTS FUNCTIONS
+// =============================================
+
+export interface AcademyEvent {
+    id: string;
+    title: string;
+    date: string;
+    location: string;
+    description: string;
+    type: 'congreso' | 'live';
+    active: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+export async function getAcademyEvents(activeOnly = true): Promise<AcademyEvent[]> {
+    let query = supabase.from('academy_events').select('*').order('created_at', { ascending: false });
+    if (activeOnly) query = query.eq('active', true);
+    const { data, error } = await query;
+    if (error) throw error;
+    return (data || []) as AcademyEvent[];
+}
+
+export async function createEvent(eventData: Omit<AcademyEvent, 'id' | 'created_at' | 'updated_at'>): Promise<AcademyEvent> {
+    const { data, error } = await supabase.from('academy_events').insert([eventData]).select().single();
+    if (error) throw error;
+    return data as AcademyEvent;
+}
+
+export async function updateEvent(id: string, updates: Partial<AcademyEvent>): Promise<AcademyEvent> {
+    const { data, error } = await supabase.from('academy_events').update({ ...updates, updated_at: new Date().toISOString() }).eq('id', id).select().single();
+    if (error) throw error;
+    return data as AcademyEvent;
+}
+
+export async function deleteEvent(id: string) {
+    const { error } = await supabase.from('academy_events').update({ active: false, updated_at: new Date().toISOString() }).eq('id', id);
+    if (error) throw error;
+}
+
+// =============================================
+// BLOG POSTS FUNCTIONS
+// =============================================
+
+export interface BlogPost {
+    id: string;
+    slug: string;
+    title: string;
+    subtitle: string | null;
+    author: string;
+    content: string;
+    excerpt: string | null;
+    featured_image: string | null;
+    categories: string[] | null;
+    tags: string[] | null;
+    published: boolean;
+    published_at: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export async function getBlogPosts(publishedOnly = true): Promise<BlogPost[]> {
+    let query = supabase.from('blog_posts').select('*').order('published_at', { ascending: false, nullsFirst: false });
+    if (publishedOnly) query = query.eq('published', true);
+    const { data, error } = await query;
+    if (error) throw error;
+    return (data || []) as BlogPost[];
+}
+
+export async function getBlogPost(slug: string): Promise<BlogPost> {
+    const { data, error } = await supabase.from('blog_posts').select('*').eq('slug', slug).single();
+    if (error) throw error;
+    return data as BlogPost;
+}
+
+export async function createBlogPost(postData: Omit<BlogPost, 'id' | 'created_at' | 'updated_at'>): Promise<BlogPost> {
+    const { data, error } = await supabase.from('blog_posts').insert([postData]).select().single();
+    if (error) throw error;
+    return data as BlogPost;
+}
+
+export async function updateBlogPost(id: string, updates: Partial<BlogPost>): Promise<BlogPost> {
+    const { data, error } = await supabase.from('blog_posts').update({ ...updates, updated_at: new Date().toISOString() }).eq('id', id).select().single();
+    if (error) throw error;
+    return data as BlogPost;
+}
+
+export async function deleteBlogPost(id: string) {
+    const { error } = await supabase.from('blog_posts').delete().eq('id', id);
+    if (error) throw error;
+}

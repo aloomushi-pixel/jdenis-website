@@ -25,6 +25,8 @@ const menuItems: MenuItem[] = [
     { path: '/admin/products', label: 'Productos B2B', icon: '🏷️', roles: ['ADMIN', 'EJECUTIVO'] },
     { path: '/admin/orders', label: 'Pedidos B2B', icon: '🧾', roles: ['ADMIN', 'EJECUTIVO'] },
     { path: '/admin/reviews', label: 'Reseñas', icon: '⭐', roles: ['ADMIN'] },
+    { path: '/admin/academy', label: 'Academia', icon: '🎓', roles: ['ADMIN', 'EJECUTIVO'] },
+    { path: '/admin/blog', label: 'Blog', icon: '✍️', roles: ['ADMIN', 'EJECUTIVO'] },
 ];
 
 const ERP_ROLES: UserRole[] = ['ADMIN', 'EJECUTIVO', 'FABRICA', 'ALMACEN_MP', 'ALMACEN_PF', 'TRANSPORTISTA'];

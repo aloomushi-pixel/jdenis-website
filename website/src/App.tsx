@@ -18,6 +18,8 @@ import SalesOrders from './pages/admin/SalesOrders';
 import TransportAssignments from './pages/admin/TransportAssignments';
 import UserManager from './pages/admin/UserManager';
 import ReviewModeration from './pages/admin/ReviewModeration';
+import AcademyManager from './pages/admin/AcademyManager';
+import BlogManager from './pages/admin/BlogManager';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
 import Checkout from './pages/Checkout';
@@ -77,6 +79,8 @@ function App() {
               <Route path="packaging" element={<PackagingRecords />} />
               <Route path="event-log" element={<EventLog />} />
               <Route path="reviews" element={<ReviewModeration />} />
+              <Route path="academy" element={<AcademyManager />} />
+              <Route path="blog" element={<BlogManager />} />
             </Route>
           </Routes>
         </main>

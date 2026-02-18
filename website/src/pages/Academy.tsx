@@ -1,102 +1,40 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Calendar, MapPin, Radio, Monitor, Shield } from 'lucide-react';
-
-const courses = [
-    // ── PRESENCIALES (basados en redes sociales) ──
-    {
-        id: 1,
-        title: 'Lash Lifting con Cisteamina — Curso Certificado DC-3',
-        duration: '2 días',
-        price: 4500,
-        description: 'Curso certificado ante la STPS con constancia DC-3 incluida. Domina la técnica de lifting con Cisteamina Estabilizada: el sistema más seguro del mercado. Capacitación oficial válida para cumplimiento de normas laborales.',
-        topics: ['Cisteamina vs. Tioglicólico', 'Shot 1.5 Hidratante', 'Selección de pads', 'Práctica con modelo', 'Constancia DC-3 / STPS'],
-        dc3: true,
-        nextDate: '3 de Marzo 2026',
-        badge: 'presencial',
-        link: 'https://wa.me/525565116087?text=Hola! Quiero inscribirme al curso: Lash Lifting con Cisteamina',
-    },
-    {
-        id: 2,
-        title: 'Lifting Coreano (Korean Lash Lift) — Certificación STPS',
-        duration: '1 día',
-        price: 3800,
-        description: 'Curso con validez oficial DC-3 ante la STPS. Aprende la técnica coreana de 51K reproducciones: rizo abierto y natural con Cisteamina + Shot 1.5. Incluye constancia DC-3 y kit de práctica.',
-        topics: ['Filosofía K-Beauty', 'Molde plano vs. nube', 'Combo Cisteamina + Shot 1.5', 'Rizo tipo J y L', 'Constancia DC-3 / STPS'],
-        dc3: true,
-        nextDate: '5 de Marzo 2026',
-        badge: 'presencial',
-        link: 'https://wa.me/525565116087?text=Hola! Quiero inscribirme al curso: Lifting Coreano',
-    },
-    {
-        id: 3,
-        title: 'Laminado de Cejas Profesional — Constancia DC-3',
-        duration: '1 día',
-        price: 3500,
-        description: 'Capacitación certificada STPS con constancia DC-3. Aprende de los creadores del laminado de cejas en México. Técnica completa de moldeo, fijación y coloración con Brow Henna. Cumple normativa laboral.',
-        topics: ['Mapeo y diseño de cejas', 'Laminado paso a paso', 'Brow Henna tono a tono', 'Aftercare', 'Constancia DC-3 / STPS'],
-        dc3: true,
-        nextDate: '10 de Marzo 2026',
-        badge: 'presencial',
-        link: 'https://wa.me/525565116087?text=Hola! Quiero inscribirme al curso: Laminado de Cejas Profesional',
-        video: '/videos/Video_con_logo_J_DENIS.mp4',
-        videoTitle: 'Técnica Brow Henna J. Denis',
-    },
-
-    // ── EN LÍNEA / EN VIVO (basados en Facebook Lives) ──
-    {
-        id: 4,
-        title: 'Business Pro 2026 by Gaby Cisneros',
-        duration: '2 horas',
-        price: 0,
-        description: '¡GRATIS! "Evolución de los Colorantes en Cejas" impartido por Gabriela Elizalde, CEO de J. Denis. Acceso vía WhatsApp.',
-        topics: ['Historia de los colorantes', 'Henna vs. tinturas tópicas', 'Tendencias 2026', 'Sesión de preguntas'],
-        nextDate: '23 de Febrero 2026, 6:00 PM',
-        badge: 'online',
-        link: 'https://chat.whatsapp.com/DEZ2b9q50qpDLM98AHcN8o?mode=gi_t',
-    },
-    {
-        id: 5,
-        title: 'Masterclass: Lifting Coreano & Cisteamina',
-        duration: '1.5 horas',
-        price: 0,
-        description: '¡GRATIS! Reprise del Live más visto (+51K reproducciones). La Maestra Gaby explica paso a paso el nuevo sistema de lifting coreano con Cisteamina.',
-        topics: ['¿Qué es Cisteamina?', 'Etanolamina explicada', 'Demo en vivo del combo', 'Resolución de dudas'],
-        nextDate: 'Disponible en replay',
-        badge: 'replay',
-        link: 'https://www.youtube.com/watch?v=jeUk-RibCec',
-    },
-    {
-        id: 6,
-        title: 'Glue Less Powder: Técnica sin Adhesivo',
-        duration: '45 min',
-        price: 0,
-        description: '¡GRATIS! Aprende a utilizar el revolucionario adhesivo en polvo para lifting de pestañas. Ideal para pieles sensibles.',
-        topics: ['Aplicación del polvo', 'Ventajas vs. adhesivo líquido', 'Pieles sensibles', 'Tips de la Maestra Gaby'],
-        nextDate: 'Disponible en replay',
-        badge: 'replay',
-        link: 'https://www.youtube.com/watch?v=WeZHAEXMEOQ',
-    },
-];
-
-const events = [
-    {
-        title: 'A la Belleza Profesional',
-        date: '15-16 de Febrero 2026',
-        location: 'Stands #64 y #72, Centro de Convenciones, CDMX',
-        description: 'J. Denis estará presente con demostraciones en vivo de Cisteamina Estabilizada, Shot 1.5 y el nuevo sistema Glue Less Powder.',
-        type: 'congreso' as const,
-    },
-    {
-        title: 'Business Pro 2026 — Gaby Cisneros',
-        date: '23 de Febrero 2026, 6:00 PM',
-        location: 'Online vía WhatsApp (acceso gratuito)',
-        description: '"Evolución de los Colorantes en Cejas" por la CEO Gabriela Elizalde. Sigue elevando tu conocimiento profesional desde donde estés.',
-        type: 'live' as const,
-    },
-];
+import { useEffect, useState } from 'react';
+import { getAcademyCourses, getAcademyEvents, type AcademyCourse, type AcademyEvent } from '../lib/supabase';
 
 export default function Academy() {
+    const [courses, setCourses] = useState<AcademyCourse[]>([]);
+    const [events, setEvents] = useState<AcademyEvent[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const loadData = async () => {
+            try {
+                const [coursesData, eventsData] = await Promise.all([
+                    getAcademyCourses(true), // Solo activos
+                    getAcademyEvents(true)
+                ]);
+                setCourses(coursesData);
+                setEvents(eventsData);
+            } catch (error) {
+                console.error('Error loading academy data:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadData();
+    }, []);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-cream pt-24 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-pink-400"></div>
+            </div>
+        );
+    }
+
     return (
         <div className="min-h-screen bg-cream">
             {/* Hero */}
@@ -184,7 +122,7 @@ export default function Academy() {
                                                         <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-medium rounded-full">
                                                             📍 PRESENCIAL
                                                         </span>
-                                                        {(course as any).dc3 && (
+                                                        {course.dc3 && (
                                                             <span className="px-2 py-0.5 bg-amber-50 text-amber-700 text-xs font-medium rounded-full border border-amber-200">
                                                                 📜 DC-3 / STPS
                                                             </span>
@@ -200,7 +138,7 @@ export default function Academy() {
                                             </p>
                                         </div>
                                         <span className="px-3 py-1 bg-gold/20 border border-gold/40 text-gold text-sm shrink-0">
-                                            {course.nextDate}
+                                            {course.next_date}
                                         </span>
                                     </div>
 
@@ -224,7 +162,7 @@ export default function Academy() {
                                         <div className="mb-6 p-4 bg-cream border border-kraft/30">
                                             <p className="text-sm font-medium text-forest mb-3 flex items-center gap-2">
                                                 <span className="text-gold">▶</span>
-                                                {course.videoTitle || 'Video Tutorial'}
+                                                {course.video_title || 'Video Tutorial'}
                                             </p>
                                             <video
                                                 controls
@@ -234,6 +172,27 @@ export default function Academy() {
                                                 <source src={course.video} type="video/mp4" />
                                                 Tu navegador no soporta el elemento de video.
                                             </video>
+                                        </div>
+                                    )}
+
+                                    {/* Course Images Gallery */}
+                                    {course.images && course.images.length > 0 && (
+                                        <div className="mb-6">
+                                            <p className="text-sm font-medium text-forest mb-3 flex items-center gap-2">
+                                                <span className="text-gold">📸</span>
+                                                Información del Curso
+                                            </p>
+                                            <div className={`grid ${course.images.length === 1 ? 'grid-cols-1' : 'grid-cols-2'} gap-3`}>
+                                                {course.images.map((img, i) => (
+                                                    <a key={i} href={img} target="_blank" rel="noopener noreferrer" className="block overflow-hidden border border-kraft/30 hover:border-gold/50 transition-all">
+                                                        <img
+                                                            src={img}
+                                                            alt={`${course.title} - Información ${i + 1}`}
+                                                            className="w-full h-auto object-cover hover:scale-105 transition-transform duration-300"
+                                                        />
+                                                    </a>
+                                                ))}
+                                            </div>
                                         </div>
                                     )}
 
@@ -276,7 +235,7 @@ export default function Academy() {
                     <div className="grid md:grid-cols-2 gap-8">
                         {events.map((event, index) => (
                             <motion.div
-                                key={index}
+                                key={event.id}
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
@@ -374,7 +333,7 @@ export default function Academy() {
                     </p>
                     <div className="flex flex-wrap justify-center gap-4">
                         <a
-                            href="https://wa.me/525527271067"
+                            href="https://api.whatsapp.com/send/?phone=525565116087&text=Hola%21+Quiero+inscribirme+al+curso%3A+Lash+Lifting+con+Cisteamina&type=phone_number&app_absent=0"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="btn bg-green-600 text-white border-green-600 hover:bg-green-700"
