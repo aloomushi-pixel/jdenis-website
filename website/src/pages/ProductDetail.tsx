@@ -18,7 +18,7 @@ export default function ProductDetail() {
         return (
             <div className="min-h-screen bg-cream flex items-center justify-center">
                 <div className="text-center">
-                    <div className="text-6xl mb-4">🔍</div>
+                    <svg className="w-16 h-16 mx-auto mb-4 text-charcoal/30" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
                     <h2 className="font-serif text-2xl text-forest mb-4">Producto no encontrado</h2>
                     <Link to="/tienda" className="btn btn-primary rounded-pill px-8">
                         Volver a la Tienda
@@ -72,8 +72,8 @@ export default function ProductDetail() {
                         <span
                             className="absolute top-4 left-4 px-3 py-1.5 text-xs font-semibold tracking-wider uppercase rounded-full"
                             style={{
-                                background: 'linear-gradient(135deg, #C9A96E, #B8943D)',
-                                color: '#1B3B2D',
+                                background: 'linear-gradient(135deg, #1C50EF, #1440C0)',
+                                color: '#FFFFFF',
                             }}
                         >
                             {product.category}
@@ -93,7 +93,7 @@ export default function ProductDetail() {
                             {product.name}
                         </h1>
                         <p className="text-2xl sm:text-3xl font-bold mb-4"
-                            style={{ color: '#C9A96E' }}>
+                            style={{ color: '#1C50EF' }}>
                             ${product.price.toLocaleString()} <span className="text-base font-normal text-charcoal/40">MXN</span>
                         </p>
 
@@ -105,8 +105,8 @@ export default function ProductDetail() {
                         {/* Performance Badge */}
                         {product.performance && (
                             <div className="mb-6 flex items-center gap-3 px-4 py-3 rounded-xl"
-                                style={{ background: 'linear-gradient(135deg, #1B3B2D10, #C9A96E15)', border: '1px solid #C9A96E30' }}>
-                                <span className="text-2xl">📊</span>
+                                style={{ background: 'linear-gradient(135deg, #17204D10, #1C50EF15)', border: '1px solid #1C50EF30' }}>
+                                <svg className="w-6 h-6 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" /></svg>
                                 <div>
                                     <span className="text-xs uppercase tracking-wider text-charcoal/50 block">Rendimiento</span>
                                     <span className="font-semibold text-forest">{product.performance}</span>
@@ -117,14 +117,14 @@ export default function ProductDetail() {
                         {/* Quick Features */}
                         <div className="space-y-2.5 mb-6">
                             {[
-                                { icon: '✓', text: 'Calidad profesional grado salón' },
-                                { icon: '✓', text: 'Fórmula hipoalergénica' },
-                                { icon: '✓', text: 'Hecho en México con ingredientes premium' },
+                                { text: 'Calidad profesional grado salón' },
+                                { text: 'Fórmula hipoalergénica' },
+                                { text: 'Hecho en México con ingredientes premium' },
                             ].map((feature, i) => (
                                 <div key={i} className="flex items-center gap-3 text-sm">
-                                    <span className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
-                                        style={{ background: '#C9A96E20', color: '#1B3B2D' }}>
-                                        {feature.icon}
+                                    <span className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"
+                                        style={{ background: '#1C50EF20', color: '#17204D' }}>
+                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                                     </span>
                                     <span className="text-charcoal/80">{feature.text}</span>
                                 </div>
@@ -137,8 +137,8 @@ export default function ProductDetail() {
                                 onClick={handleAddToCart}
                                 className="w-full py-3.5 sm:py-4 text-sm sm:text-base font-semibold tracking-wider uppercase rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-[1.02]"
                                 style={{
-                                    background: 'linear-gradient(135deg, #C9A96E, #B8943D)',
-                                    color: '#1B3B2D',
+                                    background: 'linear-gradient(135deg, #1C50EF, #1440C0)',
+                                    color: '#FFFFFF',
                                 }}
                             >
                                 Agregar al Carrito
@@ -148,17 +148,17 @@ export default function ProductDetail() {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="block w-full py-3 text-center text-sm font-medium rounded-xl border-2 transition-all hover:shadow-md"
-                                style={{ borderColor: '#1B3B2D40', color: '#1B3B2D' }}
+                                style={{ borderColor: '#17204D40', color: '#17204D' }}
                             >
-                                💬 Preguntar por WhatsApp
+                                <svg className="w-4 h-4 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" /></svg> Preguntar por WhatsApp
                             </a>
                         </div>
 
                         {/* Shipping Info */}
-                        <div className="mt-6 p-4 rounded-xl" style={{ background: '#F5F0E8', border: '1px solid #C9A96E20' }}>
+                        <div className="mt-6 p-4 rounded-xl" style={{ background: '#F0F3FA', border: '1px solid #1C50EF20' }}>
                             <p className="text-sm text-charcoal/70">
-                                📦 <strong className="text-forest">Envío FedEx:</strong> $200 MXN a todo México<br />
-                                🕐 <strong className="text-forest">Entrega:</strong> 3-5 días hábiles
+                                <svg className="w-4 h-4 inline mr-1 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M21 7.5l-2.25-1.313M21 7.5v2.25m0-2.25l-2.25 1.313M3 7.5l2.25-1.313M3 7.5l2.25 1.313M3 7.5v2.25m9 3l2.25-1.313M12 12.75l-2.25-1.313M12 12.75V15m0 6.75l2.25-1.313M12 21.75V19.5m0 2.25l-2.25-1.313m0-16.875L12 2.25l2.25 1.313M21 14.25v2.25l-2.25 1.313m-13.5 0L3 16.5v-2.25" /></svg> <strong className="text-forest">Envío FedEx:</strong> $200 MXN a todo México<br />
+                                <svg className="w-4 h-4 inline mr-1 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> <strong className="text-forest">Entrega:</strong> 3-5 días hábiles
                             </p>
                         </div>
                     </motion.div>
@@ -174,11 +174,11 @@ export default function ProductDetail() {
                     >
                         {/* Tab Headers */}
                         <div className="flex gap-1 mb-0 overflow-x-auto scrollbar-hide"
-                            style={{ borderBottom: '2px solid #E8E0D4' }}>
+                            style={{ borderBottom: '2px solid #E0E4ED' }}>
                             {hasBenefits && (
                                 <TabButton
                                     label="Beneficios"
-                                    icon="✅"
+                                    icon="✓"
                                     isActive={activeTab === 'benefits'}
                                     onClick={() => setActiveTab('benefits')}
                                 />
@@ -186,7 +186,7 @@ export default function ProductDetail() {
                             {hasIncludes && (
                                 <TabButton
                                     label="¿Qué incluye?"
-                                    icon="📦"
+                                    icon="◻"
                                     isActive={activeTab === 'includes'}
                                     onClick={() => setActiveTab('includes')}
                                 />
@@ -194,14 +194,14 @@ export default function ProductDetail() {
                             {hasSpecs && (
                                 <TabButton
                                     label="Especificaciones"
-                                    icon="📋"
+                                    icon="≡"
                                     isActive={activeTab === 'specs'}
                                     onClick={() => setActiveTab('specs')}
                                 />
                             )}
                             <TabButton
                                 label="Reseñas"
-                                icon="⭐"
+                                icon="★"
                                 isActive={activeTab === 'reviews'}
                                 onClick={() => setActiveTab('reviews')}
                             />
@@ -209,7 +209,7 @@ export default function ProductDetail() {
 
                         {/* Tab Content */}
                         <div className="bg-white rounded-b-2xl border border-t-0 p-6 sm:p-8 shadow-sm"
-                            style={{ borderColor: '#E8E0D4' }}>
+                            style={{ borderColor: '#E0E4ED' }}>
 
                             {/* Benefits */}
                             {activeTab === 'benefits' && hasBenefits && (
@@ -223,9 +223,9 @@ export default function ProductDetail() {
                                     <div className="grid sm:grid-cols-2 gap-3">
                                         {product.benefits!.map((benefit, i) => (
                                             <div key={i} className="flex items-start gap-3 p-3 rounded-xl transition-colors"
-                                                style={{ background: '#1B3B2D08' }}>
+                                                style={{ background: '#17204D08' }}>
                                                 <span className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold"
-                                                    style={{ background: '#C9A96E', color: '#1B3B2D' }}>
+                                                    style={{ background: '#1C50EF', color: '#FFFFFF' }}>
                                                     {i + 1}
                                                 </span>
                                                 <span className="text-charcoal/80 text-sm leading-relaxed">{benefit}</span>
@@ -247,16 +247,16 @@ export default function ProductDetail() {
                                     <div className="grid sm:grid-cols-2 gap-2">
                                         {product.includes!.map((item, i) => (
                                             <div key={i} className="flex items-center gap-3 py-2.5 px-3 rounded-lg"
-                                                style={{ background: i % 2 === 0 ? '#F5F0E808' : 'transparent' }}>
-                                                <span className="text-sm" style={{ color: '#C9A96E' }}>●</span>
+                                                style={{ background: i % 2 === 0 ? '#F0F3FA08' : 'transparent' }}>
+                                                <span className="text-sm" style={{ color: '#1C50EF' }}>●</span>
                                                 <span className="text-charcoal/80 text-sm">{item}</span>
                                             </div>
                                         ))}
                                     </div>
                                     {product.performance && (
                                         <div className="mt-5 p-4 rounded-xl flex items-center gap-3"
-                                            style={{ background: 'linear-gradient(135deg, #1B3B2D08, #C9A96E10)', border: '1px solid #C9A96E20' }}>
-                                            <span className="text-xl">⚡</span>
+                                            style={{ background: 'linear-gradient(135deg, #17204D08, #1C50EF10)', border: '1px solid #1C50EF20' }}>
+                                            <svg className="w-5 h-5 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" /></svg>
                                             <div>
                                                 <span className="text-xs uppercase tracking-wider text-charcoal/50 block">Rendimiento total</span>
                                                 <span className="font-semibold text-forest">{product.performance}</span>
@@ -280,10 +280,10 @@ export default function ProductDetail() {
                                             {product.specifications.map((spec, i) => (
                                                 <div key={i} className="flex items-center gap-3 py-2.5 px-4 rounded-lg"
                                                     style={{
-                                                        background: i % 2 === 0 ? '#F5F0E8' : 'transparent',
-                                                        borderBottom: '1px solid #E8E0D420',
+                                                        background: i % 2 === 0 ? '#F0F3FA' : 'transparent',
+                                                        borderBottom: '1px solid #E0E4ED20',
                                                     }}>
-                                                    <span className="text-sm" style={{ color: '#C9A96E' }}>◆</span>
+                                                    <span className="text-sm" style={{ color: '#1C50EF' }}>◆</span>
                                                     <span className="text-charcoal/80 text-sm">{spec}</span>
                                                 </div>
                                             ))}
@@ -291,8 +291,8 @@ export default function ProductDetail() {
                                     )}
                                     {product.performance && (
                                         <div className="p-4 rounded-xl flex items-center gap-3"
-                                            style={{ background: 'linear-gradient(135deg, #1B3B2D08, #C9A96E10)', border: '1px solid #C9A96E20' }}>
-                                            <span className="text-xl">📊</span>
+                                            style={{ background: 'linear-gradient(135deg, #17204D08, #1C50EF10)', border: '1px solid #1C50EF20' }}>
+                                            <svg className="w-5 h-5 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" /></svg>
                                             <div>
                                                 <span className="text-xs uppercase tracking-wider text-charcoal/50 block">Rendimiento</span>
                                                 <span className="font-semibold text-forest">{product.performance}</span>
@@ -317,7 +317,7 @@ export default function ProductDetail() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.4 }}
                         className="pt-8 lg:pt-12"
-                        style={{ borderTop: '2px solid #E8E0D4' }}
+                        style={{ borderTop: '2px solid #E0E4ED' }}
                     >
                         <div className="flex items-center justify-between mb-6">
                             <div>
@@ -327,7 +327,7 @@ export default function ProductDetail() {
                             <Link
                                 to="/tienda"
                                 className="hidden sm:flex items-center gap-2 text-sm font-medium transition-colors hover:opacity-80"
-                                style={{ color: '#C9A96E' }}
+                                style={{ color: '#1C50EF' }}
                             >
                                 Ver todos →
                             </Link>
@@ -349,13 +349,13 @@ export default function ProductDetail() {
                             </div>
                             {/* Fade edges */}
                             <div className="absolute top-0 right-0 bottom-4 w-12 pointer-events-none"
-                                style={{ background: 'linear-gradient(to left, #F5F0E8, transparent)' }} />
+                                style={{ background: 'linear-gradient(to left, #FFFFFF, transparent)' }} />
                         </div>
 
                         <Link
                             to="/tienda"
                             className="sm:hidden flex items-center justify-center gap-2 mt-4 py-3 text-sm font-medium rounded-xl border-2 transition-all"
-                            style={{ borderColor: '#C9A96E40', color: '#C9A96E' }}
+                            style={{ borderColor: '#1C50EF40', color: '#1C50EF' }}
                         >
                             Ver todo el catálogo →
                         </Link>
@@ -378,8 +378,8 @@ function TabButton({ label, icon, isActive, onClick }: {
             onClick={onClick}
             className="flex items-center gap-2 px-4 sm:px-6 py-3 text-sm font-medium transition-all whitespace-nowrap flex-shrink-0"
             style={{
-                color: isActive ? '#1B3B2D' : '#1B3B2D80',
-                borderBottom: isActive ? '3px solid #C9A96E' : '3px solid transparent',
+                color: isActive ? '#17204D' : '#17204D80',
+                borderBottom: isActive ? '3px solid #1C50EF' : '3px solid transparent',
                 background: isActive ? '#FFFFFF' : 'transparent',
                 marginBottom: '-2px',
                 borderTopLeftRadius: '0.75rem',

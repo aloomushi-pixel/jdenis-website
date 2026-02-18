@@ -5,8 +5,8 @@
 @tailwind utilities;
 
 /* ========================================
-   J.DENIS - BOTANICAL APOTHECARY THEME
-   Elegancia Natural + Ciencia Botánica
+   J.DENIS - BRAND IDENTITY THEME
+   Profesional · Elegante · Azul Marino
    ======================================== */
 
 @layer base {
@@ -43,7 +43,7 @@
   }
 
   .btn-secondary {
-    @apply bg-gold text-forest border-gold hover:bg-gold-light;
+    @apply bg-gold text-cream border-gold hover:bg-gold-light;
   }
 
   .btn-outline {
@@ -57,7 +57,7 @@
   /* ===== HERO ===== */
   .hero {
     @apply relative min-h-screen flex items-center justify-center overflow-hidden;
-    background: linear-gradient(135deg, #1a2f23 0%, #2d4a3a 50%, #1a2f23 100%);
+    background: linear-gradient(135deg, #17204D 0%, #1E2B5E 50%, #17204D 100%);
   }
 
   .hero-content {
@@ -165,14 +165,14 @@
     @apply block text-charcoal/70 text-sm mb-2;
   }
 
-  /* ===== GOLD GRADIENT TEXT ===== */
+  /* ===== ACCENT GRADIENT TEXT ===== */
   .gold-gradient {
     @apply text-gold;
   }
 
-  /* ===== BOTANICAL DECORATIONS ===== */
+  /* ===== DECORATIVE PATTERN ===== */
   .botanical-pattern {
-    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 5C30 5 35 15 30 25C25 15 30 5 30 5Z' fill='%231a2f23' opacity='0.03'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 5C30 5 35 15 30 25C25 15 30 5 30 5Z' fill='%2317204D' opacity='0.03'/%3E%3C/svg%3E");
   }
 }
 
@@ -192,6 +192,7 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }

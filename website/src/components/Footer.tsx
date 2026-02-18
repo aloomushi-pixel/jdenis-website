@@ -102,7 +102,7 @@ export default function Footer() {
                         Aviso de Privacidad
                     </Link>
                     <p className="text-cream/30 text-xs">
-                        Hecho con 🌿 en México 🇲🇽
+                        Hecho con orgullo en México
                     </p>
                 </div>
             </div>

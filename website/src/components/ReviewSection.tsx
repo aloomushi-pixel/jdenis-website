@@ -31,9 +31,9 @@ function StarRating({ rating, onRate, interactive = false }: {
                     onMouseEnter={() => interactive && setHover(star)}
                     onMouseLeave={() => interactive && setHover(0)}
                     className={`text-xl transition-transform ${interactive ? 'cursor-pointer hover:scale-125' : 'cursor-default'}`}
-                    style={{ color: star <= (hover || rating) ? '#C9A96E' : '#D1D5DB' }}
+                    style={{ color: star <= (hover || rating) ? '#1C50EF' : '#D1D5DB' }}
                 >
-                    ★
+                    <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
                 </button>
             ))}
         </div>
@@ -45,8 +45,8 @@ function AverageRatingBadge({ reviews }: { reviews: ProductReview[] }) {
     const avg = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
     return (
         <div className="flex items-center gap-3 mb-6 p-4 rounded-xl"
-            style={{ background: 'linear-gradient(135deg, #C9A96E10, #1B3B2D08)', border: '1px solid #C9A96E25' }}>
-            <span className="text-3xl font-bold" style={{ color: '#C9A96E' }}>{avg.toFixed(1)}</span>
+            style={{ background: 'linear-gradient(135deg, #1C50EF10, #17204D08)', border: '1px solid #1C50EF25' }}>
+            <span className="text-3xl font-bold" style={{ color: '#1C50EF' }}>{avg.toFixed(1)}</span>
             <div>
                 <StarRating rating={Math.round(avg)} />
                 <p className="text-xs text-charcoal/50 mt-0.5">{reviews.length} reseña{reviews.length !== 1 ? 's' : ''} verificada{reviews.length !== 1 ? 's' : ''}</p>
@@ -124,7 +124,7 @@ export default function ReviewSection({ productId, productName }: ReviewSectionP
     if (loading) {
         return (
             <div className="flex items-center justify-center py-12">
-                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2" style={{ borderColor: '#C9A96E' }} />
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2" style={{ borderColor: '#1C50EF' }} />
             </div>
         );
     }
@@ -143,32 +143,32 @@ export default function ReviewSection({ productId, productName }: ReviewSectionP
             {/* Review Form Area */}
             <div className="mb-8">
                 {submitted ? (
-                    <div className="p-5 rounded-xl text-center" style={{ background: '#1B3B2D10', border: '1px solid #1B3B2D20' }}>
-                        <span className="text-3xl block mb-2">✅</span>
+                    <div className="p-5 rounded-xl text-center" style={{ background: '#17204D10', border: '1px solid #17204D20' }}>
+                        <svg className="w-8 h-8 mx-auto mb-2 text-forest" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                         <p className="font-medium text-forest">¡Gracias por tu reseña!</p>
                         <p className="text-sm text-charcoal/60 mt-1">Tu comentario será revisado por nuestro equipo antes de publicarse.</p>
                     </div>
                 ) : !isAuthenticated ? (
-                    <div className="p-5 rounded-xl text-center" style={{ background: '#F5F0E8', border: '1px solid #C9A96E20' }}>
-                        <span className="text-2xl block mb-2">🔒</span>
+                    <div className="p-5 rounded-xl text-center" style={{ background: '#F0F3FA', border: '1px solid #1C50EF20' }}>
+                        <svg className="w-8 h-8 mx-auto mb-2 text-charcoal/50" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
                         <p className="text-sm text-charcoal/70 mb-3">Inicia sesión para dejar una reseña</p>
                         <Link to="/login" className="inline-block px-6 py-2 text-sm font-medium rounded-lg transition-all hover:shadow-md"
-                            style={{ background: 'linear-gradient(135deg, #C9A96E, #B8943D)', color: '#1B3B2D' }}>
+                            style={{ background: 'linear-gradient(135deg, #1C50EF, #1440C0)', color: '#FFFFFF' }}>
                             Iniciar Sesión
                         </Link>
                     </div>
                 ) : checkingPurchase ? (
-                    <div className="p-5 rounded-xl text-center" style={{ background: '#F5F0E8' }}>
+                    <div className="p-5 rounded-xl text-center" style={{ background: '#F0F3FA' }}>
                         <p className="text-sm text-charcoal/60">Verificando tu compra...</p>
                     </div>
                 ) : !canReview ? (
-                    <div className="p-5 rounded-xl text-center" style={{ background: '#F5F0E8', border: '1px solid #C9A96E20' }}>
-                        <span className="text-2xl block mb-2">🛒</span>
+                    <div className="p-5 rounded-xl text-center" style={{ background: '#F0F3FA', border: '1px solid #1C50EF20' }}>
+                        <svg className="w-8 h-8 mx-auto mb-2 text-charcoal/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" /></svg>
                         <p className="text-sm text-charcoal/70">Solo los compradores verificados de <strong>{productName}</strong> pueden escribir reseñas.</p>
                         <p className="text-xs text-charcoal/40 mt-2">Compra este producto para dejar tu opinión</p>
                     </div>
                 ) : showForm ? (
-                    <form onSubmit={handleSubmit} className="p-5 rounded-xl space-y-4" style={{ background: '#FFFFFF', border: '1px solid #C9A96E25', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
+                    <form onSubmit={handleSubmit} className="p-5 rounded-xl space-y-4" style={{ background: '#FFFFFF', border: '1px solid #1C50EF25', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
                         <div>
                             <label className="block text-sm font-medium text-forest mb-2">Tu calificación</label>
                             <StarRating rating={rating} onRate={setRating} interactive />
@@ -181,7 +181,7 @@ export default function ReviewSection({ productId, productName }: ReviewSectionP
                                 rows={4}
                                 placeholder={`¿Qué te pareció ${productName}? Comparte tu experiencia...`}
                                 className="w-full rounded-lg p-3 text-sm resize-none transition-colors focus:outline-none"
-                                style={{ border: '1px solid #E8E0D4', background: '#FAFAF8' }}
+                                style={{ border: '1px solid #E0E4ED', background: '#FAFAFE' }}
                                 required
                             />
                         </div>
@@ -191,7 +191,7 @@ export default function ReviewSection({ productId, productName }: ReviewSectionP
                                 type="submit"
                                 disabled={submitting || rating === 0}
                                 className="px-6 py-2.5 text-sm font-semibold rounded-lg transition-all hover:shadow-md disabled:opacity-50"
-                                style={{ background: 'linear-gradient(135deg, #C9A96E, #B8943D)', color: '#1B3B2D' }}
+                                style={{ background: 'linear-gradient(135deg, #1C50EF, #1440C0)', color: '#FFFFFF' }}
                             >
                                 {submitting ? 'Enviando...' : 'Enviar Reseña'}
                             </button>
@@ -209,9 +209,9 @@ export default function ReviewSection({ productId, productName }: ReviewSectionP
                     <button
                         onClick={() => setShowForm(true)}
                         className="w-full py-3 text-sm font-medium rounded-xl border-2 transition-all hover:shadow-md"
-                        style={{ borderColor: '#C9A96E40', color: '#C9A96E' }}
+                        style={{ borderColor: '#1C50EF40', color: '#1C50EF' }}
                     >
-                        ✍️ Escribir una reseña
+                        <svg className="w-4 h-4 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" /></svg> Escribir una reseña
                     </button>
                 )}
             </div>
@@ -219,7 +219,7 @@ export default function ReviewSection({ productId, productName }: ReviewSectionP
             {/* Reviews List */}
             {reviews.length === 0 ? (
                 <div className="text-center py-8">
-                    <span className="text-4xl block mb-3 opacity-30">💬</span>
+                    <svg className="w-10 h-10 mx-auto mb-3 text-charcoal/20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}><path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" /></svg>
                     <p className="text-charcoal/40 text-sm">Aún no hay reseñas para este producto.</p>
                     <p className="text-charcoal/30 text-xs mt-1">¡Sé el primero en compartir tu experiencia!</p>
                 </div>
@@ -227,12 +227,12 @@ export default function ReviewSection({ productId, productName }: ReviewSectionP
                 <div className="space-y-4">
                     {reviews.map((review) => (
                         <div key={review.id} className="p-5 rounded-xl transition-shadow hover:shadow-sm"
-                            style={{ background: '#FFFFFF', border: '1px solid #E8E0D4' }}>
+                            style={{ background: '#FFFFFF', border: '1px solid #E0E4ED' }}>
                             <div className="flex items-start justify-between mb-2">
                                 <div>
                                     <div className="flex items-center gap-2 mb-1">
                                         <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold"
-                                            style={{ background: '#C9A96E20', color: '#1B3B2D' }}>
+                                            style={{ background: '#1C50EF20', color: '#17204D' }}>
                                             {review.user_name[0]?.toUpperCase() || '?'}
                                         </div>
                                         <div>
@@ -246,7 +246,7 @@ export default function ReviewSection({ productId, productName }: ReviewSectionP
                                 <div className="flex items-center gap-1.5">
                                     <StarRating rating={review.rating} />
                                     <span className="text-xs px-2 py-0.5 rounded-full font-medium"
-                                        style={{ background: '#1B3B2D10', color: '#1B3B2D' }}>
+                                        style={{ background: '#17204D10', color: '#17204D' }}>
                                         ✓ Compra verificada
                                     </span>
                                 </div>

@@ -12,11 +12,20 @@ export default function Home() {
         getReels(true).then(setReels).catch(console.error);
     }, []);
 
-    const platformStyles: Record<string, { gradient: string; icon: string; label: string }> = {
-        youtube: { gradient: 'from-red-600 to-red-800', icon: '▶️', label: 'YouTube' },
-        tiktok: { gradient: 'from-[#00f2ea] via-[#ff0050] to-[#7c3aed]', icon: '🎵', label: 'TikTok' },
-        instagram: { gradient: 'from-[#f09433] via-[#e6683c] to-[#bc1888]', icon: '📸', label: 'Instagram' },
+    const platformStyles: Record<string, { gradient: string; icon: React.ReactNode; label: string }> = {
+        youtube: { gradient: 'from-red-600 to-red-800', icon: <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>, label: 'YouTube' },
+        tiktok: { gradient: 'from-[#00f2ea] via-[#ff0050] to-[#7c3aed]', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z" /></svg>, label: 'TikTok' },
+        instagram: { gradient: 'from-[#f09433] via-[#e6683c] to-[#bc1888]', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" /><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z" /></svg>, label: 'Instagram' },
     };
+
+    function getThumbnailUrl(reel: SocialReel): string | null {
+        if (reel.thumbnail_url) return reel.thumbnail_url;
+        if (reel.platform === 'youtube') {
+            const match = reel.url.match(/(?:shorts\/|watch\?v=|youtu\.be\/)([\w-]{11})/);
+            if (match) return `https://img.youtube.com/vi/${match[1]}/hqdefault.jpg`;
+        }
+        return null;
+    }
 
     return (
         <div className="min-h-screen bg-cream">
@@ -193,7 +202,7 @@ export default function Home() {
                                     'Grupos reducidos en sede Lindavista, CDMX',
                                 ].map((item, i) => (
                                     <li key={i} className="flex items-center gap-3 text-charcoal/80">
-                                        <span className="w-6 h-6 flex items-center justify-center text-gold">✓</span>
+                                        <span className="w-6 h-6 flex items-center justify-center text-gold"><svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg></span>
                                         {item}
                                     </li>
                                 ))}
@@ -225,7 +234,7 @@ export default function Home() {
                                 viewport={{ once: true }}
                             >
                                 <span className="inline-block px-4 py-2 bg-gold/20 border border-gold/40 text-gold text-xs tracking-[0.2em] uppercase mb-4">
-                                    Síguenos
+                                    #J.DENIS
                                 </span>
                                 <h2 className="font-serif text-3xl md:text-4xl text-cream mb-4">
                                     Nuestros Reels & TikToks
@@ -240,6 +249,7 @@ export default function Home() {
                         <div className="flex gap-5 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory -mx-4 px-4">
                             {reels.map((reel, i) => {
                                 const style = platformStyles[reel.platform] || platformStyles.instagram;
+                                const thumb = getThumbnailUrl(reel);
                                 return (
                                     <motion.a
                                         key={reel.id}
@@ -253,20 +263,29 @@ export default function Home() {
                                         className="group flex-shrink-0 snap-start w-[200px] sm:w-[220px]"
                                     >
                                         <div className={`relative aspect-[9/16] rounded-2xl overflow-hidden bg-gradient-to-br ${style.gradient} shadow-lg group-hover:shadow-2xl transition-all duration-300 group-hover:scale-[1.03]`}>
-                                            {/* Shimmer overlay */}
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
+                                            {/* Thumbnail image */}
+                                            {thumb && (
+                                                <img
+                                                    src={thumb}
+                                                    alt={reel.title}
+                                                    className="absolute inset-0 w-full h-full object-cover"
+                                                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                                                />
+                                            )}
+                                            {/* Gradient overlay */}
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/30" />
 
                                             {/* Play button */}
                                             <div className="absolute inset-0 flex items-center justify-center">
-                                                <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30 group-hover:bg-white/30 group-hover:scale-110 transition-all duration-300">
-                                                    <span className="text-3xl ml-1">{style.icon}</span>
+                                                <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30 group-hover:bg-white/30 group-hover:scale-110 transition-all duration-300 text-white">
+                                                    {style.icon}
                                                 </div>
                                             </div>
 
                                             {/* Platform badge */}
                                             <div className="absolute top-3 left-3">
                                                 <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold text-white bg-black/40 backdrop-blur-sm">
-                                                    {style.icon} {style.label}
+                                                    <span className="w-3 h-3">{style.icon}</span> {style.label}
                                                 </span>
                                             </div>
 
@@ -302,19 +321,19 @@ export default function Home() {
                                 name: 'María González',
                                 role: 'Lashista Certificada, Monterrey',
                                 text: 'Los productos J. Denis me han permitido ofrecer resultados que mis clientas aman. La calidad es incomparable.',
-                                avatar: 'https://ui-avatars.com/api/?name=Maria+Gonzalez&background=1a2f23&color=f5f0e8&size=128&bold=true&font-size=0.4'
+                                avatar: 'https://ui-avatars.com/api/?name=Maria+Gonzalez&background=17204D&color=ffffff&size=128&bold=true&font-size=0.4'
                             },
                             {
                                 name: 'Ana Martínez',
                                 role: 'Dueña de Salón, CDMX',
                                 text: 'Después de tomar el curso con la Maestra Gaby, mi técnica mejoró al 100%. Los kits son todo lo que necesitas.',
-                                avatar: 'https://ui-avatars.com/api/?name=Ana+Martinez&background=2d4a3a&color=f5f0e8&size=128&bold=true&font-size=0.4'
+                                avatar: 'https://ui-avatars.com/api/?name=Ana+Martinez&background=1E2B5E&color=ffffff&size=128&bold=true&font-size=0.4'
                             },
                             {
                                 name: 'Lucía Hernández',
                                 role: 'Microblader Profesional, Guadalajara',
                                 text: 'El Compass Silver Ratio revolucionó mi trabajo. Precisión perfecta en cada diseño de ceja.',
-                                avatar: 'https://ui-avatars.com/api/?name=Lucia+Hernandez&background=b8965a&color=1a2f23&size=128&bold=true&font-size=0.4'
+                                avatar: 'https://ui-avatars.com/api/?name=Lucia+Hernandez&background=1C50EF&color=ffffff&size=128&bold=true&font-size=0.4'
                             },
                         ].map((testimonial, i) => (
                             <motion.div
@@ -327,7 +346,7 @@ export default function Home() {
                             >
                                 <div className="flex gap-1 mb-4">
                                     {[1, 2, 3, 4, 5].map(star => (
-                                        <span key={star} className="text-gold">★</span>
+                                        <svg key={star} className="w-4 h-4 text-gold fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
                                     ))}
                                 </div>
                                 <p className="text-charcoal/70 italic mb-6 leading-relaxed">
@@ -388,7 +407,7 @@ export default function Home() {
                             </Link>
                         </div>
                         <p className="text-cream/40 text-sm mt-8">
-                            💬 ¿Dudas? <a href="https://wa.me/525527271067" target="_blank" rel="noopener noreferrer" className="text-gold hover:underline">Escríbenos por WhatsApp</a>
+                            <svg className="w-4 h-4 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" /></svg> ¿Dudas? <a href="https://wa.me/525527271067" target="_blank" rel="noopener noreferrer" className="text-gold hover:underline">Escríbenos por WhatsApp</a>
                         </p>
                     </motion.div>
                 </div>

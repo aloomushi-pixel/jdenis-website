@@ -98,7 +98,7 @@ export default function Shop() {
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 className="w-full pl-10 pr-4 py-3 bg-white/10 border border-gold/30 rounded-lg text-cream placeholder-cream/50 focus:outline-none focus:border-gold"
                             />
-                            <span className="absolute left-3 top-3.5 text-gold">🔍</span>
+                            <svg className="absolute left-3 top-3.5 w-5 h-5 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
                         </div>
                     </div>
                 </div>
@@ -120,7 +120,7 @@ export default function Shop() {
                                             onChange={(e) => setSearchQuery(e.target.value)}
                                             className="w-full pl-9 pr-4 py-2 border border-kraft/30 text-sm focus:outline-none focus:border-gold"
                                         />
-                                        <span className="absolute left-3 top-2.5 text-gray-400">🔍</span>
+                                        <svg className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
                                     </div>
                                 </div>
 
@@ -133,7 +133,7 @@ export default function Shop() {
                                             : 'text-charcoal/70 hover:bg-kraft/20 hover:text-forest'
                                             }`}
                                     >
-                                        <span className="mr-3">📋</span>
+                                        <svg className="w-4 h-4 mr-3 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z" /></svg>
                                         Ver Todo
                                     </button>
                                     {localCategories.filter(c => c.id !== 'all').map((cat) => (
@@ -226,7 +226,7 @@ export default function Shop() {
 
                             {filteredProducts.length === 0 && (
                                 <div className="text-center py-20">
-                                    <div className="text-6xl mb-4">🔍</div>
+                                    <svg className="w-16 h-16 mx-auto mb-4 text-charcoal/30" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
                                     <p className="text-charcoal/50">
                                         No hay productos en esta categoría
                                     </p>
