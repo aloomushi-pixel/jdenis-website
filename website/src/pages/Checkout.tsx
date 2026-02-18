@@ -22,6 +22,7 @@ export default function Checkout() {
         email: user?.email || '',
         phone: '',
         address: '',
+        references: '',
         city: '',
         state: '',
         zip: '',
@@ -56,6 +57,7 @@ export default function Checkout() {
                     },
                     shipping: {
                         address: formData.address,
+                        references: formData.references,
                         city: formData.city,
                         state: formData.state,
                         zip: formData.zip,
@@ -185,6 +187,25 @@ export default function Checkout() {
                                             className="input"
                                             placeholder="Calle, número, colonia"
                                         />
+                                    </div>
+                                    <div className="md:col-span-2">
+                                        <label className="label">
+                                            Referencias de entrega
+                                            <span className="text-rose-deep ml-1">*</span>
+                                        </label>
+                                        <textarea
+                                            name="references"
+                                            value={formData.references}
+                                            onChange={handleInputChange}
+                                            required
+                                            rows={2}
+                                            className="input"
+                                            placeholder="Ej: Entre calle Roble y calle Pino, fachada azul, portón negro, frente a la tienda OXXO"
+                                        />
+                                        <p className="text-xs text-charcoal-light mt-1 flex items-center gap-1">
+                                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" /></svg>
+                                            Indica entre qué calles se encuentra, color de fachada, referencias cercanas, etc.
+                                        </p>
                                     </div>
                                     <div>
                                         <label className="label">Ciudad</label>

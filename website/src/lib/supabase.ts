@@ -965,6 +965,7 @@ export interface MercadoPagoCheckoutRequest {
     };
     shipping: {
         address: string;
+        references?: string;
         city: string;
         state: string;
         zip: string;
