@@ -613,6 +613,28 @@ export async function moderateReview(reviewId: string, status: 'approved' | 'rej
 
 
 // =============================================
+// ACADEMY STORAGE (Image Upload)
+// =============================================
+
+export async function uploadAcademyImage(file: File): Promise<string> {
+    const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+    const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${ext}`;
+    const filePath = `courses/${fileName}`;
+
+    const { error } = await supabase.storage
+        .from('academy-images')
+        .upload(filePath, file, { cacheControl: '3600', upsert: false });
+
+    if (error) throw error;
+
+    const { data } = supabase.storage
+        .from('academy-images')
+        .getPublicUrl(filePath);
+
+    return data.publicUrl;
+}
+
+// =============================================
 // ACADEMY COURSES FUNCTIONS
 // =============================================
 

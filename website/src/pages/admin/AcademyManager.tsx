@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
-import { Plus, Edit2, Trash2, Loader, X, Save } from 'lucide-react';
+import { useEffect, useState, useRef } from 'react';
+import { Plus, Edit2, Trash2, Loader, X, Save, Upload } from 'lucide-react';
 import {
     getAcademyCourses,
     getAcademyEvents,
@@ -10,6 +10,7 @@ import {
     createEvent,
     updateEvent,
     deleteEvent,
+    uploadAcademyImage,
     type AcademyCourse,
     type AcademyEvent
 } from '../../lib/supabase';
@@ -251,7 +252,9 @@ function FormModal({ type, initialData, onClose, onSuccess }: {
     const isCourse = type === 'courses';
 
     const [saving, setSaving] = useState(false);
+    const [uploading, setUploading] = useState(false);
     const [newImageUrl, setNewImageUrl] = useState('');
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const [formData, setFormData] = useState<any>(initialData || {
         title: '',
         duration: '',
@@ -282,6 +285,26 @@ function FormModal({ type, initialData, onClose, onSuccess }: {
         const updated = [...(formData.images || [])];
         updated.splice(index, 1);
         setFormData({ ...formData, images: updated });
+    };
+
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (!files || files.length === 0) return;
+        setUploading(true);
+        try {
+            const newImages = [...(formData.images || [])];
+            for (let i = 0; i < files.length; i++) {
+                const url = await uploadAcademyImage(files[i]);
+                newImages.push(url);
+            }
+            setFormData({ ...formData, images: newImages });
+        } catch (error) {
+            console.error('Error uploading:', error);
+            alert('Error subiendo imagen. Verifica que estés logueado.');
+        } finally {
+            setUploading(false);
+            if (fileInputRef.current) fileInputRef.current.value = '';
+        }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -511,11 +534,35 @@ function FormModal({ type, initialData, onClose, onSuccess }: {
                             </div>
                         )}
 
-                        {/* Input para agregar nueva imagen */}
+                        {/* Subir archivo desde computadora */}
+                        <div className="flex gap-2 mb-3">
+                            <input
+                                ref={fileInputRef}
+                                type="file"
+                                accept="image/*"
+                                multiple
+                                onChange={handleFileUpload}
+                                className="hidden"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => fileInputRef.current?.click()}
+                                disabled={uploading}
+                                className="flex-1 px-4 py-3 border-2 border-dashed border-indigo-300 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition-all text-sm text-indigo-600 flex items-center justify-center gap-2 disabled:opacity-50"
+                            >
+                                {uploading ? (
+                                    <><Loader className="w-4 h-4 animate-spin" /> Subiendo...</>
+                                ) : (
+                                    <><Upload className="w-4 h-4" /> Subir desde computadora</>
+                                )}
+                            </button>
+                        </div>
+
+                        {/* O agregar por URL */}
                         <div className="flex gap-2">
                             <input
                                 type="text"
-                                placeholder="URL de la imagen (ej: /images/academy/foto.jpg)"
+                                placeholder="O pega una URL de imagen..."
                                 value={newImageUrl}
                                 onChange={(e) => setNewImageUrl(e.target.value)}
                                 onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addImage(); } }}
@@ -526,11 +573,11 @@ function FormModal({ type, initialData, onClose, onSuccess }: {
                                 onClick={addImage}
                                 className="px-3 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-sm flex items-center gap-1"
                             >
-                                <Plus className="w-4 h-4" /> Agregar
+                                <Plus className="w-4 h-4" /> URL
                             </button>
                         </div>
                         <p className="text-xs text-gray-400 mt-1">
-                            Agrega URLs de imágenes. Pueden ser rutas locales (/images/...) o URLs externas.
+                            Sube imágenes o pega URLs. Se aceptan JPG, PNG, WebP.
                         </p>
                     </div>
 
