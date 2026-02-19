@@ -23,6 +23,7 @@ import BlogManager from './pages/admin/BlogManager';
 import ReelsManager from './pages/admin/ReelsManager';
 
 import ProductEditor from './pages/admin/ProductEditor';
+import CartPromoSettings from './pages/admin/CartPromoSettings';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
 import NewsPost from './pages/NewsPost';
@@ -98,6 +99,7 @@ function App() {
               <Route path="reels" element={<ReelsManager />} />
 
               <Route path="catalog" element={<ProductEditor />} />
+              <Route path="cart-promos" element={<CartPromoSettings />} />
             </Route>
           </Routes>
         </main>

@@ -1,15 +1,17 @@
-import { useMemo } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import { useCartStore } from '../store/cartStore';
+import { getActiveCartPromoConfig } from '../lib/supabase';
 
 /**
  * ═══════════════════════════════════════════════════════════
  *  CONFIGURACIÓN DE PROMOCIONES DEL CARRITO
  *  ─────────────────────────────────────────────────────────
- *  Modifica estos valores para cambiar las reglas de negocio.
- *  No se necesita tocar ningún otro archivo.
+ *  Estos valores son los FALLBACK por defecto.
+ *  La configuración real se carga desde Supabase (tabla cart_promo_config)
+ *  y se puede editar desde /admin/cart-promos.
  * ═══════════════════════════════════════════════════════════
  */
-export const PROMO_CONFIG = {
+export const PROMO_CONFIG_DEFAULTS = {
     /** Monto mínimo en MXN para activar la promoción (0 = deshabilitado) */
     minAmount: 2000,
 
@@ -41,9 +43,56 @@ export const PROMO_CONFIG = {
         'El envío gratis se ha retirado porque tu carrito ya no alcanza los $2,000 MXN.',
 
     /** Texto corto para mostrar el progreso */
-    progressLabel: (remaining: number) =>
-        `Agrega $${remaining.toLocaleString()} MXN más para desbloquear Envío Gratis 🚚`,
+    progressLabel: 'Agrega $${remaining} MXN más para desbloquear Envío Gratis 🚚',
 };
+
+/** Keep backward compat — alias for code that still references PROMO_CONFIG */
+export const PROMO_CONFIG = PROMO_CONFIG_DEFAULTS;
+
+// ─── Internal: resolved config shape ──────────────────────
+interface ResolvedConfig {
+    minAmount: number;
+    minItems: number;
+    mode: 'OR' | 'AND';
+    discountPercent: number;
+    freeShipping: boolean;
+    standardShippingCost: number;
+    activationMessage: string;
+    deactivationMessage: string;
+    progressLabel: string;
+}
+
+// ─── Module-level cache (shared across all hook consumers) ─
+let _cachedConfig: ResolvedConfig | null = null;
+let _fetchPromise: Promise<void> | null = null;
+
+function mapDbToConfig(db: Awaited<ReturnType<typeof getActiveCartPromoConfig>>): ResolvedConfig {
+    if (!db) return { ...PROMO_CONFIG_DEFAULTS };
+    return {
+        minAmount: Number(db.min_amount) || 0,
+        minItems: Number(db.min_items) || 0,
+        mode: (db.eval_mode === 'AND' ? 'AND' : 'OR'),
+        discountPercent: Number(db.discount_percent) || 0,
+        freeShipping: Boolean(db.free_shipping),
+        standardShippingCost: Number(db.standard_shipping_cost) || 200,
+        activationMessage: db.activation_message || PROMO_CONFIG_DEFAULTS.activationMessage,
+        deactivationMessage: db.deactivation_message || PROMO_CONFIG_DEFAULTS.deactivationMessage,
+        progressLabel: db.progress_label || PROMO_CONFIG_DEFAULTS.progressLabel,
+    };
+}
+
+function fetchConfigOnce() {
+    if (_fetchPromise) return _fetchPromise;
+    _fetchPromise = getActiveCartPromoConfig()
+        .then((db) => { _cachedConfig = mapDbToConfig(db); })
+        .catch(() => { _cachedConfig = { ...PROMO_CONFIG_DEFAULTS }; });
+    return _fetchPromise;
+}
+
+// Kick off fetch immediately on module load (non-blocking)
+fetchConfigOnce();
+
+// ─── Public interface ─────────────────────────────────────
 
 export interface CartPromotion {
     /** Si la promoción está activa en este momento */
@@ -74,6 +123,7 @@ export interface CartPromotion {
 
 /**
  * Hook reactivo que evalúa las reglas de promoción del carrito.
+ * Carga la configuración desde Supabase (con fallback a valores por defecto).
  * Se recalcula automáticamente cuando cambia el estado del carrito.
  */
 export function useCartPromotion(): CartPromotion {
@@ -81,10 +131,22 @@ export function useCartPromotion(): CartPromotion {
     const total = useCartStore((s) => s.total);
     const itemCount = useCartStore((s) => s.itemCount);
 
+    // Trigger re-render when async config arrives
+    const [config, setConfig] = useState<ResolvedConfig>(_cachedConfig || { ...PROMO_CONFIG_DEFAULTS });
+
+    useEffect(() => {
+        if (_cachedConfig) {
+            setConfig(_cachedConfig);
+        } else {
+            fetchConfigOnce().then(() => {
+                if (_cachedConfig) setConfig(_cachedConfig);
+            });
+        }
+    }, []);
+
     return useMemo(() => {
         const subtotal = total();
         const count = itemCount();
-        const config = PROMO_CONFIG;
 
         // --- Evaluar condiciones ---
         const meetsAmount = config.minAmount > 0 && subtotal >= config.minAmount;
@@ -119,7 +181,10 @@ export function useCartPromotion(): CartPromotion {
         if (!isActive && config.minAmount > 0) {
             const remaining = config.minAmount - subtotal;
             if (remaining > 0 && subtotal > 0) {
-                progressText = config.progressLabel(remaining);
+                progressText = config.progressLabel.replace(
+                    '${remaining}',
+                    remaining.toLocaleString('es-MX'),
+                );
                 progressPercent = Math.min((subtotal / config.minAmount) * 100, 99);
             }
         } else if (isActive) {
@@ -145,5 +210,5 @@ export function useCartPromotion(): CartPromotion {
             progressPercent,
             isFreeShipping,
         };
-    }, [items, total, itemCount]);
+    }, [items, total, itemCount, config]);
 }

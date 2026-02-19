@@ -1043,6 +1043,74 @@ export async function deleteProductVariantGroup(id: string) {
 }
 
 // =============================================
+// CART PROMO CONFIG FUNCTIONS
+// =============================================
+
+export interface CartPromoConfig {
+    id: string;
+    name: string;
+    is_active: boolean;
+    min_amount: number;
+    min_items: number;
+    eval_mode: 'OR' | 'AND';
+    discount_percent: number;
+    free_shipping: boolean;
+    standard_shipping_cost: number;
+    activation_message: string;
+    deactivation_message: string;
+    progress_label: string;
+    created_at: string;
+    updated_at: string;
+}
+
+/** Fetch all promo configs (admin list) */
+export async function getCartPromoConfigs(): Promise<CartPromoConfig[]> {
+    const { data, error } = await supabase
+        .from('cart_promo_config')
+        .select('*')
+        .order('created_at', { ascending: false });
+    if (error) throw error;
+    return (data || []) as CartPromoConfig[];
+}
+
+/** Fetch only the first active config (used by the storefront hook) */
+export async function getActiveCartPromoConfig(): Promise<CartPromoConfig | null> {
+    const { data, error } = await supabase
+        .from('cart_promo_config')
+        .select('*')
+        .eq('is_active', true)
+        .order('created_at', { ascending: true })
+        .limit(1)
+        .maybeSingle();
+    if (error) throw error;
+    return data as CartPromoConfig | null;
+}
+
+export async function createCartPromoConfig(
+    cfg: Omit<CartPromoConfig, 'id' | 'created_at' | 'updated_at'>
+): Promise<CartPromoConfig> {
+    const { data, error } = await supabase.from('cart_promo_config').insert([cfg]).select().single();
+    if (error) throw error;
+    return data as CartPromoConfig;
+}
+
+export async function updateCartPromoConfig(
+    id: string, updates: Partial<CartPromoConfig>
+): Promise<CartPromoConfig> {
+    const { data, error } = await supabase
+        .from('cart_promo_config')
+        .update({ ...updates, updated_at: new Date().toISOString() })
+        .eq('id', id).select().single();
+    if (error) throw error;
+    return data as CartPromoConfig;
+}
+
+export async function deleteCartPromoConfig(id: string) {
+    const { error } = await supabase.from('cart_promo_config').delete().eq('id', id);
+    if (error) throw error;
+}
+
+// =============================================
 // PRODUCT CATALOG OVERRIDES (Editor → Store Sync)
 // =============================================
 
