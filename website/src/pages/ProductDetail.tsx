@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import ReviewSection from '../components/ReviewSection';
@@ -16,13 +16,7 @@ export default function ProductDetail() {
     const [activeTab, setActiveTab] = useState<DetailTab>('benefits');
     const [currentProductId, setCurrentProductId] = useState(id || '');
 
-    // Sync state with URL param when navigating
-    useEffect(() => {
-        if (id) {
-            setCurrentProductId(id);
-            window.scrollTo(0, 0);
-        }
-    }, [id]);
+
 
     // Get the currently displayed product (may differ from URL if variant was selected)
     const product = getProductById(currentProductId) || initialProduct;

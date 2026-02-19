@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, useLocation, useParams } from 'react-router-dom';
 import CartDrawer from './components/CartDrawer';
 import Footer from './components/Footer';
 import Header from './components/Header';
@@ -45,6 +45,11 @@ function ScrollToTop() {
   return null;
 }
 
+function ProductDetailWrapper() {
+  const { id } = useParams();
+  return <ProductDetail key={id} />;
+}
+
 function App() {
   const checkSession = useAuthStore((s) => s.checkSession);
 
@@ -61,7 +66,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/tienda" element={<Shop />} />
-            <Route path="/producto/:id" element={<ProductDetail />} />
+            <Route path="/producto/:id" element={<ProductDetailWrapper />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/login" element={<Login />} />
             <Route path="/mi-cuenta" element={<MyAccount />} />
