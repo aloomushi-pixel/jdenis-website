@@ -219,14 +219,13 @@ export default function CartPromoSettings() {
                 </div>
             )}
 
-            {/* ── Modal Form ── */}
             <AnimatePresence>
                 {showForm && (
-                    <>
-                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowForm(false)} className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40" />
-                        <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="fixed inset-4 md:inset-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-[640px] md:max-h-[85vh] bg-white rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden">
+                    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}>
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowForm(false)} className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
+                        <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="relative w-full max-w-[640px] max-h-[85vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden">
                             {/* Header */}
-                            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between shrink-0">
                                 <h2 className="text-lg font-bold text-gray-900">{editId ? 'Editar Regla' : 'Nueva Regla de Promoción'}</h2>
                                 <button onClick={() => setShowForm(false)} className="text-gray-400 hover:text-gray-600 text-xl">✕</button>
                             </div>
@@ -290,7 +289,7 @@ export default function CartPromoSettings() {
                             </div>
 
                             {/* Footer */}
-                            <div className="px-6 py-4 border-t border-gray-100 flex justify-end gap-3">
+                            <div className="px-6 py-4 border-t border-gray-100 flex justify-end gap-3 shrink-0">
                                 <button onClick={() => setShowForm(false)} className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium">
                                     Cancelar
                                 </button>
@@ -299,7 +298,7 @@ export default function CartPromoSettings() {
                                 </button>
                             </div>
                         </motion.div>
-                    </>
+                    </div>
                 )}
             </AnimatePresence>
         </div>

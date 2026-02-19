@@ -1113,6 +1113,101 @@ export const products: Product[] = [
     // --- Tintura Extras ---
     { id: 'sellador-tintura', name: 'Sellador para Tintura Tópica', price: 350, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/captura-de-pantalla-2022-10-27-a-las-22-07-361-25ed0e1a59714d490e16669266380337-480-0.webp', category: 'Tintura', description: 'Sellador profesional para tintura tópica de cejas y pestañas.', relatedCategories: ['Tintura'] },
     { id: 'activador-tintura', name: 'Activador para Tintura Tópica', price: 350, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/captura-de-pantalla-2022-10-27-a-las-22-07-361-25ed0e1a59714d490e16669266380337-480-0.webp', category: 'Tintura', description: 'Activador profesional para tintura tópica de cejas y pestañas.', relatedCategories: ['Tintura'] },
+
+    // ═══════════════════════════════════════════════════════════════════
+    // PADS DE LIFTING (VARIANTES)
+    // ═══════════════════════════════════════════════════════════════════
+    { id: 'pad-2-en-1', name: 'Pad 2 en 1', price: 150, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/pad-2en1-04-ca761e232e805d891e17410115760489-480-0.webp', category: 'Lash Lifting', description: 'Pad de silicón 2 en 1 para lash lifting profesional.', relatedCategories: ['Lash Lifting'] },
+    { id: 'pad-anime', name: 'Pad Anime', price: 250, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/anime-05-6e0e314c9e7228afe817410095004166-480-0.webp', category: 'Lash Lifting', description: 'Pad de silicón diseño Anime para lash lifting.', relatedCategories: ['Lash Lifting'] },
+    { id: 'pad-curva-c', name: 'Pad Curva C', price: 150, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/sin-titulo-2-031964be3ce015c34417187368845684-480-0.webp', category: 'Lash Lifting', description: 'Pad de silicón con curva C para lash lifting.', relatedCategories: ['Lash Lifting'] },
+    { id: 'pad-rosa-sin-canales', name: 'Pad Rosa sin Canales', price: 150, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/captura-de-pantalla-2021-04-20-a-las-12-51-361-31ffe5daf9b33aeaba16189411299706-480-0.webp', category: 'Lash Lifting', description: 'Pad rosa liso sin canales para lash lifting.', relatedCategories: ['Lash Lifting'] },
+    { id: 'pad-superior-inferior', name: 'Pad Superior e Inferior', price: 150, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/verdes-03-a758a450feb27d7f7617187363942632-480-0.webp', category: 'Lash Lifting', description: 'Set de pads para pestañas superiores e inferiores.', relatedCategories: ['Lash Lifting'] },
+    { id: 'pad-colors-8p', name: 'Pad Colors 8p', price: 150, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/color8_mesa-de-trabajo-1-082794b81eb64ce0f317187370015350-480-0.webp', category: 'Lash Lifting', description: 'Set de 8 pads de colores para lash lifting.', relatedCategories: ['Lash Lifting'] },
+    { id: 'pad-colors-6p', name: 'Pad Colors 6p', price: 150, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/color6_mesa-de-trabajo-1-99c271f1e6277b582917187371558250-480-0.webp', category: 'Lash Lifting', description: 'Set de 6 pads de colores para lash lifting.', relatedCategories: ['Lash Lifting'] },
+    { id: 'pad-oso', name: 'Pad Oso', price: 250, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/osos-03-f51e1dda485dee146d17410099492242-480-0.webp', category: 'Lash Lifting', description: 'Pad de silicón diseño Oso para lash lifting.', relatedCategories: ['Lash Lifting'] },
+    { id: 'pad-corrector-reversion', name: 'Pad Corrector (Reversión)', price: 300, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/sin-titulo-2-031964be3ce015c34417187368845684-480-0.webp', category: 'Lash Lifting', description: 'Pad corrector para reversión de lash lifting.', relatedCategories: ['Lash Lifting'] },
+    { id: 'pad-mariposa', name: 'Pad Mariposa', price: 150, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/mariposa-05-764fa14cdfc67005ba17410124758679-480-0.webp', category: 'Lash Lifting', description: 'Pad de silicón diseño Mariposa para lash lifting.', relatedCategories: ['Lash Lifting'] },
+    { id: 'pad-elevacion-l', name: 'Pad Elevación L', price: 250, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/sin-titulo-2-031964be3ce015c34417187368845684-480-0.webp', category: 'Lash Lifting', description: 'Pad de elevación tipo L para lash lifting avanzado.', relatedCategories: ['Lash Lifting'] },
+    { id: 'pad-ld-simetricos', name: 'Pad LD Simétricos', price: 250, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/sin-titulo-2-031964be3ce015c34417187368845684-480-0.webp', category: 'Lash Lifting', description: 'Pads LD simétricos para lash lifting profesional.', relatedCategories: ['Lash Lifting'] },
+    { id: 'pad-nube', name: 'Pad Nube', price: 150, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/sin-titulo-2-031964be3ce015c34417187368845684-480-0.webp', category: 'Lash Lifting', description: 'Pad de silicón diseño Nube para lash lifting.', relatedCategories: ['Lash Lifting'] },
+
+    // ═══════════════════════════════════════════════════════════════════
+    // PESTAÑAS DE TIRA EXTRAS
+    // ═══════════════════════════════════════════════════════════════════
+    { id: 'pestana-europea-tira', name: 'Pestaña Europea de Tira', price: 25, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/p22-011-a2a1a932fdb14dab2f16494552819533-480-0.webp', category: 'Pestañas en Tira', description: 'Pestaña de tira estilo europeo.', relatedCategories: ['Pestañas en Tira'] },
+    { id: 'pestana-decorada-tira', name: 'Pestaña Decorada de Tira', price: 20, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/p351-01-50b64373b52faf553616494555466379-480-0.webp', category: 'Pestañas en Tira', description: 'Pestaña de tira decorada para ocasiones especiales.', relatedCategories: ['Pestañas en Tira'] },
+    { id: 'pestana-d-colores', name: 'Pestaña (D) en Colores', price: 600, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/big-color-021-35719d95d60eae65d216847754951631-480-0.webp', category: 'Extensiones', description: 'Extensiones de pestañas curva D en colores variados.', relatedCategories: ['Extensiones'] },
+    { id: 'pestana-grupo-racimo-azul', name: 'Pestañas en Grupo o Racimo Azul', price: 22, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/sin-titulo-2-031964be3ce015c34417187368845684-480-0.webp', category: 'Pestañas en Tira', description: 'Pestañas en grupo o racimo color azul.', relatedCategories: ['Pestañas en Tira'] },
+
+    // ═══════════════════════════════════════════════════════════════════
+    // MINI CEPILLOS Y CEPILLOS EXTRAS
+    // ═══════════════════════════════════════════════════════════════════
+    { id: 'mini-cepillo-lash-lifting', name: 'Mini Cepillo para Lash Lifting', price: 40, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/fotoooo-19-263e9d2bf7a3e0676017188111757694-480-0.webp', category: 'Lash Lifting', description: 'Mini cepillo individual para lash lifting.', relatedCategories: ['Lash Lifting', 'Accesorios'] },
+    { id: '50-cepillo-mini-laminado', name: '50 Cepillos Mini para Laminado', price: 160, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/minibrush-2-753349217864bef5fa17558789995527-480-0.webp', category: 'Lash Lifting', description: 'Paquete de 50 mini cepillos para laminado de cejas.', relatedCategories: ['Lash Lifting', 'Accesorios'] },
+    { id: 'cepillo-con-guarda', name: 'Cepillo con Guarda', price: 85, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/sin-titulo-2-031964be3ce015c34417187368845684-480-0.webp', category: 'Accesorios', description: 'Cepillo para pestañas con guarda protectora.', relatedCategories: ['Accesorios'] },
+    { id: '50-cepillos-pestanas', name: '50 Cepillos para Pestañas Pro', price: 60, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/eyelash-brush-73d2f3c727699f45f317558790353516-480-0.webp', category: 'Accesorios', description: 'Paquete profesional de 50 cepillos para pestañas.', relatedCategories: ['Accesorios'] },
+
+    // ═══════════════════════════════════════════════════════════════════
+    // EXTENSIONES CURVAS FALTANTES
+    // ═══════════════════════════════════════════════════════════════════
+    // --- Curva B dimensionales ---
+    { id: 'abanicos-2d-b-015-10', name: 'Abanicos | 2D | Curva B | 0.15 | 10 mm', price: 350, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/2d-0-15-b-101-ed1be18f240c6503c716337346424009-480-0.webp', category: 'Extensiones', description: 'Abanicos 2D curva B grosor 0.15 medida 10mm.', relatedCategories: ['Extensiones'] },
+    { id: 'abanicos-2d-b-015-12', name: 'Abanicos | 2D | Curva B | 0.15 | 12 mm', price: 350, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/2d-0-15-b-121-c941335c7f2fdfa69716339836792483-480-0.webp', category: 'Extensiones', description: 'Abanicos 2D curva B grosor 0.15 medida 12mm.', relatedCategories: ['Extensiones'] },
+    { id: 'abanicos-4d-b-015-10', name: 'Abanicos | 4D | Curva B | 0.15 | 10 mm', price: 350, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/2d-0-15-b-101-ed1be18f240c6503c716337346424009-480-0.webp', category: 'Extensiones', description: 'Abanicos 4D curva B grosor 0.15 medida 10mm.', relatedCategories: ['Extensiones'] },
+    { id: 'abanicos-4d-b-015-12', name: 'Abanicos | 4D | Curva B | 0.15 | 12 mm', price: 350, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/2d-0-15-b-121-c941335c7f2fdfa69716339836792483-480-0.webp', category: 'Extensiones', description: 'Abanicos 4D curva B grosor 0.15 medida 12mm.', relatedCategories: ['Extensiones'] },
+    { id: 'abanicos-5d-b-015-10', name: 'Abanicos | 5D | Curva B | 0.15 | 10 mm', price: 350, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/2d-0-15-b-101-ed1be18f240c6503c716337346424009-480-0.webp', category: 'Extensiones', description: 'Abanicos 5D curva B grosor 0.15 medida 10mm.', relatedCategories: ['Extensiones'] },
+    // --- Curva C dimensionales ---
+    { id: 'abanicos-4d-c-005', name: 'Abanicos | 4D | Curva C | 0.05 | Mixta', price: 350, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/2d-0-15-b-101-ed1be18f240c6503c716337346424009-480-0.webp', category: 'Extensiones', description: 'Abanicos 4D curva C grosor 0.05 combo mixto.', relatedCategories: ['Extensiones'] },
+    { id: 'abanicos-5d-c-005', name: 'Abanicos | 5D | Curva C | 0.05 | Mixta', price: 350, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/2d-0-15-b-101-ed1be18f240c6503c716337346424009-480-0.webp', category: 'Extensiones', description: 'Abanicos 5D curva C grosor 0.05 combo mixto.', relatedCategories: ['Extensiones'] },
+    { id: 'abanicos-4d-c-007', name: 'Abanicos | 4D | Curva C | 0.07 | Mixta', price: 350, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/2d-0-15-b-101-ed1be18f240c6503c716337346424009-480-0.webp', category: 'Extensiones', description: 'Abanicos 4D curva C grosor 0.07 combo mixto.', relatedCategories: ['Extensiones'] },
+    { id: 'abanicos-5d-c-007', name: 'Abanicos | 5D | Curva C | 0.07 | Mixta', price: 350, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/2d-0-15-b-101-ed1be18f240c6503c716337346424009-480-0.webp', category: 'Extensiones', description: 'Abanicos 5D curva C grosor 0.07 combo mixto.', relatedCategories: ['Extensiones'] },
+    { id: 'abanicos-2d-c-015-10', name: 'Abanicos | 2D | Curva C | 0.15 | 10 mm', price: 350, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/2d-0-15-b-101-ed1be18f240c6503c716337346424009-480-0.webp', category: 'Extensiones', description: 'Abanicos 2D curva C grosor 0.15 medida 10mm.', relatedCategories: ['Extensiones'] },
+    { id: 'curva-c-010-combo', name: 'Curva C | 0.10 | Mixta', price: 280, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/2d-0-15-b-101-ed1be18f240c6503c716337346424009-480-0.webp', category: 'Extensiones', description: 'Extensiones curva C grosor 0.10 combo mixto.', relatedCategories: ['Extensiones'] },
+    { id: 'curva-cc-015-combo', name: 'Curva CC | 0.15 | Combo 7-15 mm', price: 280, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/2d-0-15-b-101-ed1be18f240c6503c716337346424009-480-0.webp', category: 'Extensiones', description: 'Extensiones curva CC grosor 0.15 combo de 7 a 15mm.', relatedCategories: ['Extensiones'] },
+    // --- Curva D dimensionales ---
+    { id: 'abanicos-4d-d-005', name: 'Abanicos | 4D | Curva D | 0.05 | Mixta', price: 350, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/2d-0-15-b-101-ed1be18f240c6503c716337346424009-480-0.webp', category: 'Extensiones', description: 'Abanicos 4D curva D grosor 0.05 combo mixto.', relatedCategories: ['Extensiones'] },
+    { id: 'abanicos-5d-d-005', name: 'Abanicos | 5D | Curva D | 0.05 | Mixta', price: 350, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/2d-0-15-b-101-ed1be18f240c6503c716337346424009-480-0.webp', category: 'Extensiones', description: 'Abanicos 5D curva D grosor 0.05 combo mixto.', relatedCategories: ['Extensiones'] },
+    { id: 'easy-fan-d-005', name: 'Easy Fan Curva D | 0.05 | Mixta', price: 380, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/2d-0-15-b-101-ed1be18f240c6503c716337346424009-480-0.webp', category: 'Extensiones', description: 'Easy Fan curva D grosor 0.05 combo mixto.', relatedCategories: ['Extensiones'] },
+    { id: 'abanicos-4d-d-007', name: 'Abanicos | 4D | Curva D | 0.07 | Mixta', price: 350, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/2d-0-15-b-101-ed1be18f240c6503c716337346424009-480-0.webp', category: 'Extensiones', description: 'Abanicos 4D curva D grosor 0.07 combo mixto.', relatedCategories: ['Extensiones'] },
+    { id: 'abanicos-5d-d-007', name: 'Abanicos | 5D | Curva D | 0.07 | Mixta', price: 350, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/2d-0-15-b-101-ed1be18f240c6503c716337346424009-480-0.webp', category: 'Extensiones', description: 'Abanicos 5D curva D grosor 0.07 combo mixto.', relatedCategories: ['Extensiones'] },
+    { id: 'easy-fan-d-007', name: 'Easy Fan Curva D | 0.07 | Mixta', price: 380, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/2d-0-15-b-101-ed1be18f240c6503c716337346424009-480-0.webp', category: 'Extensiones', description: 'Easy Fan curva D grosor 0.07 combo mixto.', relatedCategories: ['Extensiones'] },
+    // --- Curva J dimensionales ---
+    { id: 'abanicos-2d-j-015-10', name: 'Abanicos | 2D | Curva J | 0.15 | 10 mm', price: 350, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/2d-0-15-b-101-ed1be18f240c6503c716337346424009-480-0.webp', category: 'Extensiones', description: 'Abanicos 2D curva J grosor 0.15 medida 10mm.', relatedCategories: ['Extensiones'] },
+    { id: 'abanicos-2d-j-015-12', name: 'Abanicos | 2D | Curva J | 0.15 | 12 mm', price: 350, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/2d-0-15-b-121-c941335c7f2fdfa69716339836792483-480-0.webp', category: 'Extensiones', description: 'Abanicos 2D curva J grosor 0.15 medida 12mm.', relatedCategories: ['Extensiones'] },
+    { id: 'abanicos-5d-j-015-10', name: 'Abanicos | 5D | Curva J | 0.15 | 10 mm', price: 350, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/2d-0-15-b-101-ed1be18f240c6503c716337346424009-480-0.webp', category: 'Extensiones', description: 'Abanicos 5D curva J grosor 0.15 medida 10mm.', relatedCategories: ['Extensiones'] },
+    // --- Curva L / LC ---
+    { id: 'curva-l-010-combo', name: 'Curva L | 0.10 | Mixta', price: 280, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/2d-0-15-b-101-ed1be18f240c6503c716337346424009-480-0.webp', category: 'Extensiones', description: 'Extensiones curva L grosor 0.10 combo mixto.', relatedCategories: ['Extensiones'] },
+    { id: 'curva-l-015-combo', name: 'Curva L | 0.15 | Mixta', price: 280, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/2d-0-15-b-101-ed1be18f240c6503c716337346424009-480-0.webp', category: 'Extensiones', description: 'Extensiones curva L grosor 0.15 combo mixto.', relatedCategories: ['Extensiones'] },
+    { id: 'curva-lc-010-combo', name: 'Curva LC | 0.10 | Mixta', price: 280, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/2d-0-15-b-101-ed1be18f240c6503c716337346424009-480-0.webp', category: 'Extensiones', description: 'Extensiones curva LC grosor 0.10 combo mixto.', relatedCategories: ['Extensiones'] },
+    { id: 'curva-lc-015-combo', name: 'Curva LC | 0.15 | Mixta', price: 280, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/2d-0-15-b-101-ed1be18f240c6503c716337346424009-480-0.webp', category: 'Extensiones', description: 'Extensiones curva LC grosor 0.15 combo mixto.', relatedCategories: ['Extensiones'] },
+
+    // ═══════════════════════════════════════════════════════════════════
+    // PINZAS EXTRAS
+    // ═══════════════════════════════════════════════════════════════════
+    { id: 'pinza-abanicos-sin-punta', name: 'Pinza Abanicos sin Punta', price: 100, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/sin-punta-11-01f6336c5e77686f5b16275044778948-480-0.webp', category: 'Herramientas', description: 'Pinza para abanicos sin punta para extensiones de pestañas.', relatedCategories: ['Herramientas', 'Extensiones'] },
+    { id: 'pinza-ele-m19', name: 'Pinza Ele M-19', price: 140, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/sin-titulo-1-f73143c3262f6e86e317344090343101-480-0.webp', category: 'Herramientas', description: 'Pinza profesional en forma de ele modelo M-19.', relatedCategories: ['Herramientas', 'Extensiones'] },
+    { id: 'pinza-md14-ele', name: 'Pinza MD 14 en Ele', price: 200, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/rnqo91301-301a1e5c1eb7c2d41016567718166121-480-0.webp', category: 'Herramientas', description: 'Pinza MD 14 en forma de ele para extensiones.', relatedCategories: ['Herramientas', 'Extensiones'] },
+    { id: 'pinza-md14-punta', name: 'Pinza MD 14 en Punta', price: 200, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/wpfs53581-363b5cfbc93b7d967216567716588826-480-0.webp', category: 'Herramientas', description: 'Pinza MD 14 en punta para extensiones.', relatedCategories: ['Herramientas', 'Extensiones'] },
+    { id: 'pinza-colocar-m18', name: 'Pinza para Colocar M-18', price: 140, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/sin-titulo-1-f73143c3262f6e86e317344090343101-480-0.webp', category: 'Herramientas', description: 'Pinza para colocar extensiones modelo M-18.', relatedCategories: ['Herramientas', 'Extensiones'] },
+    { id: 'pinza-depilar', name: 'Pinza para Depilar', price: 150, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/con-peine-plata1-5bdd469dc6a19e888716274269228512-480-0.webp', category: 'Herramientas', description: 'Pinza profesional para depilar cejas.', relatedCategories: ['Herramientas', 'Diseño de Cejas'] },
+    { id: 'pinza-punta-larga', name: 'Pinza Punta Larga', price: 140, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/sin-titulo-1-f73143c3262f6e86e317344090343101-480-0.webp', category: 'Herramientas', description: 'Pinza de punta larga para extensiones de pestañas.', relatedCategories: ['Herramientas', 'Extensiones'] },
+    { id: 'pinza-punta-m12', name: 'Pinza Punta M-12', price: 140, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/sin-titulo-1-f73143c3262f6e86e317344090343101-480-0.webp', category: 'Herramientas', description: 'Pinza punta modelo M-12 para extensiones.', relatedCategories: ['Herramientas', 'Extensiones'] },
+
+    // ═══════════════════════════════════════════════════════════════════
+    // TINTURAS Y LIMPIADORES EXTRAS
+    // ═══════════════════════════════════════════════════════════════════
+    { id: 'adhesivo-balsamo-30gr', name: 'Adhesivo Bálsamo Butter 30 gr', price: 380, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/captura-de-pantalla-2022-10-27-a-las-22-07-361-25ed0e1a59714d490e16669266380337-480-0.webp', category: 'Adhesivos', description: 'Adhesivo bálsamo butter presentación de 30 gramos.', relatedCategories: ['Adhesivos', 'Extensiones'] },
+    { id: 'limpiador-impurezas-normal-seca', name: 'Limpiador de Impurezas | Piel Normal y Seca', price: 90, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/captura-de-pantalla-2022-10-27-a-las-22-07-361-25ed0e1a59714d490e16669266380337-480-0.webp', category: 'Higiene', description: 'Limpiador de impurezas formulado para piel normal y seca.', relatedCategories: ['Higiene', 'Lash Lifting'] },
+    { id: 'tintura-topica-castano-oscuro', name: 'Tintura Tópica - Castaño Oscuro', price: 350, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/captura-de-pantalla-2022-10-27-a-las-22-07-361-25ed0e1a59714d490e16669266380337-480-0.webp', category: 'Tintura', description: 'Tintura tópica profesional color castaño oscuro para cejas y pestañas.', relatedCategories: ['Tintura'] },
+    { id: 'tintura-topica-negro', name: 'Tintura Tópica - Negro', price: 350, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/captura-de-pantalla-2022-10-27-a-las-22-07-361-25ed0e1a59714d490e16669266380337-480-0.webp', category: 'Tintura', description: 'Tintura tópica profesional color negro para cejas y pestañas.', relatedCategories: ['Tintura'] },
+
+    // ═══════════════════════════════════════════════════════════════════
+    // RULOS EXTRAS
+    // ═══════════════════════════════════════════════════════════════════
+    { id: 'rulos-adhesivos-curva-ch', name: 'Rulos Adhesivos Curva CH', price: 70, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/sin-titulo-1-071-f0552b059105e2a53d16669736033613-480-0.webp', category: 'Lash Lifting', description: 'Rulos adhesivos curva corta (CH) para lash lifting.', relatedCategories: ['Lash Lifting'] },
+    { id: 'rulos-adhesivos-curva-m', name: 'Rulos Adhesivos Curva M', price: 70, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/sin-titulo-1-071-f0552b059105e2a53d16669736033613-480-0.webp', category: 'Lash Lifting', description: 'Rulos adhesivos curva media (M) para lash lifting.', relatedCategories: ['Lash Lifting'] },
+    { id: 'rulos-desechables-ch', name: 'Rulos Desechables Curva Corta CH', price: 50, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/sin-titulo-1-071-f0552b059105e2a53d16669736033613-480-0.webp', category: 'Lash Lifting', description: 'Rulos desechables curva corta (CH) para lash lifting.', relatedCategories: ['Lash Lifting'] },
+    { id: 'rulos-desechables-g', name: 'Rulos Desechables Curva Amplia G', price: 50, image: 'https://acdn-us.mitiendanube.com/stores/694/809/products/sin-titulo-1-071-f0552b059105e2a53d16669736033613-480-0.webp', category: 'Lash Lifting', description: 'Rulos desechables curva amplia (G) para lash lifting.', relatedCategories: ['Lash Lifting'] },
 ];
 
 // Last updated: 2026-02-18
@@ -1287,7 +1382,8 @@ export const variantGroups: VariantGroup[] = [
         attributeNames: ['Curva'],
         variants: [
             { productId: 'rulos-adhesivos-curva-g', attributes: { Curva: 'G' } },
-            { productId: 'rulos-adhesivos-m-ch', attributes: { Curva: 'M/CH' } },
+            { productId: 'rulos-adhesivos-curva-ch', attributes: { Curva: 'CH' } },
+            { productId: 'rulos-adhesivos-curva-m', attributes: { Curva: 'M' } },
         ],
     },
     // 8. Tintura Tópica
@@ -1329,7 +1425,7 @@ export const variantGroups: VariantGroup[] = [
         attributeNames: ['Tipo de Piel'],
         variants: [
             { productId: 'limpiador-impurezas', attributes: { 'Tipo de Piel': 'Mixta / Grasa' } },
-            { productId: 'limpiador-piel-normal-seca', attributes: { 'Tipo de Piel': 'Normal / Seca' } },
+            { productId: 'limpiador-impurezas-normal-seca', attributes: { 'Tipo de Piel': 'Normal / Seca' } },
         ],
     },
     // 12. Adhesivo Bálsamo
@@ -1339,7 +1435,7 @@ export const variantGroups: VariantGroup[] = [
         attributeNames: ['Presentación'],
         variants: [
             { productId: 'adhesivo-balsamo-20gr', attributes: { 'Presentación': '20 gr' } },
-            { productId: 'adhesivo-balsamo-butter-30gr', attributes: { 'Presentación': 'Butter 30 gr' } },
+            { productId: 'adhesivo-balsamo-30gr', attributes: { 'Presentación': 'Butter 30 gr' } },
         ],
     },
     // 13. Pinzas Profesionales
