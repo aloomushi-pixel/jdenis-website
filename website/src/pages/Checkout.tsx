@@ -3,19 +3,23 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useCartStore } from '../store/cartStore';
 import { useAuthStore } from '../store/authStore';
+import { useCartPromotion } from '../hooks/useCartPromotion';
+import CartPromoBanner from '../components/CartPromoBanner';
 import { createWebsiteOrder, createMercadoPagoCheckout } from '../lib/supabase';
 
 export default function Checkout() {
     const navigate = useNavigate();
-    const { items, total, clearCart } = useCartStore();
+    const { items, clearCart } = useCartStore();
     const { isAuthenticated, user } = useAuthStore();
+    const promotion = useCartPromotion();
     const [paymentMethod, setPaymentMethod] = useState('card');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const SHIPPING_COST = 200;
-    const subtotal = total();
-    const grandTotal = subtotal + SHIPPING_COST;
+    const subtotal = promotion.subtotal;
+    const shippingCost = promotion.shippingCost;
+    const discountAmount = promotion.discountAmount;
+    const grandTotal = promotion.grandTotal;
 
     const [formData, setFormData] = useState({
         fullName: user?.fullName || '',
@@ -63,7 +67,8 @@ export default function Checkout() {
                         zip: formData.zip,
                     },
                     total: grandTotal,
-                    shipping_cost: SHIPPING_COST,
+                    discount: discountAmount,
+                    shipping_cost: shippingCost,
                 };
 
                 const result = await createMercadoPagoCheckout(checkoutData);
@@ -242,7 +247,12 @@ export default function Checkout() {
                                     </div>
                                 </div>
                                 <p className="text-sm text-charcoal-light mt-4">
-                                    <svg className="w-4 h-4 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M21 7.5l-2.25-1.313M21 7.5v2.25m0-2.25l-2.25 1.313M3 7.5l2.25-1.313M3 7.5l2.25 1.313M3 7.5v2.25m9 3l2.25-1.313M12 12.75l-2.25-1.313M12 12.75V15m0 6.75l2.25-1.313M12 21.75V19.5m0 2.25l-2.25-1.313m0-16.875L12 2.25l2.25 1.313M21 14.25v2.25l-2.25 1.313m-13.5 0L3 16.5v-2.25" /></svg> Envío vía FedEx: <strong>$200 MXN</strong> a todo México
+                                    <svg className="w-4 h-4 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M21 7.5l-2.25-1.313M21 7.5v2.25m0-2.25l-2.25 1.313M3 7.5l2.25-1.313M3 7.5l2.25 1.313M3 7.5v2.25m9 3l2.25-1.313M12 12.75l-2.25-1.313M12 12.75V15m0 6.75l2.25-1.313M12 21.75V19.5m0 2.25l-2.25-1.313m0-16.875L12 2.25l2.25 1.313M21 14.25v2.25l-2.25 1.313m-13.5 0L3 16.5v-2.25" /></svg>
+                                    {promotion.isFreeShipping ? (
+                                        <><strong className="text-emerald-600">¡Envío GRATIS!</strong> <span className="line-through text-charcoal-light/50">$200 MXN</span></>
+                                    ) : (
+                                        <>Envío vía FedEx: <strong>$200 MXN</strong> a todo México</>
+                                    )}
                                 </p>
                             </div>
 
@@ -354,6 +364,9 @@ export default function Checkout() {
                                 ))}
                             </div>
 
+                            {/* Promotion Banner */}
+                            <CartPromoBanner promotion={promotion} />
+
                             <hr className="border-charcoal/10 my-4" />
 
                             <div className="space-y-2 text-sm">
@@ -361,9 +374,26 @@ export default function Checkout() {
                                     <span className="text-charcoal-light">Subtotal</span>
                                     <span>${subtotal.toLocaleString()}</span>
                                 </div>
+
+                                {/* Descuento (si aplica) */}
+                                {discountAmount > 0 && (
+                                    <div className="flex justify-between">
+                                        <span className="text-emerald-600 font-medium">Descuento ({promotion.discountPercent}%)</span>
+                                        <span className="text-emerald-600 font-medium">-${discountAmount.toLocaleString()}</span>
+                                    </div>
+                                )}
+
+                                {/* Envío */}
                                 <div className="flex justify-between">
                                     <span className="text-charcoal-light">Envío FedEx</span>
-                                    <span>${SHIPPING_COST}</span>
+                                    {promotion.isFreeShipping ? (
+                                        <span className="font-medium">
+                                            <span className="text-emerald-600">GRATIS</span>{' '}
+                                            <span className="line-through text-charcoal-light/40 text-xs">$200</span>
+                                        </span>
+                                    ) : (
+                                        <span>${shippingCost}</span>
+                                    )}
                                 </div>
                             </div>
 
