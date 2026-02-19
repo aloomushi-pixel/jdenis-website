@@ -4,8 +4,9 @@ import { Link, useParams } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import ReviewSection from '../components/ReviewSection';
 import VariantSelector from '../components/VariantSelector';
-import { getProductById, getRelatedProducts, getVariantCount, getVariantGroup } from '../data/products';
+import { getProductById, getRelatedProducts, getVariantCount, getVariantGroup, type VariantGroup } from '../data/products';
 import { useCartStore } from '../store/cartStore';
+import { useVariants } from '../hooks/useVariants';
 
 type DetailTab = 'benefits' | 'includes' | 'specs' | 'reviews';
 
@@ -15,12 +16,25 @@ export default function ProductDetail() {
     const initialProduct = getProductById(id || '');
     const [activeTab, setActiveTab] = useState<DetailTab>('benefits');
     const [currentProductId, setCurrentProductId] = useState(id || '');
+    const { groups: dbGroups } = useVariants();
 
 
 
     // Get the currently displayed product (may differ from URL if variant was selected)
     const product = getProductById(currentProductId) || initialProduct;
-    const variantGroup = product ? getVariantGroup(product.id) : undefined;
+
+    // Try to find variant group from DB first, then fallback to local file
+    const dbGroup = product ? dbGroups.find(g => g.variants.some(v => v.product_id === product.id)) : undefined;
+
+    const variantGroup: VariantGroup | undefined = dbGroup ? {
+        parentId: dbGroup.id,
+        parentName: dbGroup.name,
+        attributeNames: dbGroup.attribute_names,
+        variants: dbGroup.variants.map(v => ({
+            productId: v.product_id,
+            attributes: v.attributes
+        }))
+    } : (product ? getVariantGroup(product.id) : undefined);
 
     if (!product) {
         return (

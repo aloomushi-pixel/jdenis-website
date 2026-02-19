@@ -4,6 +4,8 @@ import { getVariantCount, getVariantGroup, variantGroups } from '../../data/prod
 import type { Product } from '../../store/cartStore';
 import * as XLSX from 'xlsx';
 import { useProducts } from '../../hooks/useProducts';
+import { useVariants } from '../../hooks/useVariants';
+import VariantManager from './VariantManager';
 
 // ═══════════════════════════════════════════
 // Excel row <-> Product mapping
@@ -32,6 +34,7 @@ function productToRow(p: Product) {
 }
 
 export default function ProductEditor() {
+    const [activeTab, setActiveTab] = useState<'catalog' | 'variants'>('catalog');
     const [search, setSearch] = useState('');
     const [categoryFilter, setCategoryFilter] = useState('all');
     const [sortBy, setSortBy] = useState<'name' | 'price' | 'category' | 'id'>('name');
@@ -46,6 +49,7 @@ export default function ProductEditor() {
     // Supabase integration via useProducts hook
     // ═══════════════════════════════════════════
     const { products, loading: supabaseLoading, error: supabaseError, saveProduct, saveStatus, synced } = useProducts();
+    const { groups: dbVariantGroups, loading: variantsLoading, createGroup, deleteGroup, addVariant, removeVariant } = useVariants();
 
     // ═══════════════════════════════════════════
     // Editable state: product overrides stored in memory
@@ -312,7 +316,6 @@ export default function ProductEditor() {
     // Stats
     const totalProducts = products.length;
     const totalVariantGroups = variantGroups.length;
-    const totalVariantSKUs = variantGroups.reduce((acc, g) => acc + g.variants.length, 0);
     const editedCount = Object.keys(edits).length;
 
     // ═══════════════════════════════════════════
@@ -384,84 +387,107 @@ export default function ProductEditor() {
                 </motion.div>
             )}
 
-            {/* Header */}
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6 gap-4">
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-800">Editor de Catálogo</h1>
-                    <p className="text-sm text-gray-500 mt-1">
-                        {totalProducts} productos · {totalVariantGroups} grupos de variantes · {totalVariantSKUs} SKUs agrupados
-                        {editedCount > 0 && (
-                            <span className="ml-2 text-amber-600 font-medium">
-                                · {editedCount} productos editados
-                            </span>
-                        )}
-                        {synced && (
-                            <span className="ml-2 text-green-600 font-medium">
-                                · ☁️ Sincronizado con tienda
-                            </span>
-                        )}
-                        {supabaseLoading && (
-                            <span className="ml-2 text-blue-600 font-medium animate-pulse">
-                                · ⏳ Cargando datos...
-                            </span>
-                        )}
-                        {supabaseError && (
-                            <span className="ml-2 text-red-500 font-medium">
-                                · ⚠️ Modo offline
-                            </span>
-                        )}
-                    </p>
-                </div>
-                <div className="flex items-center gap-2 flex-wrap">
-                    {/* Unsaved changes indicator */}
-                    {hasChanges && (
-                        <span className="px-3 py-2 bg-amber-100 text-amber-700 rounded-lg text-xs font-medium flex items-center gap-1">
-                            <span className="w-2 h-2 bg-amber-500 rounded-full animate-pulse" />
-                            Cambios sin exportar
-                        </span>
-                    )}
-
-                    {/* Export Excel */}
-                    <button
-                        onClick={handleExportExcel}
-                        className="flex items-center gap-2 px-4 py-2.5 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors shadow-sm"
-                    >
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
-                        Exportar Excel
-                    </button>
-
-                    {/* Import Excel */}
-                    <label className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm cursor-pointer">
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" /></svg>
-                        Importar Excel
-                        <input
-                            ref={fileInputRef}
-                            type="file"
-                            accept=".xlsx,.xls,.csv"
-                            className="hidden"
-                            onChange={handleImportExcel}
-                        />
-                    </label>
-
-                    {/* Export JSON */}
-                    <button
-                        onClick={handleExportJSON}
-                        className="flex items-center gap-2 px-4 py-2.5 bg-gray-600 text-white rounded-lg text-sm font-medium hover:bg-gray-700 transition-colors shadow-sm"
-                    >
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" /></svg>
-                        JSON
-                    </button>
-
-                    {/* Reset edits */}
-                    {hasChanges && (
+            {/* Header & Tabs */}
+            <div className="flex flex-col mb-6 gap-4">
+                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                    <div>
+                        <h1 className="text-2xl font-bold text-gray-800">Editor de Catálogo</h1>
+                        <p className="text-sm text-gray-500 mt-1">
+                            {totalProducts} productos · {dbVariantGroups.length} grupos de variantes (DB)
+                            {editedCount > 0 && (
+                                <span className="ml-2 text-amber-600 font-medium">
+                                    · {editedCount} productos editados
+                                </span>
+                            )}
+                            {synced && (
+                                <span className="ml-2 text-green-600 font-medium">
+                                    · ☁️ Sincronizado
+                                </span>
+                            )}
+                            {(supabaseLoading || variantsLoading) && (
+                                <span className="ml-2 text-blue-600 font-medium animate-pulse">
+                                    · ⏳ Cargando...
+                                </span>
+                            )}
+                            {supabaseError && (
+                                <span className="ml-2 text-red-500 font-medium">
+                                    · ⚠️ Error Supabase
+                                </span>
+                            )}
+                        </p>
+                    </div>
+                    {/* Tab Switcher */}
+                    <div className="flex p-1 bg-gray-100 rounded-lg self-start lg:self-center">
                         <button
-                            onClick={() => { setEdits({}); setHasChanges(false); showNotification('info', '🔄 Ediciones descartadas'); }}
-                            className="flex items-center gap-2 px-4 py-2.5 bg-red-100 text-red-700 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors"
+                            onClick={() => setActiveTab('catalog')}
+                            className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'catalog' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                                }`}
                         >
-                            ↺ Descartar
+                            Catálogo
                         </button>
-                    )}
+                        <button
+                            onClick={() => setActiveTab('variants')}
+                            className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'variants' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                                }`}
+                        >
+                            Variantes
+                        </button>
+                    </div>
                 </div>
+
+                {/* Catalog Controls (Only show if catalog tab active) */}
+                {activeTab === 'catalog' && (
+                    <div className="flex items-center gap-2 flex-wrap justify-end">
+                        {/* Unsaved changes indicator */}
+                        {hasChanges && (
+                            <span className="px-3 py-2 bg-amber-100 text-amber-700 rounded-lg text-xs font-medium flex items-center gap-1">
+                                <span className="w-2 h-2 bg-amber-500 rounded-full animate-pulse" />
+                                Cambios sin exportar
+                            </span>
+                        )}
+
+                        {/* Export Excel */}
+                        <button
+                            onClick={handleExportExcel}
+                            className="flex items-center gap-2 px-4 py-2.5 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors shadow-sm"
+                        >
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
+                            Exportar Excel
+                        </button>
+
+                        {/* Import Excel */}
+                        <label className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm cursor-pointer">
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" /></svg>
+                            Importar Excel
+                            <input
+                                ref={fileInputRef}
+                                type="file"
+                                accept=".xlsx,.xls,.csv"
+                                className="hidden"
+                                onChange={handleImportExcel}
+                            />
+                        </label>
+
+                        {/* Export JSON */}
+                        <button
+                            onClick={handleExportJSON}
+                            className="flex items-center gap-2 px-4 py-2.5 bg-gray-600 text-white rounded-lg text-sm font-medium hover:bg-gray-700 transition-colors shadow-sm"
+                        >
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" /></svg>
+                            JSON
+                        </button>
+
+                        {/* Reset edits */}
+                        {hasChanges && (
+                            <button
+                                onClick={() => { setEdits({}); setHasChanges(false); showNotification('info', '🔄 Ediciones descartadas'); }}
+                                className="flex items-center gap-2 px-4 py-2.5 bg-red-100 text-red-700 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors"
+                            >
+                                ↺ Descartar
+                            </button>
+                        )}
+                    </div>
+                )}
             </div>
 
             {/* Info banner */}
@@ -1068,6 +1094,19 @@ export default function ProductEditor() {
                     ))}
                 </div>
             </div>
+
+            {/* Variants Tab */}
+            {activeTab === 'variants' && (
+                <VariantManager
+                    groups={dbVariantGroups}
+                    products={products}
+                    loading={variantsLoading}
+                    createGroup={createGroup}
+                    deleteGroup={deleteGroup}
+                    addVariant={addVariant}
+                    removeVariant={removeVariant}
+                />
+            )}
         </div >
     );
 }
