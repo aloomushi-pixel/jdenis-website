@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { products as localProducts, getDisplayProducts } from '../data/products';
 import { getAllProductOverrides, updateProductCatalog, type ProductOverride } from '../lib/supabase';
 import type { Product } from '../store/cartStore';
@@ -95,14 +95,11 @@ export function useProducts(): UseProductsReturn {
         return () => { cancelled = true; };
     }, []);
 
-    // Merge local + overrides
-    const products = mergeProducts(localProducts, overrides);
+    // Merge local + overrides (memoized to prevent new references on every render)
+    const products = useMemo(() => mergeProducts(localProducts, overrides), [overrides]);
 
     // Display products (variant-filtered) — reuse local logic but with merged data
-    const displayProducts = (() => {
-        const merged = mergeProducts(getDisplayProducts(), overrides);
-        return merged;
-    })();
+    const displayProducts = useMemo(() => mergeProducts(getDisplayProducts(), overrides), [overrides]);
 
     // Save a single field to Supabase
     const saveProduct = useCallback(async (productId: string, field: string, value: string | number | boolean | undefined): Promise<boolean> => {
