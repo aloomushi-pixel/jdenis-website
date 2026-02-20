@@ -1,8 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
-import type { Product as CartProduct } from '../store/cartStore';
 import { categories as localCategories, getDisplayProducts, getVariantCount } from '../data/products';
 import { useProducts } from '../hooks/useProducts';
 
@@ -26,8 +25,6 @@ export default function Shop() {
     const [activeCategory, setActiveCategory] = useState(searchParams.get('cat') || 'all');
     const [sortBy, setSortBy] = useState('name');
     const [searchQuery, setSearchQuery] = useState('');
-    const [products, setProducts] = useState<CartProduct[]>([]);
-    const [loading, setLoading] = useState(true);
 
     // Advanced filters
     const [priceRange, setPriceRange] = useState<[number, number]>([PRICE_MIN, FALLBACK_PRICE_MAX]);
@@ -36,18 +33,18 @@ export default function Shop() {
 
     // Supabase-backed product data (merges local + cloud overrides)
     const { displayProducts: mergedProducts, loading: supabaseLoading } = useProducts();
+    const products = mergedProducts;
+    const loading = supabaseLoading;
 
-    useEffect(() => {
-        // Use merged products (Supabase overrides applied to local base)
-        setProducts(mergedProducts);
-        if (!supabaseLoading) setLoading(false);
-
-        // Recalculate price range if needed
-        if (mergedProducts.length > 0) {
-            const maxPrice = Math.ceil(Math.max(...mergedProducts.map(p => p.price)) / 100) * 100;
-            setPriceRange(prev => [prev[0], Math.max(prev[1], maxPrice)]);
+    // Calculate max price once when products change (via ref to avoid re-render cascade)
+    const maxPriceRef = useRef(FALLBACK_PRICE_MAX);
+    const computedMax = useMemo(() => {
+        if (products.length > 0) {
+            return Math.ceil(Math.max(...products.map(p => p.price)) / 100) * 100;
         }
-    }, [mergedProducts, supabaseLoading]);
+        return FALLBACK_PRICE_MAX;
+    }, [products]);
+    maxPriceRef.current = computedMax;
 
     useEffect(() => {
         const cat = searchParams.get('cat');

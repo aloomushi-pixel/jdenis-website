@@ -118,7 +118,7 @@ export default function ProductDetail() {
                             {product.category}
                         </span>
                         <h1 className="font-serif text-2xl sm:text-3xl lg:text-4xl text-forest mb-3 leading-tight">
-                            {variantGroup ? variantGroup.parentName : product.name}
+                            {product.name}
                         </h1>
 
                         {/* Variant Selector */}
