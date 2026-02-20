@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { products as localProducts } from '../../data/products';
+import { useProducts } from '../../hooks/useProducts';
 import type { Promotion, DistributorPrice } from '../../lib/supabase';
 import {
     getPromotions, createPromotion, updatePromotion, deletePromotion,
@@ -26,6 +26,7 @@ const emptyDistPrice: Omit<DistributorPrice, 'id' | 'created_at' | 'updated_at'>
 
 // ─── Component ──────────────────────────────────────────────────
 export default function PromotionsManager() {
+    const { products } = useProducts();
     const [tab, setTab] = useState<Tab>('promotions');
     const [promos, setPromos] = useState<Promotion[]>([]);
     const [distPrices, setDistPrices] = useState<DistributorPrice[]>([]);
@@ -118,14 +119,14 @@ export default function PromotionsManager() {
     };
 
     const selectProduct = (productId: string) => {
-        const product = localProducts.find(p => p.id === productId);
+        const product = products.find(p => p.id === productId);
         if (product) {
             setDistForm({ ...distForm, product_id: product.id, product_name: product.name, regular_price: product.price });
         }
     };
 
     // ─── Unique categories from local products ──────────────────
-    const categories = [...new Set(localProducts.map(p => p.category))].sort();
+    const categories = [...new Set(products.map(p => p.category))].sort();
 
     if (loading) {
         return (
@@ -491,7 +492,7 @@ export default function PromotionsManager() {
                                         onChange={e => selectProduct(e.target.value)}
                                         className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                                         <option value="">Seleccionar producto...</option>
-                                        {localProducts.map(p => (
+                                        {products.map(p => (
                                             <option key={p.id} value={p.id}>{p.name} — {fmt(p.price)}</option>
                                         ))}
                                     </select>

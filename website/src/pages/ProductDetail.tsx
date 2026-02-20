@@ -1,29 +1,43 @@
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import ReviewSection from '../components/ReviewSection';
 import VariantSelector from '../components/VariantSelector';
-import { getProductById, getRelatedProducts, getVariantCount, getVariantGroup, type VariantGroup } from '../data/products';
+import { useProducts, type DisplayProduct } from '../hooks/useProducts';
 import { useCartStore } from '../store/cartStore';
 import { useVariants } from '../hooks/useVariants';
+
+// Local VariantGroup type (previously from data/products)
+interface VariantGroup {
+    parentId: string;
+    parentName: string;
+    attributeNames: string[];
+    variants: { productId: string; attributes: Record<string, string> }[];
+}
 
 type DetailTab = 'benefits' | 'includes' | 'specs' | 'reviews';
 
 export default function ProductDetail() {
     const { id } = useParams<{ id: string }>();
     const { addItem, openCart } = useCartStore();
-    const initialProduct = getProductById(id || '');
+    const { products, loading: productsLoading } = useProducts();
     const [activeTab, setActiveTab] = useState<DetailTab>('benefits');
     const [currentProductId, setCurrentProductId] = useState(id || '');
     const { groups: dbGroups } = useVariants();
 
+    // Update currentProductId when URL param changes
+    useEffect(() => {
+        if (id) setCurrentProductId(id);
+    }, [id]);
 
+    // Get the currently displayed product from Supabase data
+    const product: DisplayProduct | undefined = useMemo(() => {
+        return products.find(p => p.id === currentProductId) ||
+            products.find(p => p.id === id);
+    }, [products, currentProductId, id]);
 
-    // Get the currently displayed product (may differ from URL if variant was selected)
-    const product = getProductById(currentProductId) || initialProduct;
-
-    // Try to find variant group from DB first, then fallback to local file
+    // Try to find variant group from DB
     const dbGroup = product ? dbGroups.find(g => g.variants.some(v => v.product_id === product.id)) : undefined;
 
     const variantGroup: VariantGroup | undefined = dbGroup ? {
@@ -34,7 +48,15 @@ export default function ProductDetail() {
             productId: v.product_id,
             attributes: v.attributes
         }))
-    } : (product ? getVariantGroup(product.id) : undefined);
+    } : undefined;
+
+    if (productsLoading) {
+        return (
+            <div className="min-h-screen bg-cream flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gold"></div>
+            </div>
+        );
+    }
 
     if (!product) {
         return (
@@ -61,7 +83,12 @@ export default function ProductDetail() {
         window.history.replaceState(null, '', `/producto/${newProductId}`);
     };
 
-    const relatedProducts = getRelatedProducts(product, 8);
+    // Related products: same category, different product
+    const relatedProducts = useMemo(() => {
+        return products
+            .filter(p => p.category === product.category && p.id !== product.id)
+            .slice(0, 8);
+    }, [products, product]);
 
     const hasBenefits = product.benefits && product.benefits.length > 0;
     const hasIncludes = product.includes && product.includes.length > 0;
@@ -380,7 +407,7 @@ export default function ProductDetail() {
                                             <ProductCard
                                                 product={p}
                                                 index={index}
-                                                variantCount={getVariantCount(p.id)}
+                                                variantCount={0}
                                             />
                                         </div>
                                     ))}

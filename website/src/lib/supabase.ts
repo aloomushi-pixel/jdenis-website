@@ -24,6 +24,17 @@ export interface Product {
     sort_order: number | null;
     created_at: string | null;
     updated_at: string | null;
+    // Rich-content columns
+    benefits: string[] | null;
+    includes: string[] | null;
+    performance: string | null;
+    specifications: string[] | null;
+    gallery: string[] | null;
+    video: string | null;
+    related_categories: string[] | null;
+    original_price: number | null;
+    distributor_price: number | null;
+    promotion: string | null;
 }
 
 export interface ProductCategory {
@@ -128,17 +139,182 @@ export async function getProductById(id: string) {
     return data;
 }
 
-export async function getFeaturedProducts() {
+export async function getFeaturedProducts(limit: number = 12) {
     const { data, error } = await supabase
         .from('products')
         .select('*')
         .eq('is_active', true)
         .eq('is_featured', true)
         .order('sort_order', { ascending: true })
-        .limit(4);
+        .limit(limit);
 
     if (error) throw error;
     return data;
+}
+
+/**
+ * Returns a de-duplicated list of products for the shop grid.
+ * For each variant group, only the parent (first) product is shown.
+ */
+export async function getDisplayProducts(category?: string): Promise<Product[]> {
+    // 1. Get all active products
+    let query = supabase
+        .from('products')
+        .select('*')
+        .eq('is_active', true)
+        .order('sort_order', { ascending: true });
+
+    if (category && category !== 'all') {
+        query = query.ilike('category', `%${category}%`);
+    }
+
+    const { data: products, error: productsError } = await query;
+    if (productsError) throw productsError;
+    if (!products || products.length === 0) return [];
+
+    // 2. Get variant groups + their variants to identify hidden products
+    const { data: variantGroups, error: vgError } = await supabase
+        .from('variant_groups')
+        .select('id, name');
+    if (vgError) throw vgError;
+
+    const { data: variants, error: pvError } = await supabase
+        .from('product_variants')
+        .select('group_id, product_id');
+    if (pvError) throw pvError;
+
+    // 3. Build set of hidden product IDs (non-parent variants)
+    const hiddenIds = new Set<string>();
+    if (variantGroups && variants) {
+        for (const group of variantGroups) {
+            const groupVariants = variants.filter(v => v.group_id === group.id);
+            if (groupVariants.length > 0) {
+                // First variant's product_id is the parent — hide all others
+                const parentId = groupVariants[0].product_id;
+                for (const v of groupVariants) {
+                    if (v.product_id !== parentId) {
+                        hiddenIds.add(v.product_id);
+                    }
+                }
+            }
+        }
+    }
+
+    return products.filter(p => !hiddenIds.has(p.id));
+}
+
+/**
+ * Returns the variant group a product belongs to, with all variants and their products.
+ */
+export async function getVariantGroupForProduct(productId: string): Promise<{
+    group: { id: string; name: string; attribute_names: string[] };
+    variants: { product_id: string; attributes: Record<string, string> }[];
+} | null> {
+    // Find variant entry for this product
+    const { data: variantEntry, error: veError } = await supabase
+        .from('product_variants')
+        .select('group_id')
+        .eq('product_id', productId)
+        .limit(1)
+        .maybeSingle();
+
+    if (veError) throw veError;
+    if (!variantEntry) return null;
+
+    // Fetch the group
+    const { data: group, error: gError } = await supabase
+        .from('variant_groups')
+        .select('*')
+        .eq('id', variantEntry.group_id)
+        .single();
+
+    if (gError) throw gError;
+
+    // Fetch all variants for the group
+    const { data: variants, error: vError } = await supabase
+        .from('product_variants')
+        .select('product_id, attributes')
+        .eq('group_id', variantEntry.group_id);
+
+    if (vError) throw vError;
+
+    return {
+        group: { id: group.id, name: group.name, attribute_names: group.attribute_names },
+        variants: variants || [],
+    };
+}
+
+/**
+ * Returns related products by matching any of the given categories.
+ */
+export async function getRelatedProducts(currentProductId: string, categories: string[], limit: number = 4): Promise<Product[]> {
+    if (!categories || categories.length === 0) return [];
+
+    // Use OR filter for related_categories overlap
+    let query = supabase
+        .from('products')
+        .select('*')
+        .eq('is_active', true)
+        .neq('id', currentProductId)
+        .limit(limit);
+
+    // Filter to same top-level category for simplicity
+    if (categories.length > 0) {
+        query = query.ilike('category', `%${categories[0]}%`);
+    }
+
+    const { data, error } = await query;
+    if (error) throw error;
+    return data || [];
+}
+
+/**
+ * Returns all variant groups with their variants.
+ */
+export async function getAllVariantGroups(): Promise<{
+    id: string;
+    name: string;
+    attribute_names: string[];
+    variants: { product_id: string; attributes: Record<string, string> }[];
+}[]> {
+    const { data: groups, error: gError } = await supabase
+        .from('variant_groups')
+        .select('*');
+    if (gError) throw gError;
+
+    const { data: variants, error: vError } = await supabase
+        .from('product_variants')
+        .select('group_id, product_id, attributes');
+    if (vError) throw vError;
+
+    return (groups || []).map(g => ({
+        id: g.id,
+        name: g.name,
+        attribute_names: g.attribute_names,
+        variants: (variants || []).filter(v => v.group_id === g.id),
+    }));
+}
+
+/**
+ * Returns the count of variants for a product's group, or 0 if standalone.
+ */
+export async function getVariantCountForProduct(productId: string): Promise<number> {
+    const group = await getVariantGroupForProduct(productId);
+    return group ? group.variants.length : 0;
+}
+
+/**
+ * Returns unique categories from active products.
+ */
+export async function getUniqueCategories(): Promise<string[]> {
+    const { data, error } = await supabase
+        .from('products')
+        .select('category')
+        .eq('is_active', true);
+
+    if (error) throw error;
+    const cats = new Set((data || []).map(p => p.category));
+    return Array.from(cats).sort();
 }
 
 // =============================================

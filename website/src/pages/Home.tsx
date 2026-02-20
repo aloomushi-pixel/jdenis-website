@@ -1,14 +1,16 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { bestsellers } from '../data/products';
-import { getReels, type SocialReel } from '../lib/supabase';
+import { getFeaturedProducts, getReels, type SocialReel, type Product } from '../lib/supabase';
 
 export default function Home() {
     const [reels, setReels] = useState<SocialReel[]>([]);
     const [thumbs, setThumbs] = useState<Record<string, string>>({});
     const [currentReel, setCurrentReel] = useState(0);
     const [isReelPaused, setIsReelPaused] = useState(false);
+
+    // Bestsellers from Supabase
+    const [bestsellers, setBestsellers] = useState<Product[]>([]);
 
     // Favorites carousel state
     const [favSlide, setFavSlide] = useState(0);
@@ -26,6 +28,7 @@ export default function Home() {
 
     useEffect(() => {
         getReels(true).then(setReels).catch(console.error);
+        getFeaturedProducts(12).then(setBestsellers).catch(console.error);
     }, []);
 
     // Fetch oEmbed thumbnails for TikTok/Instagram reels
@@ -249,7 +252,7 @@ export default function Home() {
                                                     {/* Image side */}
                                                     <div className="relative overflow-hidden bg-cream-dark aspect-square md:aspect-auto md:min-h-[420px]">
                                                         <img
-                                                            src={product.image}
+                                                            src={product.image_url || '/placeholder.webp'}
                                                             alt={product.name}
                                                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                                         />

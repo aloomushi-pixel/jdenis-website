@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion';
 import React, { useMemo, useRef, useState } from 'react';
-import { getVariantCount, getVariantGroup, variantGroups } from '../../data/products';
 import type { Product } from '../../store/cartStore';
 import * as XLSX from 'xlsx';
 import { useProducts } from '../../hooks/useProducts';
@@ -29,7 +28,7 @@ function productToRow(p: Product) {
         Performance: p.performance || '',
         'Galería': (p.gallery || []).join(' | '),
         'Categorías Relacionadas': (p.relatedCategories || []).join(' | '),
-        Variantes: getVariantCount(p.id),
+        Variantes: 0, // Will be calculated from DB groups
     };
 }
 
@@ -49,7 +48,27 @@ export default function ProductEditor() {
     // Supabase integration via useProducts hook
     // ═══════════════════════════════════════════
     const { products, loading: supabaseLoading, error: supabaseError, saveProduct, saveStatus, synced } = useProducts();
-    const { groups: dbVariantGroups, loading: variantsLoading, createGroup, deleteGroup, addVariant, removeVariant } = useVariants();
+    const { groups: rawDbGroups, loading: variantsLoading, createGroup, deleteGroup, addVariant, removeVariant } = useVariants();
+
+    // Map DB variant groups (snake_case) to camelCase for rendering
+    interface MappedVariantGroup {
+        parentId: string;
+        parentName: string;
+        attributeNames: string[];
+        variants: { productId: string; attributes: Record<string, string> }[];
+    }
+    const dbVariantGroups: MappedVariantGroup[] = useMemo(() =>
+        rawDbGroups.map(g => ({
+            parentId: g.id,
+            parentName: g.name,
+            attributeNames: g.attribute_names,
+            variants: g.variants.map(v => ({
+                productId: v.product_id,
+                attributes: v.attributes
+            }))
+        })),
+        [rawDbGroups]
+    );
 
     // ═══════════════════════════════════════════
     // Editable state: product overrides stored in memory
@@ -195,7 +214,7 @@ export default function ProductEditor() {
             { wch: 30 }, { wch: 10 },
         ];
 
-        const variantRows = variantGroups.map(g => ({
+        const variantRows = dbVariantGroups.map(g => ({
             'Producto Padre (ID)': g.parentId,
             'Nombre Padre': g.parentName,
             Atributos: g.attributeNames.join(', '),
@@ -315,7 +334,7 @@ export default function ProductEditor() {
 
     // Stats
     const totalProducts = products.length;
-    const totalVariantGroups = variantGroups.length;
+    const totalVariantGroups = dbVariantGroups.length;
     const editedCount = Object.keys(edits).length;
 
     // ═══════════════════════════════════════════
@@ -647,7 +666,7 @@ export default function ProductEditor() {
                         </thead>
                         <tbody className="divide-y divide-gray-50">
                             {filteredProducts.map((product, index) => {
-                                const vc = getVariantCount(product.id);
+                                const vc = dbVariantGroups.find(g => g.variants.some(v => v.productId === product.id))?.variants.length || 0;
                                 const isEdited = !!edits[product.id];
                                 const rowSaveStatus = saveStatus[product.id];
                                 return (
@@ -974,7 +993,7 @@ export default function ProductEditor() {
                                         {/* Inline Variant Detail — appears right below this product */}
                                         {
                                             expandedVariantGroup === product.id && (() => {
-                                                const group = getVariantGroup(product.id);
+                                                const group = dbVariantGroups.find(g => g.variants.some(v => v.productId === product.id));
                                                 if (!group) return null;
                                                 return (
                                                     <tr>
@@ -1063,7 +1082,7 @@ export default function ProductEditor() {
             <div className="mt-6 bg-white rounded-xl shadow-sm p-6">
                 <h2 className="text-lg font-bold text-gray-800 mb-4">Grupos de Variantes ({totalVariantGroups})</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {variantGroups.map((g) => (
+                    {dbVariantGroups.map((g) => (
                         <button
                             key={g.parentId}
                             onClick={() => {
@@ -1098,7 +1117,7 @@ export default function ProductEditor() {
             {/* Variants Tab */}
             {activeTab === 'variants' && (
                 <VariantManager
-                    groups={dbVariantGroups}
+                    groups={rawDbGroups}
                     products={products}
                     loading={variantsLoading}
                     createGroup={createGroup}

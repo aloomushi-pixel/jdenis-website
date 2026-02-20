@@ -1,15 +1,23 @@
 import { motion } from 'framer-motion';
 import { useMemo } from 'react';
-import type { VariantGroup } from '../data/products';
-import { getProductById } from '../data/products';
+import type { DisplayProduct } from '../hooks/useProducts';
+
+// Local VariantGroup type (previously from data/products)
+export interface VariantGroup {
+    parentId: string;
+    parentName: string;
+    attributeNames: string[];
+    variants: { productId: string; attributes: Record<string, string> }[];
+}
 
 interface VariantSelectorProps {
     group: VariantGroup;
     currentProductId: string;
     onVariantChange: (productId: string) => void;
+    allProducts?: DisplayProduct[];
 }
 
-export default function VariantSelector({ group, currentProductId, onVariantChange }: VariantSelectorProps) {
+export default function VariantSelector({ group, currentProductId, onVariantChange, allProducts = [] }: VariantSelectorProps) {
     // Get unique values for each attribute
     const attributeOptions = useMemo(() => {
         const result: { name: string; values: { value: string; productIds: string[] }[] }[] = [];
@@ -78,7 +86,10 @@ export default function VariantSelector({ group, currentProductId, onVariantChan
 
     // Get price range for the group
     const prices = group.variants
-        .map(v => getProductById(v.productId)?.price || 0)
+        .map(v => {
+            const found = allProducts.find(p => p.id === v.productId);
+            return found?.price || 0;
+        })
         .filter(p => p > 0);
     const minPrice = Math.min(...prices);
     const maxPrice = Math.max(...prices);
