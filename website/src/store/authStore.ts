@@ -21,6 +21,8 @@ interface AuthState {
     register: (email: string, password: string, fullName: string) => Promise<void>;
     logout: () => Promise<void>;
     checkSession: () => Promise<void>;
+    resetPassword: (email: string) => Promise<void>;
+    updatePassword: (newPassword: string) => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -135,6 +137,20 @@ export const useAuthStore = create<AuthState>()(
                 set({ loading: true });
                 await supabase.auth.signOut();
                 set({ user: null, isAuthenticated: false, loading: false });
+            },
+
+            resetPassword: async (email: string) => {
+                const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                    redirectTo: `${window.location.origin}/restablecer-contrasena`,
+                });
+                if (error) throw error;
+            },
+
+            updatePassword: async (newPassword: string) => {
+                const { error } = await supabase.auth.updateUser({
+                    password: newPassword,
+                });
+                if (error) throw error;
             },
         }),
         {

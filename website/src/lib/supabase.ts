@@ -51,6 +51,10 @@ export interface OrderB2B {
     payment_method: string | null;
     payment_reference: string | null;
     notes: string | null;
+    tracking_number: string | null;
+    shipped_at: string | null;
+    queued_for_date: string | null;
+    packed_items: Record<string, boolean> | null;
     created_at: string | null;
     updated_at: string | null;
 }
@@ -1163,4 +1167,89 @@ export async function updateProductCatalog(
 
     if (error) throw error;
     return data as ProductOverride;
+}
+
+// =============================================
+// WAREHOUSE QUEUE FUNCTIONS (Almacén PF)
+// =============================================
+
+export async function getShippingQueue(date: string) {
+    const { data, error } = await supabase
+        .from('orders_b2b')
+        .select(`
+            *,
+            order_items:order_items(id, product_id, product_name, quantity, unit_price, total)
+        `)
+        .eq('queued_for_date', date)
+        .in('status', ['confirmed', 'processing', 'pending'])
+        .order('created_at', { ascending: true });
+
+    if (error) throw error;
+    return data as (OrderB2B & { order_items: OrderItem[] })[];
+}
+
+export async function getCompletedShipments(date: string) {
+    const { data, error } = await supabase
+        .from('orders_b2b')
+        .select(`
+            *,
+            order_items:order_items(id, product_id, product_name, quantity, unit_price, total)
+        `)
+        .eq('queued_for_date', date)
+        .eq('status', 'shipped')
+        .order('shipped_at', { ascending: false });
+
+    if (error) throw error;
+    return data as (OrderB2B & { order_items: OrderItem[] })[];
+}
+
+export async function updatePackedItems(orderId: string, packedItems: Record<string, boolean>) {
+    const allPacked = Object.values(packedItems).every(Boolean);
+    const newStatus = allPacked ? 'processing' : 'confirmed';
+
+    const { data, error } = await supabase
+        .from('orders_b2b')
+        .update({
+            packed_items: packedItems,
+            status: newStatus,
+            updated_at: new Date().toISOString(),
+        })
+        .eq('id', orderId)
+        .select()
+        .single();
+
+    if (error) throw error;
+    return data;
+}
+
+export async function updateOrderTracking(orderId: string, trackingNumber: string) {
+    const { data, error } = await supabase
+        .from('orders_b2b')
+        .update({
+            tracking_number: trackingNumber,
+            status: 'shipped',
+            shipped_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+        })
+        .eq('id', orderId)
+        .select()
+        .single();
+
+    if (error) throw error;
+    return data;
+}
+
+export async function queueOrderForShipping(orderId: string, date: string) {
+    const { data, error } = await supabase
+        .from('orders_b2b')
+        .update({
+            queued_for_date: date,
+            updated_at: new Date().toISOString(),
+        })
+        .eq('id', orderId)
+        .select()
+        .single();
+
+    if (error) throw error;
+    return data;
 }
