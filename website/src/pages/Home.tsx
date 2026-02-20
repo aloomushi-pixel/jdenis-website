@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getFeaturedProducts, getReels, type SocialReel, type Product } from '../lib/supabase';
+import GoogleReviews from '../components/GoogleReviews';
 
 export default function Home() {
     const [reels, setReels] = useState<SocialReel[]>([]);
@@ -603,6 +604,9 @@ export default function Home() {
                     </div>
                 </div>
             </section>
+
+            {/* GOOGLE REVIEWS */}
+            <GoogleReviews />
 
             {/* CTA FINAL - DYNAMIC SECTION */}
             <section className="py-20 relative overflow-hidden bg-forest">
