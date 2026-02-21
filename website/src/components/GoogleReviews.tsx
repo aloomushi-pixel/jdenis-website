@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // ─── Real reviews from Google Maps (JJD Oficina / J.Denis) ────────
@@ -147,6 +147,17 @@ const REVIEWS: GoogleReview[] = [
 const GOOGLE_MAPS_URL = 'https://maps.app.goo.gl/16NKbc3J7NHh5W2P6';
 const OVERALL_RATING = 4.0;
 const TOTAL_REVIEWS = 65;
+const DISPLAY_COUNT = 10; // Show only this many reviews per page load
+
+/** Fisher-Yates shuffle — returns a new shuffled copy */
+function shuffleArray<T>(arr: T[]): T[] {
+    const copy = [...arr];
+    for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+}
 
 // ─── Google avatar color palette (same colors Google uses) ────────
 const AVATAR_COLORS = [
@@ -249,6 +260,12 @@ function ReviewCard({ review }: { review: GoogleReview }) {
 
 // ─── Main Component ───────────────────────────────────────────────
 export default function GoogleReviews() {
+    // Pick a random subset of DISPLAY_COUNT reviews once per mount
+    const displayReviews = useMemo(
+        () => shuffleArray(REVIEWS).slice(0, DISPLAY_COUNT),
+        [] // only on mount — each page load gets a fresh random set
+    );
+
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isPaused, setIsPaused] = useState(false);
     const [cardsPerView, setCardsPerView] = useState(3);
@@ -270,17 +287,17 @@ export default function GoogleReviews() {
     useEffect(() => {
         if (isPaused) return;
         const timer = setInterval(() => {
-            setCurrentIndex(prev => (prev + 1) % REVIEWS.length);
+            setCurrentIndex(prev => (prev + 1) % displayReviews.length);
         }, 5000);
         return () => clearInterval(timer);
-    }, [isPaused]);
+    }, [isPaused, displayReviews.length]);
 
     // Build the visible window (with wrap-around for infinite loop)
     const getVisibleReviews = () => {
         const visible: { review: GoogleReview; index: number }[] = [];
         for (let i = 0; i < cardsPerView; i++) {
-            const idx = (currentIndex + i) % REVIEWS.length;
-            visible.push({ review: REVIEWS[idx], index: idx });
+            const idx = (currentIndex + i) % displayReviews.length;
+            visible.push({ review: displayReviews[idx], index: idx });
         }
         return visible;
     };
@@ -344,7 +361,7 @@ export default function GoogleReviews() {
 
                 {/* ── Dots ──────────────────────────────── */}
                 <div className="google-reviews__dots">
-                    {REVIEWS.map((_, i) => (
+                    {displayReviews.map((_, i) => (
                         <button
                             key={i}
                             onClick={() => setCurrentIndex(i)}
