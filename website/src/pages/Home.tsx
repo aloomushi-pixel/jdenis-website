@@ -236,6 +236,11 @@ export default function Home() {
                                 >
                                     {(() => {
                                         const product = bestsellers[favSlide];
+                                        if (!product) return (
+                                            <div className="max-w-4xl mx-auto bg-white/50 animate-pulse rounded-lg h-[420px] flex items-center justify-center">
+                                                <p className="text-charcoal/40 text-sm">Cargando favoritos…</p>
+                                            </div>
+                                        );
                                         const rankLabels = [
                                             '#1 Más Vendido',
                                             '#2 Top Favorito',
