@@ -70,6 +70,14 @@ export default function Header() {
                             {/* User */}
                             {isAuthenticated ? (
                                 <div className="hidden sm:flex items-center gap-4">
+                                    {(user?.role === 'ADMIN' || user?.role === 'EJECUTIVO') && (
+                                        <Link
+                                            to="/admin"
+                                            className="text-xs tracking-wider uppercase text-gold hover:text-white transition-colors"
+                                        >
+                                            Admin
+                                        </Link>
+                                    )}
                                     <Link
                                         to="/mi-cuenta"
                                         className="text-xs tracking-wider uppercase text-cream/70 hover:text-gold transition-colors"
@@ -160,6 +168,15 @@ export default function Header() {
                     <div className="w-16 h-px bg-gold/30 my-4" />
                     {isAuthenticated ? (
                         <>
+                            {(user?.role === 'ADMIN' || user?.role === 'EJECUTIVO') && (
+                                <Link
+                                    to="/admin"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className="text-gold hover:text-white"
+                                >
+                                    Panel Admin
+                                </Link>
+                            )}
                             <Link
                                 to="/mi-cuenta"
                                 onClick={() => setMobileMenuOpen(false)}
