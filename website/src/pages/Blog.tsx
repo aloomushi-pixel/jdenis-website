@@ -15,7 +15,7 @@ export default function Blog() {
             try {
                 setNewsLoading(true);
                 const [newsData, blogData] = await Promise.all([
-                    getNewsPosts(false),
+                    getNewsPosts(true),
                     getBlogPosts(true)
                 ]);
                 setNewsItems(newsData);
