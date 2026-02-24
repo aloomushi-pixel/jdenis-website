@@ -9,13 +9,11 @@ export default function Blog() {
     const [newsItems, setNewsItems] = useState<BlogPost[]>([]);
     const [newsLoading, setNewsLoading] = useState(true);
     const [blogArticles, setBlogArticles] = useState<BlogPost[]>([]);
-    const [blogLoading, setBlogLoading] = useState(true);
 
     useEffect(() => {
         const loadPosts = async () => {
             try {
                 setNewsLoading(true);
-                setBlogLoading(true);
                 const [newsData, blogData] = await Promise.all([
                     getNewsPosts(true),
                     getBlogPosts(true)
@@ -26,7 +24,6 @@ export default function Blog() {
                 console.error('Error loading posts:', error);
             } finally {
                 setNewsLoading(false);
-                setBlogLoading(false);
             }
         };
         loadPosts();
