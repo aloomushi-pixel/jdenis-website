@@ -501,8 +501,9 @@ export default function Home() {
                                                         <video
                                                             ref={videoRef}
                                                             src={reel.video_url}
-                                                            muted // Start muted for autoplay to work
+                                                            muted
                                                             playsInline
+                                                            autoPlay={isReelsInView && !isReelPaused}
                                                             onEnded={() => {
                                                                 if (!isReelPaused) {
                                                                     setCurrentReel(prev => (prev + 1) % reels.length);
