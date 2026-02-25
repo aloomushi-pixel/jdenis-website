@@ -6,7 +6,7 @@ import { supabase } from './supabase';
 // TYPE DEFINITIONS
 // =============================================
 
-export type UserRole = 'ADMIN' | 'CLIENT' | 'COLLABORATOR' | 'TECHNICIAN' | 'TRANSPORTISTA' | 'ALMACEN_MATERIA_PRIMA' | 'ALMACEN_PRODUCTO_FINAL' | 'FABRICA' | 'EJECUTIVO';
+export type UserRole = 'ADMIN' | 'EJECUTIVO' | 'FABRICA' | 'ALMACEN_MATERIA_PRIMA' | 'ALMACEN_PRODUCTO_FINAL' | 'TRANSPORTISTA' | 'CLIENTE' | 'DISTRIBUIDOR';
 
 export interface ERPUser {
     id: string;
@@ -199,14 +199,13 @@ export async function getUsers(role?: UserRole) {
 }
 
 export async function updateUserRole(userId: string, role: UserRole) {
-    const { data, error } = await supabase
-        .from('users')
-        .update({ role })
-        .eq('id', userId)
-        .select()
-        .single();
+    const { error } = await supabase.rpc('update_user_role_admin', {
+        target_user_id: userId,
+        new_role: role
+    });
+
     if (error) throw error;
-    return data;
+    return null; // RPC doesn't return the row normally unless defined to
 }
 
 // =============================================

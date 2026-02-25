@@ -31,7 +31,7 @@ export default function SalesOrders() {
 
     const fetchOrders = useCallback(() => { setLoading(true); getSalesOrders(filter || undefined).then(setOrders).finally(() => setLoading(false)); }, [filter]);
     useEffect(() => { fetchOrders(); }, [fetchOrders]);
-    useEffect(() => { getUsers('CLIENT').then(setClients); }, []);
+    useEffect(() => { getUsers('CLIENTE').then(setClients); }, []);
 
     const handleCreate = async () => {
         if (!form.order_number || !form.client_id || !user) return;

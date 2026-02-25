@@ -9,9 +9,8 @@ const ROLES: { value: UserRole; label: string; color: string }[] = [
     { value: 'ALMACEN_MATERIA_PRIMA', label: 'Almacén MP', color: 'bg-blue-100 text-blue-700' },
     { value: 'ALMACEN_PRODUCTO_FINAL', label: 'Almacén PF', color: 'bg-cyan-100 text-cyan-700' },
     { value: 'TRANSPORTISTA', label: 'Transportista', color: 'bg-green-100 text-green-700' },
-    { value: 'CLIENT', label: 'Cliente', color: 'bg-gray-100 text-gray-700' },
-    { value: 'COLLABORATOR', label: 'Colaborador', color: 'bg-indigo-100 text-indigo-700' },
-    { value: 'TECHNICIAN', label: 'Técnico', color: 'bg-teal-100 text-teal-700' },
+    { value: 'CLIENTE', label: 'Cliente', color: 'bg-gray-100 text-gray-700' },
+    { value: 'DISTRIBUIDOR', label: 'Distribuidor', color: 'bg-gold/20 text-gold-dark' },
 ];
 
 export default function UserManager() {
