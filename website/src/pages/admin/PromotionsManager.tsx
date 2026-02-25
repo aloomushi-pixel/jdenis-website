@@ -51,7 +51,14 @@ export default function PromotionsManager() {
         } catch (e: unknown) { setError((e as Error).message); }
         setLoading(false);
     };
-    useEffect(() => { load(); }, []);
+
+    useEffect(() => {
+        let mounted = true;
+        setTimeout(() => {
+            if (mounted) load();
+        }, 0);
+        return () => { mounted = false; };
+    }, []);
 
     // ─── Promo Handlers ─────────────────────────────────────────
     const openNewPromo = () => { setEditPromo(null); setPromoForm(emptyPromo); setShowPromoForm(true); };

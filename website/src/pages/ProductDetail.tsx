@@ -28,6 +28,7 @@ export default function ProductDetail() {
 
     // Update currentProductId when URL param changes
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         if (id) setCurrentProductId(id);
     }, [id]);
 
@@ -219,7 +220,7 @@ export default function ProductDetail() {
                 </div>
 
                 {/* Detail Tabs Section */}
-                {(hasDetailContent || true) && (
+                {hasDetailContent && (
                     <motion.section
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}

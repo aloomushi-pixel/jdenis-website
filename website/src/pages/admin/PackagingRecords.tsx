@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { createPackagingRecord, getPackagingRecords, updatePackagingStatus, type PackagingRecord } from '../../lib/erp';
 import { useAuthStore } from '../../store/authStore';
 
@@ -18,8 +18,8 @@ export default function PackagingRecords() {
     const [form, setForm] = useState({ total_packages: 0, packing_list: '', weight: 0 });
     const [saving, setSaving] = useState(false);
 
-    const fetch = () => { setLoading(true); getPackagingRecords(filter || undefined).then(setRecords).finally(() => setLoading(false)); };
-    useEffect(() => { fetch(); }, [filter]);
+    const fetch = useCallback(() => { setLoading(true); getPackagingRecords(filter || undefined).then(setRecords).finally(() => setLoading(false)); }, [filter]);
+    useEffect(() => { fetch(); }, [fetch]);
 
     const handleCreate = async () => {
         setSaving(true);

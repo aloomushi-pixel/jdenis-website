@@ -102,18 +102,18 @@ async function seedBlogPosts() {
             .single();
 
         if (existing) {
-            console.log(\`Post \${post.slug} already exists, skipping.\`);
-      continue;
-    }
+            console.log(`Post ${post.slug} already exists, skipping.`);
+            continue;
+        }
 
-    const { error } = await supabase.from('blog_posts').insert([post]);
-    if (error) {
-      console.error(\`Error inserting \${post.slug}:\`, error);
-    } else {
-      console.log(\`Successfully inserted \${post.slug}\`);
+        const { error } = await supabase.from('blog_posts').insert([post]);
+        if (error) {
+            console.error(`Error inserting ${post.slug}:`, error);
+        } else {
+            console.log(`Successfully inserted ${post.slug}`);
+        }
     }
-  }
-  console.log('Finished seeding blog posts.');
+    console.log('Finished seeding blog posts.');
 }
 
 seedBlogPosts();

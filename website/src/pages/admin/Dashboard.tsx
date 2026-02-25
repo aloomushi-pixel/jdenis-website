@@ -53,7 +53,7 @@ export default function AdminDashboard() {
                 const totalResources = resSummary.reduce((a: number, r: any) => a + (r.total_items || 0), 0);
                 const lowStockRes = resSummary.reduce((a: number, r: any) => a + (r.low_stock_count || 0), 0);
                 const totalValue = resSummary.reduce((a: number, r: any) => a + (r.total_value || 0), 0);
-                const prod = erpProduction.status === 'fulfilled' ? erpProduction.value : { pending_orders: 0, in_progress: 0, completed: 0 };
+                const prod = erpProduction.status === 'fulfilled' ? erpProduction.value : { pending_orders: 0, in_progress: 0, completed: 0 } as any;
 
                 setMetrics({
                     totalOrders: s.totalOrders,

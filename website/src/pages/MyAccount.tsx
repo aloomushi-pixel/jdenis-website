@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuthStore } from '../store/authStore';
@@ -14,17 +14,12 @@ interface Order {
 export default function MyAccount() {
     const { user, logout, isAuthenticated } = useAuthStore();
     const [searchParams] = useSearchParams();
-    const [orders, setOrders] = useState<Order[]>([]);
+    const [orders] = useState<Order[]>([
+        { id: 'ORD-2024-001', date: '2024-01-15', status: 'Entregado', total: 1850, items: 3 },
+        { id: 'ORD-2024-002', date: '2024-01-20', status: 'En camino', total: 950, items: 2 },
+    ]);
     const [activeTab, setActiveTab] = useState('orders');
     const showSuccess = searchParams.get('pedido') === 'exito';
-
-    useEffect(() => {
-        // Simular carga de pedidos
-        setOrders([
-            { id: 'ORD-2024-001', date: '2024-01-15', status: 'Entregado', total: 1850, items: 3 },
-            { id: 'ORD-2024-002', date: '2024-01-20', status: 'En camino', total: 950, items: 2 },
-        ]);
-    }, []);
 
     if (!isAuthenticated) {
         return (

@@ -80,9 +80,9 @@ export function useProducts() {
             setProducts((data || []).map(toDisplayProduct));
             setSynced(true);
             setError(null);
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('useProducts fetch error:', err);
-            setError(err.message || 'Error al cargar productos');
+            setError((err as any).message || 'Error al cargar productos');
             setSynced(false);
         } finally {
             setLoading(false);
@@ -148,7 +148,7 @@ export function useProducts() {
             }), 3000);
 
             return true;
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error(`useProducts.saveProduct error (${field}):`, err);
             setSaveStatus(prev => ({ ...prev, [productId]: 'error' }));
             return false;

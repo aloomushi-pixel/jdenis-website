@@ -52,9 +52,9 @@ export function useVariants() {
 
             setGroups(merged);
             setError(null);
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Error fetching variants:', err);
-            setError(err.message || 'Error al cargar variantes');
+            setError((err as any).message || 'Error al cargar variantes');
         } finally {
             setLoading(false);
         }
@@ -76,7 +76,7 @@ export function useVariants() {
             if (error) throw error;
             await fetchGroups(); // Refresh list
             return data;
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Error creating group:', err);
             throw err; // Re-throw so VariantManager can show toast
         }
@@ -92,7 +92,7 @@ export function useVariants() {
             if (error) throw error;
             // Optimistic removal + refresh
             setGroups(prev => prev.filter(g => g.id !== id));
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Error deleting group:', err);
             throw err;
         }
@@ -109,7 +109,7 @@ export function useVariants() {
             if (error) throw error;
             await fetchGroups(); // Refresh list
             return data;
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Error adding variant:', err);
             throw err;
         }
@@ -124,7 +124,7 @@ export function useVariants() {
 
             if (error) throw error;
             await fetchGroups(); // Refresh list
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Error removing variant:', err);
             throw err;
         }

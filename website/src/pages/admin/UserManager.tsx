@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { getUsers, updateUserRole, type ERPUser, type UserRole } from '../../lib/erp';
 
 const ROLES: { value: UserRole; label: string; color: string }[] = [
@@ -21,7 +21,7 @@ export default function UserManager() {
     const [search, setSearch] = useState('');
     const [saving, setSaving] = useState<string | null>(null);
 
-    const fetchUsers = async () => {
+    const fetchUsers = useCallback(async () => {
         setLoading(true);
         try {
             const data = await getUsers(filter || undefined);
@@ -31,9 +31,9 @@ export default function UserManager() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [filter]);
 
-    useEffect(() => { fetchUsers(); }, [filter]);
+    useEffect(() => { fetchUsers(); }, [fetchUsers]);
 
     const handleRoleChange = async (userId: string, newRole: UserRole) => {
         setSaving(userId);

@@ -127,7 +127,6 @@ export interface CartPromotion {
  * Se recalcula automáticamente cuando cambia el estado del carrito.
  */
 export function useCartPromotion(): CartPromotion {
-    const items = useCartStore((s) => s.items);
     const total = useCartStore((s) => s.total);
     const itemCount = useCartStore((s) => s.itemCount);
 
@@ -135,13 +134,15 @@ export function useCartPromotion(): CartPromotion {
     const [config, setConfig] = useState<ResolvedConfig>(_cachedConfig || { ...PROMO_CONFIG_DEFAULTS });
 
     useEffect(() => {
+        let isMounted = true;
         if (_cachedConfig) {
-            setConfig(_cachedConfig);
+            setTimeout(() => { if (isMounted) setConfig(_cachedConfig as ResolvedConfig); }, 0);
         } else {
             fetchConfigOnce().then(() => {
-                if (_cachedConfig) setConfig(_cachedConfig);
+                if (isMounted && _cachedConfig) setConfig(_cachedConfig);
             });
         }
+        return () => { isMounted = false; };
     }, []);
 
     return useMemo(() => {
@@ -210,5 +211,5 @@ export function useCartPromotion(): CartPromotion {
             progressPercent,
             isFreeShipping,
         };
-    }, [items, total, itemCount, config]);
+    }, [total, itemCount, config]);
 }

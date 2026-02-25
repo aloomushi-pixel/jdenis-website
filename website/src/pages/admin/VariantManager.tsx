@@ -6,9 +6,9 @@ interface VariantManagerProps {
     groups: VariantGroupWithVariants[];
     products: Product[];
     loading: boolean;
-    createGroup: (name: string, attributeNames: string[]) => Promise<any>;
+    createGroup: (name: string, attributeNames: string[]) => Promise<unknown>;
     deleteGroup: (id: string) => Promise<void>;
-    addVariant: (groupId: string, productId: string, attributes: Record<string, string>) => Promise<any>;
+    addVariant: (groupId: string, productId: string, attributes: Record<string, string>) => Promise<unknown>;
     removeVariant: (variantId: string) => Promise<void>;
 }
 
@@ -48,9 +48,9 @@ export default function VariantManager({
             setNewGroupName('');
             setNewGroupAttrs('');
             showToast('success', `✅ Grupo "${newGroupName}" creado exitosamente`);
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Error creating group:', err);
-            showToast('error', `❌ Error al crear grupo: ${err.message || 'Error desconocido'}`);
+            showToast('error', `❌ Error al crear grupo: ${(err as any).message || 'Error desconocido'}`);
         } finally {
             setSaving(false);
         }
@@ -73,9 +73,9 @@ export default function VariantManager({
             setSelectedProduct('');
             setVariantAttributes({});
             showToast('success', '✅ Variante agregada exitosamente');
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Error adding variant:', err);
-            showToast('error', `❌ Error al agregar variante: ${err.message || 'Error desconocido'}`);
+            showToast('error', `❌ Error al agregar variante: ${(err as any).message || 'Error desconocido'}`);
         } finally {
             setSaving(false);
         }
@@ -87,9 +87,9 @@ export default function VariantManager({
         try {
             await deleteGroup(groupId);
             showToast('success', `🗑️ Grupo "${groupName}" eliminado`);
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Error deleting group:', err);
-            showToast('error', `❌ Error al eliminar grupo: ${err.message || 'Error desconocido'}`);
+            showToast('error', `❌ Error al eliminar grupo: ${(err as any).message || 'Error desconocido'}`);
         } finally {
             setSaving(false);
         }
@@ -100,9 +100,9 @@ export default function VariantManager({
         try {
             await removeVariant(variantId);
             showToast('success', '✅ Variante eliminada');
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Error removing variant:', err);
-            showToast('error', `❌ Error al eliminar variante: ${err.message || 'Error desconocido'}`);
+            showToast('error', `❌ Error al eliminar variante: ${(err as any).message || 'Error desconocido'}`);
         } finally {
             setSaving(false);
         }

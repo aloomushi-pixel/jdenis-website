@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { getAllReviews, moderateReview, type ProductReview } from '../../lib/supabase';
 
 type FilterStatus = 'all' | 'pending' | 'approved' | 'rejected';
@@ -16,7 +16,7 @@ export default function ReviewModeration() {
     const [filter, setFilter] = useState<FilterStatus>('pending');
     const [actionLoading, setActionLoading] = useState<string | null>(null);
 
-    const fetchReviews = async () => {
+    const fetchReviews = useCallback(async () => {
         setLoading(true);
         try {
             const data = await getAllReviews(filter === 'all' ? undefined : filter);
@@ -26,11 +26,11 @@ export default function ReviewModeration() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [filter]);
 
     useEffect(() => {
         fetchReviews();
-    }, [filter]);
+    }, [fetchReviews]);
 
     const handleModerate = async (reviewId: string, status: 'approved' | 'rejected') => {
         setActionLoading(reviewId);

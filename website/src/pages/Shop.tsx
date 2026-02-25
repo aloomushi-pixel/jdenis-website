@@ -103,16 +103,18 @@ export default function Shop() {
     // Calculate max price once when products change (via ref to avoid re-render cascade)
     const maxPriceRef = useRef(DEFAULT_PRICE_MAX);
     const computedMax = useMemo(() => {
-        if (products.length > 0) {
-            return Math.ceil(Math.max(...products.map(p => p.price)) / 100) * 100;
-        }
-        return DEFAULT_PRICE_MAX;
+        if (products.length === 0) return DEFAULT_PRICE_MAX;
+        const max = Math.max(...products.map(p => p.price));
+        return max > 0 ? max : DEFAULT_PRICE_MAX;
     }, [products]);
-    maxPriceRef.current = computedMax;
+
+    useEffect(() => {
+        maxPriceRef.current = computedMax;
+    }, [computedMax]);
 
     useEffect(() => {
         const cat = searchParams.get('cat');
-        if (cat) setActiveCategory(cat);
+        if (cat) setTimeout(() => setActiveCategory(cat), 0);
     }, [searchParams]);
 
     // Products with promotions
@@ -201,7 +203,7 @@ export default function Shop() {
     }
 
     // Active filter chips
-    const ActiveFilterChips = () => {
+    const renderActiveFilterChips = () => {
         const chips: { label: string; onRemove: () => void }[] = [];
 
         if (activeCategory !== 'all') {
@@ -437,7 +439,7 @@ export default function Shop() {
                     </div>
 
                     {/* Active filter chips */}
-                    <ActiveFilterChips />
+                    {renderActiveFilterChips()}
 
                     {/* Products Grid */}
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
