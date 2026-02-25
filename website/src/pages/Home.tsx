@@ -1,5 +1,5 @@
-import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { getFeaturedProducts, getReels, type SocialReel, type Product } from '../lib/supabase';
 import GoogleReviews from '../components/GoogleReviews';
@@ -9,6 +9,10 @@ export default function Home() {
     const [thumbs, setThumbs] = useState<Record<string, string>>({});
     const [currentReel, setCurrentReel] = useState(0);
     const [isReelPaused, setIsReelPaused] = useState(false);
+
+    const reelsRef = useRef<HTMLDivElement>(null);
+    const isReelsInView = useInView(reelsRef, { amount: 0.3 });
+    const videoRef = useRef<HTMLVideoElement>(null);
 
     // Bestsellers from Supabase
     const [bestsellers, setBestsellers] = useState<Product[]>([]);
@@ -61,14 +65,29 @@ export default function Home() {
         fetchThumbs();
     }, [reels]);
 
-    // Auto-rotate reels every 3 seconds
+    // Auto-rotate reels every 5 seconds (only for external link reels)
     useEffect(() => {
-        if (reels.length <= 1 || isReelPaused) return;
+        if (reels.length <= 1 || isReelPaused || !isReelsInView) return;
+
+        const currentHasVideo = reels[currentReel]?.video_url;
+        if (currentHasVideo) return; // Wait for onEnded event of the video
+
         const timer = setInterval(() => {
             setCurrentReel(prev => (prev + 1) % reels.length);
-        }, 3000);
+        }, 5000);
         return () => clearInterval(timer);
-    }, [reels.length, isReelPaused]);
+    }, [reels.length, isReelPaused, isReelsInView, currentReel, reels]);
+
+    // Handle native video auto-play/pause when scrolling into view
+    useEffect(() => {
+        if (videoRef.current) {
+            if (isReelsInView && !isReelPaused) {
+                videoRef.current.play().catch(console.error);
+            } else {
+                videoRef.current.pause();
+            }
+        }
+    }, [isReelsInView, isReelPaused, currentReel]);
 
     const platformStyles: Record<string, { gradient: string; icon: React.ReactNode; label: string }> = {
         youtube: { gradient: 'from-red-600 to-red-800', icon: <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>, label: 'YouTube' },
@@ -418,7 +437,7 @@ export default function Home() {
 
             {/* REELS & TIKTOKS GALLERY */}
             {reels.length > 0 && (
-                <section className="py-20 relative overflow-hidden bg-forest">
+                <section ref={reelsRef} className="py-20 relative overflow-hidden bg-forest">
                     {/* Dynamic glow overlay */}
                     <div className="absolute inset-0 opacity-30">
                         <div className="absolute top-0 left-1/4 w-80 h-80 bg-gold/40 rounded-full blur-3xl" />
@@ -459,36 +478,59 @@ export default function Home() {
                                         const style = platformStyles[reel.platform] || platformStyles.instagram;
                                         const thumb = getThumbnailUrl(reel);
                                         return (
-                                            <motion.a
+                                            <motion.div
                                                 key={reel.id}
-                                                href={reel.url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
                                                 initial={{ opacity: 0, scale: 0.9, rotateY: -15 }}
                                                 animate={{ opacity: 1, scale: 1, rotateY: 0 }}
                                                 exit={{ opacity: 0, scale: 0.9, rotateY: 15 }}
                                                 transition={{ duration: 0.5, ease: 'easeInOut' }}
                                                 className="group absolute inset-0"
+                                                onClick={() => {
+                                                    if (reel.video_url) {
+                                                        // Toggle mute on click for native videos
+                                                        if (videoRef.current) {
+                                                            videoRef.current.muted = !videoRef.current.muted;
+                                                        }
+                                                    } else {
+                                                        window.open(reel.url, '_blank');
+                                                    }
+                                                }}
                                             >
-                                                <div className={`relative w-full h-full rounded-2xl overflow-hidden bg-gradient-to-br ${style.gradient} shadow-2xl ring-2 ring-gold/30`}>
-                                                    {/* Thumbnail image */}
-                                                    {thumb && (
-                                                        <img
-                                                            src={thumb}
-                                                            alt={reel.title}
+                                                <div className={`relative w-full h-full rounded-2xl overflow-hidden bg-gradient-to-br ${style.gradient} shadow-2xl ring-2 ring-gold/30 cursor-pointer`}>
+                                                    {reel.video_url ? (
+                                                        <video
+                                                            ref={videoRef}
+                                                            src={reel.video_url}
+                                                            muted // Start muted for autoplay to work
+                                                            playsInline
+                                                            onEnded={() => {
+                                                                if (!isReelPaused) {
+                                                                    setCurrentReel(prev => (prev + 1) % reels.length);
+                                                                }
+                                                            }}
                                                             className="absolute inset-0 w-full h-full object-cover"
-                                                            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                                                         />
+                                                    ) : (
+                                                        <>
+                                                            {/* Thumbnail image */}
+                                                            {thumb && (
+                                                                <img
+                                                                    src={thumb}
+                                                                    alt={reel.title}
+                                                                    className="absolute inset-0 w-full h-full object-cover"
+                                                                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                                                                />
+                                                            )}
+                                                            {/* Gradient overlay */}
+                                                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-black/20" />
+                                                            {/* Play button */}
+                                                            <div className="absolute inset-0 flex items-center justify-center">
+                                                                <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30 group-hover:bg-white/30 group-hover:scale-110 transition-all duration-300 text-white">
+                                                                    {style.icon}
+                                                                </div>
+                                                            </div>
+                                                        </>
                                                     )}
-                                                    {/* Gradient overlay */}
-                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-black/20" />
-
-                                                    {/* Play button */}
-                                                    <div className="absolute inset-0 flex items-center justify-center">
-                                                        <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30 group-hover:bg-white/30 group-hover:scale-110 transition-all duration-300 text-white">
-                                                            {style.icon}
-                                                        </div>
-                                                    </div>
 
                                                     {/* Platform badge */}
                                                     <div className="absolute top-3 left-3">
@@ -505,17 +547,19 @@ export default function Home() {
                                                     </div>
 
                                                     {/* Progress bar */}
-                                                    <div className="absolute top-0 left-0 right-0 h-1 bg-white/10">
-                                                        <motion.div
-                                                            className="h-full bg-gold"
-                                                            initial={{ width: '0%' }}
-                                                            animate={{ width: isReelPaused ? undefined : '100%' }}
-                                                            transition={{ duration: 3, ease: 'linear' }}
-                                                            key={`progress-${currentReel}`}
-                                                        />
-                                                    </div>
+                                                    {!reel.video_url && (
+                                                        <div className="absolute top-0 left-0 right-0 h-1 bg-white/10">
+                                                            <motion.div
+                                                                className="h-full bg-gold"
+                                                                initial={{ width: '0%' }}
+                                                                animate={{ width: isReelPaused ? undefined : '100%' }}
+                                                                transition={{ duration: 5, ease: 'linear' }}
+                                                                key={`progress-${currentReel}`}
+                                                            />
+                                                        </div>
+                                                    )}
                                                 </div>
-                                            </motion.a>
+                                            </motion.div>
                                         );
                                     })()}
                                 </AnimatePresence>

@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { Plus, Trash2, Loader, ExternalLink } from 'lucide-react';
-import { getReels, createReel, deleteReel, type SocialReel } from '../../lib/supabase';
+import { getReels, createReel, deleteReel, uploadReelVideo, type SocialReel } from '../../lib/supabase';
 
 const PLATFORM_OPTIONS = [
     { value: 'youtube', label: 'YouTube Shorts', icon: <svg className="w-4 h-4 inline" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg> },
@@ -18,6 +18,7 @@ export default function ReelsManager() {
     // Form state
     const [title, setTitle] = useState('');
     const [url, setUrl] = useState('');
+    const [videoFile, setVideoFile] = useState<File | null>(null);
     const [platform, setPlatform] = useState<'youtube' | 'tiktok' | 'instagram'>('instagram');
 
     async function loadReels() {
@@ -38,9 +39,15 @@ export default function ReelsManager() {
         e.preventDefault();
         setSaving(true);
         try {
+            let video_url = null;
+            if (videoFile) {
+                video_url = await uploadReelVideo(videoFile);
+            }
+
             await createReel({
                 title,
                 url,
+                video_url,
                 platform,
                 thumbnail_url: null,
                 sort_order: reels.length + 1,
@@ -48,6 +55,7 @@ export default function ReelsManager() {
             });
             setTitle('');
             setUrl('');
+            setVideoFile(null);
             setPlatform('instagram');
             setShowForm(false);
             await loadReels();
@@ -116,15 +124,24 @@ export default function ReelsManager() {
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">URL del Video</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">URL (Opcional - Referencia)</label>
                             <input
                                 type="url"
                                 value={url}
                                 onChange={(e) => setUrl(e.target.value)}
-                                required
                                 placeholder="https://..."
                                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
                             />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Archivo de Video (.mp4)</label>
+                            <input
+                                type="file"
+                                accept="video/mp4,video/quicktime"
+                                onChange={(e) => setVideoFile(e.target.files?.[0] || null)}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                            />
+                            <p className="text-xs text-gray-500 mt-1">Sube el reel para auto-reproducción</p>
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Plataforma</label>
@@ -178,7 +195,8 @@ export default function ReelsManager() {
                                 <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Orden</th>
                                 <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Título</th>
                                 <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Plataforma</th>
-                                <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">URL</th>
+                                <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">URL Externa</th>
+                                <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Video Nativo</th>
                                 <th className="text-right px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Acciones</th>
                             </tr>
                         </thead>
@@ -195,15 +213,28 @@ export default function ReelsManager() {
                                             </span>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <a
-                                                href={reel.url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="inline-flex items-center gap-1 text-sm text-indigo-600 hover:text-indigo-800 hover:underline"
-                                            >
-                                                <ExternalLink size={14} />
-                                                Abrir
-                                            </a>
+                                            {reel.url ? (
+                                                <a
+                                                    href={reel.url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="inline-flex items-center gap-1 text-sm text-indigo-600 hover:text-indigo-800 hover:underline"
+                                                >
+                                                    <ExternalLink size={14} />
+                                                    Enlace
+                                                </a>
+                                            ) : <span className="text-gray-400 text-sm">-</span>}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            {reel.video_url ? (
+                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700">
+                                                    Subido
+                                                </span>
+                                            ) : (
+                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-rose-50 text-rose-700">
+                                                    Falta
+                                                </span>
+                                            )}
                                         </td>
                                         <td className="px-6 py-4 text-right">
                                             <button

@@ -1002,6 +1002,7 @@ export interface SocialReel {
     id: string;
     title: string;
     url: string;
+    video_url: string | null;
     platform: 'youtube' | 'tiktok' | 'instagram';
     thumbnail_url: string | null;
     sort_order: number;
@@ -1022,6 +1023,23 @@ export async function createReel(reelData: Omit<SocialReel, 'id' | 'created_at' 
     const { data, error } = await supabase.from('social_reels').insert([reelData]).select().single();
     if (error) throw error;
     return data as SocialReel;
+}
+
+export async function uploadReelVideo(file: File): Promise<string> {
+    const ext = file.name.split('.').pop()?.toLowerCase() || 'mp4';
+    const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${ext}`;
+
+    const { error } = await supabase.storage
+        .from('reels')
+        .upload(fileName, file, { upsert: true });
+
+    if (error) throw error;
+
+    const { data: publicUrlData } = supabase.storage
+        .from('reels')
+        .getPublicUrl(fileName);
+
+    return publicUrlData.publicUrl;
 }
 
 export async function updateReel(id: string, updates: Partial<SocialReel>): Promise<SocialReel> {
