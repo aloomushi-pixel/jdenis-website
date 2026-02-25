@@ -923,6 +923,7 @@ export interface BlogPost {
     published_at: string | null;
     post_type: 'article' | 'news';
     tag: string | null;
+    is_featured?: boolean;
     created_at: string;
     updated_at: string;
 }
