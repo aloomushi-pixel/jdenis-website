@@ -1,0 +1,70 @@
+src/hooks/useCartPromotion.ts(130,11): error TS2451: Cannot redeclare block-scoped variable 'total'.
+src/hooks/useCartPromotion.ts(131,11): error TS2451: Cannot redeclare block-scoped variable 'total'.
+src/hooks/useProducts.ts(85,22): error TS18046: 'err' is of type 'unknown'.
+src/hooks/useVariants.ts(57,22): error TS18046: 'err' is of type 'unknown'.
+src/pages/admin/AcademyManager.tsx(281,23): error TS2698: Spread types may only be created from object types.
+src/pages/admin/AcademyManager.tsx(281,49): error TS18046: 'formData' is of type 'unknown'.
+src/pages/admin/AcademyManager.tsx(286,30): error TS18046: 'formData' is of type 'unknown'.
+src/pages/admin/AcademyManager.tsx(288,23): error TS2698: Spread types may only be created from object types.
+src/pages/admin/AcademyManager.tsx(296,36): error TS18046: 'formData' is of type 'unknown'.
+src/pages/admin/AcademyManager.tsx(301,27): error TS2698: Spread types may only be created from object types.
+src/pages/admin/AcademyManager.tsx(318,75): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'Partial<AcademyCourse>'.
+src/pages/admin/AcademyManager.tsx(320,40): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'Omit<AcademyCourse, "id" | "created_at" | "updated_at">'.
+src/pages/admin/AcademyManager.tsx(324,73): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'Partial<AcademyEvent>'.
+src/pages/admin/AcademyManager.tsx(326,39): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'Omit<AcademyEvent, "id" | "created_at" | "updated_at">'.
+src/pages/admin/AcademyManager.tsx(360,36): error TS18046: 'formData' is of type 'unknown'.
+src/pages/admin/AcademyManager.tsx(361,60): error TS2698: Spread types may only be created from object types.
+src/pages/admin/AcademyManager.tsx(374,48): error TS18046: 'formData' is of type 'unknown'.
+src/pages/admin/AcademyManager.tsx(375,72): error TS2698: Spread types may only be created from object types.
+src/pages/admin/AcademyManager.tsx(384,48): error TS18046: 'formData' is of type 'unknown'.
+src/pages/admin/AcademyManager.tsx(385,72): error TS2698: Spread types may only be created from object types.
+src/pages/admin/AcademyManager.tsx(395,44): error TS18046: 'formData' is of type 'unknown'.
+src/pages/admin/AcademyManager.tsx(396,68): error TS2698: Spread types may only be created from object types.
+src/pages/admin/AcademyManager.tsx(410,44): error TS18046: 'formData' is of type 'unknown'.
+src/pages/admin/AcademyManager.tsx(411,68): error TS2698: Spread types may only be created from object types.
+src/pages/admin/AcademyManager.tsx(421,44): error TS18046: 'formData' is of type 'unknown'.
+src/pages/admin/AcademyManager.tsx(422,68): error TS2698: Spread types may only be created from object types.
+src/pages/admin/AcademyManager.tsx(431,50): error TS18046: 'formData' is of type 'unknown'.
+src/pages/admin/AcademyManager.tsx(432,72): error TS2698: Spread types may only be created from object types.
+src/pages/admin/AcademyManager.tsx(440,50): error TS18046: 'formData' is of type 'unknown'.
+src/pages/admin/AcademyManager.tsx(441,72): error TS2698: Spread types may only be created from object types.
+src/pages/admin/AcademyManager.tsx(455,44): error TS18046: 'formData' is of type 'unknown'.
+src/pages/admin/AcademyManager.tsx(456,68): error TS2698: Spread types may only be created from object types.
+src/pages/admin/AcademyManager.tsx(466,44): error TS18046: 'formData' is of type 'unknown'.
+src/pages/admin/AcademyManager.tsx(467,68): error TS2698: Spread types may only be created from object types.
+src/pages/admin/AcademyManager.tsx(476,44): error TS18046: 'formData' is of type 'unknown'.
+src/pages/admin/AcademyManager.tsx(477,68): error TS2698: Spread types may only be created from object types.
+src/pages/admin/AcademyManager.tsx(488,46): error TS18046: 'formData' is of type 'unknown'.
+src/pages/admin/AcademyManager.tsx(489,68): error TS2698: Spread types may only be created from object types.
+src/pages/admin/AcademyManager.tsx(502,36): error TS18046: 'formData' is of type 'unknown'.
+src/pages/admin/AcademyManager.tsx(503,60): error TS2698: Spread types may only be created from object types.
+src/pages/admin/AcademyManager.tsx(514,30): error TS18046: 'formData' is of type 'unknown'.
+src/pages/admin/AcademyManager.tsx(514,49): error TS18046: 'formData' is of type 'unknown'.
+src/pages/admin/AcademyManager.tsx(516,38): error TS18046: 'formData' is of type 'unknown'.
+src/pages/admin/AcademyManager.tsx(525,73): error TS18046: 'formData' is of type 'unknown'.
+src/pages/admin/AcademyManager.tsx(527,67): error TS2698: Spread types may only be created from object types.
+src/pages/admin/AcademyManager.tsx(549,63): error TS2698: Spread types may only be created from object types.
+src/pages/admin/AcademyManager.tsx(549,89): error TS18046: 'formData' is of type 'unknown'.
+src/pages/admin/AcademyManager.tsx(560,59): error TS2698: Spread types may only be created from object types.
+src/pages/admin/AcademyManager.tsx(560,85): error TS18046: 'formData' is of type 'unknown'.
+src/pages/admin/AcademyManager.tsx(580,26): error TS18046: 'formData' is of type 'unknown'.
+src/pages/admin/AcademyManager.tsx(580,45): error TS18046: 'formData' is of type 'unknown'.
+src/pages/admin/AcademyManager.tsx(582,34): error TS18046: 'formData' is of type 'unknown'.
+src/pages/admin/BlogManager.tsx(305,42): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'Omit<BlogPost, "id" | "created_at" | "updated_at" | "post_type">'.
+src/pages/admin/BlogManager.tsx(307,42): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'Omit<BlogPost, "id" | "created_at" | "updated_at">'.
+src/pages/admin/Dashboard.tsx(48,66): error TS18046: 'x' is of type 'unknown'.
+src/pages/admin/Dashboard.tsx(53,90): error TS18046: 'r' is of type 'unknown'.
+src/pages/admin/Dashboard.tsx(54,87): error TS18046: 'r' is of type 'unknown'.
+src/pages/admin/Dashboard.tsx(55,86): error TS18046: 'r' is of type 'unknown'.
+src/pages/admin/Dashboard.tsx(68,45): error TS2339: Property 'pending_orders' does not exist on type '{}'.
+src/pages/admin/Dashboard.tsx(69,48): error TS2339: Property 'in_progress' does not exist on type '{}'.
+src/pages/admin/Dashboard.tsx(70,47): error TS2339: Property 'completed' does not exist on type '{}'.
+src/pages/admin/TransportAssignments.tsx(28,35): error TS18046: 'updates' is of type 'unknown'.
+src/pages/admin/TransportAssignments.tsx(29,37): error TS18046: 'updates' is of type 'unknown'.
+src/pages/admin/TransportAssignments.tsx(30,45): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'Partial<TransportAssignment>'.
+src/pages/admin/TransportAssignments.tsx(60,92): error TS2571: Object is of type 'unknown'.
+src/pages/admin/TransportAssignments.tsx(60,126): error TS2571: Object is of type 'unknown'.
+src/pages/admin/VariantManager.tsx(53,59): error TS18046: 'err' is of type 'unknown'.
+src/pages/admin/VariantManager.tsx(78,64): error TS18046: 'err' is of type 'unknown'.
+src/pages/admin/VariantManager.tsx(92,62): error TS18046: 'err' is of type 'unknown'.
+src/pages/admin/VariantManager.tsx(105,65): error TS18046: 'err' is of type 'unknown'.

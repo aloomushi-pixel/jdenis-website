@@ -1,0 +1,80 @@
+
+> website@0.0.0 lint
+> eslint .
+
+
+C:\Users\info\OneDrive\Documentos\J Denis\jdenis-website\website\src\components\ImageGallery.tsx
+  17:5  error  React Hook "useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+
+C:\Users\info\OneDrive\Documentos\J Denis\jdenis-website\website\src\hooks\useCartPromotion.ts
+  215:8  warning  React Hook useMemo has an unnecessary dependency: 'items'. Either exclude it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\info\OneDrive\Documentos\J Denis\jdenis-website\website\src\pages\admin\EventLog.tsx
+  41:9   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\info\OneDrive\Documentos\J Denis\jdenis-website\website\src\pages\admin\EventLog.tsx:41:9
+  39 |
+  40 |     useEffect(() => {
+> 41 |         fetchEvents();
+     |         ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  42 |     }, [fetchEvents]);
+  43 |
+  44 |     return (  react-hooks/set-state-in-effect
+  74:58  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @typescript-eslint/no-explicit-any
+  74:92  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @typescript-eslint/no-explicit-any
+
+C:\Users\info\OneDrive\Documentos\J Denis\jdenis-website\website\src\pages\admin\ProductEditor.tsx
+  173:38  error    Compilation Skipped: Existing memoization could not be preserved
+
+React Compiler has skipped optimizing this component because the existing manual memoization could not be preserved. The inferred dependencies did not match the manually specified dependencies, which could cause the value to change more or less frequently than expected. The inferred dependency was `getProduct`, but the source dependencies were [search, categoryFilter, sortBy, sortDir, edits, products]. Inferred different dependency than source.
+
+C:\Users\info\OneDrive\Documentos\J Denis\jdenis-website\website\src\pages\admin\ProductEditor.tsx:173:38
+  171 |     };
+  172 |
+> 173 |     const filteredProducts = useMemo(() => {
+      |                                      ^^^^^^^
+> 174 |         let result = products.map(getProduct);
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 175 |
+      …
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 200 |         return result;
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 201 |     }, [search, categoryFilter, sortBy, sortDir, edits, products]);
+      | ^^^^^^ Could not preserve existing manual memoization
+  202 |
+  203 |     // ═══════════════════════════════════════════
+  204 |     // EXPORT TO EXCEL  react-hooks/preserve-manual-memoization
+  201:8   warning  React Hook useMemo has a missing dependency: 'getProduct'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            react-hooks/exhaustive-deps
+
+C:\Users\info\OneDrive\Documentos\J Denis\jdenis-website\website\src\pages\admin\PromotionsManager.tsx
+  54:23  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\info\OneDrive\Documentos\J Denis\jdenis-website\website\src\pages\admin\PromotionsManager.tsx:54:23
+  52 |         setLoading(false);
+  53 |     };
+> 54 |     useEffect(() => { load(); }, []);
+     |                       ^^^^ Avoid calling setState() directly within an effect
+  55 |
+  56 |     // ─── Promo Handlers ─────────────────────────────────────────
+  57 |     const openNewPromo = () => { setEditPromo(null); setPromoForm(emptyPromo); setShowPromoForm(true); };  react-hooks/set-state-in-effect
+
+C:\Users\info\OneDrive\Documentos\J Denis\jdenis-website\website\src\pages\admin\SalesOrders.tsx
+  77:98   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  77:132  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  96:71   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+✖ 11 problems (9 errors, 2 warnings)
+

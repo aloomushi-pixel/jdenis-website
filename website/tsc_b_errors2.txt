@@ -1,0 +1,4 @@
+src/hooks/useCartPromotion.ts(130,11): error TS2451: Cannot redeclare block-scoped variable 'total'.
+src/hooks/useCartPromotion.ts(131,11): error TS2451: Cannot redeclare block-scoped variable 'total'.
+src/hooks/useProducts.ts(85,22): error TS18046: 'err' is of type 'unknown'.
+src/hooks/useVariants.ts(57,22): error TS18046: 'err' is of type 'unknown'.
