@@ -47,7 +47,7 @@ export default function ProductEditor() {
     // ═══════════════════════════════════════════
     // Supabase integration via useProducts hook
     // ═══════════════════════════════════════════
-    const { products, loading: supabaseLoading, error: supabaseError, saveProduct, saveStatus, synced } = useProducts();
+    const { products, loading: supabaseLoading, error: supabaseError, saveProduct, saveStatus, synced, createProduct, updateProduct, deleteProduct } = useProducts();
     const { groups: rawDbGroups, loading: variantsLoading, createGroup, deleteGroup, addVariant, removeVariant } = useVariants();
 
     // Map DB variant groups (snake_case) to camelCase for rendering
@@ -81,6 +81,11 @@ export default function ProductEditor() {
     const [expandedVariantGroup, setExpandedVariantGroup] = useState<string | null>(null);
     const [imageEditorId, setImageEditorId] = useState<string | null>(null);
     const [newGalleryUrl, setNewGalleryUrl] = useState('');
+
+    // Full CRUD Editor State
+    const [fullEditingId, setFullEditingId] = useState<string | null>(null);
+    const [isCreating, setIsCreating] = useState(false);
+    const [formData, setFormData] = useState<Partial<Product>>({});
 
     const showNotification = (type: 'success' | 'error' | 'info', msg: string) => {
         setNotification({ type, msg });
@@ -155,6 +160,57 @@ export default function ProductEditor() {
     const handleEditKey = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter') saveEdit();
         if (e.key === 'Escape') cancelEdit();
+    };
+
+    // ═══════════════════════════════════════════
+    // FULL CRUD HANDLERS
+    // ═══════════════════════════════════════════
+    const handleDelete = async (id: string, name: string) => {
+        if (!confirm(`¿Eliminar irreversiblemente "${name}"?`)) return;
+        const ok = await deleteProduct(id);
+        if (ok) showNotification('success', `✅ Producto eliminado: ${name}`);
+        else showNotification('error', `❌ Error al eliminar producto`);
+    };
+
+    const openFullEditor = (p?: Product) => {
+        if (p) {
+            setFullEditingId(p.id);
+            setIsCreating(false);
+            setFormData({ ...p });
+        } else {
+            setFullEditingId(null);
+            setIsCreating(true);
+            setFormData({ name: '', price: 0, category: 'General', isFeatured: false, stock: 10, promotion: '', description: '', image: '' });
+        }
+        setImageEditorId(null);
+        setExpandedVariantGroup(null);
+    };
+
+    const closeFullEditor = () => {
+        setFullEditingId(null);
+        setIsCreating(false);
+        setFormData({});
+    };
+
+    const saveFullEditor = async () => {
+        if (!formData.name || formData.price === undefined || !formData.category) {
+            showNotification('error', '⚠️ Nombre, precio y categoría son obligatorios');
+            return;
+        }
+
+        if (isCreating) {
+            const ok = await createProduct(formData as any);
+            if (ok) {
+                showNotification('success', '✅ Producto creado');
+                closeFullEditor();
+            } else showNotification('error', '❌ Error al crear producto');
+        } else if (fullEditingId) {
+            const ok = await updateProduct(fullEditingId, formData);
+            if (ok) {
+                showNotification('success', '✅ Producto actualizado');
+                closeFullEditor();
+            } else showNotification('error', '❌ Error al actualizar producto');
+        }
     };
 
     // Unique categories
@@ -372,7 +428,7 @@ export default function ProductEditor() {
         return (
             <button
                 onClick={() => startEdit(product.id, field as string, value as string | number)}
-                className={`text - left w - full px - 2 py - 1 rounded hover: bg - indigo - 50 transition - colors cursor - pointer group ${isEdited ? 'bg-amber-50 border border-amber-200' : ''
+                className={`text-left w-full px-2 py-1 rounded hover:bg-indigo-50 transition-colors cursor-pointer group ${isEdited ? 'bg-amber-50 border border-amber-200' : ''
                     } ${className} `}
                 title="Click para editar"
             >
@@ -387,6 +443,44 @@ export default function ProductEditor() {
             </button>
         );
     };
+
+    const renderFullEditorForm = () => (
+        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="bg-white border-x-4 border-indigo-500 p-6 shadow-md m-4 rounded-lg flex flex-col">
+            <div className="flex items-center justify-between mb-4 border-b pb-4">
+                <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+                    {isCreating ? '✨ Nuevo Producto' : `✏️ Editar Producto: ${formData.id}`}
+                </h3>
+                <button onClick={closeFullEditor} className="p-2 hover:bg-gray-100 rounded-lg text-gray-500 transition-colors">✕</button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-4">
+                <div><label className="block text-xs font-bold text-gray-700 mb-1">Nombre *</label><input type="text" value={formData.name || ''} onChange={e => setFormData({ ...formData, name: e.target.value })} className="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-shadow" /></div>
+                <div><label className="block text-xs font-bold text-gray-700 mb-1">Categoría *</label><input type="text" value={formData.category || ''} onChange={e => setFormData({ ...formData, category: e.target.value })} className="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-shadow" /></div>
+                <div><label className="block text-xs font-bold text-gray-700 mb-1">Precio Cliente *</label><input type="number" step="0.01" value={formData.price || 0} onChange={e => setFormData({ ...formData, price: Number(e.target.value) })} className="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-shadow" /></div>
+                <div><label className="block text-xs font-bold text-gray-700 mb-1">Precio Original</label><input type="number" step="0.01" value={formData.originalPrice || ''} onChange={e => setFormData({ ...formData, originalPrice: e.target.value ? Number(e.target.value) : undefined })} className="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-shadow" /></div>
+
+                <div><label className="block text-xs font-bold text-gray-700 mb-1">Precio Distribuidor</label><input type="number" step="0.01" value={formData.distributorPrice || ''} onChange={e => setFormData({ ...formData, distributorPrice: e.target.value ? Number(e.target.value) : undefined })} className="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-shadow" /></div>
+                <div><label className="block text-xs font-bold text-gray-700 mb-1">Stock</label><input type="number" value={formData.stock || 0} onChange={e => setFormData({ ...formData, stock: Number(e.target.value) })} className="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-shadow" /></div>
+                <div><label className="block text-xs font-bold text-gray-700 mb-1">Promoción (Texto)</label><input type="text" value={formData.promotion || ''} onChange={e => setFormData({ ...formData, promotion: e.target.value })} className="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-shadow" /></div>
+                <div><label className="block text-xs font-bold text-gray-700 mb-1">URL Imagen</label><input type="text" value={formData.image || ''} onChange={e => setFormData({ ...formData, image: e.target.value })} className="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-shadow font-mono text-xs" /></div>
+
+                <div className="md:col-span-2"><label className="block text-xs font-bold text-gray-700 mb-1">Descripción</label><textarea value={formData.description || ''} onChange={e => setFormData({ ...formData, description: e.target.value })} className="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-shadow" rows={2} /></div>
+                <div className="md:col-span-2"><label className="block text-xs font-bold text-gray-700 mb-1">Performance (Beneficios, etc)</label><textarea value={formData.performance || ''} onChange={e => setFormData({ ...formData, performance: e.target.value })} className="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-shadow" rows={2} /></div>
+            </div>
+            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border">
+                <label className="flex items-center gap-2 text-sm font-medium cursor-pointer">
+                    <input type="checkbox" checked={!!formData.isFeatured} onChange={e => setFormData({ ...formData, isFeatured: e.target.checked })} className="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500" />
+                    Marcar como Destacado (✨)
+                </label>
+            </div>
+            <div className="mt-6 flex gap-3 justify-end border-t pt-4">
+                <button onClick={closeFullEditor} className="px-5 py-2.5 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors">Cancelar</button>
+                <button onClick={saveFullEditor} className="px-5 py-2.5 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 shadow-sm transition-colors flex items-center gap-2">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                    Guardar Cambios
+                </button>
+            </div>
+        </motion.div>
+    );
 
     return (
         <div>
@@ -463,6 +557,15 @@ export default function ProductEditor() {
                                 Cambios sin exportar
                             </span>
                         )}
+
+                        {/* Add Product */}
+                        <button
+                            onClick={() => openFullEditor()}
+                            className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors shadow-sm"
+                        >
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+                            Agregar Producto
+                        </button>
 
                         {/* Export Excel */}
                         <button
@@ -661,9 +764,18 @@ export default function ProductEditor() {
                                 <th className="text-center px-3 py-3 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">V</th>
                                 <th className="text-center px-3 py-3 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">⭐</th>
                                 <th className="text-left px-3 py-3 text-[10px] font-semibold text-gray-500 uppercase tracking-wider max-w-[200px]">Descripción</th>
+                                <th className="text-center px-3 py-3 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Acciones</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-50">
+                            {/* Create Form Row */}
+                            {isCreating && (
+                                <tr>
+                                    <td colSpan={13} className="p-0 bg-gray-50/50">
+                                        {renderFullEditorForm()}
+                                    </td>
+                                </tr>
+                            )}
                             {filteredProducts.map((product, index) => {
                                 const vc = dbVariantGroups.find(g => g.variants.some(v => v.productId === product.id))?.variants.length || 0;
                                 const isEdited = !!edits[product.id];
@@ -748,7 +860,21 @@ export default function ProductEditor() {
                                             <td className="px-3 py-2 max-w-[200px]">
                                                 {renderEditableCell(product, 'description', 'text', 'text-[11px] text-gray-500 line-clamp-1')}
                                             </td>
+                                            <td className="px-3 py-2 text-center whitespace-nowrap">
+                                                <button onClick={() => openFullEditor(product)} className="text-indigo-600 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 p-1.5 rounded mx-0.5 transition-colors" title="Editar">✏️</button>
+                                                <button onClick={() => handleDelete(product.id, product.name)} className="text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 p-1.5 rounded mx-0.5 transition-colors" title="Eliminar">🗑️</button>
+                                            </td>
                                         </tr>
+                                        {/* Full Editor Inline */}
+                                        {
+                                            fullEditingId === product.id && (
+                                                <tr>
+                                                    <td colSpan={13} className="p-0 bg-indigo-50/30">
+                                                        {renderFullEditorForm()}
+                                                    </td>
+                                                </tr>
+                                            )
+                                        }
                                         {/* Inline Image Editor — appears right below this product */}
                                         {
                                             imageEditorId === product.id && (() => {

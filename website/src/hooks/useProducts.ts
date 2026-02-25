@@ -4,6 +4,12 @@ import { supabase, type Product as SupabaseProduct } from '../lib/supabase';
 // Re-export Supabase Product type for consumers
 export type { SupabaseProduct };
 
+// Generate random ID fallback if crypto is unavailable or incomplete
+function generateId() {
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
+    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+}
+
 /**
  * Lightweight adapter: maps a Supabase product row to the shape
  * expected by the cart store and all UI components.
@@ -155,11 +161,136 @@ export function useProducts() {
         }
     }, []);
 
+    /**
+     * Update multiple fields at once (Submit form edit)
+     */
+    const updateProduct = useCallback(async (productId: string, updates: Partial<DisplayProduct>): Promise<boolean> => {
+        setSaveStatus(prev => ({ ...prev, [productId]: 'saving' }));
+
+        try {
+            const dbUpdates: Record<string, unknown> = { updated_at: new Date().toISOString() };
+
+            // Map keys
+            if (updates.name !== undefined) dbUpdates.name = updates.name;
+            if (updates.price !== undefined) dbUpdates.price = updates.price;
+            if (updates.originalPrice !== undefined) dbUpdates.original_price = updates.originalPrice;
+            if (updates.distributorPrice !== undefined) dbUpdates.distributor_price = updates.distributorPrice;
+            if (updates.promotion !== undefined) dbUpdates.promotion = updates.promotion;
+            if (updates.image !== undefined) dbUpdates.image_url = updates.image;
+            if (updates.category !== undefined) dbUpdates.category = updates.category;
+            if (updates.description !== undefined) dbUpdates.description = updates.description;
+            if (updates.stock !== undefined) dbUpdates.stock = updates.stock;
+            if (updates.benefits !== undefined) dbUpdates.benefits = updates.benefits;
+            if (updates.includes !== undefined) dbUpdates.includes = updates.includes;
+            if (updates.performance !== undefined) dbUpdates.performance = updates.performance;
+            if (updates.specifications !== undefined) dbUpdates.specifications = updates.specifications;
+            if (updates.gallery !== undefined) dbUpdates.gallery = updates.gallery;
+            if (updates.video !== undefined) dbUpdates.video = updates.video;
+            if (updates.relatedCategories !== undefined) dbUpdates.related_categories = updates.relatedCategories;
+            if (updates.isFeatured !== undefined) dbUpdates.is_featured = updates.isFeatured;
+            if (updates.slug !== undefined) dbUpdates.slug = updates.slug;
+
+            const { error: updateError } = await supabase
+                .from('products')
+                .update(dbUpdates)
+                .eq('id', productId);
+
+            if (updateError) throw updateError;
+
+            // Update local state
+            setProducts(prev => prev.map(p => p.id === productId ? { ...p, ...updates } : p));
+            setSaveStatus(prev => ({ ...prev, [productId]: 'saved' }));
+            setTimeout(() => setSaveStatus(prev => {
+                const next = { ...prev };
+                delete next[productId];
+                return next;
+            }), 3000);
+
+            return true;
+        } catch (err) {
+            console.error('useProducts.updateProduct error:', err);
+            setSaveStatus(prev => ({ ...prev, [productId]: 'error' }));
+            return false;
+        }
+    }, []);
+
+    /**
+     * Create a new product.
+     */
+    const createProduct = useCallback(async (newProduct: Omit<DisplayProduct, 'id'>): Promise<boolean> => {
+        try {
+            const id = generateId();
+            const slug = newProduct.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+
+            const dbInsert = {
+                id,
+                name: newProduct.name,
+                price: newProduct.price,
+                original_price: newProduct.originalPrice,
+                distributor_price: newProduct.distributorPrice,
+                promotion: newProduct.promotion,
+                image_url: newProduct.image,
+                category: newProduct.category,
+                description: newProduct.description,
+                stock: newProduct.stock,
+                benefits: newProduct.benefits,
+                includes: newProduct.includes,
+                performance: newProduct.performance,
+                specifications: newProduct.specifications,
+                gallery: newProduct.gallery,
+                video: newProduct.video,
+                related_categories: newProduct.relatedCategories,
+                is_featured: newProduct.isFeatured ?? false,
+                slug,
+                is_active: true
+            };
+
+            const { error: insertError } = await supabase
+                .from('products')
+                .insert([dbInsert]);
+
+            if (insertError) throw insertError;
+
+            // Refetch or add directly
+            await fetchProducts();
+            return true;
+        } catch (err) {
+            console.error('useProducts.createProduct error:', err);
+            return false;
+        }
+    }, [fetchProducts]);
+
+    /**
+     * Soft delete a product
+     */
+    const deleteProduct = useCallback(async (productId: string): Promise<boolean> => {
+        try {
+            setSaveStatus(prev => ({ ...prev, [productId]: 'saving' }));
+            const { error: deleteError } = await supabase
+                .from('products')
+                .update({ is_active: false })
+                .eq('id', productId);
+
+            if (deleteError) throw deleteError;
+
+            // Update local state by removing it
+            setProducts(prev => prev.filter(p => p.id !== productId));
+            return true;
+        } catch (err) {
+            console.error('useProducts.deleteProduct error:', err);
+            setSaveStatus(prev => ({ ...prev, [productId]: 'error' }));
+            return false;
+        }
+    }, []);
+
     return {
         products,
         loading,
         error,
         saveProduct,
+        updateProduct,
+        createProduct,
+        deleteProduct,
         saveStatus,
         synced,
         refetch: fetchProducts,
