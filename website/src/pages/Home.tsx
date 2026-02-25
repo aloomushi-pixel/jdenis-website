@@ -12,7 +12,6 @@ export default function Home() {
 
     const reelsRef = useRef<HTMLDivElement>(null);
     const isReelsInView = useInView(reelsRef, { amount: 0.3 });
-    const videoRef = useRef<HTMLVideoElement>(null);
 
     // Bestsellers from Supabase
     const [bestsellers, setBestsellers] = useState<Product[]>([]);
@@ -80,13 +79,20 @@ export default function Home() {
 
     // Handle native video auto-play/pause when scrolling into view
     useEffect(() => {
-        if (videoRef.current) {
+        const videos = document.querySelectorAll('.reel-video');
+        videos.forEach((v) => {
+            const video = v as HTMLVideoElement;
             if (isReelsInView && !isReelPaused) {
-                videoRef.current.play().catch(console.error);
+                const playPromise = video.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(_error => {
+                        // Auto-play was prevented.
+                    });
+                }
             } else {
-                videoRef.current.pause();
+                video.pause();
             }
-        }
+        });
     }, [isReelsInView, isReelPaused, currentReel]);
 
     const platformStyles: Record<string, { gradient: string; icon: React.ReactNode; label: string }> = {
@@ -485,11 +491,12 @@ export default function Home() {
                                                 exit={{ opacity: 0, scale: 0.9, rotateY: 15 }}
                                                 transition={{ duration: 0.5, ease: 'easeInOut' }}
                                                 className="group absolute inset-0"
-                                                onClick={() => {
+                                                onClick={(e) => {
                                                     if (reel.video_url) {
                                                         // Toggle mute on click for native videos
-                                                        if (videoRef.current) {
-                                                            videoRef.current.muted = !videoRef.current.muted;
+                                                        const video = e.currentTarget.querySelector('video');
+                                                        if (video) {
+                                                            video.muted = !video.muted;
                                                         }
                                                     } else {
                                                         window.open(reel.url, '_blank');
@@ -499,14 +506,16 @@ export default function Home() {
                                                 <div className={`relative w-full h-full rounded-2xl overflow-hidden bg-gradient-to-br ${style.gradient} shadow-2xl ring-2 ring-gold/30 cursor-pointer`}>
                                                     {reel.video_url ? (
                                                         <video
-                                                            ref={videoRef}
                                                             src={reel.video_url}
                                                             muted
                                                             playsInline
-                                                            onLoadedData={(e) => {
-                                                                // This guarantees the new video plays as soon as it mounts inside AnimatePresence
+                                                            autoPlay={isReelsInView && !isReelPaused}
+                                                            onCanPlay={(e) => {
                                                                 if (isReelsInView && !isReelPaused) {
-                                                                    e.currentTarget.play().catch(() => { });
+                                                                    const playPromise = e.currentTarget.play();
+                                                                    if (playPromise !== undefined) {
+                                                                        playPromise.catch(() => { });
+                                                                    }
                                                                 }
                                                             }}
                                                             onEnded={() => {
@@ -514,7 +523,7 @@ export default function Home() {
                                                                     setCurrentReel(prev => (prev + 1) % reels.length);
                                                                 }
                                                             }}
-                                                            className="absolute inset-0 w-full h-full object-cover"
+                                                            className="reel-video absolute inset-0 w-full h-full object-cover"
                                                         />
                                                     ) : (
                                                         <>
