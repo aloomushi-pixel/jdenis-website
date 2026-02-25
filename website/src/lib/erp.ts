@@ -6,7 +6,7 @@ import { supabase } from './supabase';
 // TYPE DEFINITIONS
 // =============================================
 
-export type UserRole = 'ADMIN' | 'CLIENT' | 'COLLABORATOR' | 'TECHNICIAN' | 'TRANSPORTISTA' | 'ALMACEN_MP' | 'ALMACEN_PF' | 'FABRICA' | 'EJECUTIVO';
+export type UserRole = 'ADMIN' | 'CLIENT' | 'COLLABORATOR' | 'TECHNICIAN' | 'TRANSPORTISTA' | 'ALMACEN_MATERIA_PRIMA' | 'ALMACEN_PRODUCTO_FINAL' | 'FABRICA' | 'EJECUTIVO';
 
 export interface ERPUser {
     id: string;
