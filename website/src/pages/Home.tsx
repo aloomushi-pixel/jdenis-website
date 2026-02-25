@@ -1,14 +1,7 @@
-<<<<<<< HEAD
-import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
-import { Volume2, VolumeX, Pause, Play } from 'lucide-react';
-import { bestsellers } from '../data/products';
-import { getReels, type SocialReel } from '../lib/supabase';
-=======
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { Volume2, VolumeX, Pause, Play } from 'lucide-react';
 import { getFeaturedProducts, getReels, type SocialReel, type Product } from '../lib/supabase';
 import GoogleReviews from '../components/GoogleReviews';
 
@@ -45,12 +38,14 @@ function ReelCard({
 }) {
     const videoRef = useRef<HTMLVideoElement>(null);
     const style = platformStyles[reel.platform] || platformStyles.instagram;
+    const [isMuted, setIsMuted] = useState(true);
+    const [isManualPaused, setIsManualPaused] = useState(false);
 
     useEffect(() => {
         const video = videoRef.current;
         if (!video) return;
 
-        if (isReelsInView && !isReelPaused) {
+        if (isReelsInView && !isReelPaused && !isManualPaused) {
             const playPromise = video.play();
             if (playPromise !== undefined) {
                 playPromise.catch(() => { });
@@ -58,7 +53,13 @@ function ReelCard({
         } else {
             video.pause();
         }
-    }, [isReelsInView, isReelPaused]);
+    }, [isReelsInView, isReelPaused, isManualPaused]);
+
+    useEffect(() => {
+        if (videoRef.current) {
+            videoRef.current.muted = isMuted;
+        }
+    }, [isMuted]);
 
     return (
         <motion.div
@@ -67,28 +68,33 @@ function ReelCard({
             animate={{ opacity: 1, scale: 1, rotateY: 0 }}
             exit={{ opacity: 0, scale: 0.9, rotateY: 15 }}
             transition={{ duration: 0.5, ease: 'easeInOut' }}
-            className="group absolute inset-0"
-            onClick={(e) => {
-                if (reel.video_url) {
-                    const video = e.currentTarget.querySelector('video');
-                    if (video) {
-                        video.muted = !video.muted;
-                    }
-                } else {
-                    window.open(reel.url, '_blank');
-                }
-            }}
+            className="group absolute inset-0 cursor-pointer"
         >
-            <div className={`relative w-full h-full rounded-2xl overflow-hidden bg-gradient-to-br ${style.gradient} shadow-2xl ring-2 ring-gold/30 cursor-pointer`}>
+            <div className={`relative w-full h-full rounded-2xl overflow-hidden bg-gradient-to-br ${style.gradient} shadow-2xl ring-2 ring-gold/30`}>
                 {reel.video_url ? (
-                    <video
-                        ref={videoRef}
-                        src={reel.video_url}
-                        muted
-                        playsInline
-                        onEnded={onNextReel}
-                        className="reel-video absolute inset-0 w-full h-full object-cover"
-                    />
+                    <>
+                        <video
+                            ref={videoRef}
+                            src={reel.video_url}
+                            playsInline
+                            onEnded={onNextReel}
+                            className="reel-video absolute inset-0 w-full h-full object-cover"
+                        />
+                        <div className="absolute top-4 right-4 flex flex-col gap-3 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <button
+                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); setIsMuted(!isMuted); }}
+                                className="w-10 h-10 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/80 transition-colors"
+                            >
+                                {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+                            </button>
+                            <button
+                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); setIsManualPaused(!isManualPaused); }}
+                                className="w-10 h-10 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/80 transition-colors"
+                            >
+                                {isManualPaused ? <Play size={18} fill="currentColor" /> : <Pause size={18} fill="currentColor" />}
+                            </button>
+                        </div>
+                    </>
                 ) : (
                     <>
                         {thumb && (
@@ -100,11 +106,11 @@ function ReelCard({
                             />
                         )}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-black/20" />
-                        <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30 group-hover:bg-white/30 group-hover:scale-110 transition-all duration-300 text-white">
+                        <a href={reel.url} target="_blank" rel="noopener noreferrer" className="absolute inset-0 flex items-center justify-center z-20">
+                            <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30 group-hover:bg-white/30 group-hover:scale-110 transition-all duration-300 text-white shadow-lg">
                                 {style.icon}
                             </div>
-                        </div>
+                        </a>
                     </>
                 )}
 
@@ -135,18 +141,12 @@ function ReelCard({
         </motion.div>
     );
 }
->>>>>>> 24bd2a2
 
 export default function Home() {
     const [reels, setReels] = useState<SocialReel[]>([]);
     const [thumbs, setThumbs] = useState<Record<string, string>>({});
     const [currentReel, setCurrentReel] = useState(0);
-    const [isReelHovered, setIsReelHovered] = useState(false);
-    const [isVideoPaused, setIsVideoPaused] = useState(false);
-    const [isReelsMuted, setIsReelsMuted] = useState(true);
-    const [isReelsSectionVisible, setIsReelsSectionVisible] = useState(false);
-
-    const videoRef = useRef<HTMLVideoElement>(null);
+    const [isReelPaused, setIsReelPaused] = useState(false);
 
     const reelsRef = useRef<HTMLDivElement>(null);
     const isReelsInView = useInView(reelsRef, { amount: 0.3 });
@@ -202,60 +202,20 @@ export default function Home() {
         fetchThumbs();
     }, [reels]);
 
-<<<<<<< HEAD
-    // Observer para la sección de Reels
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                setIsReelsSectionVisible(entry.isIntersecting);
-            },
-            { threshold: 0.5 }
-        );
-        const section = document.getElementById('reels-section');
-        if (section) observer.observe(section);
-        return () => observer.disconnect();
-    }, [reels.length]);
-
-    // Manejar el auto-play y pausa del video
-    useEffect(() => {
-        if (videoRef.current) {
-            if (isReelsSectionVisible && !isVideoPaused) {
-                videoRef.current.play().catch(e => console.error("Autoplay failed:", e));
-            } else {
-                videoRef.current.pause();
-            }
-            videoRef.current.muted = isReelsMuted;
-        }
-    }, [isReelsSectionVisible, isVideoPaused, currentReel, isReelsMuted]);
-
-    // Auto-rotate reels every 3 seconds ONLY si no hay video
-    useEffect(() => {
-        if (reels.length <= 1) return;
-
-        const currentHasVideo = !!reels[currentReel]?.video_url;
-        if (currentHasVideo) return; // Si tiene video, el onEnded se encarga
-
-        if (isReelHovered) return;
-=======
     // Auto-rotate reels every 5 seconds (only for external link reels)
     useEffect(() => {
         if (reels.length <= 1 || isReelPaused || !isReelsInView) return;
 
         const currentHasVideo = reels[currentReel]?.video_url;
         if (currentHasVideo) return; // Wait for onEnded event of the video
->>>>>>> 24bd2a2
 
         const timer = setInterval(() => {
             setCurrentReel(prev => (prev + 1) % reels.length);
         }, 5000);
         return () => clearInterval(timer);
-<<<<<<< HEAD
-    }, [reels.length, isReelHovered, currentReel, reels]);
-=======
     }, [reels.length, isReelPaused, isReelsInView, currentReel, reels]);
 
     // Removed top-level querySelectorAll video playback effect; handled in ReelCard component now.
->>>>>>> 24bd2a2
 
 
 
@@ -591,11 +551,7 @@ export default function Home() {
 
             {/* REELS & TIKTOKS GALLERY */}
             {reels.length > 0 && (
-<<<<<<< HEAD
-                <section id="reels-section" className="py-20 relative overflow-hidden bg-forest">
-=======
                 <section ref={reelsRef} className="py-20 relative overflow-hidden bg-forest">
->>>>>>> 24bd2a2
                     {/* Dynamic glow overlay */}
                     <div className="absolute inset-0 opacity-30">
                         <div className="absolute top-0 left-1/4 w-80 h-80 bg-gold/40 rounded-full blur-3xl" />
@@ -626,8 +582,8 @@ export default function Home() {
                         {/* Auto-rotating centered carousel */}
                         <div
                             className="flex flex-col items-center"
-                            onMouseEnter={() => setIsReelHovered(true)}
-                            onMouseLeave={() => setIsReelHovered(false)}
+                            onMouseEnter={() => setIsReelPaused(true)}
+                            onMouseLeave={() => setIsReelPaused(false)}
                         >
                             <div className="relative w-[260px] sm:w-[280px] md:w-[300px] aspect-[9/16]">
                                 <AnimatePresence mode="wait">
@@ -635,95 +591,6 @@ export default function Home() {
                                         const reel = reels[currentReel];
                                         const thumb = getThumbnailUrl(reel, thumbs);
                                         return (
-<<<<<<< HEAD
-                                            <motion.div
-                                                key={reel.id}
-                                                initial={{ opacity: 0, scale: 0.9, rotateY: -15 }}
-                                                animate={{ opacity: 1, scale: 1, rotateY: 0 }}
-                                                exit={{ opacity: 0, scale: 0.9, rotateY: 15 }}
-                                                transition={{ duration: 0.4, ease: 'easeInOut' }}
-                                                className="group absolute inset-0"
-                                            >
-                                                <div className={`relative w-full h-full rounded-2xl overflow-hidden bg-gradient-to-br ${style.gradient} shadow-2xl ring-2 ring-gold/30`}>
-                                                    {reel.video_url ? (
-                                                        <>
-                                                            <video
-                                                                ref={videoRef}
-                                                                src={reel.video_url}
-                                                                className="absolute inset-0 w-full h-full object-cover"
-                                                                onEnded={() => {
-                                                                    setCurrentReel(prev => (prev + 1) % reels.length);
-                                                                }}
-                                                                playsInline
-                                                            />
-                                                            {/* Controles de superposición interactivos */}
-                                                            <div className="absolute top-4 right-4 flex flex-col gap-3 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                                                <button
-                                                                    onClick={(e) => { e.preventDefault(); setIsReelsMuted(!isReelsMuted); }}
-                                                                    className="w-10 h-10 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/80 transition-colors"
-                                                                >
-                                                                    {isReelsMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
-                                                                </button>
-                                                                <button
-                                                                    onClick={(e) => { e.preventDefault(); setIsVideoPaused(!isVideoPaused); }}
-                                                                    className="w-10 h-10 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/80 transition-colors"
-                                                                >
-                                                                    {isVideoPaused ? <Play size={18} fill="currentColor" /> : <Pause size={18} fill="currentColor" />}
-                                                                </button>
-                                                            </div>
-                                                        </>
-                                                    ) : (
-                                                        thumb && (
-                                                            <img
-                                                                src={thumb}
-                                                                alt={reel.title}
-                                                                className="absolute inset-0 w-full h-full object-cover"
-                                                                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                                                            />
-                                                        )
-                                                    )}
-
-                                                    {/* Gradient overlay */}
-                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-black/30 pointer-events-none" />
-
-                                                    {/* Play button indicator (only for links) */}
-                                                    {!reel.video_url && (
-                                                        <a href={reel.url} target="_blank" rel="noopener noreferrer" className="absolute inset-0 flex items-center justify-center z-20">
-                                                            <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30 group-hover:bg-white/30 group-hover:scale-110 transition-all duration-300 text-white shadow-lg">
-                                                                {style.icon}
-                                                            </div>
-                                                        </a>
-                                                    )}
-
-                                                    {/* Platform badge */}
-                                                    <div className="absolute top-3 left-3 z-20">
-                                                        <a href={reel.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-[11px] font-bold text-white bg-black/50 backdrop-blur-md hover:bg-black/70 transition-colors shadow-lg">
-                                                            <span className="w-3.5 h-3.5 flex items-center justify-center">{style.icon}</span> {style.label}
-                                                        </a>
-                                                    </div>
-
-                                                    {/* Title at bottom */}
-                                                    <div className="absolute bottom-0 left-0 right-0 p-5 z-20 pointer-events-none">
-                                                        <p className="text-white text-sm font-medium leading-snug line-clamp-2 drop-shadow-md">
-                                                            {reel.title}
-                                                        </p>
-                                                    </div>
-
-                                                    {/* Progress bar (only simulates for thumb, real video delegates to onEnded) */}
-                                                    {!reel.video_url && (
-                                                        <div className="absolute top-0 left-0 right-0 h-1 bg-white/10 z-20">
-                                                            <motion.div
-                                                                className="h-full bg-gold"
-                                                                initial={{ width: '0%' }}
-                                                                animate={{ width: isReelHovered ? undefined : '100%' }}
-                                                                transition={{ duration: 3, ease: 'linear' }}
-                                                                key={`progress-${currentReel}`}
-                                                            />
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </motion.div>
-=======
                                             <ReelCard
                                                 key={reel.id}
                                                 reel={reel}
@@ -737,7 +604,6 @@ export default function Home() {
                                                     }
                                                 }}
                                             />
->>>>>>> 24bd2a2
                                         );
                                     })()}
                                 </AnimatePresence>

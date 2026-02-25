@@ -1005,7 +1005,6 @@ export interface SocialReel {
     video_url: string | null;
     platform: 'youtube' | 'tiktok' | 'instagram';
     thumbnail_url: string | null;
-    video_url?: string | null;
     sort_order: number;
     active: boolean;
     created_at: string;
