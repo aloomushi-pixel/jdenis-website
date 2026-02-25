@@ -503,7 +503,12 @@ export default function Home() {
                                                             src={reel.video_url}
                                                             muted
                                                             playsInline
-                                                            autoPlay={isReelsInView && !isReelPaused}
+                                                            onLoadedData={(e) => {
+                                                                // This guarantees the new video plays as soon as it mounts inside AnimatePresence
+                                                                if (isReelsInView && !isReelPaused) {
+                                                                    e.currentTarget.play().catch(() => { });
+                                                                }
+                                                            }}
                                                             onEnded={() => {
                                                                 if (!isReelPaused) {
                                                                     setCurrentReel(prev => (prev + 1) % reels.length);
