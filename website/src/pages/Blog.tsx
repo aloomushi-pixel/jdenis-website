@@ -1,149 +1,51 @@
 import { useEffect, useState } from 'react';
-import { ArrowRight, BookOpen, Clock, Droplets, Eye, FileText, FlaskConical, Leaf, Loader, Newspaper, Search, Shield, Sparkles, Star, X, Zap } from 'lucide-react';
+import { ArrowRight, BookOpen, Clock, FileText, Leaf, Loader, Newspaper, Search, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { getNewsPosts, type BlogPost } from '../lib/supabase';
-
-interface BlogArticle {
-    id: string;
-    title: string;
-    excerpt: string;
-    category: string;
-    readTime: string;
-    icon: React.ReactNode;
-    featured?: boolean;
-}
-
-
-const blogArticles: BlogArticle[] = [
-    {
-        id: 'cisteamina-estabilizada',
-        title: 'Cisteamina Estabilizada: La Revolución del Lifting Seguro',
-        excerpt: 'Descubre por qué la cisteamina estabilizada reemplaza al ácido tioglicólico como el activo estrella en lifting de pestañas. Más suave, más efectiva y con resultados superiores.',
-        category: 'Innovación',
-        readTime: '7 min',
-        icon: <FlaskConical className="w-6 h-6" />,
-        featured: true
-    },
-    {
-        id: 'shot-hidratante-1-5',
-        title: 'Shot 1.5 Hidratante: El Secreto del Paso 2',
-        excerpt: 'El nuevo Shot 1.5 Hidratante de J. Denis hidrata y refuerza los puentes de disulfuro durante el lifting. Aprende cuándo y cómo aplicarlo para resultados espectaculares.',
-        category: 'Producto Estrella',
-        readTime: '6 min',
-        icon: <Droplets className="w-6 h-6" />,
-        featured: true
-    },
-    {
-        id: 'historia-laminado-cejas',
-        title: 'Historia del Laminado de Cejas en México',
-        excerpt: 'J. Denis: los creadores del laminado de cejas en México. Una trayectoria de más de 25 años innovando en la industria de la belleza profesional.',
-        category: 'Historia',
-        readTime: '8 min',
-        icon: <Star className="w-6 h-6" />,
-    },
-    {
-        id: 'lifting-coreano-vs-clasico',
-        title: 'Lifting Coreano vs. Lifting Clásico',
-        excerpt: 'Compara las dos técnicas más populares de lifting de pestañas. ¿Cuál es mejor para tu tipo de cliente? Resultados, tiempos y diferencias clave.',
-        category: 'Comparativa',
-        readTime: '9 min',
-        icon: <Zap className="w-6 h-6" />,
-    },
-    {
-        id: 'glue-less-powder',
-        title: 'Glue Less Powder: Adhesivo sin Pegamento',
-        excerpt: 'La tecnología de fijación sin pegamento que está revolucionando la aplicación de pestañas. Más limpio, más cómodo y con mejor retención.',
-        category: 'Innovación',
-        readTime: '5 min',
-        icon: <Sparkles className="w-6 h-6" />,
-    },
-    {
-        id: 'semaforo-salud-capilar',
-        title: 'Semáforo de Salud Capilar',
-        excerpt: 'Aprende a diagnosticar el estado de tus pestañas antes de un lifting. ¿Verde, amarillo o rojo? Identifica si estás lista para el tratamiento.',
-        category: 'Guía de Diagnóstico',
-        readTime: '8 min',
-        icon: <Eye className="w-6 h-6" />,
-    },
-    {
-        id: 'laminado-vs-microblading',
-        title: 'Laminado vs. Microblading',
-        excerpt: 'Por qué tu mirada prefiere la química inteligente. Comparativa de costo-beneficio, dolor, recuperación y reversibilidad.',
-        category: 'Comparativa',
-        readTime: '10 min',
-        icon: <Sparkles className="w-6 h-6" />,
-    },
-    {
-        id: 'pad-nube-vs-plano',
-        title: 'Pad Nube vs. Pad Plano',
-        excerpt: 'Guía técnica para profesionales: qué tipo de ojo se beneficia de cada molde de silicona. Domina la selección de pads.',
-        category: 'Tutorial Técnico',
-        readTime: '5 min',
-        icon: <BookOpen className="w-6 h-6" />
-    },
-    {
-        id: 'que-es-constancia-dc3-stps',
-        title: '¿Qué es la Constancia DC-3 y por qué la necesitas como profesional de belleza?',
-        excerpt: 'La constancia DC-3 es el documento oficial que la STPS emite para certificar la capacitación laboral en México. Descubre por qué es esencial para tu carrera en estética profesional y cómo obtenerla.',
-        category: 'Certificación STPS',
-        readTime: '10 min',
-        icon: <Shield className="w-6 h-6" />,
-        featured: true
-    },
-    {
-        id: 'como-obtener-dc3-lash-lifting',
-        title: 'Cómo obtener tu DC-3 en Lash Lifting y Laminado de Cejas',
-        excerpt: 'Guía paso a paso para obtener tu constancia DC-3 en técnicas de lash lifting y laminado de cejas. Requisitos, proceso y beneficios de certificarte ante la STPS con J. Denis.',
-        category: 'Guía DC-3',
-        readTime: '8 min',
-        icon: <FileText className="w-6 h-6" />,
-        featured: true
-    },
-    {
-        id: 'capacitacion-stps-estetica-salon',
-        title: 'Capacitación STPS en Estética: Normas y Beneficios para tu Salón',
-        excerpt: '¿Sabías que la STPS exige capacitación formal para empleados de salones de belleza? Conoce las normas, los beneficios legales y cómo cumplir con la formación certificada DC-3.',
-        category: 'Normativa STPS',
-        readTime: '12 min',
-        icon: <Shield className="w-6 h-6" />
-    }
-];
-
-// Extract unique categories
-const allCategories = [...new Set(blogArticles.map(a => a.category))];
+import { getNewsPosts, getBlogPosts, type BlogPost } from '../lib/supabase';
 
 export default function Blog() {
     const [searchTerm, setSearchTerm] = useState('');
     const [activeCategory, setActiveCategory] = useState<string | null>(null);
     const [newsItems, setNewsItems] = useState<BlogPost[]>([]);
     const [newsLoading, setNewsLoading] = useState(true);
+    const [blogArticles, setBlogArticles] = useState<BlogPost[]>([]);
 
     useEffect(() => {
-        const loadNews = async () => {
+        const loadPosts = async () => {
             try {
-                const data = await getNewsPosts(true);
-                setNewsItems(data);
+                setNewsLoading(true);
+                const [newsData, blogData] = await Promise.all([
+                    getNewsPosts(true),
+                    getBlogPosts(true)
+                ]);
+                setNewsItems(newsData);
+                setBlogArticles(blogData);
             } catch (error) {
-                console.error('Error loading news:', error);
+                console.error('Error loading posts:', error);
             } finally {
                 setNewsLoading(false);
             }
         };
-        loadNews();
+        loadPosts();
     }, []);
 
     // Filter logic
-    const filterArticle = (article: BlogArticle) => {
+    const filterArticle = (article: BlogPost) => {
         const matchesSearch = searchTerm === '' ||
             article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            article.excerpt.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesCategory = !activeCategory || article.category === activeCategory;
+            (article.excerpt && article.excerpt.toLowerCase().includes(searchTerm.toLowerCase()));
+        const matchesCategory = !activeCategory || article.categories?.includes(activeCategory);
         return matchesSearch && matchesCategory;
     };
 
     const filteredArticles = blogArticles.filter(filterArticle);
-    const filteredFeatured = blogArticles.filter(a => a.featured).filter(filterArticle);
+    const filteredFeatured = [...blogArticles, ...newsItems]
+        .filter(a => a.is_featured)
+        .filter(filterArticle);
     const hasActiveFilters = searchTerm !== '' || activeCategory !== null;
+
+    // Extract unique categories dynamically
+    const allCategories = [...new Set(blogArticles.flatMap(a => a.categories || []))].filter(Boolean);
 
     return (
         <div className="min-h-screen bg-cream">
@@ -300,7 +202,7 @@ export default function Blog() {
                             {filteredFeatured.map((article) => (
                                 <Link
                                     key={article.id}
-                                    to={`/blog/${article.id}`}
+                                    to={article.post_type === 'news' ? `/noticias/${article.slug}` : `/blog/${article.slug}`}
                                     className="group relative overflow-hidden bg-white border border-kraft/30 hover:border-gold/50 transition-all duration-500"
                                 >
                                     <div className="absolute inset-0 bg-gradient-to-br from-forest/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -308,13 +210,15 @@ export default function Blog() {
                                     <div className="relative p-8">
                                         <div className="flex items-center gap-4 mb-6">
                                             <div className="p-3 bg-forest text-gold">
-                                                {article.icon}
+                                                <FileText className="w-6 h-6" />
                                             </div>
                                             <div>
-                                                <span className="text-sm text-gold font-medium">{article.category}</span>
+                                                <span className="text-sm text-gold font-medium">
+                                                    {article.post_type === 'news' ? (article.tag || 'Noticia') : (article.categories?.[0] || 'Artículo')}
+                                                </span>
                                                 <div className="flex items-center gap-2 text-charcoal/50 text-sm">
                                                     <Clock className="w-4 h-4" />
-                                                    {article.readTime} de lectura
+                                                    {article.published_at ? new Date(article.published_at).toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' }) : ''}
                                                 </div>
                                             </div>
                                         </div>
@@ -354,14 +258,14 @@ export default function Blog() {
                             {filteredArticles.map((article) => (
                                 <Link
                                     key={article.id}
-                                    to={`/blog/${article.id}`}
+                                    to={`/blog/${article.slug}`}
                                     className="group p-6 bg-cream border border-kraft/30 hover:border-gold/50 transition-all duration-300"
                                 >
                                     <div className="flex items-center gap-3 mb-4">
                                         <div className="p-2 bg-forest text-gold">
-                                            {article.icon}
+                                            <FileText className="w-6 h-6" />
                                         </div>
-                                        <span className="text-sm text-charcoal/60">{article.category}</span>
+                                        <span className="text-sm text-charcoal/60">{article.categories?.[0] || 'Artículo'}</span>
                                     </div>
 
                                     <h3 className="font-serif text-lg text-forest mb-2 group-hover:text-gold transition-colors">
@@ -375,7 +279,7 @@ export default function Blog() {
                                     <div className="flex items-center justify-between text-sm">
                                         <span className="text-charcoal/40 flex items-center gap-1">
                                             <Clock className="w-4 h-4" />
-                                            {article.readTime}
+                                            {article.published_at ? new Date(article.published_at).toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' }) : ''}
                                         </span>
                                         <span className="text-gold group-hover:text-forest transition-colors">
                                             Leer más →

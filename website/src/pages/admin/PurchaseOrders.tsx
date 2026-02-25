@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { createPurchaseOrder, getPurchaseOrders, updatePurchaseOrderStatus, type PurchaseOrder } from '../../lib/erp';
 import { useAuthStore } from '../../store/authStore';
 
@@ -27,12 +27,12 @@ export default function PurchaseOrders() {
     });
     const [saving, setSaving] = useState(false);
 
-    const fetchOrders = () => {
+    const fetchOrders = useCallback(() => {
         setLoading(true);
         getPurchaseOrders(filter || undefined)
             .then(setOrders).finally(() => setLoading(false));
-    };
-    useEffect(() => { fetchOrders(); }, [filter]);
+    }, [filter]);
+    useEffect(() => { fetchOrders(); }, [fetchOrders]);
 
     const handleCreate = async () => {
         if (!form.order_number || !user) return;

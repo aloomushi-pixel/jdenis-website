@@ -20,6 +20,7 @@ export interface Product {
     video?: string;
     relatedCategories?: string[];
     isFeatured?: boolean;
+    slug?: string;
 }
 
 export interface CartItem extends Product {

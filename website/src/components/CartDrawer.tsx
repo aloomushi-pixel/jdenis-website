@@ -1,9 +1,12 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useCartStore } from '../store/cartStore';
+import { useCartPromotion } from '../hooks/useCartPromotion';
+import CartPromoBanner from './CartPromoBanner';
 
 export default function CartDrawer() {
-    const { isOpen, closeCart, items, removeItem, updateQuantity, total } = useCartStore();
+    const { isOpen, closeCart, items, removeItem, updateQuantity } = useCartStore();
+    const promotion = useCartPromotion();
 
     return (
         <AnimatePresence>
@@ -84,13 +87,53 @@ export default function CartDrawer() {
                             )}
                         </div>
 
+                        {/* Promotion Banner */}
+                        {items.length > 0 && (
+                            <div className="px-6">
+                                <CartPromoBanner promotion={promotion} />
+                            </div>
+                        )}
+
                         {/* Footer */}
                         {items.length > 0 && (
                             <div className="p-6 border-t border-rose/20 bg-blush/50 rounded-bl-4xl">
-                                <div className="flex justify-between mb-4">
-                                    <span className="text-ink font-medium">Subtotal</span>
-                                    <span className="text-rose-deep font-bold text-xl">${total().toLocaleString()} MXN</span>
+                                <div className="space-y-2 mb-4">
+                                    {/* Subtotal */}
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-ink/70">Subtotal</span>
+                                        <span className="text-ink">${promotion.subtotal.toLocaleString()} MXN</span>
+                                    </div>
+
+                                    {/* Descuento (si aplica) */}
+                                    {promotion.discountAmount > 0 && (
+                                        <div className="flex justify-between text-sm">
+                                            <span className="text-emerald-600 font-medium">Descuento ({promotion.discountPercent}%)</span>
+                                            <span className="text-emerald-600 font-medium">-${promotion.discountAmount.toLocaleString()} MXN</span>
+                                        </div>
+                                    )}
+
+                                    {/* Envío */}
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-ink/70">Envío</span>
+                                        {promotion.isFreeShipping ? (
+                                            <span className="font-medium">
+                                                <span className="text-emerald-600">GRATIS</span>{' '}
+                                                <span className="line-through text-ink/40 text-xs">$200 MXN</span>
+                                            </span>
+                                        ) : (
+                                            <span className="text-ink">${promotion.shippingCost} MXN</span>
+                                        )}
+                                    </div>
                                 </div>
+
+                                {/* Total */}
+                                <div className="flex justify-between pt-2 border-t border-rose/20 mb-4">
+                                    <span className="text-ink font-semibold">Total</span>
+                                    <span className="text-rose-deep font-bold text-xl">
+                                        ${promotion.grandTotal.toLocaleString()} MXN
+                                    </span>
+                                </div>
+
                                 <Link
                                     to="/checkout"
                                     onClick={closeCart}

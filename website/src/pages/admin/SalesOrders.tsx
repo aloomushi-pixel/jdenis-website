@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { createSalesOrder, getSalesOrders, getUsers, updateSalesOrderStatus, type ERPUser, type SalesOrder } from '../../lib/erp';
 import { useAuthStore } from '../../store/authStore';
 
@@ -29,9 +29,9 @@ export default function SalesOrders() {
     const [form, setForm] = useState({ order_number: '', client_id: '', delivery_address: '', delivery_date: '', notes: '', subtotal: 0, tax: 0 });
     const [saving, setSaving] = useState(false);
 
-    const fetchOrders = () => { setLoading(true); getSalesOrders(filter || undefined).then(setOrders).finally(() => setLoading(false)); };
-    useEffect(() => { fetchOrders(); }, [filter]);
-    useEffect(() => { getUsers('CLIENT').then(setClients); }, []);
+    const fetchOrders = useCallback(() => { setLoading(true); getSalesOrders(filter || undefined).then(setOrders).finally(() => setLoading(false)); }, [filter]);
+    useEffect(() => { fetchOrders(); }, [fetchOrders]);
+    useEffect(() => { getUsers('CLIENTE').then(setClients); }, []);
 
     const handleCreate = async () => {
         if (!form.order_number || !form.client_id || !user) return;
@@ -74,7 +74,7 @@ export default function SalesOrders() {
                                             <h3 className="font-bold text-gray-800">#{order.order_number}</h3>
                                             <span className={`px-3 py-1 rounded-full text-xs font-medium ${STATUS_MAP[order.status]?.color}`}>{STATUS_MAP[order.status]?.label}</span>
                                         </div>
-                                        <p className="text-sm text-gray-500">Cliente: {(order as any).users?.fullName || (order as any).users?.email || order.client_id.slice(0, 8)}</p>
+                                        <p className="text-sm text-gray-500">Cliente: {(((order as unknown) as Record<string, unknown>).users as Record<string, string> | undefined)?.fullName || (((order as unknown) as Record<string, unknown>).users as Record<string, string> | undefined)?.email || order.client_id.slice(0, 8)}</p>
                                     </div>
                                     <div className="flex items-center gap-3">
                                         <span className="text-lg font-bold text-gray-800">${order.total.toLocaleString()}</span>
@@ -93,14 +93,18 @@ export default function SalesOrders() {
                                 <div className="px-6 pb-4 border-t border-gray-100 pt-3">
                                     <p className="text-xs font-semibold text-gray-500 mb-2">Historial de Estatus</p>
                                     <div className="space-y-2">
-                                        {order.status_history.map((h: any, i: number) => (
-                                            <div key={i} className="flex items-center gap-3 text-xs">
-                                                <div className="w-2 h-2 rounded-full bg-indigo-400"></div>
-                                                <span className="font-medium text-gray-700">{STATUS_MAP[h.status]?.label || h.status}</span>
-                                                <span className="text-gray-400">{new Date(h.timestamp).toLocaleString('es-MX')}</span>
-                                                {h.notes && <span className="text-gray-500">— {h.notes}</span>}
-                                            </div>
-                                        ))}
+                                        {order.status_history.map((hist: unknown, i: number) => {
+                                            const h = hist as Record<string, unknown>;
+                                            const statusKey = typeof h.status === 'string' ? h.status : '';
+                                            return (
+                                                <div key={i} className="flex items-center gap-3 text-xs">
+                                                    <div className="w-2 h-2 rounded-full bg-indigo-400"></div>
+                                                    <span className="font-medium text-gray-700">{STATUS_MAP[statusKey as keyof typeof STATUS_MAP]?.label || statusKey}</span>
+                                                    <span className="text-gray-400">{new Date(h.timestamp as string).toLocaleString('es-MX')}</span>
+                                                    {typeof h.notes === 'string' && <span className="text-gray-500">— {h.notes}</span>}
+                                                </div>
+                                            );
+                                        })}
                                     </div>
                                 </div>
                             )}

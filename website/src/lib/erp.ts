@@ -6,7 +6,7 @@ import { supabase } from './supabase';
 // TYPE DEFINITIONS
 // =============================================
 
-export type UserRole = 'ADMIN' | 'CLIENT' | 'COLLABORATOR' | 'TECHNICIAN' | 'TRANSPORTISTA' | 'ALMACEN_MP' | 'ALMACEN_PF' | 'FABRICA' | 'EJECUTIVO';
+export type UserRole = 'ADMIN' | 'EJECUTIVO' | 'FABRICA' | 'ALMACEN_MATERIA_PRIMA' | 'ALMACEN_PRODUCTO_FINAL' | 'TRANSPORTISTA' | 'CLIENTE' | 'DISTRIBUIDOR';
 
 export interface ERPUser {
     id: string;
@@ -86,9 +86,9 @@ export interface ProductionOrder {
     id: string;
     order_number: string;
     status: string;
-    raw_materials: any[];
+    raw_materials: unknown[];
     total_raw_input: number;
-    finished_output: any[];
+    finished_output: unknown[];
     total_finished_output: number;
     tolerance_coefficient: number;
     actual_loss: number;
@@ -107,7 +107,7 @@ export interface PurchaseOrder {
     supplier_name: string | null;
     supplier_contact: string | null;
     status: string;
-    items: any[];
+    items: unknown[];
     subtotal: number;
     tax: number;
     total: number;
@@ -123,8 +123,8 @@ export interface SalesOrder {
     order_number: string;
     client_id: string;
     status: string;
-    status_history: any[];
-    items: any[];
+    status_history: unknown[];
+    items: unknown[];
     subtotal: number;
     tax: number;
     total: number;
@@ -162,7 +162,7 @@ export interface PackagingRecord {
     sales_order_id: string | null;
     production_order_id: string | null;
     status: string;
-    items: any[];
+    items: unknown[];
     total_packages: number;
     packing_list: string | null;
     photo_urls: string[] | null;
@@ -179,7 +179,7 @@ export interface EventLogEntry {
     action: string;
     entity_type: string | null;
     entity_id: string | null;
-    metadata: Record<string, any>;
+    metadata: Record<string, unknown>;
     performed_by: string;
     created_at: string;
     // Joined
@@ -199,14 +199,13 @@ export async function getUsers(role?: UserRole) {
 }
 
 export async function updateUserRole(userId: string, role: UserRole) {
-    const { data, error } = await supabase
-        .from('users')
-        .update({ role })
-        .eq('id', userId)
-        .select()
-        .single();
+    const { error } = await supabase.rpc('update_user_role_admin', {
+        target_user_id: userId,
+        new_role: role
+    });
+
     if (error) throw error;
-    return data;
+    return null; // RPC doesn't return the row normally unless defined to
 }
 
 // =============================================
@@ -365,7 +364,7 @@ export async function getProductionOrders(status?: string) {
 
 export async function createProductionOrder(order: {
     order_number: string;
-    raw_materials?: any[];
+    raw_materials?: unknown[];
     total_raw_input?: number;
     linked_purchase_order_id?: string;
     created_by: string;
@@ -376,7 +375,7 @@ export async function createProductionOrder(order: {
 }
 
 export async function updateProductionOrderStatus(id: string, status: string, extra?: Partial<ProductionOrder>) {
-    const updates: any = { status, updated_at: new Date().toISOString(), ...extra };
+    const updates: Partial<ProductionOrder> & { updated_at: string; status: string } = { status, updated_at: new Date().toISOString(), ...extra };
     if (status === 'EN_PROCESO') updates.started_at = new Date().toISOString();
     if (status === 'COMPLETADA') updates.completed_at = new Date().toISOString();
     const { data, error } = await supabase.from('production_orders').update(updates).eq('id', id).select().single();
@@ -400,7 +399,7 @@ export async function createPurchaseOrder(order: {
     order_number: string;
     supplier_name?: string;
     supplier_contact?: string;
-    items?: any[];
+    items?: unknown[];
     subtotal?: number;
     tax?: number;
     total?: number;
@@ -441,7 +440,7 @@ export async function getSalesOrders(status?: string) {
 export async function createSalesOrder(order: {
     order_number: string;
     client_id: string;
-    items?: any[];
+    items?: unknown[];
     subtotal?: number;
     tax?: number;
     total?: number;
@@ -529,7 +528,7 @@ export async function getPackagingRecords(status?: string) {
 export async function createPackagingRecord(record: {
     sales_order_id?: string;
     production_order_id?: string;
-    items?: any[];
+    items?: unknown[];
     packaged_by?: string;
 }) {
     const { data, error } = await supabase.from('packaging_records').insert(record).select().single();
@@ -538,7 +537,7 @@ export async function createPackagingRecord(record: {
 }
 
 export async function updatePackagingStatus(id: string, status: string, extra?: Partial<PackagingRecord>) {
-    const updates: any = { status, ...extra };
+    const updates: Partial<PackagingRecord> & { status: string } = { status, ...extra };
     if (status === 'COMPLETADO') updates.completed_at = new Date().toISOString();
     const { data, error } = await supabase.from('packaging_records').update(updates).eq('id', id).select().single();
     if (error) throw error;
@@ -568,7 +567,7 @@ export async function logEvent(entry: {
     action: string;
     entity_type?: string;
     entity_id?: string;
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
     performed_by: string;
 }) {
     const { data, error } = await supabase.from('event_log').insert(entry).select().single();
@@ -607,5 +606,5 @@ export async function getResourceSummary() {
 export async function getProductionSummary() {
     const { data, error } = await supabase.rpc('get_production_summary');
     if (error) throw error;
-    return (data as any[])?.[0] || { total_orders: 0, pending_orders: 0, in_progress: 0, completed: 0, total_loss: 0 };
+    return (data as unknown[])?.[0] || { total_orders: 0, pending_orders: 0, in_progress: 0, completed: 0, total_loss: 0 };
 }

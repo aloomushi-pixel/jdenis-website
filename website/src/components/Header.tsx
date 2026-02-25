@@ -70,12 +70,29 @@ export default function Header() {
                             {/* User */}
                             {isAuthenticated ? (
                                 <div className="hidden sm:flex items-center gap-4">
-                                    <Link
-                                        to="/mi-cuenta"
-                                        className="text-xs tracking-wider uppercase text-cream/70 hover:text-gold transition-colors"
-                                    >
+                                    {['ADMIN', 'EJECUTIVO', 'FABRICA', 'ALMACEN_MATERIA_PRIMA', 'ALMACEN_PRODUCTO_FINAL', 'TRANSPORTISTA'].includes(user?.role || '') ? (
+                                        <Link
+                                            to="/admin"
+                                            className="text-xs tracking-wider uppercase text-gold hover:text-white transition-colors"
+                                        >
+                                            {user?.role === 'ADMIN' ? 'Admin' :
+                                                user?.role === 'EJECUTIVO' ? 'Ejecutivo' :
+                                                    user?.role === 'FABRICA' ? 'Fábrica' :
+                                                        user?.role === 'ALMACEN_MATERIA_PRIMA' ? 'Almacén MP' :
+                                                            user?.role === 'ALMACEN_PRODUCTO_FINAL' ? 'Almacén PF' :
+                                                                user?.role === 'TRANSPORTISTA' ? 'Transportista' : 'Panel'}
+                                        </Link>
+                                    ) : (
+                                        <Link
+                                            to="/mi-cuenta"
+                                            className="text-xs tracking-wider uppercase text-gold hover:text-white transition-colors"
+                                        >
+                                            {user?.role === 'DISTRIBUIDOR' ? 'Distribuidor' : 'Cliente'}
+                                        </Link>
+                                    )}
+                                    <span className="text-xs tracking-wider uppercase text-cream/70">
                                         {user?.fullName?.split(' ')[0]}
-                                    </Link>
+                                    </span>
                                     <button
                                         onClick={logout}
                                         className="text-xs text-cream/50 hover:text-gold transition-colors"
@@ -160,13 +177,27 @@ export default function Header() {
                     <div className="w-16 h-px bg-gold/30 my-4" />
                     {isAuthenticated ? (
                         <>
-                            <Link
-                                to="/mi-cuenta"
-                                onClick={() => setMobileMenuOpen(false)}
-                                className="text-cream/70 hover:text-gold"
-                            >
-                                Mi Cuenta
-                            </Link>
+                            {['ADMIN', 'EJECUTIVO', 'FABRICA', 'ALMACEN_MATERIA_PRIMA', 'ALMACEN_PRODUCTO_FINAL', 'TRANSPORTISTA'].includes(user?.role || '') && (
+                                <Link
+                                    to="/admin"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className="text-gold hover:text-white"
+                                >
+                                    Panel Interno
+                                </Link>
+                            )}
+                            {['CLIENTE', 'DISTRIBUIDOR'].includes(user?.role || '') && (
+                                <Link
+                                    to="/mi-cuenta"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className="text-gold hover:text-white"
+                                >
+                                    Dashboard
+                                </Link>
+                            )}
+                            <div className="text-cream/70">
+                                {user?.fullName?.split(' ')[0]}
+                            </div>
                             <button onClick={() => { logout(); setMobileMenuOpen(false); }} className="text-cream/50">
                                 Cerrar Sesión
                             </button>

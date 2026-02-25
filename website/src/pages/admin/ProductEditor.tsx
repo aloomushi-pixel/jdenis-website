@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion';
-import React, { useMemo, useRef, useState } from 'react';
-import { getVariantCount, getVariantGroup, variantGroups } from '../../data/products';
+import { useState, useMemo, useRef, useCallback, Fragment } from 'react';
 import type { Product } from '../../store/cartStore';
 import * as XLSX from 'xlsx';
 import { useProducts } from '../../hooks/useProducts';
@@ -29,7 +28,7 @@ function productToRow(p: Product) {
         Performance: p.performance || '',
         'Galería': (p.gallery || []).join(' | '),
         'Categorías Relacionadas': (p.relatedCategories || []).join(' | '),
-        Variantes: getVariantCount(p.id),
+        Variantes: 0, // Will be calculated from DB groups
     };
 }
 
@@ -49,7 +48,27 @@ export default function ProductEditor() {
     // Supabase integration via useProducts hook
     // ═══════════════════════════════════════════
     const { products, loading: supabaseLoading, error: supabaseError, saveProduct, saveStatus, synced } = useProducts();
-    const { groups: dbVariantGroups, loading: variantsLoading, createGroup, deleteGroup, addVariant, removeVariant } = useVariants();
+    const { groups: rawDbGroups, loading: variantsLoading, createGroup, deleteGroup, addVariant, removeVariant } = useVariants();
+
+    // Map DB variant groups (snake_case) to camelCase for rendering
+    interface MappedVariantGroup {
+        parentId: string;
+        parentName: string;
+        attributeNames: string[];
+        variants: { productId: string; attributes: Record<string, string> }[];
+    }
+    const dbVariantGroups: MappedVariantGroup[] = useMemo(() =>
+        rawDbGroups.map(g => ({
+            parentId: g.id,
+            parentName: g.name,
+            attributeNames: g.attribute_names,
+            variants: g.variants.map(v => ({
+                productId: v.product_id,
+                attributes: v.attributes
+            }))
+        })),
+        [rawDbGroups]
+    );
 
     // ═══════════════════════════════════════════
     // Editable state: product overrides stored in memory
@@ -121,7 +140,7 @@ export default function ProductEditor() {
 
         // Auto-save to Supabase
         saveProduct(product.id, 'isFeatured', newValue).then(ok => {
-            if (ok) showNotification('success', `✅ Destacado ${newValue ? 'activado' : 'desactivado'}`);
+            if (ok) showNotification('success', `✅ Destacado ${newValue ? 'activado' : 'desactivado'} `);
             else showNotification('error', '❌ Error al guardar destacado');
         });
     };
@@ -145,13 +164,12 @@ export default function ProductEditor() {
     }, [products]);
 
     // Apply edits to products for display
-    const getProduct = (p: Product): Product => {
+    const getProduct = useCallback((p: Product): Product => {
         const override = edits[p.id];
         if (!override) return p;
         return { ...p, ...override };
-    };
+    }, [edits]);
 
-    // Filtered and sorted products
     const filteredProducts = useMemo(() => {
         let result = products.map(getProduct);
 
@@ -180,7 +198,7 @@ export default function ProductEditor() {
         });
 
         return result;
-    }, [search, categoryFilter, sortBy, sortDir, edits]);
+    }, [search, categoryFilter, sortBy, sortDir, products, getProduct]);
 
     // ═══════════════════════════════════════════
     // EXPORT TO EXCEL
@@ -195,7 +213,7 @@ export default function ProductEditor() {
             { wch: 30 }, { wch: 10 },
         ];
 
-        const variantRows = variantGroups.map(g => ({
+        const variantRows = dbVariantGroups.map(g => ({
             'Producto Padre (ID)': g.parentId,
             'Nombre Padre': g.parentName,
             Atributos: g.attributeNames.join(', '),
@@ -299,7 +317,7 @@ export default function ProductEditor() {
         a.download = `products_${new Date().toISOString().split('T')[0]}.json`;
         a.click();
         URL.revokeObjectURL(url);
-        showNotification('success', `✅ Exportado JSON con ${products.length} productos (incluye ediciones)`);
+        showNotification('success', `✅ Exportado JSON con ${products.length} productos(incluye ediciones)`);
     };
 
     // Sort
@@ -308,25 +326,25 @@ export default function ProductEditor() {
         else { setSortBy(col); setSortDir('asc'); }
     };
 
-    const SortIcon = ({ col }: { col: string }) => {
+    const renderSortIcon = (col: string) => {
         if (sortBy !== col) return <span className="text-gray-300 ml-1">↕</span>;
         return <span className="text-indigo-600 ml-1">{sortDir === 'asc' ? '↑' : '↓'}</span>;
     };
 
     // Stats
     const totalProducts = products.length;
-    const totalVariantGroups = variantGroups.length;
+    const totalVariantGroups = dbVariantGroups.length;
     const editedCount = Object.keys(edits).length;
 
     // ═══════════════════════════════════════════
     // Editable cell component
     // ═══════════════════════════════════════════
-    const EditableCell = ({ product, field, type = 'text', className = '' }: {
-        product: Product;
-        field: keyof Product;
-        type?: 'text' | 'number' | 'currency';
-        className?: string;
-    }) => {
+    const renderEditableCell = (
+        product: Product,
+        field: keyof Product,
+        type: 'text' | 'number' | 'currency' = 'text',
+        className = ''
+    ) => {
         const isEditing = editingCell?.id === product.id && editingCell?.field === field;
         const value = getVal(product, field);
         const isEdited = edits[product.id] && field in (edits[product.id] || {});
@@ -348,17 +366,17 @@ export default function ProductEditor() {
         }
 
         const displayVal = type === 'currency' && value != null && value !== ''
-            ? `$${Number(value).toLocaleString()}`
+            ? `$${Number(value).toLocaleString()} `
             : (value ?? '—');
 
         return (
             <button
                 onClick={() => startEdit(product.id, field as string, value as string | number)}
-                className={`text-left w-full px-2 py-1 rounded hover:bg-indigo-50 transition-colors cursor-pointer group ${isEdited ? 'bg-amber-50 border border-amber-200' : ''
-                    } ${className}`}
+                className={`text - left w - full px - 2 py - 1 rounded hover: bg - indigo - 50 transition - colors cursor - pointer group ${isEdited ? 'bg-amber-50 border border-amber-200' : ''
+                    } ${className} `}
                 title="Click para editar"
             >
-                <span className={`${!value && value !== 0 ? 'text-gray-300' : ''}`}>
+                <span className={`${!value && value !== 0 ? 'text-gray-300' : ''} `}>
                     {String(displayVal)}
                 </span>
                 {!isEdited && (
@@ -378,10 +396,10 @@ export default function ProductEditor() {
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0 }}
-                    className={`fixed top-4 right-4 z-50 px-6 py-3 rounded-xl shadow-lg text-white text-sm font-medium ${notification.type === 'success' ? 'bg-green-600'
+                    className={`fixed top - 4 right - 4 z - 50 px - 6 py - 3 rounded - xl shadow - lg text - white text - sm font - medium ${notification.type === 'success' ? 'bg-green-600'
                         : notification.type === 'info' ? 'bg-blue-600'
                             : 'bg-red-600'
-                        }`}
+                        } `}
                 >
                     {notification.msg}
                 </motion.div>
@@ -420,15 +438,15 @@ export default function ProductEditor() {
                     <div className="flex p-1 bg-gray-100 rounded-lg self-start lg:self-center">
                         <button
                             onClick={() => setActiveTab('catalog')}
-                            className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'catalog' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'
-                                }`}
+                            className={`px - 4 py - 2 rounded - md text - sm font - medium transition - all ${activeTab === 'catalog' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                                } `}
                         >
                             Catálogo
                         </button>
                         <button
                             onClick={() => setActiveTab('variants')}
-                            className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'variants' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'
-                                }`}
+                            className={`px - 4 py - 2 rounded - md text - sm font - medium transition - all ${activeTab === 'variants' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                                } `}
                         >
                             Variantes
                         </button>
@@ -611,19 +629,19 @@ export default function ProductEditor() {
                                     className="text-left px-3 py-3 text-[10px] font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:text-indigo-600"
                                     onClick={() => handleSort('id')}
                                 >
-                                    ID <SortIcon col="id" />
+                                    ID {renderSortIcon('id')}
                                 </th>
                                 <th
                                     className="text-left px-3 py-3 text-[10px] font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:text-indigo-600 min-w-[180px]"
                                     onClick={() => handleSort('name')}
                                 >
-                                    Nombre <SortIcon col="name" />
+                                    Nombre {renderSortIcon('name')}
                                 </th>
                                 <th
                                     className="text-right px-3 py-3 text-[10px] font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:text-indigo-600 min-w-[100px]"
                                     onClick={() => handleSort('price')}
                                 >
-                                    <span className="text-blue-700">💰 P. Cliente</span> <SortIcon col="price" />
+                                    <span className="text-blue-700">💰 P. Cliente</span> {renderSortIcon('price')}
                                 </th>
                                 <th className="text-right px-3 py-3 text-[10px] font-semibold text-gray-500 uppercase tracking-wider min-w-[100px]">
                                     <span className="text-red-600">🔥 P. Original</span>
@@ -638,7 +656,7 @@ export default function ProductEditor() {
                                     className="text-left px-3 py-3 text-[10px] font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:text-indigo-600"
                                     onClick={() => handleSort('category')}
                                 >
-                                    Categoría <SortIcon col="category" />
+                                    Categoría {renderSortIcon('category')}
                                 </th>
                                 <th className="text-center px-3 py-3 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">V</th>
                                 <th className="text-center px-3 py-3 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">⭐</th>
@@ -647,13 +665,13 @@ export default function ProductEditor() {
                         </thead>
                         <tbody className="divide-y divide-gray-50">
                             {filteredProducts.map((product, index) => {
-                                const vc = getVariantCount(product.id);
+                                const vc = dbVariantGroups.find(g => g.variants.some(v => v.productId === product.id))?.variants.length || 0;
                                 const isEdited = !!edits[product.id];
                                 const rowSaveStatus = saveStatus[product.id];
                                 return (
-                                    <React.Fragment key={product.id}>
+                                    <Fragment key={product.id}>
                                         <tr
-                                            className={`hover:bg-indigo-50/30 transition-colors ${isEdited ? 'bg-amber-50/40' : ''} ${rowSaveStatus === 'saving' ? 'opacity-70' : ''}`}
+                                            className={`hover: bg - indigo - 50 / 30 transition - colors ${isEdited ? 'bg-amber-50/40' : ''} ${rowSaveStatus === 'saving' ? 'opacity-70' : ''} `}
                                         >
                                             <td className="px-3 py-2 text-xs text-gray-400">
                                                 <span className="flex items-center gap-1">
@@ -666,8 +684,8 @@ export default function ProductEditor() {
                                             <td className="px-3 py-2">
                                                 <button
                                                     onClick={() => setImageEditorId(imageEditorId === product.id ? null : product.id)}
-                                                    className={`relative group w-9 h-9 rounded cursor-pointer overflow-hidden border-2 transition-colors ${imageEditorId === product.id ? 'border-indigo-500 shadow-md' : 'border-transparent hover:border-indigo-300'
-                                                        } ${edits[product.id] && ('image' in (edits[product.id] || {}) || 'gallery' in (edits[product.id] || {})) ? 'ring-2 ring-amber-300' : ''}`}
+                                                    className={`relative group w - 9 h - 9 rounded cursor - pointer overflow - hidden border - 2 transition - colors ${imageEditorId === product.id ? 'border-indigo-500 shadow-md' : 'border-transparent hover:border-indigo-300'
+                                                        } ${edits[product.id] && ('image' in (edits[product.id] || {}) || 'gallery' in (edits[product.id] || {})) ? 'ring-2 ring-amber-300' : ''} `}
                                                     title="Click para editar imagen y galería"
                                                 >
                                                     <img
@@ -684,31 +702,31 @@ export default function ProductEditor() {
                                             </td>
                                             <td className="px-3 py-2 text-[11px] text-gray-500 font-mono">{product.id}</td>
                                             <td className="px-3 py-2 min-w-[180px]">
-                                                <EditableCell product={product} field="name" className="text-sm font-medium text-gray-900" />
+                                                {renderEditableCell(product, 'name', 'text', 'text-sm font-medium text-gray-900')}
                                             </td>
                                             <td className="px-3 py-2 text-right min-w-[100px]">
-                                                <EditableCell product={product} field="price" type="currency" className="text-sm font-semibold text-blue-800" />
+                                                {renderEditableCell(product, 'price', 'currency', 'text-sm font-semibold text-blue-800')}
                                             </td>
                                             <td className="px-3 py-2 text-right min-w-[100px]">
-                                                <EditableCell product={product} field="originalPrice" type="currency" className={`text-sm font-semibold ${getVal(product, 'originalPrice') ? 'text-red-600' : 'text-gray-300'}`} />
+                                                {renderEditableCell(product, 'originalPrice', 'currency', `text - sm font - semibold ${getVal(product, 'originalPrice') ? 'text-red-600' : 'text-gray-300'} `)}
                                             </td>
                                             <td className="px-3 py-2 text-right min-w-[110px]">
-                                                <EditableCell product={product} field="distributorPrice" type="currency" className="text-sm font-semibold text-purple-800" />
+                                                {renderEditableCell(product, 'distributorPrice', 'currency', 'text-sm font-semibold text-purple-800')}
                                             </td>
                                             <td className="px-3 py-2 min-w-[130px]">
-                                                <EditableCell product={product} field="promotion" className="text-xs text-green-700" />
+                                                {renderEditableCell(product, 'promotion', 'text', 'text-xs text-green-700')}
                                             </td>
                                             <td className="px-3 py-2">
-                                                <EditableCell product={product} field="category" className="text-xs text-gray-600" />
+                                                {renderEditableCell(product, 'category', 'text', 'text-xs text-gray-600')}
                                             </td>
                                             <td className="px-3 py-2 text-center">
                                                 {vc > 1 ? (
                                                     <button
                                                         onClick={() => setExpandedVariantGroup(expandedVariantGroup === product.id ? null : product.id)}
-                                                        className={`px-1.5 py-0.5 rounded-full text-[10px] font-medium transition-colors cursor-pointer ${expandedVariantGroup === product.id
+                                                        className={`px - 1.5 py - 0.5 rounded - full text - [10px] font - medium transition - colors cursor - pointer ${expandedVariantGroup === product.id
                                                             ? 'bg-indigo-600 text-white'
                                                             : 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200'
-                                                            }`}
+                                                            } `}
                                                         title="Click para ver/editar variantes"
                                                     >{vc}</button>
                                                 ) : (
@@ -718,17 +736,17 @@ export default function ProductEditor() {
                                             <td className="px-3 py-2 text-center">
                                                 <button
                                                     onClick={() => toggleFeatured(product)}
-                                                    className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all cursor-pointer ${getVal(product, 'isFeatured')
+                                                    className={`w - 7 h - 7 rounded - lg flex items - center justify - center transition - all cursor - pointer ${getVal(product, 'isFeatured')
                                                         ? 'bg-amber-100 hover:bg-amber-200 text-amber-500 shadow-sm'
                                                         : 'bg-gray-50 hover:bg-gray-100 text-gray-300'
-                                                        } ${edits[product.id] && 'isFeatured' in (edits[product.id] || {}) ? 'ring-2 ring-amber-300' : ''}`}
+                                                        } ${edits[product.id] && 'isFeatured' in (edits[product.id] || {}) ? 'ring-2 ring-amber-300' : ''} `}
                                                     title={getVal(product, 'isFeatured') ? 'Quitar de destacados' : 'Marcar como destacado'}
                                                 >
                                                     {getVal(product, 'isFeatured') ? '⭐' : '☆'}
                                                 </button>
                                             </td>
                                             <td className="px-3 py-2 max-w-[200px]">
-                                                <EditableCell product={product} field="description" className="text-[11px] text-gray-500 line-clamp-1" />
+                                                {renderEditableCell(product, 'description', 'text', 'text-[11px] text-gray-500 line-clamp-1')}
                                             </td>
                                         </tr>
                                         {/* Inline Image Editor — appears right below this product */}
@@ -858,7 +876,7 @@ export default function ProductEditor() {
                                                                                     <div key={idx} className="relative group rounded-lg overflow-hidden border border-gray-200 aspect-square bg-white">
                                                                                         <img
                                                                                             src={url}
-                                                                                            alt={`Galería ${idx + 1}`}
+                                                                                            alt={`Galería ${idx + 1} `}
                                                                                             className="w-full h-full object-cover"
                                                                                             onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80"><rect fill="%23fef2f2" width="80" height="80"/><text x="50%25" y="50%25" fill="%23ef4444" font-size="10" text-anchor="middle" dy=".3em">Error</text></svg>'; }}
                                                                                         />
@@ -974,7 +992,7 @@ export default function ProductEditor() {
                                         {/* Inline Variant Detail — appears right below this product */}
                                         {
                                             expandedVariantGroup === product.id && (() => {
-                                                const group = getVariantGroup(product.id);
+                                                const group = dbVariantGroups.find(g => g.variants.some(v => v.productId === product.id));
                                                 if (!group) return null;
                                                 return (
                                                     <tr>
@@ -1021,7 +1039,7 @@ export default function ProductEditor() {
                                                                                     <tr key={v.productId} className="hover:bg-indigo-100/50">
                                                                                         <td className="px-3 py-2 text-xs font-mono text-gray-500">{v.productId}</td>
                                                                                         <td className="px-3 py-2">
-                                                                                            <EditableCell product={editedVProduct} field="name" className="text-sm text-gray-900" />
+                                                                                            {renderEditableCell(editedVProduct, 'name', 'text', 'text-sm text-gray-900')}
                                                                                         </td>
                                                                                         {group.attributeNames.map(attr => (
                                                                                             <td key={attr} className="px-3 py-2">
@@ -1031,13 +1049,13 @@ export default function ProductEditor() {
                                                                                             </td>
                                                                                         ))}
                                                                                         <td className="px-3 py-2 text-right">
-                                                                                            <EditableCell product={editedVProduct} field="price" type="currency" className="text-sm font-semibold text-blue-800" />
+                                                                                            {renderEditableCell(editedVProduct, 'price', 'currency', 'text-sm font-semibold text-blue-800')}
                                                                                         </td>
                                                                                         <td className="px-3 py-2 text-right">
-                                                                                            <EditableCell product={editedVProduct} field="distributorPrice" type="currency" className="text-sm font-semibold text-purple-800" />
+                                                                                            {renderEditableCell(editedVProduct, 'distributorPrice', 'currency', 'text-sm font-semibold text-purple-800')}
                                                                                         </td>
                                                                                         <td className="px-3 py-2">
-                                                                                            <EditableCell product={editedVProduct} field="promotion" className="text-xs text-green-700" />
+                                                                                            {renderEditableCell(editedVProduct, 'promotion', 'text', 'text-xs text-green-700')}
                                                                                         </td>
                                                                                     </tr>
                                                                                 );
@@ -1051,7 +1069,7 @@ export default function ProductEditor() {
                                                 );
                                             })()
                                         }
-                                    </React.Fragment>
+                                    </Fragment>
                                 );
                             })}
                         </tbody>
@@ -1063,17 +1081,17 @@ export default function ProductEditor() {
             <div className="mt-6 bg-white rounded-xl shadow-sm p-6">
                 <h2 className="text-lg font-bold text-gray-800 mb-4">Grupos de Variantes ({totalVariantGroups})</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {variantGroups.map((g) => (
+                    {dbVariantGroups.map((g) => (
                         <button
                             key={g.parentId}
                             onClick={() => {
                                 setExpandedVariantGroup(expandedVariantGroup === g.parentId ? null : g.parentId);
                                 window.scrollTo({ top: 0, behavior: 'smooth' });
                             }}
-                            className={`border rounded-lg p-4 text-left transition-colors cursor-pointer ${expandedVariantGroup === g.parentId
+                            className={`border rounded - lg p - 4 text - left transition - colors cursor - pointer ${expandedVariantGroup === g.parentId
                                 ? 'border-indigo-400 bg-indigo-50 shadow-md'
                                 : 'border-gray-100 hover:border-indigo-200'
-                                }`}
+                                } `}
                         >
                             <h3 className="font-semibold text-sm text-gray-800">{g.parentName}</h3>
                             <div className="flex items-center gap-2 mt-1">
@@ -1098,7 +1116,7 @@ export default function ProductEditor() {
             {/* Variants Tab */}
             {activeTab === 'variants' && (
                 <VariantManager
-                    groups={dbVariantGroups}
+                    groups={rawDbGroups}
                     products={products}
                     loading={variantsLoading}
                     createGroup={createGroup}

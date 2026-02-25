@@ -153,7 +153,7 @@ export default function Academy() {
                                     <div className="mb-6">
                                         <p className="text-sm font-medium text-forest mb-2">Temario:</p>
                                         <ul className="grid grid-cols-2 gap-2">
-                                            {course.topics.map((topic, i) => (
+                                            {(course.topics || []).map((topic, i) => (
                                                 <li key={i} className="text-sm text-charcoal/60 flex items-center gap-2">
                                                     <span className="text-gold">•</span>
                                                     {topic}
@@ -180,7 +180,7 @@ export default function Academy() {
                                     )}
 
                                     {/* Course Images Gallery */}
-                                    {course.images && course.images.length > 0 && (
+                                    {course.images?.length > 0 && (
                                         <ImageGallery
                                             images={course.images}
                                             title="Galería del Curso"
@@ -247,7 +247,7 @@ export default function Academy() {
                                 <p className="text-charcoal/70 text-sm mb-4">{event.description}</p>
 
                                 {/* Event Images */}
-                                {event.images && event.images.length > 0 && (
+                                {event.images?.length > 0 && (
                                     <ImageGallery
                                         images={event.images}
                                         title="Galería del Evento"

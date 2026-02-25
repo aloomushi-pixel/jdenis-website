@@ -1,17 +1,16 @@
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { getUsers, updateUserRole, type ERPUser, type UserRole } from '../../lib/erp';
 
 const ROLES: { value: UserRole; label: string; color: string }[] = [
     { value: 'ADMIN', label: 'Administrador', color: 'bg-red-100 text-red-700' },
     { value: 'EJECUTIVO', label: 'Ejecutivo', color: 'bg-purple-100 text-purple-700' },
     { value: 'FABRICA', label: 'Fábrica', color: 'bg-amber-100 text-amber-700' },
-    { value: 'ALMACEN_MP', label: 'Almacén MP', color: 'bg-blue-100 text-blue-700' },
-    { value: 'ALMACEN_PF', label: 'Almacén PF', color: 'bg-cyan-100 text-cyan-700' },
+    { value: 'ALMACEN_MATERIA_PRIMA', label: 'Almacén MP', color: 'bg-blue-100 text-blue-700' },
+    { value: 'ALMACEN_PRODUCTO_FINAL', label: 'Almacén PF', color: 'bg-cyan-100 text-cyan-700' },
     { value: 'TRANSPORTISTA', label: 'Transportista', color: 'bg-green-100 text-green-700' },
-    { value: 'CLIENT', label: 'Cliente', color: 'bg-gray-100 text-gray-700' },
-    { value: 'COLLABORATOR', label: 'Colaborador', color: 'bg-indigo-100 text-indigo-700' },
-    { value: 'TECHNICIAN', label: 'Técnico', color: 'bg-teal-100 text-teal-700' },
+    { value: 'CLIENTE', label: 'Cliente', color: 'bg-gray-100 text-gray-700' },
+    { value: 'DISTRIBUIDOR', label: 'Distribuidor', color: 'bg-gold/20 text-gold-dark' },
 ];
 
 export default function UserManager() {
@@ -21,7 +20,7 @@ export default function UserManager() {
     const [search, setSearch] = useState('');
     const [saving, setSaving] = useState<string | null>(null);
 
-    const fetchUsers = async () => {
+    const fetchUsers = useCallback(async () => {
         setLoading(true);
         try {
             const data = await getUsers(filter || undefined);
@@ -31,9 +30,9 @@ export default function UserManager() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [filter]);
 
-    useEffect(() => { fetchUsers(); }, [filter]);
+    useEffect(() => { fetchUsers(); }, [fetchUsers]);
 
     const handleRoleChange = async (userId: string, newRole: UserRole) => {
         setSaving(userId);

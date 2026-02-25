@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import type { OrderB2B } from '../../lib/supabase';
 import { getOrders, updateOrderStatus } from '../../lib/supabase';
 
@@ -22,11 +22,7 @@ export default function AdminOrders() {
     const [filter, setFilter] = useState<string>('');
     const [updatingId, setUpdatingId] = useState<string | null>(null);
 
-    useEffect(() => {
-        fetchOrders();
-    }, [filter]);
-
-    const fetchOrders = async () => {
+    const fetchOrders = useCallback(async () => {
         setLoading(true);
         try {
             const data = await getOrders(filter || undefined);
@@ -36,7 +32,11 @@ export default function AdminOrders() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [filter]);
+
+    useEffect(() => {
+        fetchOrders();
+    }, [fetchOrders]);
 
     const handleStatusChange = async (orderId: string, newStatus: string) => {
         setUpdatingId(orderId);

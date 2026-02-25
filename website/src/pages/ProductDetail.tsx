@@ -1,29 +1,44 @@
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import ReviewSection from '../components/ReviewSection';
 import VariantSelector from '../components/VariantSelector';
-import { getProductById, getRelatedProducts, getVariantCount, getVariantGroup, type VariantGroup } from '../data/products';
+import { useProducts, type DisplayProduct } from '../hooks/useProducts';
 import { useCartStore } from '../store/cartStore';
 import { useVariants } from '../hooks/useVariants';
+
+// Local VariantGroup type (previously from data/products)
+interface VariantGroup {
+    parentId: string;
+    parentName: string;
+    attributeNames: string[];
+    variants: { productId: string; attributes: Record<string, string> }[];
+}
 
 type DetailTab = 'benefits' | 'includes' | 'specs' | 'reviews';
 
 export default function ProductDetail() {
     const { id } = useParams<{ id: string }>();
     const { addItem, openCart } = useCartStore();
-    const initialProduct = getProductById(id || '');
+    const { products, loading: productsLoading } = useProducts();
     const [activeTab, setActiveTab] = useState<DetailTab>('benefits');
     const [currentProductId, setCurrentProductId] = useState(id || '');
     const { groups: dbGroups } = useVariants();
 
+    // Update currentProductId when URL param changes
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        if (id) setCurrentProductId(id);
+    }, [id]);
 
+    // Get the currently displayed product from Supabase data
+    const product: DisplayProduct | undefined = useMemo(() => {
+        return products.find(p => p.id === currentProductId) ||
+            products.find(p => p.id === id);
+    }, [products, currentProductId, id]);
 
-    // Get the currently displayed product (may differ from URL if variant was selected)
-    const product = getProductById(currentProductId) || initialProduct;
-
-    // Try to find variant group from DB first, then fallback to local file
+    // Try to find variant group from DB
     const dbGroup = product ? dbGroups.find(g => g.variants.some(v => v.product_id === product.id)) : undefined;
 
     const variantGroup: VariantGroup | undefined = dbGroup ? {
@@ -34,7 +49,23 @@ export default function ProductDetail() {
             productId: v.product_id,
             attributes: v.attributes
         }))
-    } : (product ? getVariantGroup(product.id) : undefined);
+    } : undefined;
+
+    // Related products: same category, different product
+    const relatedProducts = useMemo(() => {
+        if (!product) return [];
+        return products
+            .filter(p => p.category === product?.category && p.id !== product?.id)
+            .slice(0, 8);
+    }, [products, product]);
+
+    if (productsLoading) {
+        return (
+            <div className="min-h-screen bg-cream flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gold"></div>
+            </div>
+        );
+    }
 
     if (!product) {
         return (
@@ -60,8 +91,6 @@ export default function ProductDetail() {
         // Update URL without navigation
         window.history.replaceState(null, '', `/producto/${newProductId}`);
     };
-
-    const relatedProducts = getRelatedProducts(product, 8);
 
     const hasBenefits = product.benefits && product.benefits.length > 0;
     const hasIncludes = product.includes && product.includes.length > 0;
@@ -98,11 +127,7 @@ export default function ProductDetail() {
                             />
                         </div>
                         <span
-                            className="absolute top-4 left-4 px-3 py-1.5 text-xs font-semibold tracking-wider uppercase rounded-full"
-                            style={{
-                                background: 'linear-gradient(135deg, #1C50EF, #1440C0)',
-                                color: '#FFFFFF',
-                            }}
+                            className="absolute top-4 left-4 px-3 py-1.5 text-xs font-semibold tracking-wider uppercase rounded-full bg-gold text-forest shadow-md"
                         >
                             {product.category}
                         </span>
@@ -118,7 +143,7 @@ export default function ProductDetail() {
                             {product.category}
                         </span>
                         <h1 className="font-serif text-2xl sm:text-3xl lg:text-4xl text-forest mb-3 leading-tight">
-                            {variantGroup ? variantGroup.parentName : product.name}
+                            {product.name}
                         </h1>
 
                         {/* Variant Selector */}
@@ -130,8 +155,7 @@ export default function ProductDetail() {
                             />
                         )}
 
-                        <p className="text-2xl sm:text-3xl font-bold mb-4"
-                            style={{ color: '#1C50EF' }}>
+                        <p className="text-2xl sm:text-3xl font-bold mb-4 text-forest">
                             ${product.price.toLocaleString()} <span className="text-base font-normal text-charcoal/40">MXN</span>
                         </p>
 
@@ -140,10 +164,8 @@ export default function ProductDetail() {
                                 'Producto profesional de alta calidad diseñado para especialistas en belleza. Técnicas patentadas J. Denis con más de 25 años de experiencia.'}
                         </p>
 
-                        {/* Performance Badge */}
                         {product.performance && (
-                            <div className="mb-6 flex items-center gap-3 px-4 py-3 rounded-xl"
-                                style={{ background: 'linear-gradient(135deg, #17204D10, #1C50EF15)', border: '1px solid #1C50EF30' }}>
+                            <div className="mb-6 flex items-center gap-3 px-4 py-3 rounded-xl bg-forest/5 border border-forest/10">
                                 <svg className="w-6 h-6 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" /></svg>
                                 <div>
                                     <span className="text-xs uppercase tracking-wider text-charcoal/50 block">Rendimiento</span>
@@ -160,8 +182,7 @@ export default function ProductDetail() {
                                 { text: 'Hecho en México con ingredientes premium' },
                             ].map((feature, i) => (
                                 <div key={i} className="flex items-center gap-3 text-sm">
-                                    <span className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"
-                                        style={{ background: '#1C50EF20', color: '#17204D' }}>
+                                    <span className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 bg-gold/20 text-forest">
                                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                                     </span>
                                     <span className="text-charcoal/80">{feature.text}</span>
@@ -173,11 +194,7 @@ export default function ProductDetail() {
                         <div className="mt-auto space-y-3">
                             <button
                                 onClick={handleAddToCart}
-                                className="w-full py-3.5 sm:py-4 text-sm sm:text-base font-semibold tracking-wider uppercase rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-[1.02]"
-                                style={{
-                                    background: 'linear-gradient(135deg, #1C50EF, #1440C0)',
-                                    color: '#FFFFFF',
-                                }}
+                                className="w-full py-3.5 sm:py-4 text-sm sm:text-base font-semibold tracking-wider uppercase rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-[1.02] bg-gold text-forest hover:bg-gold-light"
                             >
                                 Agregar al Carrito
                             </button>
@@ -193,7 +210,7 @@ export default function ProductDetail() {
                         </div>
 
                         {/* Shipping Info */}
-                        <div className="mt-6 p-4 rounded-xl" style={{ background: '#F0F3FA', border: '1px solid #1C50EF20' }}>
+                        <div className="mt-6 p-4 rounded-xl bg-forest/5 border border-forest/10">
                             <p className="text-sm text-charcoal/70">
                                 <svg className="w-4 h-4 inline mr-1 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M21 7.5l-2.25-1.313M21 7.5v2.25m0-2.25l-2.25 1.313M3 7.5l2.25-1.313M3 7.5l2.25 1.313M3 7.5v2.25m9 3l2.25-1.313M12 12.75l-2.25-1.313M12 12.75V15m0 6.75l2.25-1.313M12 21.75V19.5m0 2.25l-2.25-1.313m0-16.875L12 2.25l2.25 1.313M21 14.25v2.25l-2.25 1.313m-13.5 0L3 16.5v-2.25" /></svg> <strong className="text-forest">Envío FedEx:</strong> $200 MXN a todo México<br />
                                 <svg className="w-4 h-4 inline mr-1 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> <strong className="text-forest">Entrega:</strong> 3-5 días hábiles
@@ -203,7 +220,7 @@ export default function ProductDetail() {
                 </div>
 
                 {/* Detail Tabs Section */}
-                {(hasDetailContent || true) && (
+                {hasDetailContent && (
                     <motion.section
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -262,8 +279,7 @@ export default function ProductDetail() {
                                         {product.benefits!.map((benefit, i) => (
                                             <div key={i} className="flex items-start gap-3 p-3 rounded-xl transition-colors"
                                                 style={{ background: '#17204D08' }}>
-                                                <span className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold"
-                                                    style={{ background: '#1C50EF', color: '#FFFFFF' }}>
+                                                <span className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold bg-gold text-forest">
                                                     {i + 1}
                                                 </span>
                                                 <span className="text-charcoal/80 text-sm leading-relaxed">{benefit}</span>
@@ -286,14 +302,13 @@ export default function ProductDetail() {
                                         {product.includes!.map((item, i) => (
                                             <div key={i} className="flex items-center gap-3 py-2.5 px-3 rounded-lg"
                                                 style={{ background: i % 2 === 0 ? '#F0F3FA08' : 'transparent' }}>
-                                                <span className="text-sm" style={{ color: '#1C50EF' }}>●</span>
+                                                <span className="text-sm text-gold">●</span>
                                                 <span className="text-charcoal/80 text-sm">{item}</span>
                                             </div>
                                         ))}
                                     </div>
                                     {product.performance && (
-                                        <div className="mt-5 p-4 rounded-xl flex items-center gap-3"
-                                            style={{ background: 'linear-gradient(135deg, #17204D08, #1C50EF10)', border: '1px solid #1C50EF20' }}>
+                                        <div className="mt-5 p-4 rounded-xl flex items-center gap-3 bg-forest/5 border border-forest/10">
                                             <svg className="w-5 h-5 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" /></svg>
                                             <div>
                                                 <span className="text-xs uppercase tracking-wider text-charcoal/50 block">Rendimiento total</span>
@@ -321,15 +336,14 @@ export default function ProductDetail() {
                                                         background: i % 2 === 0 ? '#F0F3FA' : 'transparent',
                                                         borderBottom: '1px solid #E0E4ED20',
                                                     }}>
-                                                    <span className="text-sm" style={{ color: '#1C50EF' }}>◆</span>
+                                                    <span className="text-sm text-gold">◆</span>
                                                     <span className="text-charcoal/80 text-sm">{spec}</span>
                                                 </div>
                                             ))}
                                         </div>
                                     )}
                                     {product.performance && (
-                                        <div className="p-4 rounded-xl flex items-center gap-3"
-                                            style={{ background: 'linear-gradient(135deg, #17204D08, #1C50EF10)', border: '1px solid #1C50EF20' }}>
+                                        <div className="p-4 rounded-xl flex items-center gap-3 bg-forest/5 border border-forest/10">
                                             <svg className="w-5 h-5 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" /></svg>
                                             <div>
                                                 <span className="text-xs uppercase tracking-wider text-charcoal/50 block">Rendimiento</span>
@@ -364,8 +378,7 @@ export default function ProductDetail() {
                             </div>
                             <Link
                                 to="/tienda"
-                                className="hidden sm:flex items-center gap-2 text-sm font-medium transition-colors hover:opacity-80"
-                                style={{ color: '#1C50EF' }}
+                                className="hidden sm:flex items-center gap-2 text-sm font-medium transition-colors hover:opacity-80 text-gold"
                             >
                                 Ver todos →
                             </Link>
@@ -380,7 +393,7 @@ export default function ProductDetail() {
                                             <ProductCard
                                                 product={p}
                                                 index={index}
-                                                variantCount={getVariantCount(p.id)}
+                                                variantCount={0}
                                             />
                                         </div>
                                     ))}
@@ -401,7 +414,7 @@ export default function ProductDetail() {
                     </motion.section>
                 )}
             </div>
-        </div>
+        </div >
     );
 }
 
@@ -418,7 +431,7 @@ function TabButton({ label, icon, isActive, onClick }: {
             className="flex items-center gap-2 px-4 sm:px-6 py-3 text-sm font-medium transition-all whitespace-nowrap flex-shrink-0"
             style={{
                 color: isActive ? '#17204D' : '#17204D80',
-                borderBottom: isActive ? '3px solid #1C50EF' : '3px solid transparent',
+                borderBottom: isActive ? '3px solid var(--color-gold, #D4AF37)' : '3px solid transparent',
                 background: isActive ? '#FFFFFF' : 'transparent',
                 marginBottom: '-2px',
                 borderTopLeftRadius: '0.75rem',

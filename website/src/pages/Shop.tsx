@@ -1,15 +1,30 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
-import type { Product as CartProduct } from '../store/cartStore';
-import { categories as localCategories, getDisplayProducts, getVariantCount } from '../data/products';
 import { useProducts } from '../hooks/useProducts';
 
-// Price boundaries (fallback, will be recalculated with Supabase data)
-const FALLBACK_PRODUCTS = getDisplayProducts();
+// Category filter definitions (UI constants with SVG icon paths)
+const shopCategories = [
+    { id: 'all', name: 'Todos', icon: 'M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z' },
+    { id: 'lash-lifting', name: 'Lash Lifting', icon: 'M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z M15 12a3 3 0 11-6 0 3 3 0 016 0z' },
+    { id: 'brow-henna', name: 'Brow Henna', icon: 'M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487z' },
+    { id: 'cejas', name: 'Diseño de Cejas', icon: 'M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42' },
+    { id: 'pigmentos', name: 'Pigmentos', icon: 'M4.098 19.902a3.75 3.75 0 005.304 0l6.401-6.402M6.75 21A3.75 3.75 0 013 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M6.75 21a3.75 3.75 0 003.75-3.75V8.197M6.75 21h13.125c.621 0 1.125-.504 1.125-1.125v-5.25c0-.621-.504-1.125-1.125-1.125h-4.072M10.5 8.197l2.88-2.88c.438-.439 1.15-.439 1.59 0l3.712 3.713c.44.44.44 1.152 0 1.59l-2.879 2.88M6.75 17.25h.008v.008H6.75v-.008z' },
+    { id: 'lash-curling', name: 'Lash Curling', icon: 'M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.678 48.678 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3l-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3l-3 3' },
+    { id: 'extensiones', name: 'Extensiones', icon: 'M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z' },
+    { id: 'adhesivos', name: 'Adhesivos', icon: 'M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 5.608a2.25 2.25 0 01-2.024 2.842 47.28 47.28 0 01-6.178.326 47.28 47.28 0 01-6.178-.326 2.25 2.25 0 01-2.024-2.842L5 14.5' },
+    { id: 'tratamientos', name: 'Tratamientos', icon: 'M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z' },
+    { id: 'herramientas', name: 'Herramientas', icon: 'M11.42 15.17l-5.384 5.384a2.625 2.625 0 01-3.712-3.712l5.384-5.384M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.049.58.025 1.193-.14 1.743' },
+    { id: 'accesorios', name: 'Accesorios', icon: 'M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18' },
+    { id: 'higiene', name: 'Higiene', icon: 'M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 5.608a2.25 2.25 0 01-2.024 2.842 47.28 47.28 0 01-6.178.326 47.28 47.28 0 01-6.178-.326 2.25 2.25 0 01-2.024-2.842L5 14.5' },
+    { id: 'pestanas-en-tira', name: 'Pestañas en Tira', icon: 'M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z M15 12a3 3 0 11-6 0 3 3 0 016 0z' },
+    { id: 'microblading', name: 'Microblading', icon: 'M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10' },
+];
+
+// Price boundaries
 const PRICE_MIN = 0;
-const FALLBACK_PRICE_MAX = Math.ceil(Math.max(...FALLBACK_PRODUCTS.map(p => p.price)) / 100) * 100;
+const DEFAULT_PRICE_MAX = 5000;
 
 // Sort options
 const sortOptions = [
@@ -26,32 +41,80 @@ export default function Shop() {
     const [activeCategory, setActiveCategory] = useState(searchParams.get('cat') || 'all');
     const [sortBy, setSortBy] = useState('name');
     const [searchQuery, setSearchQuery] = useState('');
-    const [products, setProducts] = useState<CartProduct[]>([]);
-    const [loading, setLoading] = useState(true);
 
     // Advanced filters
-    const [priceRange, setPriceRange] = useState<[number, number]>([PRICE_MIN, FALLBACK_PRICE_MAX]);
+    const [priceRange, setPriceRange] = useState<[number, number]>([PRICE_MIN, DEFAULT_PRICE_MAX]);
     const [showOffersOnly, setShowOffersOnly] = useState(false);
     const [showMobileFilters, setShowMobileFilters] = useState(false);
 
-    // Supabase-backed product data (merges local + cloud overrides)
-    const { displayProducts: mergedProducts, loading: supabaseLoading } = useProducts();
+    // Supabase-backed product data
+    const { products, loading } = useProducts();
+
+    // ─── SEO: dynamic title, meta description & JSON-LD ───────────
+    useEffect(() => {
+        const prevTitle = document.title;
+        document.title = 'Tienda Profesional de Cejas y Pestañas | Insumos J. Denis México';
+
+        const setMeta = (name: string, content: string) => {
+            let el = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement | null;
+            if (!el) {
+                el = document.createElement('meta');
+                el.name = name;
+                document.head.appendChild(el);
+            }
+            el.content = content;
+        };
+
+        setMeta('description', 'Compra insumos profesionales para cejas y pestañas: lash lifting, extensiones, pigmentos, adhesivos y herramientas. Calidad de laboratorio, envíos a todo México. J. Denis desde 1998.');
+        setMeta('keywords', 'insumos cejas pestañas, lash lifting profesional, extensiones de pestañas México, pigmentos microblading, adhesivos pestañas, productos belleza profesional, J Denis tienda');
+
+        // JSON-LD structured data for product listing
+        const jsonLd = document.createElement('script');
+        jsonLd.type = 'application/ld+json';
+        jsonLd.id = 'shop-jsonld';
+        jsonLd.textContent = JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'CollectionPage',
+            'name': 'Tienda Profesional J. Denis',
+            'description': 'Catálogo de insumos profesionales para cejas y pestañas con calidad de laboratorio.',
+            'url': window.location.href,
+            'provider': {
+                '@type': 'Organization',
+                'name': 'J. Denis México',
+                'foundingDate': '1998',
+                'url': window.location.origin,
+            },
+            'breadcrumb': {
+                '@type': 'BreadcrumbList',
+                'itemListElement': [
+                    { '@type': 'ListItem', 'position': 1, 'name': 'Inicio', 'item': window.location.origin },
+                    { '@type': 'ListItem', 'position': 2, 'name': 'Tienda', 'item': window.location.href },
+                ],
+            },
+        });
+        document.head.appendChild(jsonLd);
+
+        return () => {
+            document.title = prevTitle;
+            document.getElementById('shop-jsonld')?.remove();
+        };
+    }, []);
+
+    // Calculate max price once when products change (via ref to avoid re-render cascade)
+    const maxPriceRef = useRef(DEFAULT_PRICE_MAX);
+    const computedMax = useMemo(() => {
+        if (products.length === 0) return DEFAULT_PRICE_MAX;
+        const max = Math.max(...products.map(p => p.price));
+        return max > 0 ? max : DEFAULT_PRICE_MAX;
+    }, [products]);
 
     useEffect(() => {
-        // Use merged products (Supabase overrides applied to local base)
-        setProducts(mergedProducts);
-        if (!supabaseLoading) setLoading(false);
-
-        // Recalculate price range if needed
-        if (mergedProducts.length > 0) {
-            const maxPrice = Math.ceil(Math.max(...mergedProducts.map(p => p.price)) / 100) * 100;
-            setPriceRange(prev => [prev[0], Math.max(prev[1], maxPrice)]);
-        }
-    }, [mergedProducts, supabaseLoading]);
+        maxPriceRef.current = computedMax;
+    }, [computedMax]);
 
     useEffect(() => {
         const cat = searchParams.get('cat');
-        if (cat) setActiveCategory(cat);
+        if (cat) setTimeout(() => setActiveCategory(cat), 0);
     }, [searchParams]);
 
     // Products with promotions
@@ -68,15 +131,15 @@ export default function Shop() {
     const hasActiveFilters = useMemo(() => {
         return (
             priceRange[0] > PRICE_MIN ||
-            priceRange[1] < FALLBACK_PRICE_MAX ||
+            priceRange[1] < computedMax ||
             showOffersOnly ||
             searchQuery.length > 0 ||
             activeCategory !== 'all'
         );
-    }, [priceRange, showOffersOnly, searchQuery, activeCategory]);
+    }, [priceRange, showOffersOnly, searchQuery, activeCategory, computedMax]);
 
     const clearAllFilters = () => {
-        setPriceRange([PRICE_MIN, FALLBACK_PRICE_MAX]);
+        setPriceRange([PRICE_MIN, computedMax]);
         setShowOffersOnly(false);
         setSearchQuery('');
         setActiveCategory('all');
@@ -87,7 +150,7 @@ export default function Shop() {
         let result = products;
 
         if (activeCategory !== 'all') {
-            const cat = localCategories.find(c => c.id === activeCategory);
+            const cat = shopCategories.find(c => c.id === activeCategory);
             const catName = cat ? cat.name : activeCategory;
             result = result.filter(p => p.category === catName || p.category.toLowerCase() === activeCategory.toLowerCase());
         }
@@ -140,11 +203,11 @@ export default function Shop() {
     }
 
     // Active filter chips
-    const ActiveFilterChips = () => {
+    const renderActiveFilterChips = () => {
         const chips: { label: string; onRemove: () => void }[] = [];
 
         if (activeCategory !== 'all') {
-            const cat = localCategories.find(c => c.id === activeCategory);
+            const cat = shopCategories.find(c => c.id === activeCategory);
             chips.push({
                 label: `${cat?.name || activeCategory}`,
                 onRemove: () => setActiveCategory('all'),
@@ -156,10 +219,10 @@ export default function Shop() {
                 onRemove: () => setSearchQuery(''),
             });
         }
-        if (priceRange[0] > PRICE_MIN || priceRange[1] < FALLBACK_PRICE_MAX) {
+        if (priceRange[0] > PRICE_MIN || priceRange[1] < computedMax) {
             chips.push({
                 label: `$${priceRange[0]} – $${priceRange[1].toLocaleString()}`,
-                onRemove: () => setPriceRange([PRICE_MIN, FALLBACK_PRICE_MAX]),
+                onRemove: () => setPriceRange([PRICE_MIN, computedMax]),
             });
         }
         if (showOffersOnly) {
@@ -215,9 +278,9 @@ export default function Shop() {
                         <span className="inline-block px-4 py-2 bg-gold/20 border border-gold/40 text-gold text-sm font-medium mb-4">
                             Catálogo Profesional
                         </span>
-                        <h1 className="font-serif text-3xl md:text-5xl text-cream mb-4">Tienda B2B</h1>
+                        <h1 className="font-serif text-3xl md:text-5xl text-cream mb-4">Insumos Profesionales para Cejas y Pestañas</h1>
                         <p className="hidden md:block text-cream/70 max-w-xl mx-auto">
-                            Insumos de laboratorio con calidad científica para profesionales de la belleza
+                            Productos de laboratorio con calidad científica · Lash Lifting · Extensiones · Pigmentos · Envíos a todo México
                         </p>
                     </motion.div>
 
@@ -270,7 +333,7 @@ export default function Shop() {
                                         <ProductCard
                                             product={product}
                                             index={index}
-                                            variantCount={getVariantCount(product.id)}
+                                            variantCount={0}
                                         />
                                     </div>
                                 ))}
@@ -316,7 +379,7 @@ export default function Shop() {
                                         </span>
                                     )}
                                 </button>
-                                {localCategories.filter(c => c.id !== 'all').map((cat) => (
+                                {shopCategories.filter(c => c.id !== 'all').map((cat) => (
                                     <button
                                         key={cat.id}
                                         onClick={() => setActiveCategory(cat.id)}
@@ -358,7 +421,7 @@ export default function Shop() {
                                 {/* Filter button (opens panel) */}
                                 <button
                                     onClick={() => setShowMobileFilters(true)}
-                                    className={`flex items-center gap-1.5 px-3 py-2 text-sm rounded-lg border transition-all ${(priceRange[0] > PRICE_MIN || priceRange[1] < FALLBACK_PRICE_MAX)
+                                    className={`flex items-center gap-1.5 px-3 py-2 text-sm rounded-lg border transition-all ${(priceRange[0] > PRICE_MIN || priceRange[1] < computedMax)
                                         ? 'bg-gold/10 border-gold/40 text-forest'
                                         : 'bg-white border-kraft/30 text-charcoal/70 hover:border-gold/40'
                                         }`}
@@ -367,7 +430,7 @@ export default function Shop() {
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
                                     </svg>
                                     <span className="hidden sm:inline">Filtros</span>
-                                    {(priceRange[0] > PRICE_MIN || priceRange[1] < FALLBACK_PRICE_MAX) && (
+                                    {(priceRange[0] > PRICE_MIN || priceRange[1] < computedMax) && (
                                         <span className="w-2 h-2 bg-gold rounded-full" />
                                     )}
                                 </button>
@@ -376,7 +439,7 @@ export default function Shop() {
                     </div>
 
                     {/* Active filter chips */}
-                    <ActiveFilterChips />
+                    {renderActiveFilterChips()}
 
                     {/* Products Grid */}
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
@@ -385,7 +448,7 @@ export default function Shop() {
                                 key={product.id}
                                 product={product}
                                 index={index}
-                                variantCount={getVariantCount(product.id)}
+                                variantCount={0}
                             />
                         ))}
                     </div>
@@ -472,9 +535,9 @@ export default function Shop() {
                                             <input
                                                 type="number"
                                                 min={priceRange[0]}
-                                                max={FALLBACK_PRICE_MAX}
+                                                max={computedMax}
                                                 value={priceRange[1]}
-                                                onChange={(e) => setPriceRange([priceRange[0], Math.min(FALLBACK_PRICE_MAX, Number(e.target.value))])}
+                                                onChange={(e) => setPriceRange([priceRange[0], Math.min(computedMax, Number(e.target.value))])}
                                                 className="w-full pl-5 pr-2 py-2.5 border border-kraft/30 text-sm text-forest bg-cream focus:outline-none focus:border-gold rounded-lg"
                                                 placeholder="Max"
                                             />
@@ -485,14 +548,14 @@ export default function Shop() {
                                         <div
                                             className="absolute h-full bg-gradient-to-r from-gold to-gold-light rounded-full transition-all duration-300"
                                             style={{
-                                                left: `${(priceRange[0] / FALLBACK_PRICE_MAX) * 100}%`,
-                                                right: `${100 - (priceRange[1] / FALLBACK_PRICE_MAX) * 100}%`,
+                                                left: `${(priceRange[0] / computedMax) * 100}%`,
+                                                right: `${100 - (priceRange[1] / computedMax) * 100}%`,
                                             }}
                                         />
                                     </div>
                                     <div className="flex justify-between mt-1">
                                         <span className="text-[10px] text-charcoal/40">${PRICE_MIN}</span>
-                                        <span className="text-[10px] text-charcoal/40">${FALLBACK_PRICE_MAX.toLocaleString()}</span>
+                                        <span className="text-[10px] text-charcoal/40">${computedMax.toLocaleString()}</span>
                                     </div>
                                 </div>
 

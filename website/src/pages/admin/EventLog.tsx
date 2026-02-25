@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import type { ReactNode } from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { getEventLog, type EventLogEntry } from '../../lib/erp';
 
 const I = ({ d }: { d: string }) => <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d={d} /></svg>;
@@ -16,8 +16,8 @@ const TYPE_ICONS: Record<string, ReactNode> = {
 };
 
 const MODULE_COLORS: Record<string, string> = {
-    FABRICA: 'bg-amber-100 text-amber-700', ALMACEN_MP: 'bg-blue-100 text-blue-700',
-    ALMACEN_PF: 'bg-cyan-100 text-cyan-700', EJECUTIVO: 'bg-purple-100 text-purple-700',
+    FABRICA: 'bg-amber-100 text-amber-700', ALMACEN_MATERIA_PRIMA: 'bg-blue-100 text-blue-700',
+    ALMACEN_PRODUCTO_FINAL: 'bg-cyan-100 text-cyan-700', EJECUTIVO: 'bg-purple-100 text-purple-700',
     TRANSPORTE: 'bg-green-100 text-green-700',
 };
 
@@ -27,13 +27,21 @@ export default function EventLog() {
     const [typeFilter, setTypeFilter] = useState('');
     const [moduleFilter, setModuleFilter] = useState('');
 
-    useEffect(() => {
+    const fetchEvents = useCallback(() => {
         setLoading(true);
-        const filters: any = {};
+        const filters: { event_type?: string; module?: string } = {};
         if (typeFilter) filters.event_type = typeFilter;
         if (moduleFilter) filters.module = moduleFilter;
-        getEventLog(100, Object.keys(filters).length ? filters : undefined).then(setEvents).finally(() => setLoading(false));
+        getEventLog(100, Object.keys(filters).length ? filters : undefined)
+            .then(setEvents)
+            .finally(() => setLoading(false));
     }, [typeFilter, moduleFilter]);
+
+    useEffect(() => {
+        let mounted = true;
+        setTimeout(() => { if (mounted) fetchEvents(); }, 0);
+        return () => { mounted = false; };
+    }, [fetchEvents]);
 
     return (
         <div>
@@ -65,7 +73,7 @@ export default function EventLog() {
                                         <span className={`px-2 py-0.5 rounded text-xs font-medium ${MODULE_COLORS[event.module] || 'bg-gray-100 text-gray-600'}`}>{event.module}</span>
                                     </div>
                                     <div className="flex items-center gap-3 text-xs text-gray-400">
-                                        <span>{(event as any).users?.fullName || (event as any).users?.email || event.performed_by.slice(0, 8)}</span>
+                                        <span>{(((event as unknown) as Record<string, unknown>).users as Record<string, string> | undefined)?.fullName || (((event as unknown) as Record<string, unknown>).users as Record<string, string> | undefined)?.email || event.performed_by.slice(0, 8)}</span>
                                         <span>•</span>
                                         <span>{new Date(event.created_at).toLocaleString('es-MX')}</span>
                                         {event.entity_type && <><span>•</span><span>{event.entity_type}</span></>}

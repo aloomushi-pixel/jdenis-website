@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight, ZoomIn } from 'lucide-react';
 
@@ -12,17 +12,21 @@ export default function ImageGallery({ images, title, variant = 'academy' }: Ima
     const [lightboxOpen, setLightboxOpen] = useState(false);
     const [activeIndex, setActiveIndex] = useState(0);
 
+    useEffect(() => {
+        if (lightboxOpen) document.body.style.overflow = 'hidden';
+        else document.body.style.overflow = '';
+        return () => { document.body.style.overflow = ''; };
+    }, [lightboxOpen]);
+
     if (!images || images.length === 0) return null;
 
     const openLightbox = (index: number) => {
         setActiveIndex(index);
         setLightboxOpen(true);
-        document.body.style.overflow = 'hidden';
     };
 
     const closeLightbox = () => {
         setLightboxOpen(false);
-        document.body.style.overflow = '';
     };
 
     const goNext = () => setActiveIndex((prev) => (prev + 1) % images.length);

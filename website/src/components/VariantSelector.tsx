@@ -1,15 +1,23 @@
 import { motion } from 'framer-motion';
 import { useMemo } from 'react';
-import type { VariantGroup } from '../data/products';
-import { getProductById } from '../data/products';
+import type { DisplayProduct } from '../hooks/useProducts';
+
+// Local VariantGroup type (previously from data/products)
+export interface VariantGroup {
+    parentId: string;
+    parentName: string;
+    attributeNames: string[];
+    variants: { productId: string; attributes: Record<string, string> }[];
+}
 
 interface VariantSelectorProps {
     group: VariantGroup;
     currentProductId: string;
     onVariantChange: (productId: string) => void;
+    allProducts?: DisplayProduct[];
 }
 
-export default function VariantSelector({ group, currentProductId, onVariantChange }: VariantSelectorProps) {
+export default function VariantSelector({ group, currentProductId, onVariantChange, allProducts = [] }: VariantSelectorProps) {
     // Get unique values for each attribute
     const attributeOptions = useMemo(() => {
         const result: { name: string; values: { value: string; productIds: string[] }[] }[] = [];
@@ -78,7 +86,10 @@ export default function VariantSelector({ group, currentProductId, onVariantChan
 
     // Get price range for the group
     const prices = group.variants
-        .map(v => getProductById(v.productId)?.price || 0)
+        .map(v => {
+            const found = allProducts.find(p => p.id === v.productId);
+            return found?.price || 0;
+        })
         .filter(p => p > 0);
     const minPrice = Math.min(...prices);
     const maxPrice = Math.max(...prices);
@@ -93,8 +104,8 @@ export default function VariantSelector({ group, currentProductId, onVariantChan
         >
             {/* Variant group label */}
             <div className="flex items-center gap-2">
-                <span className="text-xs uppercase tracking-[0.15em] font-medium"
-                    style={{ color: '#1C50EF' }}>
+                <span className="hidden sm:flex items-center gap-1.5 text-xs font-semibold py-1 px-2 rounded-md bg-gold/10 text-forest"
+                    style={{ color: 'var(--color-forest, #17204D)' }}>
                     {group.variants.length} opciones disponibles
                 </span>
                 {hasPriceRange && (
@@ -131,15 +142,12 @@ export default function VariantSelector({ group, currentProductId, onVariantChan
                                     key={opt.value}
                                     onClick={() => handleAttributeChange(attr.name, opt.value)}
                                     disabled={!isAvailable}
-                                    className={`
-                                        px-4 py-2 text-sm font-medium rounded-lg border-2 transition-all duration-200
-                                        ${isSelected
-                                            ? 'border-[#1C50EF] bg-[#1C50EF] text-white shadow-md scale-[1.02]'
-                                            : isAvailable
-                                                ? 'border-[#1C50EF30] bg-white text-forest hover:border-[#1C50EF] hover:bg-[#1C50EF08]'
-                                                : 'border-gray-200 bg-gray-50 text-gray-300 cursor-not-allowed'
-                                        }
-                                    `}
+                                    className={`px-4 mt-2 sm:mt-0 py-2.5 sm:py-2 text-sm font-medium rounded-lg transition-all duration-200 border text-center ${isSelected
+                                        ? 'border-gold bg-gold text-forest shadow-md scale-[1.02]'
+                                        : !isAvailable
+                                            ? 'border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed hidden'
+                                            : 'border-gold/30 bg-white text-forest hover:border-gold hover:bg-gold/5'
+                                        }`}
                                 >
                                     {opt.value}
                                 </button>

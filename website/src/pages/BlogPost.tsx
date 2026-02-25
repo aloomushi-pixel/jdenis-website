@@ -1,5 +1,7 @@
+import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Clock, Share2, BookmarkPlus, Eye, Sparkles, BookOpen, AlertTriangle, CheckCircle, XCircle, FlaskConical, Droplets, Star, Zap } from 'lucide-react';
+import { ArrowLeft, Clock, Share2, BookmarkPlus, Eye, Sparkles, BookOpen, AlertTriangle, CheckCircle, XCircle, FlaskConical, Droplets, Star, Zap, Loader } from 'lucide-react';
+import { supabase, type BlogPost as BlogPostType } from '../lib/supabase';
 
 // Blog content data
 const blogContent: Record<string, {
@@ -90,7 +92,43 @@ const blogContent: Record<string, {
 
 export default function BlogPost() {
     const { slug } = useParams<{ slug: string }>();
-    const post = slug ? blogContent[slug] : null;
+    const [post, setPost] = useState<BlogPostType | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    // We get the hardcoded component content based on the slug.
+    // If it's a dynamic article without a hardcoded component, we'll render its content prop or rich text.
+    const hardcodedPost = slug ? blogContent[slug] : null;
+
+    useEffect(() => {
+        const fetchPost = async () => {
+            if (!slug) return;
+            try {
+                setLoading(true);
+                const { data, error } = await supabase
+                    .from('blog_posts')
+                    .select('*')
+                    .eq('slug', slug)
+                    .single();
+
+                if (error) throw error;
+                setPost(data);
+            } catch (err) {
+                console.error('Error fetching blog post:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchPost();
+    }, [slug]);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+                <Loader className="w-8 h-8 animate-spin text-purple-500" />
+            </div>
+        );
+    }
 
     if (!post) {
         return (
@@ -105,6 +143,8 @@ export default function BlogPost() {
         );
     }
 
+    const gradient = hardcodedPost?.gradient || 'from-purple-500 to-pink-600';
+
     return (
         <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
             {/* Header */}
@@ -116,8 +156,8 @@ export default function BlogPost() {
                     </Link>
 
                     <div className="max-w-4xl">
-                        <span className={`inline-block px-4 py-1 bg-gradient-to-r ${post.gradient} text-white text-sm font-medium rounded-full mb-4`}>
-                            {post.category}
+                        <span className={`inline-block px-4 py-1 bg-gradient-to-r ${gradient} text-white text-sm font-medium rounded-full mb-4`}>
+                            {post.categories?.[0] || 'Artículo'}
                         </span>
 
                         <h1 className="text-3xl md:text-5xl font-bold text-white mb-6 leading-tight">
@@ -127,7 +167,7 @@ export default function BlogPost() {
                         <div className="flex items-center gap-6 text-gray-400">
                             <span className="flex items-center gap-2">
                                 <Clock className="w-5 h-5" />
-                                {post.readTime} de lectura
+                                {post.published_at ? new Date(post.published_at).toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' }) : ''}
                             </span>
                             <span className="text-sm">Por el Equipo Técnico de J. Denis</span>
                         </div>
@@ -139,7 +179,9 @@ export default function BlogPost() {
             <article className="py-12 px-4">
                 <div className="container mx-auto max-w-4xl">
                     <div className="prose prose-invert prose-lg max-w-none">
-                        {post.content}
+                        {hardcodedPost ? hardcodedPost.content : (
+                            <div dangerouslySetInnerHTML={{ __html: post.content }} />
+                        )}
                     </div>
                 </div>
             </article>

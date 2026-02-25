@@ -1,175 +1,167 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { products as localProducts, getDisplayProducts } from '../data/products';
-import { getAllProductOverrides, updateProductCatalog, type ProductOverride } from '../lib/supabase';
-import type { Product } from '../store/cartStore';
+import { useState, useEffect, useCallback } from 'react';
+import { supabase, type Product as SupabaseProduct } from '../lib/supabase';
+
+// Re-export Supabase Product type for consumers
+export type { SupabaseProduct };
 
 /**
- * useProducts — Hybrid merge layer
- * 
- * Base: products.ts (images, descriptions, benefits, includes, etc.)
- * Overrides: Supabase products table (price, originalPrice, isFeatured, stock, name, category)
- * 
- * Edits flow: Editor → Supabase → Shop (on next load)
+ * Lightweight adapter: maps a Supabase product row to the shape
+ * expected by the cart store and all UI components.
  */
-
-interface UseProductsReturn {
-    /** Merged products (local base + Supabase overrides) */
-    products: Product[];
-    /** Display products (variants filtered out) */
-    displayProducts: Product[];
-    /** Loading state for initial Supabase fetch */
-    loading: boolean;
-    /** Error from Supabase fetch (products still available from local fallback) */
-    error: string | null;
-    /** Save a single product field to Supabase. Returns true on success. */
-    saveProduct: (productId: string, field: string, value: string | number | boolean | undefined) => Promise<boolean>;
-    /** Map of productId → save status ('saving' | 'saved' | 'error') */
-    saveStatus: Record<string, 'saving' | 'saved' | 'error'>;
-    /** Whether Supabase overrides have been loaded */
-    synced: boolean;
+export interface DisplayProduct {
+    id: string;
+    name: string;
+    price: number;
+    originalPrice?: number;
+    distributorPrice?: number;
+    promotion?: string;
+    image: string;
+    category: string;
+    description?: string;
+    stock?: number;
+    benefits?: string[];
+    includes?: string[];
+    performance?: string;
+    specifications?: string[];
+    gallery?: string[];
+    video?: string;
+    relatedCategories?: string[];
+    isFeatured?: boolean;
+    slug?: string;
 }
 
-// Map local field names → Supabase column names
-const fieldToColumn: Record<string, string> = {
-    name: 'name',
-    price: 'price',
-    originalPrice: 'compare_at_price',
-    isFeatured: 'is_featured',
-    stock: 'stock',
-    category: 'category',
-};
-
-function mergeProducts(locals: Product[], overrides: ProductOverride[]): Product[] {
-    // Index overrides by slug (id in local = slug in Supabase)
-    const overrideMap = new Map<string, ProductOverride>();
-    for (const o of overrides) {
-        overrideMap.set(o.slug, o);
-    }
-
-    return locals.map(local => {
-        const override = overrideMap.get(local.id);
-        if (!override) return local;
-
-        return {
-            ...local,
-            name: override.name || local.name,
-            price: Number(override.price) || local.price,
-            originalPrice: override.compare_at_price ? Number(override.compare_at_price) : local.originalPrice,
-            isFeatured: override.is_featured ?? local.isFeatured,
-            stock: override.stock ?? local.stock,
-            category: override.category || local.category,
-        };
-    });
+/** Map a Supabase row → DisplayProduct used by every UI component */
+export function toDisplayProduct(p: SupabaseProduct): DisplayProduct {
+    return {
+        id: p.id,
+        name: p.name,
+        price: p.price,
+        originalPrice: p.original_price ?? p.compare_at_price ?? undefined,
+        distributorPrice: p.distributor_price ?? undefined,
+        promotion: p.promotion ?? undefined,
+        image: p.image_url ?? '/placeholder.webp',
+        category: p.category,
+        description: p.description ?? undefined,
+        stock: p.stock ?? undefined,
+        benefits: p.benefits ?? undefined,
+        includes: p.includes ?? undefined,
+        performance: p.performance ?? undefined,
+        specifications: p.specifications ?? undefined,
+        gallery: p.gallery ?? undefined,
+        video: p.video ?? undefined,
+        relatedCategories: p.related_categories ?? undefined,
+        isFeatured: p.is_featured ?? false,
+        slug: p.slug,
+    };
 }
 
-export function useProducts(): UseProductsReturn {
-    const [overrides, setOverrides] = useState<ProductOverride[]>([]);
+/**
+ * Pure Supabase hook — fetches all active products and provides
+ * save helpers for the admin editor.
+ */
+export function useProducts() {
+    const [products, setProducts] = useState<DisplayProduct[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [saveStatus, setSaveStatus] = useState<Record<string, 'saving' | 'saved' | 'error'>>({});
     const [synced, setSynced] = useState(false);
-    const saveTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
+    const [saveStatus, setSaveStatus] = useState<Record<string, 'saving' | 'saved' | 'error'>>({});
 
-    // Fetch overrides from Supabase on mount
-    useEffect(() => {
-        let cancelled = false;
+    const fetchProducts = useCallback(async () => {
+        setLoading(true);
+        try {
+            const { data, error: fetchError } = await supabase
+                .from('products')
+                .select('*')
+                .eq('is_active', true)
+                .order('sort_order', { ascending: true });
 
-        async function fetchOverrides() {
-            try {
-                const data = await getAllProductOverrides();
-                if (!cancelled) {
-                    setOverrides(data);
-                    setSynced(true);
-                }
-            } catch (err) {
-                if (!cancelled) {
-                    console.warn('[useProducts] Supabase fetch failed, using local data:', err);
-                    setError(err instanceof Error ? err.message : 'Error loading from Supabase');
-                }
-            } finally {
-                if (!cancelled) setLoading(false);
-            }
+            if (fetchError) throw fetchError;
+
+            setProducts((data || []).map(toDisplayProduct));
+            setSynced(true);
+            setError(null);
+        } catch (err: unknown) {
+            console.error('useProducts fetch error:', err);
+            setError((err as any).message || 'Error al cargar productos');
+            setSynced(false);
+        } finally {
+            setLoading(false);
         }
-
-        fetchOverrides();
-        return () => { cancelled = true; };
     }, []);
 
-    // Merge local + overrides
-    const products = mergeProducts(localProducts, overrides);
+    useEffect(() => {
+        fetchProducts();
+    }, [fetchProducts]);
 
-    // Display products (variant-filtered) — reuse local logic but with merged data
-    const displayProducts = (() => {
-        const merged = mergeProducts(getDisplayProducts(), overrides);
-        return merged;
-    })();
+    /**
+     * Persist a single field change for a product to Supabase.
+     * Maps camelCase field names to snake_case DB columns.
+     */
+    const saveProduct = useCallback(async (productId: string, field: string, value: unknown): Promise<boolean> => {
+        // Map UI field names → Supabase column names
+        const fieldMap: Record<string, string> = {
+            name: 'name',
+            price: 'price',
+            originalPrice: 'original_price',
+            distributorPrice: 'distributor_price',
+            promotion: 'promotion',
+            isFeatured: 'is_featured',
+            stock: 'stock',
+            category: 'category',
+            description: 'description',
+            image: 'image_url',
+            benefits: 'benefits',
+            includes: 'includes',
+            performance: 'performance',
+            specifications: 'specifications',
+            gallery: 'gallery',
+            video: 'video',
+            relatedCategories: 'related_categories',
+        };
 
-    // Save a single field to Supabase
-    const saveProduct = useCallback(async (productId: string, field: string, value: string | number | boolean | undefined): Promise<boolean> => {
-        const column = fieldToColumn[field];
-        if (!column) {
-            console.warn(`[useProducts] Unknown field for Supabase sync: ${field}`);
+        const dbField = fieldMap[field];
+        if (!dbField) {
+            console.warn(`useProducts.saveProduct: unknown field "${field}"`);
             return false;
-        }
-
-        // Clear any existing "saved" timer for this product
-        if (saveTimers.current[productId]) {
-            clearTimeout(saveTimers.current[productId]);
         }
 
         setSaveStatus(prev => ({ ...prev, [productId]: 'saving' }));
 
         try {
-            const updates: Record<string, unknown> = { [column]: value ?? null };
-            const updated = await updateProductCatalog(productId, updates as Parameters<typeof updateProductCatalog>[1]);
+            const { error: updateError } = await supabase
+                .from('products')
+                .update({ [dbField]: value, updated_at: new Date().toISOString() })
+                .eq('id', productId);
 
-            // Update local overrides cache
-            setOverrides(prev => {
-                const idx = prev.findIndex(o => o.slug === productId);
-                if (idx >= 0) {
-                    const newOverrides = [...prev];
-                    newOverrides[idx] = updated;
-                    return newOverrides;
-                }
-                return [...prev, updated];
-            });
+            if (updateError) throw updateError;
+
+            // Update local state
+            setProducts(prev => prev.map(p =>
+                p.id === productId ? { ...p, [field]: value } : p
+            ));
 
             setSaveStatus(prev => ({ ...prev, [productId]: 'saved' }));
-
-            // Auto-clear "saved" status after 3 seconds
-            saveTimers.current[productId] = setTimeout(() => {
-                setSaveStatus(prev => {
-                    const next = { ...prev };
-                    delete next[productId];
-                    return next;
-                });
-            }, 3000);
+            setTimeout(() => setSaveStatus(prev => {
+                const next = { ...prev };
+                delete next[productId];
+                return next;
+            }), 3000);
 
             return true;
-        } catch (err) {
-            console.error(`[useProducts] Failed to save ${field} for ${productId}:`, err);
+        } catch (err: unknown) {
+            console.error(`useProducts.saveProduct error (${field}):`, err);
             setSaveStatus(prev => ({ ...prev, [productId]: 'error' }));
-
-            // Auto-clear error after 5 seconds
-            saveTimers.current[productId] = setTimeout(() => {
-                setSaveStatus(prev => {
-                    const next = { ...prev };
-                    delete next[productId];
-                    return next;
-                });
-            }, 5000);
-
             return false;
         }
     }, []);
 
     return {
         products,
-        displayProducts,
         loading,
         error,
         saveProduct,
         saveStatus,
         synced,
+        refetch: fetchProducts,
     };
 }

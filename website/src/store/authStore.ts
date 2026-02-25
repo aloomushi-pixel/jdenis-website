@@ -21,6 +21,8 @@ interface AuthState {
     register: (email: string, password: string, fullName: string) => Promise<void>;
     logout: () => Promise<void>;
     checkSession: () => Promise<void>;
+    resetPassword: (email: string) => Promise<void>;
+    updatePassword: (newPassword: string) => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -35,13 +37,20 @@ export const useAuthStore = create<AuthState>()(
                     set({ loading: true });
                     const { data: { session } } = await supabase.auth.getSession();
                     if (session?.user) {
+                        // Fetch the role from the public database table instead of user metadata
+                        const { data: publicUser } = await supabase
+                            .from('users')
+                            .select('role')
+                            .eq('id', session.user.id)
+                            .single();
+
                         set({
                             user: {
                                 id: session.user.id,
                                 email: session.user.email!,
                                 fullName: session.user.user_metadata.full_name || session.user.email?.split('@')[0],
                                 name: session.user.user_metadata.full_name || session.user.email?.split('@')[0],
-                                role: session.user.user_metadata.role || 'CLIENTE',
+                                role: publicUser?.role || session.user.user_metadata.role || 'CLIENTE',
                                 avatar_url: session.user.user_metadata.avatar_url
                             },
                             isAuthenticated: true
@@ -67,13 +76,20 @@ export const useAuthStore = create<AuthState>()(
                     if (error) throw error;
                     if (!data.user) throw new Error('No user returned');
 
+                    // Fetch the role from the public database table instead of user metadata
+                    const { data: publicUser } = await supabase
+                        .from('users')
+                        .select('role')
+                        .eq('id', data.user.id)
+                        .single();
+
                     set({
                         user: {
                             id: data.user.id,
                             email: data.user.email!,
                             fullName: data.user.user_metadata.full_name || email.split('@')[0],
                             name: data.user.user_metadata.full_name || email.split('@')[0],
-                            role: data.user.user_metadata.role || 'CLIENTE',
+                            role: publicUser?.role || data.user.user_metadata.role || 'CLIENTE',
                         },
                         isAuthenticated: true,
                     });
@@ -135,6 +151,20 @@ export const useAuthStore = create<AuthState>()(
                 set({ loading: true });
                 await supabase.auth.signOut();
                 set({ user: null, isAuthenticated: false, loading: false });
+            },
+
+            resetPassword: async (email: string) => {
+                const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                    redirectTo: `${window.location.origin}/restablecer-contrasena`,
+                });
+                if (error) throw error;
+            },
+
+            updatePassword: async (newPassword: string) => {
+                const { error } = await supabase.auth.updateUser({
+                    password: newPassword,
+                });
+                if (error) throw error;
             },
         }),
         {

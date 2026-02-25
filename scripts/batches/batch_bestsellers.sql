@@ -1,0 +1,1 @@
+UPDATE products SET is_featured = true WHERE slug IN ('laminado-cejas', 'jade-rizado-pestanas', 'chocolate-pigmento-cejas', 'pigmento-pestanas', 'tratamiento-alargador', 'adhesivo-supreme-g4');

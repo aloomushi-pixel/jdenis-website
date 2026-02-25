@@ -1,9 +1,141 @@
+<<<<<<< HEAD
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Volume2, VolumeX, Pause, Play } from 'lucide-react';
 import { bestsellers } from '../data/products';
 import { getReels, type SocialReel } from '../lib/supabase';
+=======
+import { motion, AnimatePresence, useInView } from 'framer-motion';
+import { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
+import { getFeaturedProducts, getReels, type SocialReel, type Product } from '../lib/supabase';
+import GoogleReviews from '../components/GoogleReviews';
+
+const platformStyles: Record<string, { gradient: string; icon: React.ReactNode; label: string }> = {
+    youtube: { gradient: 'from-red-600 to-red-800', icon: <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>, label: 'YouTube' },
+    tiktok: { gradient: 'from-[#00f2ea] via-[#ff0050] to-[#7c3aed]', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z" /></svg>, label: 'TikTok' },
+    instagram: { gradient: 'from-[#f09433] via-[#e6683c] to-[#bc1888]', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" /><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z" /></svg>, label: 'Instagram' },
+};
+
+function getThumbnailUrl(reel: SocialReel, thumbs: Record<string, string>): string | null {
+    if (reel.thumbnail_url) return reel.thumbnail_url;
+    if (thumbs[reel.id]) return thumbs[reel.id];
+    if (reel.platform === 'youtube') {
+        const match = reel.url.match(/(?:shorts\/|watch\?v=|youtu\.be\/)([\w-]{11})/);
+        if (match) return `https://img.youtube.com/vi/${match[1]}/hqdefault.jpg`;
+    }
+    return null;
+}
+
+function ReelCard({
+    reel,
+    thumb,
+    isReelsInView,
+    isReelPaused,
+    onNextReel,
+    currentReelIndex
+}: {
+    reel: SocialReel;
+    thumb: string | null;
+    isReelsInView: boolean;
+    isReelPaused: boolean;
+    onNextReel: () => void;
+    currentReelIndex: number;
+}) {
+    const videoRef = useRef<HTMLVideoElement>(null);
+    const style = platformStyles[reel.platform] || platformStyles.instagram;
+
+    useEffect(() => {
+        const video = videoRef.current;
+        if (!video) return;
+
+        if (isReelsInView && !isReelPaused) {
+            const playPromise = video.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(() => { });
+            }
+        } else {
+            video.pause();
+        }
+    }, [isReelsInView, isReelPaused]);
+
+    return (
+        <motion.div
+            key={reel.id}
+            initial={{ opacity: 0, scale: 0.9, rotateY: -15 }}
+            animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+            exit={{ opacity: 0, scale: 0.9, rotateY: 15 }}
+            transition={{ duration: 0.5, ease: 'easeInOut' }}
+            className="group absolute inset-0"
+            onClick={(e) => {
+                if (reel.video_url) {
+                    const video = e.currentTarget.querySelector('video');
+                    if (video) {
+                        video.muted = !video.muted;
+                    }
+                } else {
+                    window.open(reel.url, '_blank');
+                }
+            }}
+        >
+            <div className={`relative w-full h-full rounded-2xl overflow-hidden bg-gradient-to-br ${style.gradient} shadow-2xl ring-2 ring-gold/30 cursor-pointer`}>
+                {reel.video_url ? (
+                    <video
+                        ref={videoRef}
+                        src={reel.video_url}
+                        muted
+                        playsInline
+                        onEnded={onNextReel}
+                        className="reel-video absolute inset-0 w-full h-full object-cover"
+                    />
+                ) : (
+                    <>
+                        {thumb && (
+                            <img
+                                src={thumb}
+                                alt={reel.title}
+                                className="absolute inset-0 w-full h-full object-cover"
+                                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                            />
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-black/20" />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30 group-hover:bg-white/30 group-hover:scale-110 transition-all duration-300 text-white">
+                                {style.icon}
+                            </div>
+                        </div>
+                    </>
+                )}
+
+                <div className="absolute top-3 left-3">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold text-white bg-black/40 backdrop-blur-sm">
+                        <span className="w-3 h-3">{style.icon}</span> {style.label}
+                    </span>
+                </div>
+
+                <div className="absolute bottom-0 left-0 right-0 p-4">
+                    <p className="text-white text-sm font-medium leading-snug line-clamp-2">
+                        {reel.title}
+                    </p>
+                </div>
+
+                {!reel.video_url && (
+                    <div className="absolute top-0 left-0 right-0 h-1 bg-white/10">
+                        <motion.div
+                            className="h-full bg-gold"
+                            initial={{ width: '0%' }}
+                            animate={{ width: isReelPaused ? undefined : '100%' }}
+                            transition={{ duration: 5, ease: 'linear' }}
+                            key={`progress-${currentReelIndex}`}
+                        />
+                    </div>
+                )}
+            </div>
+        </motion.div>
+    );
+}
+>>>>>>> 24bd2a2
 
 export default function Home() {
     const [reels, setReels] = useState<SocialReel[]>([]);
@@ -15,6 +147,12 @@ export default function Home() {
     const [isReelsSectionVisible, setIsReelsSectionVisible] = useState(false);
 
     const videoRef = useRef<HTMLVideoElement>(null);
+
+    const reelsRef = useRef<HTMLDivElement>(null);
+    const isReelsInView = useInView(reelsRef, { amount: 0.3 });
+
+    // Bestsellers from Supabase
+    const [bestsellers, setBestsellers] = useState<Product[]>([]);
 
     // Favorites carousel state
     const [favSlide, setFavSlide] = useState(0);
@@ -32,6 +170,7 @@ export default function Home() {
 
     useEffect(() => {
         getReels(true).then(setReels).catch(console.error);
+        getFeaturedProducts(12).then(setBestsellers).catch(console.error);
     }, []);
 
     // Fetch oEmbed thumbnails for TikTok/Instagram reels
@@ -63,6 +202,7 @@ export default function Home() {
         fetchThumbs();
     }, [reels]);
 
+<<<<<<< HEAD
     // Observer para la sección de Reels
     useEffect(() => {
         const observer = new IntersectionObserver(
@@ -96,28 +236,28 @@ export default function Home() {
         if (currentHasVideo) return; // Si tiene video, el onEnded se encarga
 
         if (isReelHovered) return;
+=======
+    // Auto-rotate reels every 5 seconds (only for external link reels)
+    useEffect(() => {
+        if (reels.length <= 1 || isReelPaused || !isReelsInView) return;
+
+        const currentHasVideo = reels[currentReel]?.video_url;
+        if (currentHasVideo) return; // Wait for onEnded event of the video
+>>>>>>> 24bd2a2
 
         const timer = setInterval(() => {
             setCurrentReel(prev => (prev + 1) % reels.length);
-        }, 3000);
+        }, 5000);
         return () => clearInterval(timer);
+<<<<<<< HEAD
     }, [reels.length, isReelHovered, currentReel, reels]);
+=======
+    }, [reels.length, isReelPaused, isReelsInView, currentReel, reels]);
 
-    const platformStyles: Record<string, { gradient: string; icon: React.ReactNode; label: string }> = {
-        youtube: { gradient: 'from-red-600 to-red-800', icon: <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>, label: 'YouTube' },
-        tiktok: { gradient: 'from-[#00f2ea] via-[#ff0050] to-[#7c3aed]', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z" /></svg>, label: 'TikTok' },
-        instagram: { gradient: 'from-[#f09433] via-[#e6683c] to-[#bc1888]', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" /><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z" /></svg>, label: 'Instagram' },
-    };
+    // Removed top-level querySelectorAll video playback effect; handled in ReelCard component now.
+>>>>>>> 24bd2a2
 
-    function getThumbnailUrl(reel: SocialReel): string | null {
-        if (reel.thumbnail_url) return reel.thumbnail_url;
-        if (thumbs[reel.id]) return thumbs[reel.id];
-        if (reel.platform === 'youtube') {
-            const match = reel.url.match(/(?:shorts\/|watch\?v=|youtu\.be\/)([\w-]{11})/);
-            if (match) return `https://img.youtube.com/vi/${match[1]}/hqdefault.jpg`;
-        }
-        return null;
-    }
+
 
     return (
         <div className="min-h-screen bg-cream">
@@ -269,6 +409,11 @@ export default function Home() {
                                 >
                                     {(() => {
                                         const product = bestsellers[favSlide];
+                                        if (!product) return (
+                                            <div className="max-w-4xl mx-auto bg-white/50 animate-pulse rounded-lg h-[420px] flex items-center justify-center">
+                                                <p className="text-charcoal/40 text-sm">Cargando favoritos…</p>
+                                            </div>
+                                        );
                                         const rankLabels = [
                                             '#1 Más Vendido',
                                             '#2 Top Favorito',
@@ -286,7 +431,7 @@ export default function Home() {
                                                     {/* Image side */}
                                                     <div className="relative overflow-hidden bg-cream-dark aspect-square md:aspect-auto md:min-h-[420px]">
                                                         <img
-                                                            src={product.image}
+                                                            src={product.image_url || '/placeholder.webp'}
                                                             alt={product.name}
                                                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                                         />
@@ -446,7 +591,11 @@ export default function Home() {
 
             {/* REELS & TIKTOKS GALLERY */}
             {reels.length > 0 && (
+<<<<<<< HEAD
                 <section id="reels-section" className="py-20 relative overflow-hidden bg-forest">
+=======
+                <section ref={reelsRef} className="py-20 relative overflow-hidden bg-forest">
+>>>>>>> 24bd2a2
                     {/* Dynamic glow overlay */}
                     <div className="absolute inset-0 opacity-30">
                         <div className="absolute top-0 left-1/4 w-80 h-80 bg-gold/40 rounded-full blur-3xl" />
@@ -484,9 +633,9 @@ export default function Home() {
                                 <AnimatePresence mode="wait">
                                     {reels.length > 0 && (() => {
                                         const reel = reels[currentReel];
-                                        const style = platformStyles[reel.platform] || platformStyles.instagram;
-                                        const thumb = getThumbnailUrl(reel);
+                                        const thumb = getThumbnailUrl(reel, thumbs);
                                         return (
+<<<<<<< HEAD
                                             <motion.div
                                                 key={reel.id}
                                                 initial={{ opacity: 0, scale: 0.9, rotateY: -15 }}
@@ -574,6 +723,21 @@ export default function Home() {
                                                     )}
                                                 </div>
                                             </motion.div>
+=======
+                                            <ReelCard
+                                                key={reel.id}
+                                                reel={reel}
+                                                thumb={thumb}
+                                                isReelsInView={isReelsInView}
+                                                isReelPaused={isReelPaused}
+                                                currentReelIndex={currentReel}
+                                                onNextReel={() => {
+                                                    if (!isReelPaused) {
+                                                        setCurrentReel(prev => (prev + 1) % reels.length);
+                                                    }
+                                                }}
+                                            />
+>>>>>>> 24bd2a2
                                         );
                                     })()}
                                 </AnimatePresence>
@@ -603,70 +767,8 @@ export default function Home() {
                 </section>
             )}
 
-            {/* TESTIMONIALS - CREAM SECTION */}
-            <section className="section section-cream">
-                <div className="container-luxury">
-                    <div className="section-header">
-                        <span className="section-badge">Testimonios</span>
-                        <h2 className="section-title">Lo que Dicen Nuestras Profesionales</h2>
-                        <p className="section-subtitle">
-                            Miles de especialistas confían en J. Denis
-                        </p>
-                    </div>
-
-                    <div className="grid md:grid-cols-3 gap-8">
-                        {[
-                            {
-                                name: 'María González',
-                                role: 'Lashista Certificada, Monterrey',
-                                text: 'Los productos J. Denis me han permitido ofrecer resultados que mis clientas aman. La calidad es incomparable.',
-                                avatar: 'https://ui-avatars.com/api/?name=Maria+Gonzalez&background=17204D&color=ffffff&size=128&bold=true&font-size=0.4'
-                            },
-                            {
-                                name: 'Ana Martínez',
-                                role: 'Dueña de Salón, CDMX',
-                                text: 'Después de tomar el curso con la Maestra Gaby, mi técnica mejoró al 100%. Los kits son todo lo que necesitas.',
-                                avatar: 'https://ui-avatars.com/api/?name=Ana+Martinez&background=1E2B5E&color=ffffff&size=128&bold=true&font-size=0.4'
-                            },
-                            {
-                                name: 'Lucía Hernández',
-                                role: 'Microblader Profesional, Guadalajara',
-                                text: 'El Compass Silver Ratio revolucionó mi trabajo. Precisión perfecta en cada diseño de ceja.',
-                                avatar: 'https://ui-avatars.com/api/?name=Lucia+Hernandez&background=1C50EF&color=ffffff&size=128&bold=true&font-size=0.4'
-                            },
-                        ].map((testimonial, i) => (
-                            <motion.div
-                                key={i}
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: i * 0.1 }}
-                                className="testimonial-card"
-                            >
-                                <div className="flex gap-1 mb-4">
-                                    {[1, 2, 3, 4, 5].map(star => (
-                                        <svg key={star} className="w-4 h-4 text-gold fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
-                                    ))}
-                                </div>
-                                <p className="text-charcoal/70 italic mb-6 leading-relaxed">
-                                    "{testimonial.text}"
-                                </p>
-                                <div className="flex items-center gap-4">
-                                    <img
-                                        src={testimonial.avatar}
-                                        alt={testimonial.name}
-                                        className="w-12 h-12 object-cover border-2 border-gold/30"
-                                    />
-                                    <div>
-                                        <p className="font-medium text-forest">{testimonial.name}</p>
-                                        <p className="text-sm text-charcoal/50">{testimonial.role}</p>
-                                    </div>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </div>
-                </div>
-            </section>
+            {/* GOOGLE REVIEWS */}
+            <GoogleReviews />
 
             {/* CTA FINAL - DYNAMIC SECTION */}
             <section className="py-20 relative overflow-hidden bg-forest">

@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase';
 export interface VariantGroupDB {
     id: string;
     name: string;
-    attribute_names: string[]; // Start here
+    attribute_names: string[];
     created_at?: string;
 }
 
@@ -25,6 +25,7 @@ export function useVariants() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
+    // Core fetch function — always runs when called (no stale guard)
     const fetchGroups = useCallback(async () => {
         setLoading(true);
         try {
@@ -51,14 +52,15 @@ export function useVariants() {
 
             setGroups(merged);
             setError(null);
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Error fetching variants:', err);
-            setError(err.message);
+            setError((err as any).message || 'Error al cargar variantes');
         } finally {
             setLoading(false);
         }
     }, []);
 
+    // Initial fetch on mount
     useEffect(() => {
         fetchGroups();
     }, [fetchGroups]);
@@ -72,11 +74,11 @@ export function useVariants() {
                 .single();
 
             if (error) throw error;
-            await fetchGroups(); // Refresh
+            await fetchGroups(); // Refresh list
             return data;
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Error creating group:', err);
-            throw err;
+            throw err; // Re-throw so VariantManager can show toast
         }
     };
 
@@ -88,8 +90,9 @@ export function useVariants() {
                 .eq('id', id);
 
             if (error) throw error;
+            // Optimistic removal + refresh
             setGroups(prev => prev.filter(g => g.id !== id));
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Error deleting group:', err);
             throw err;
         }
@@ -104,9 +107,9 @@ export function useVariants() {
                 .single();
 
             if (error) throw error;
-            await fetchGroups(); // Refresh
+            await fetchGroups(); // Refresh list
             return data;
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Error adding variant:', err);
             throw err;
         }
@@ -120,8 +123,8 @@ export function useVariants() {
                 .eq('id', variantId);
 
             if (error) throw error;
-            await fetchGroups(); // Refresh
-        } catch (err: any) {
+            await fetchGroups(); // Refresh list
+        } catch (err: unknown) {
             console.error('Error removing variant:', err);
             throw err;
         }

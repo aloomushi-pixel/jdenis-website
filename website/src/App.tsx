@@ -23,6 +23,9 @@ import BlogManager from './pages/admin/BlogManager';
 import ReelsManager from './pages/admin/ReelsManager';
 
 import ProductEditor from './pages/admin/ProductEditor';
+import CartPromoSettings from './pages/admin/CartPromoSettings';
+import WarehouseQueue from './pages/admin/WarehouseQueue';
+import DistributorRequests from './pages/admin/DistributorRequests';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
 import NewsPost from './pages/NewsPost';
@@ -34,6 +37,7 @@ import ProductDetail from './pages/ProductDetail';
 import RegistroDistribuidor from './pages/RegistroDistribuidor';
 import Shop from './pages/Shop';
 import PaymentResult from './pages/PaymentResult';
+import ResetPassword from './pages/ResetPassword';
 import AvisoPrivacidad from './pages/AvisoPrivacidad';
 import { useAuthStore } from './store/authStore';
 
@@ -78,6 +82,7 @@ function App() {
             <Route path="/registro-distribuidor" element={<RegistroDistribuidor />} />
             <Route path="/aviso-de-privacidad" element={<AvisoPrivacidad />} />
             <Route path="/pago-resultado" element={<PaymentResult />} />
+            <Route path="/restablecer-contrasena" element={<ResetPassword />} />
 
             {/* Admin / ERP Routes */}
             <Route path="/admin" element={<AdminLayout />}>
@@ -98,6 +103,9 @@ function App() {
               <Route path="reels" element={<ReelsManager />} />
 
               <Route path="catalog" element={<ProductEditor />} />
+              <Route path="cart-promos" element={<CartPromoSettings />} />
+              <Route path="warehouse-queue" element={<WarehouseQueue />} />
+              <Route path="distributors" element={<DistributorRequests />} />
             </Route>
           </Routes>
         </main>
