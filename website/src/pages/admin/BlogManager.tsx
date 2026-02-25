@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { Plus, Edit2, Trash2, Loader, X, Save, Eye, EyeOff, Newspaper } from 'lucide-react';
-import { getBlogPosts, createBlogPost, updateBlogPost, deleteBlogPost, getNewsPosts, createNewsPost, updateNewsPost, deleteNewsPost, type BlogPost } from '../../lib/supabase';
+import { Plus, Edit2, Trash2, Loader, X, Save, Eye, EyeOff, Newspaper, Star } from 'lucide-react';
+import { getBlogPosts, createBlogPost, updateBlogPost, deleteBlogPost, getNewsPosts, createNewsPost, updateNewsPost, deleteNewsPost, toggleFeatureBlogPost, type BlogPost } from '../../lib/supabase';
 
-type TabType = 'blog' | 'noticias';
+type TabType = 'blog' | 'noticias' | 'destacados';
 
 export default function BlogManager() {
     const [activeTab, setActiveTab] = useState<TabType>('blog');
@@ -56,6 +56,16 @@ export default function BlogManager() {
         }
     };
 
+    const handleToggleFeatured = async (id: string, currentFeatured: boolean) => {
+        try {
+            await toggleFeatureBlogPost(id, !currentFeatured);
+            await loadAll();
+        } catch (error) {
+            console.error('Error toggling feature status:', error);
+            alert('Error al actualizar el estado de destacado');
+        }
+    };
+
     const openForm = (post: BlogPost | null = null) => {
         setEditing(post);
         setShowForm(true);
@@ -69,7 +79,7 @@ export default function BlogManager() {
         );
     }
 
-    const currentItems = activeTab === 'blog' ? posts : newsPosts;
+    const currentItems = activeTab === 'blog' ? posts : (activeTab === 'noticias' ? newsPosts : [...posts, ...newsPosts].filter(p => p.published));
     const handleDelete = activeTab === 'blog' ? handleDeleteBlog : handleDeleteNews;
 
     return (
@@ -79,8 +89,8 @@ export default function BlogManager() {
                 <button
                     onClick={() => setActiveTab('blog')}
                     className={`flex items-center gap-2 pb-3 px-1 text-sm font-semibold border-b-2 transition-colors ${activeTab === 'blog'
-                            ? 'border-indigo-600 text-indigo-600'
-                            : 'border-transparent text-gray-500 hover:text-gray-700'
+                        ? 'border-indigo-600 text-indigo-600'
+                        : 'border-transparent text-gray-500 hover:text-gray-700'
                         }`}
                 >
                     <Edit2 className="w-4 h-4" />
@@ -89,27 +99,39 @@ export default function BlogManager() {
                 <button
                     onClick={() => setActiveTab('noticias')}
                     className={`flex items-center gap-2 pb-3 px-1 text-sm font-semibold border-b-2 transition-colors ${activeTab === 'noticias'
-                            ? 'border-indigo-600 text-indigo-600'
-                            : 'border-transparent text-gray-500 hover:text-gray-700'
+                        ? 'border-indigo-600 text-indigo-600'
+                        : 'border-transparent text-gray-500 hover:text-gray-700'
                         }`}
                 >
                     <Newspaper className="w-4 h-4" />
                     📰 Noticias
+                </button>
+                <button
+                    onClick={() => setActiveTab('destacados')}
+                    className={`flex items-center gap-2 pb-3 px-1 text-sm font-semibold border-b-2 transition-colors ${activeTab === 'destacados'
+                        ? 'border-indigo-600 text-indigo-600'
+                        : 'border-transparent text-gray-500 hover:text-gray-700'
+                        }`}
+                >
+                    <Star className="w-4 h-4" />
+                    ⭐ Destacados
                 </button>
             </div>
 
             {/* Header */}
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-bold text-gray-800">
-                    {activeTab === 'blog' ? '📝 Gestión de Blog' : '📰 Gestión de Noticias'}
+                    {activeTab === 'blog' ? '📝 Gestión de Blog' : (activeTab === 'noticias' ? '📰 Gestión de Noticias' : '⭐ Artículos Destacados')}
                 </h1>
-                <button
-                    onClick={() => openForm(null)}
-                    className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
-                >
-                    <Plus className="w-4 h-4" />
-                    {activeTab === 'blog' ? 'Nuevo Post' : 'Nueva Noticia'}
-                </button>
+                {activeTab !== 'destacados' && (
+                    <button
+                        onClick={() => openForm(null)}
+                        className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+                    >
+                        <Plus className="w-4 h-4" />
+                        {activeTab === 'blog' ? 'Nuevo Post' : 'Nueva Noticia'}
+                    </button>
+                )}
             </div>
 
             {/* Table */}
@@ -133,9 +155,17 @@ export default function BlogManager() {
                         {currentItems.map((post) => (
                             <tr key={post.id} className="hover:bg-gray-50">
                                 <td className="px-6 py-4">
-                                    <div className="text-sm font-medium text-gray-900">{post.title}</div>
+                                    <div className="text-sm font-medium text-gray-900 flex items-center gap-2">
+                                        {post.title}
+                                        {activeTab === 'destacados' && post.post_type === 'news' && (
+                                            <span className="px-2 py-0.5 text-[10px] rounded-full bg-blue-100 text-blue-700 font-bold uppercase">Noticia</span>
+                                        )}
+                                        {activeTab === 'destacados' && post.post_type === 'article' && (
+                                            <span className="px-2 py-0.5 text-[10px] rounded-full bg-gray-100 text-gray-700 font-bold uppercase">Blog</span>
+                                        )}
+                                    </div>
                                     <div className="text-sm text-gray-500 truncate max-w-md">
-                                        {activeTab === 'blog' ? post.subtitle : post.excerpt}
+                                        {post.post_type === 'article' ? post.subtitle : post.excerpt}
                                     </div>
                                 </td>
                                 {activeTab === 'noticias' && (
@@ -148,7 +178,7 @@ export default function BlogManager() {
                                     </td>
                                 )}
                                 <td className="px-6 py-4 text-sm text-gray-900">
-                                    {activeTab === 'blog' ? post.author : (
+                                    {post.post_type === 'article' ? post.author : (
                                         post.featured_image ? (
                                             <img src={post.featured_image} alt="" className="w-12 h-12 object-cover rounded" />
                                         ) : <span className="text-gray-400">—</span>
@@ -163,12 +193,24 @@ export default function BlogManager() {
                                     {post.published_at ? new Date(post.published_at).toLocaleDateString() : '-'}
                                 </td>
                                 <td className="px-6 py-4 text-right text-sm font-medium">
-                                    <button onClick={() => openForm(post)} className="text-indigo-600 hover:text-indigo-900 mr-4">
-                                        <Edit2 className="w-4 h-4" />
-                                    </button>
-                                    <button onClick={() => handleDelete(post.id)} className="text-red-600 hover:text-red-900">
-                                        <Trash2 className="w-4 h-4" />
-                                    </button>
+                                    {activeTab === 'destacados' ? (
+                                        <button
+                                            onClick={() => handleToggleFeatured(post.id, !!post.is_featured)}
+                                            className={`transition-colors ${post.is_featured ? 'text-amber-400 hover:text-amber-500' : 'text-gray-300 hover:text-gray-400'}`}
+                                            title={post.is_featured ? "Quitar de destacados" : "Marcar como destacado"}
+                                        >
+                                            <Star className="w-5 h-5" fill={post.is_featured ? "currentColor" : "none"} />
+                                        </button>
+                                    ) : (
+                                        <>
+                                            <button onClick={() => openForm(post)} className="text-indigo-600 hover:text-indigo-900 mr-4">
+                                                <Edit2 className="w-4 h-4" />
+                                            </button>
+                                            <button onClick={() => handleDelete(post.id)} className="text-red-600 hover:text-red-900">
+                                                <Trash2 className="w-4 h-4" />
+                                            </button>
+                                        </>
+                                    )}
                                 </td>
                             </tr>
                         ))}
@@ -179,7 +221,7 @@ export default function BlogManager() {
                     <div className="text-center py-12 text-gray-500">
                         {activeTab === 'blog'
                             ? 'No hay posts aún. ¡Crea el primero!'
-                            : 'No hay noticias aún. ¡Crea la primera!'}
+                            : (activeTab === 'noticias' ? 'No hay noticias aún. ¡Crea la primera!' : 'No hay artículos publicados aún para destacar.')}
                     </div>
                 )}
             </div>

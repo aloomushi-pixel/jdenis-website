@@ -1430,3 +1430,13 @@ export async function queueOrderForShipping(orderId: string, date: string) {
     if (error) throw error;
     return data;
 }
+
+// Helper to toggle featured status for any blog post or news
+export async function toggleFeatureBlogPost(id: string, is_featured: boolean): Promise<void> {
+    const { error } = await supabase
+        .from('blog_posts')
+        .update({ is_featured })
+        .eq('id', id);
+
+    if (error) throw error;
+}

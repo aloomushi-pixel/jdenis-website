@@ -39,8 +39,9 @@ export default function Blog() {
     };
 
     const filteredArticles = blogArticles.filter(filterArticle);
-    // Since featured isn't in BlogPost currently we will just show the latest 2 as featured if possible
-    const filteredFeatured = blogArticles.slice(0, 2).filter(filterArticle);
+    const filteredFeatured = [...blogArticles, ...newsItems]
+        .filter(a => a.is_featured)
+        .filter(filterArticle);
     const hasActiveFilters = searchTerm !== '' || activeCategory !== null;
 
     // Extract unique categories dynamically
@@ -201,7 +202,7 @@ export default function Blog() {
                             {filteredFeatured.map((article) => (
                                 <Link
                                     key={article.id}
-                                    to={`/blog/${article.id}`}
+                                    to={article.post_type === 'news' ? `/noticias/${article.slug}` : `/blog/${article.slug}`}
                                     className="group relative overflow-hidden bg-white border border-kraft/30 hover:border-gold/50 transition-all duration-500"
                                 >
                                     <div className="absolute inset-0 bg-gradient-to-br from-forest/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -212,7 +213,9 @@ export default function Blog() {
                                                 <FileText className="w-6 h-6" />
                                             </div>
                                             <div>
-                                                <span className="text-sm text-gold font-medium">{article.categories?.[0] || 'Artículo'}</span>
+                                                <span className="text-sm text-gold font-medium">
+                                                    {article.post_type === 'news' ? (article.tag || 'Noticia') : (article.categories?.[0] || 'Artículo')}
+                                                </span>
                                                 <div className="flex items-center gap-2 text-charcoal/50 text-sm">
                                                     <Clock className="w-4 h-4" />
                                                     {article.published_at ? new Date(article.published_at).toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' }) : ''}

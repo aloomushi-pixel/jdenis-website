@@ -16,8 +16,8 @@ const TYPE_ICONS: Record<string, ReactNode> = {
 };
 
 const MODULE_COLORS: Record<string, string> = {
-    FABRICA: 'bg-amber-100 text-amber-700', ALMACEN_MP: 'bg-blue-100 text-blue-700',
-    ALMACEN_PF: 'bg-cyan-100 text-cyan-700', EJECUTIVO: 'bg-purple-100 text-purple-700',
+    FABRICA: 'bg-amber-100 text-amber-700', ALMACEN_MATERIA_PRIMA: 'bg-blue-100 text-blue-700',
+    ALMACEN_PRODUCTO_FINAL: 'bg-cyan-100 text-cyan-700', EJECUTIVO: 'bg-purple-100 text-purple-700',
     TRANSPORTE: 'bg-green-100 text-green-700',
 };
 
