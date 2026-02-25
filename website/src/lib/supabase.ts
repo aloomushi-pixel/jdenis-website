@@ -823,6 +823,7 @@ export interface SocialReel {
     url: string;
     platform: 'youtube' | 'tiktok' | 'instagram';
     thumbnail_url: string | null;
+    video_url?: string | null;
     sort_order: number;
     active: boolean;
     created_at: string;
