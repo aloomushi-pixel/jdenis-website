@@ -90,6 +90,11 @@ function ReelCard({
                                 if (el) {
                                     el.loop = false;
                                     el.removeAttribute('loop');
+                                    // Aggressively enforce muted for strict production autoplay policies
+                                    el.muted = isMuted;
+                                    el.defaultMuted = true;
+                                    if (isMuted) el.setAttribute('muted', '');
+
                                     el.onended = () => {
                                         if (!el.dataset.ended) {
                                             el.dataset.ended = "true";
