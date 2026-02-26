@@ -63,8 +63,8 @@ function ReelCard({
                     }
                 });
             }
-        } else {
-            // Only pause if it's currently playing or trying to play
+        } else if (isManualPaused) {
+            // Only pause if the user explicitly requested it
             if (playPromise !== undefined) {
                 playPromise.then(() => {
                     video.pause();
@@ -75,7 +75,7 @@ function ReelCard({
                 video.pause();
             }
         }
-    }, [isReelsInView, isManualPaused, currentReelIndex]);
+    }, [isReelsInView, isManualPaused, currentReelIndex, isMuted]);
 
     return (
         <motion.div
@@ -203,6 +203,23 @@ export default function Home() {
 
     // Bestsellers from Supabase
     const [bestsellers, setBestsellers] = useState<Product[]>([]);
+
+    // Safari/Production Autoplay MEI (Media Engagement Index) Global Override
+    // This monkey-patches the play method globally so the browser always sees "muted=true"
+    // before evaluating its internal strict autoplay policies.
+    useEffect(() => {
+        const originalPlay = HTMLVideoElement.prototype.play;
+        HTMLVideoElement.prototype.play = function () {
+            this.muted = true;
+            this.defaultMuted = true;
+            this.setAttribute('muted', '');
+            this.setAttribute('playsinline', '');
+            return originalPlay.apply(this, arguments as any);
+        };
+        return () => {
+            HTMLVideoElement.prototype.play = originalPlay;
+        };
+    }, []);
 
     // Favorites carousel state
     const [favSlide, setFavSlide] = useState(0);
