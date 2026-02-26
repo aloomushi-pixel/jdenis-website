@@ -48,6 +48,13 @@ function ReelCard({
         let playPromise: Promise<void> | undefined;
 
         if (isReelsInView && !isManualPaused) {
+            // Extreme Autoplay Bypasses for strict Production Environments
+            video.muted = isMuted;
+            video.defaultMuted = true;
+            if (isMuted) {
+                video.setAttribute('muted', '');
+            }
+
             playPromise = video.play();
             if (playPromise !== undefined) {
                 playPromise.catch((e) => {
@@ -108,6 +115,7 @@ function ReelCard({
                             muted={isMuted}
                             autoPlay
                             loop={false}
+                            crossOrigin="anonymous"
                             onTimeUpdate={(e) => {
                                 const v = e.currentTarget;
                                 // Limit reels to either their actual duration or 15 seconds max
