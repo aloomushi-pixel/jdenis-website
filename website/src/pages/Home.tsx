@@ -45,24 +45,30 @@ function ReelCard({
         const video = videoRef.current;
         if (!video) return;
 
-        if (isReelsInView && !isReelPaused && !isManualPaused) {
-            // Reset to beginning if needed and play
-            const playPromise = video.play();
+        let playPromise: Promise<void> | undefined;
+
+        if (isReelsInView && !isManualPaused) {
+            playPromise = video.play();
             if (playPromise !== undefined) {
                 playPromise.catch((e) => {
-                    console.log("Autoplay prevented:", e);
+                    if (e.name !== 'AbortError') {
+                        console.log("Autoplay prevented:", e.message);
+                    }
                 });
             }
         } else {
-            video.pause();
+            // Only pause if it's currently playing or trying to play
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    video.pause();
+                }).catch(() => {
+                    video.pause();
+                });
+            } else {
+                video.pause();
+            }
         }
-    }, [isReelsInView, isReelPaused, isManualPaused, currentReelIndex]);
-
-    useEffect(() => {
-        if (videoRef.current) {
-            videoRef.current.muted = isMuted;
-        }
-    }, [isMuted]);
+    }, [isReelsInView, isManualPaused, currentReelIndex]);
 
     return (
         <motion.div
@@ -77,13 +83,38 @@ function ReelCard({
                 {reel.video_url ? (
                     <>
                         <video
-                            ref={videoRef}
+                            key={`video-${reel.id}-${currentReelIndex}`}
+                            ref={(el) => {
+                                // Assign to ref and strictly fix loop property on mount
+                                (videoRef as any).current = el;
+                                if (el) {
+                                    el.loop = false;
+                                    el.removeAttribute('loop');
+                                    el.onended = () => {
+                                        if (!el.dataset.ended) {
+                                            el.dataset.ended = "true";
+                                            onNextReel();
+                                        }
+                                    };
+                                }
+                            }}
                             src={reel.video_url}
                             playsInline
-                            muted
+                            muted={isMuted}
                             autoPlay
                             loop={false}
-                            onEnded={onNextReel}
+                            onTimeUpdate={(e) => {
+                                const v = e.currentTarget;
+                                // Limit reels to either their actual duration or 15 seconds max
+                                const actualDuration = v.duration || 15;
+                                const maxAllowed = Math.min(actualDuration, 15);
+
+                                if (v.currentTime >= maxAllowed - 0.2 && !v.dataset.ended) {
+                                    v.dataset.ended = "true";
+                                    v.pause();
+                                    onNextReel();
+                                }
+                            }}
                             className="reel-video absolute inset-0 w-full h-full object-cover"
                         />
                         <div className="absolute top-4 right-4 flex flex-col gap-3 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -155,7 +186,7 @@ export default function Home() {
     const [isReelPaused, setIsReelPaused] = useState(false);
 
     const reelsRef = useRef<HTMLDivElement>(null);
-    const isReelsInView = useInView(reelsRef, { amount: 0.3 });
+    const isReelsInView = useInView(reelsRef, { amount: 0.1 });
 
     // Bestsellers from Supabase
     const [bestsellers, setBestsellers] = useState<Product[]>([]);
@@ -605,9 +636,7 @@ export default function Home() {
                                                 isReelPaused={isReelPaused}
                                                 currentReelIndex={currentReel}
                                                 onNextReel={() => {
-                                                    if (!isReelPaused) {
-                                                        setCurrentReel(prev => (prev + 1) % reels.length);
-                                                    }
+                                                    setCurrentReel(prev => (prev + 1) % reels.length);
                                                 }}
                                             />
                                         );
