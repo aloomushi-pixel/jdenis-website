@@ -77,6 +77,7 @@ function ReelCard({
                             ref={videoRef}
                             src={reel.video_url}
                             playsInline
+                            muted
                             onEnded={onNextReel}
                             className="reel-video absolute inset-0 w-full h-full object-cover"
                         />
