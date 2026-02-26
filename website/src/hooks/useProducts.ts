@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase, type Product as SupabaseProduct } from '../lib/supabase';
+import { useAuthStore } from '../store/authStore';
 
 // Re-export Supabase Product type for consumers
 export type { SupabaseProduct };
@@ -37,14 +38,19 @@ export interface DisplayProduct {
 }
 
 /** Map a Supabase row → DisplayProduct used by every UI component */
-export function toDisplayProduct(p: SupabaseProduct): DisplayProduct {
+export function toDisplayProduct(p: SupabaseProduct, hasAccessToPromos: boolean = true): DisplayProduct {
+    // If user has no access to promos and there is an original price, it means there's a discount we must hide
+    // We treat the "original_price" (or compare_at_price) as the actual public price
+    const publicPrice = p.original_price ?? p.compare_at_price ?? p.price;
+    const finalPrice = hasAccessToPromos ? p.price : publicPrice;
+
     return {
         id: p.id,
         name: p.name,
-        price: p.price,
-        originalPrice: p.original_price ?? p.compare_at_price ?? undefined,
+        price: finalPrice,
+        originalPrice: hasAccessToPromos ? (p.original_price ?? p.compare_at_price ?? undefined) : undefined,
         distributorPrice: p.distributor_price ?? undefined,
-        promotion: p.promotion ?? undefined,
+        promotion: hasAccessToPromos ? (p.promotion ?? undefined) : undefined,
         image: p.image_url ?? '/placeholder.webp',
         category: p.category,
         description: p.description ?? undefined,
@@ -66,6 +72,10 @@ export function toDisplayProduct(p: SupabaseProduct): DisplayProduct {
  * save helpers for the admin editor.
  */
 export function useProducts() {
+    const userRole = useAuthStore(state => state.user?.role);
+    const isAuthenticated = useAuthStore(state => state.isAuthenticated);
+    const hasAccessToPromos = isAuthenticated && ['CLIENTE', 'ADMIN', 'admin'].includes(userRole || '');
+
     const [products, setProducts] = useState<DisplayProduct[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -83,7 +93,7 @@ export function useProducts() {
 
             if (fetchError) throw fetchError;
 
-            setProducts((data || []).map(toDisplayProduct));
+            setProducts((data || []).map(p => toDisplayProduct(p, hasAccessToPromos)));
             setSynced(true);
             setError(null);
         } catch (err: unknown) {
@@ -93,7 +103,7 @@ export function useProducts() {
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [hasAccessToPromos]);
 
     useEffect(() => {
         fetchProducts();
