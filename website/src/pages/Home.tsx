@@ -46,14 +46,17 @@ function ReelCard({
         if (!video) return;
 
         if (isReelsInView && !isReelPaused && !isManualPaused) {
+            // Reset to beginning if needed and play
             const playPromise = video.play();
             if (playPromise !== undefined) {
-                playPromise.catch(() => { });
+                playPromise.catch((e) => {
+                    console.log("Autoplay prevented:", e);
+                });
             }
         } else {
             video.pause();
         }
-    }, [isReelsInView, isReelPaused, isManualPaused]);
+    }, [isReelsInView, isReelPaused, isManualPaused, currentReelIndex]);
 
     useEffect(() => {
         if (videoRef.current) {
@@ -78,6 +81,8 @@ function ReelCard({
                             src={reel.video_url}
                             playsInline
                             muted
+                            autoPlay
+                            loop={false}
                             onEnded={onNextReel}
                             className="reel-video absolute inset-0 w-full h-full object-cover"
                         />
@@ -593,7 +598,7 @@ export default function Home() {
                                         const thumb = getThumbnailUrl(reel, thumbs);
                                         return (
                                             <ReelCard
-                                                key={reel.id}
+                                                key={`${reel.id}-${currentReel}`}
                                                 reel={reel}
                                                 thumb={thumb}
                                                 isReelsInView={isReelsInView}
