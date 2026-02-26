@@ -1206,21 +1206,20 @@ export default function ProductEditor() {
                         </div>
                     </div>
 
+                </>
+            )}
+
+            {/* Variants Tab */}
+            {activeTab === 'variants' && (
+                <div className="space-y-6">
                     {/* Variant Groups Summary */}
-                    <div className="mt-6 bg-white rounded-xl shadow-sm p-6">
-                        <h2 className="text-lg font-bold text-gray-800 mb-4">Grupos de Variantes ({totalVariantGroups})</h2>
+                    <div className="bg-white rounded-xl shadow-sm p-6">
+                        <h2 className="text-lg font-bold text-gray-800 mb-4">Resumen de Grupos ({totalVariantGroups})</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                             {dbVariantGroups.map((g) => (
-                                <button
+                                <div
                                     key={g.parentId}
-                                    onClick={() => {
-                                        setExpandedVariantGroup(expandedVariantGroup === g.parentId ? null : g.parentId);
-                                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                                    }}
-                                    className={`border rounded - lg p - 4 text - left transition - colors cursor - pointer ${expandedVariantGroup === g.parentId
-                                        ? 'border-indigo-400 bg-indigo-50 shadow-md'
-                                        : 'border-gray-100 hover:border-indigo-200'
-                                        } `}
+                                    className="border border-gray-100 rounded-lg p-4 text-left bg-gray-50"
                                 >
                                     <h3 className="font-semibold text-sm text-gray-800">{g.parentName}</h3>
                                     <div className="flex items-center gap-2 mt-1">
@@ -1229,7 +1228,7 @@ export default function ProductEditor() {
                                     </div>
                                     <div className="mt-2 flex flex-wrap gap-1">
                                         {g.variants.slice(0, 6).map(v => (
-                                            <span key={v.productId} className="px-1.5 py-0.5 bg-gray-50 text-gray-600 rounded text-[10px]">
+                                            <span key={v.productId} className="px-1.5 py-0.5 bg-white border border-gray-200 text-gray-600 rounded text-[10px]">
                                                 {Object.values(v.attributes).join(' · ')}
                                             </span>
                                         ))}
@@ -1237,25 +1236,21 @@ export default function ProductEditor() {
                                             <span className="px-1.5 py-0.5 text-gray-400 text-[10px]">+{g.variants.length - 6} más</span>
                                         )}
                                     </div>
-                                </button>
+                                </div>
                             ))}
                         </div>
                     </div>
 
-                </>
-            )}
-
-            {/* Variants Tab */}
-            {activeTab === 'variants' && (
-                <VariantManager
-                    groups={rawDbGroups}
-                    products={products}
-                    loading={variantsLoading}
-                    createGroup={createGroup}
-                    deleteGroup={deleteGroup}
-                    addVariant={addVariant}
-                    removeVariant={removeVariant}
-                />
+                    <VariantManager
+                        groups={rawDbGroups}
+                        products={products}
+                        loading={variantsLoading}
+                        createGroup={createGroup}
+                        deleteGroup={deleteGroup}
+                        addVariant={addVariant}
+                        removeVariant={removeVariant}
+                    />
+                </div>
             )}
         </div >
     );
