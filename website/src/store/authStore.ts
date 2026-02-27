@@ -137,8 +137,7 @@ export const useAuthStore = create<AuthState>()(
                             {
                                 id: result.user.id,
                                 email: email,
-                                first_name: fullName.split(' ')[0],
-                                last_name: fullName.split(' ').slice(1).join(' ') || '',
+                                full_name: fullName,
                                 role: 'CLIENTE',
                             }
                         ]);

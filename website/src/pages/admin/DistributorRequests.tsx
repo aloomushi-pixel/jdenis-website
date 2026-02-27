@@ -107,8 +107,7 @@ export default function DistributorRequests() {
                     const { error: insertError } = await supabase.from('users').insert({
                         id: authData.user.id,
                         email: app.email,
-                        first_name: app.full_name.split(' ')[0],
-                        last_name: app.full_name.split(' ').slice(1).join(' ') || '',
+                        full_name: app.full_name,
                         role: 'DISTRIBUIDOR'
                     });
                     if (insertError) {
