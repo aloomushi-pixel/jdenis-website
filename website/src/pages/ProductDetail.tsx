@@ -51,13 +51,43 @@ export default function ProductDetail() {
         }))
     } : undefined;
 
-    // Related products: same category, different product
+    // Group products so we only show one representative per variant group in Related Products
+    const { groupedProducts, variantCounts } = useMemo(() => {
+        const counts = new Map<string, number>();
+        const groupFirstIds = new Map<string, string>();
+        const productToGroup = new Map<string, any>();
+
+        dbGroups.forEach(group => {
+            if (group.variants && group.variants.length > 0) {
+                const firstVar = group.variants[0];
+                groupFirstIds.set(group.id, firstVar.product_id);
+                counts.set(firstVar.product_id, group.variants.length);
+                group.variants.forEach(v => productToGroup.set(v.product_id, group));
+            }
+        });
+
+        const grouped = products.filter(p => {
+            const group = productToGroup.get(p.id);
+            if (!group) return true;
+            return groupFirstIds.get(group.id) === p.id;
+        }).map(p => {
+            const group = productToGroup.get(p.id);
+            if (group && groupFirstIds.get(group.id) === p.id) {
+                return { ...p, name: group.name };
+            }
+            return p;
+        });
+
+        return { groupedProducts: grouped, variantCounts: counts };
+    }, [products, dbGroups]);
+
+    // Related products: same category, different product (and not in the identical variant group to avoid showing its own variants)
     const relatedProducts = useMemo(() => {
         if (!product) return [];
-        return products
-            .filter(p => p.category === product?.category && p.id !== product?.id)
+        return groupedProducts
+            .filter(p => p.category === product?.category && p.id !== product?.id && (!dbGroup || !dbGroup.variants.some(v => v.product_id === p.id)))
             .slice(0, 8);
-    }, [products, product]);
+    }, [groupedProducts, product, dbGroup]);
 
     if (productsLoading) {
         return (
@@ -152,6 +182,7 @@ export default function ProductDetail() {
                                 group={variantGroup}
                                 currentProductId={product.id}
                                 onVariantChange={handleVariantChange}
+                                allProducts={products}
                             />
                         )}
 
@@ -393,7 +424,7 @@ export default function ProductDetail() {
                                             <ProductCard
                                                 product={p}
                                                 index={index}
-                                                variantCount={0}
+                                                variantCount={variantCounts.get(p.id) || 0}
                                             />
                                         </div>
                                     ))}

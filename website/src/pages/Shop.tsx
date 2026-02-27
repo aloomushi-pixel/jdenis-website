@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import { useProducts } from '../hooks/useProducts';
+import { useVariants } from '../hooks/useVariants';
 
 // Category filter definitions (UI constants with SVG icon paths)
 const shopCategories = [
@@ -49,6 +50,46 @@ export default function Shop() {
 
     // Supabase-backed product data
     const { products, loading } = useProducts();
+    const { groups } = useVariants();
+
+    // Group products so we only show one representative per variant group
+    const { groupedProducts, variantCounts } = useMemo(() => {
+        const counts = new Map<string, number>();
+        const groupFirstProductIds = new Map<string, string>(); // group_id -> representative product_id
+        const productToGroup = new Map<string, any>(); // product_id -> group
+
+        groups.forEach(group => {
+            if (group.variants && group.variants.length > 0) {
+                // Determine the representative product for this group
+                // We pick the first one from the loaded variants
+                const firstVariant = group.variants[0];
+                groupFirstProductIds.set(group.id, firstVariant.product_id);
+                counts.set(firstVariant.product_id, group.variants.length);
+
+                group.variants.forEach(v => {
+                    productToGroup.set(v.product_id, group);
+                });
+            }
+        });
+
+        const grouped = products.filter(p => {
+            const group = productToGroup.get(p.id);
+            if (!group) return true; // Not in any group, show normally
+
+            // If it is in a group, only show it if it's the representative
+            return groupFirstProductIds.get(group.id) === p.id;
+        }).map(p => {
+            const group = productToGroup.get(p.id);
+            if (group && groupFirstProductIds.get(group.id) === p.id) {
+                // Rename the representative product to the group's base name
+                // e.g. "Abanicos 2D" instead of "Abanicos | 2D | Curva B..."
+                return { ...p, name: group.name };
+            }
+            return p;
+        });
+
+        return { groupedProducts: grouped, variantCounts: counts };
+    }, [products, groups]);
 
     // ─── SEO: dynamic title, meta description & JSON-LD ───────────
     useEffect(() => {
@@ -103,10 +144,10 @@ export default function Shop() {
     // Calculate max price once when products change (via ref to avoid re-render cascade)
     const maxPriceRef = useRef(DEFAULT_PRICE_MAX);
     const computedMax = useMemo(() => {
-        if (products.length === 0) return DEFAULT_PRICE_MAX;
-        const max = Math.max(...products.map(p => p.price));
+        if (groupedProducts.length === 0) return DEFAULT_PRICE_MAX;
+        const max = Math.max(...groupedProducts.map(p => p.price));
         return max > 0 ? max : DEFAULT_PRICE_MAX;
-    }, [products]);
+    }, [groupedProducts]);
 
     useEffect(() => {
         maxPriceRef.current = computedMax;
@@ -119,13 +160,13 @@ export default function Shop() {
 
     // Products with promotions
     const promoProducts = useMemo(() => {
-        return products.filter(p => p.originalPrice && p.originalPrice > p.price);
-    }, [products]);
+        return groupedProducts.filter(p => p.originalPrice && p.originalPrice > p.price);
+    }, [groupedProducts]);
 
     // Featured products
     const featuredProducts = useMemo(() => {
-        return products.filter(p => p.isFeatured);
-    }, [products]);
+        return groupedProducts.filter(p => p.isFeatured);
+    }, [groupedProducts]);
 
     // Check if any advanced filter is active
     const hasActiveFilters = useMemo(() => {
@@ -147,7 +188,7 @@ export default function Shop() {
     };
 
     const filteredProducts = useMemo(() => {
-        let result = products;
+        let result = groupedProducts;
 
         if (activeCategory !== 'all') {
             const cat = shopCategories.find(c => c.id === activeCategory);
@@ -192,7 +233,7 @@ export default function Shop() {
         });
 
         return result;
-    }, [products, activeCategory, sortBy, searchQuery, priceRange, showOffersOnly]);
+    }, [groupedProducts, activeCategory, sortBy, searchQuery, priceRange, showOffersOnly]);
 
     if (loading) {
         return (
@@ -333,7 +374,7 @@ export default function Shop() {
                                         <ProductCard
                                             product={product}
                                             index={index}
-                                            variantCount={0}
+                                            variantCount={variantCounts.get(product.id) || 0}
                                         />
                                     </div>
                                 ))}
@@ -448,7 +489,7 @@ export default function Shop() {
                                 key={product.id}
                                 product={product}
                                 index={index}
-                                variantCount={0}
+                                variantCount={variantCounts.get(product.id) || 0}
                             />
                         ))}
                     </div>

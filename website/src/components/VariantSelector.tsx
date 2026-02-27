@@ -91,9 +91,9 @@ export default function VariantSelector({ group, currentProductId, onVariantChan
             return found?.price || 0;
         })
         .filter(p => p > 0);
-    const minPrice = Math.min(...prices);
-    const maxPrice = Math.max(...prices);
-    const hasPriceRange = minPrice !== maxPrice;
+    const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
+    const maxPrice = prices.length > 0 ? Math.max(...prices) : 0;
+    const hasPriceRange = prices.length > 0 && minPrice !== maxPrice;
 
     return (
         <motion.div
