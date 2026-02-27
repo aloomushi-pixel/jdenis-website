@@ -38,19 +38,48 @@ export interface DisplayProduct {
 }
 
 /** Map a Supabase row → DisplayProduct used by every UI component */
-export function toDisplayProduct(p: SupabaseProduct, hasAccessToPromos: boolean = true): DisplayProduct {
-    // If user has no access to promos and there is an original price, it means there's a discount we must hide
-    // We treat the "original_price" (or compare_at_price) as the actual public price
+export function toDisplayProduct(p: SupabaseProduct, userRole: string | undefined = undefined): DisplayProduct {
+    const normalizedRole = (userRole || '').toUpperCase();
+    const isDistributor = normalizedRole === 'DISTRIBUIDOR';
+    const isClient = normalizedRole === 'CLIENTE';
+    const isAdmin = normalizedRole === 'ADMIN';
+    const hasAccessToPromos = isClient || isAdmin || isDistributor;
+
     const publicPrice = p.original_price ?? p.compare_at_price ?? p.price;
-    const finalPrice = hasAccessToPromos ? p.price : publicPrice;
+
+    let finalPrice = p.price;
+    let finalOriginalPrice = p.original_price ?? p.compare_at_price ?? undefined;
+    let finalPromotion = p.promotion ?? undefined;
+
+    if (isAdmin) {
+        // Admins see raw data
+        finalPrice = p.price;
+        finalOriginalPrice = p.original_price ?? p.compare_at_price ?? undefined;
+        finalPromotion = p.promotion ?? undefined;
+    } else if (isDistributor && p.distributor_price != null && p.distributor_price > 0) {
+        // Distributors get distributor price as active price, strike out normal retail
+        finalPrice = p.distributor_price;
+        finalOriginalPrice = p.price;
+        finalPromotion = 'Precio Distribuidor';
+    } else if (hasAccessToPromos) {
+        // Regular clients see configured promos
+        finalPrice = p.price;
+        finalOriginalPrice = p.original_price ?? p.compare_at_price ?? undefined;
+        finalPromotion = p.promotion ?? undefined;
+    } else {
+        // Public sees disabled promos
+        finalPrice = publicPrice;
+        finalOriginalPrice = undefined;
+        finalPromotion = undefined;
+    }
 
     return {
         id: p.id,
         name: p.name,
         price: finalPrice,
-        originalPrice: hasAccessToPromos ? (p.original_price ?? p.compare_at_price ?? undefined) : undefined,
+        originalPrice: finalOriginalPrice,
         distributorPrice: p.distributor_price ?? undefined,
-        promotion: hasAccessToPromos ? (p.promotion ?? undefined) : undefined,
+        promotion: finalPromotion,
         image: p.image_url ?? '/placeholder.webp',
         category: p.category,
         description: p.description ?? undefined,
@@ -73,8 +102,6 @@ export function toDisplayProduct(p: SupabaseProduct, hasAccessToPromos: boolean 
  */
 export function useProducts() {
     const userRole = useAuthStore(state => state.user?.role);
-    const isAuthenticated = useAuthStore(state => state.isAuthenticated);
-    const hasAccessToPromos = isAuthenticated && ['CLIENTE', 'ADMIN', 'admin'].includes(userRole || '');
 
     const [products, setProducts] = useState<DisplayProduct[]>([]);
     const [loading, setLoading] = useState(true);
@@ -93,7 +120,7 @@ export function useProducts() {
 
             if (fetchError) throw fetchError;
 
-            setProducts((data || []).map(p => toDisplayProduct(p, hasAccessToPromos)));
+            setProducts((data || []).map(p => toDisplayProduct(p, userRole)));
             setSynced(true);
             setError(null);
         } catch (err: unknown) {
@@ -103,7 +130,7 @@ export function useProducts() {
         } finally {
             setLoading(false);
         }
-    }, [hasAccessToPromos]);
+    }, [userRole]);
 
     useEffect(() => {
         fetchProducts();
