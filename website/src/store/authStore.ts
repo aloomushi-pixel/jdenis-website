@@ -128,6 +128,25 @@ export const useAuthStore = create<AuthState>()(
                     if (error) throw error;
                     if (!result.user) throw new Error('No user returned');
 
+                    // --- INYECCIÓN EN BASE DE DATOS (PUBLIC.USERS) ---
+                    // Esto remedia la pérdida de sincronización que impedía a los administradores
+                    // ver y gestionar los perfiles de los nuevos clientes.
+                    const { error: insertError } = await supabase
+                        .from('users')
+                        .insert([
+                            {
+                                id: result.user.id,
+                                email: email,
+                                first_name: fullName.split(' ')[0],
+                                last_name: fullName.split(' ').slice(1).join(' ') || '',
+                                role: 'CLIENTE',
+                            }
+                        ]);
+
+                    if (insertError) {
+                        console.error('Warning: Error syncing client user to public.users table:', insertError);
+                    }
+
                     if (result.session) {
                         set({
                             user: {
