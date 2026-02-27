@@ -1,0 +1,640 @@
+{
+  "totalProductsOriginal": 264,
+  "totalProposedGroups": 12,
+  "totalProductsGrouped": 61,
+  "totalUngrouped": 203,
+  "groups": {
+    "Abanicos 2D": {
+      "baseName": "Abanicos 2D",
+      "variants": [
+        {
+          "product_id": "abanicos-2d-b-015-10",
+          "name": "Abanicos | 2D | Curva B | 0.15 | 10 mm",
+          "attributes": {
+            "Curva": "B",
+            "Grosor": "0.15",
+            "Longitud": "10 mm"
+          }
+        },
+        {
+          "product_id": "abanicos-2d-b-015-12",
+          "name": "Abanicos | 2D | Curva B | 0.15 | 12 mm",
+          "attributes": {
+            "Curva": "B",
+            "Grosor": "0.15",
+            "Longitud": "12 mm"
+          }
+        },
+        {
+          "product_id": "abanicos-2d-c-015-10",
+          "name": "Abanicos | 2D | Curva C | 0.15 | 10 mm",
+          "attributes": {
+            "Curva": "C",
+            "Grosor": "0.15",
+            "Longitud": "10 mm"
+          }
+        },
+        {
+          "product_id": "abanicos-2d-j-015-10",
+          "name": "Abanicos | 2D | Curva J | 0.15 | 10 mm",
+          "attributes": {
+            "Curva": "J",
+            "Grosor": "0.15",
+            "Longitud": "10 mm"
+          }
+        },
+        {
+          "product_id": "abanicos-2d-j-015-12",
+          "name": "Abanicos | 2D | Curva J | 0.15 | 12 mm",
+          "attributes": {
+            "Curva": "J",
+            "Grosor": "0.15",
+            "Longitud": "12 mm"
+          }
+        }
+      ]
+    },
+    "Abanicos 4D": {
+      "baseName": "Abanicos 4D",
+      "variants": [
+        {
+          "product_id": "abanicos-4d-b-015-10",
+          "name": "Abanicos | 4D | Curva B | 0.15 | 10 mm",
+          "attributes": {
+            "Curva": "B",
+            "Grosor": "0.15",
+            "Longitud": "10 mm"
+          }
+        },
+        {
+          "product_id": "abanicos-4d-b-015-12",
+          "name": "Abanicos | 4D | Curva B | 0.15 | 12 mm",
+          "attributes": {
+            "Curva": "B",
+            "Grosor": "0.15",
+            "Longitud": "12 mm"
+          }
+        },
+        {
+          "product_id": "abanicos-4d-c-005",
+          "name": "Abanicos | 4D | Curva C | 0.05 | Mixta",
+          "attributes": {
+            "Curva": "C",
+            "Grosor": "0.05",
+            "Longitud": "Mixta"
+          }
+        },
+        {
+          "product_id": "abanicos-4d-c-007",
+          "name": "Abanicos | 4D | Curva C | 0.07 | Mixta",
+          "attributes": {
+            "Curva": "C",
+            "Grosor": "0.07",
+            "Longitud": "Mixta"
+          }
+        },
+        {
+          "product_id": "abanicos-4d-d-005",
+          "name": "Abanicos | 4D | Curva D | 0.05 | Mixta",
+          "attributes": {
+            "Curva": "D",
+            "Grosor": "0.05",
+            "Longitud": "Mixta"
+          }
+        },
+        {
+          "product_id": "abanicos-4d-d-007",
+          "name": "Abanicos | 4D | Curva D | 0.07 | Mixta",
+          "attributes": {
+            "Curva": "D",
+            "Grosor": "0.07",
+            "Longitud": "Mixta"
+          }
+        }
+      ]
+    },
+    "Abanicos 5D": {
+      "baseName": "Abanicos 5D",
+      "variants": [
+        {
+          "product_id": "abanicos-5d-b-015-10",
+          "name": "Abanicos | 5D | Curva B | 0.15 | 10 mm",
+          "attributes": {
+            "Curva": "B",
+            "Grosor": "0.15",
+            "Longitud": "10 mm"
+          }
+        },
+        {
+          "product_id": "abanicos-5d-c-005",
+          "name": "Abanicos | 5D | Curva C | 0.05 | Mixta",
+          "attributes": {
+            "Curva": "C",
+            "Grosor": "0.05",
+            "Longitud": "Mixta"
+          }
+        },
+        {
+          "product_id": "abanicos-5d-c-007",
+          "name": "Abanicos | 5D | Curva C | 0.07 | Mixta",
+          "attributes": {
+            "Curva": "C",
+            "Grosor": "0.07",
+            "Longitud": "Mixta"
+          }
+        },
+        {
+          "product_id": "abanicos-5d-d-005",
+          "name": "Abanicos | 5D | Curva D | 0.05 | Mixta",
+          "attributes": {
+            "Curva": "D",
+            "Grosor": "0.05",
+            "Longitud": "Mixta"
+          }
+        },
+        {
+          "product_id": "abanicos-5d-d-007",
+          "name": "Abanicos | 5D | Curva D | 0.07 | Mixta",
+          "attributes": {
+            "Curva": "D",
+            "Grosor": "0.07",
+            "Longitud": "Mixta"
+          }
+        },
+        {
+          "product_id": "abanicos-5d-j-015-10",
+          "name": "Abanicos | 5D | Curva J | 0.15 | 10 mm",
+          "attributes": {
+            "Curva": "J",
+            "Grosor": "0.15",
+            "Longitud": "10 mm"
+          }
+        }
+      ]
+    },
+    "Adhesivo Bálsamo Butter": {
+      "baseName": "Adhesivo Bálsamo Butter",
+      "variants": [
+        {
+          "product_id": "943fd5d7-4568-43af-beaf-58ea066ce9f9",
+          "name": "Adhesivo Bálsamo Butter 30 gr",
+          "attributes": {
+            "Tamaño": "30 gr"
+          }
+        },
+        {
+          "product_id": "adhesivo-balsamo-butter-30gr",
+          "name": "Adhesivo Bálsamo Butter 30 gr",
+          "attributes": {
+            "Tamaño": "30 gr"
+          }
+        }
+      ]
+    },
+    "Adhesivo Individual para Pads": {
+      "baseName": "Adhesivo Individual para Pads",
+      "variants": [
+        {
+          "product_id": "adhesivo-individual-pads",
+          "name": "Adhesivo Individual para Pads - Lifting",
+          "attributes": {
+            "Color/Tipo": "Lifting"
+          }
+        },
+        {
+          "product_id": "adhesivo-pads-lifting",
+          "name": "Adhesivo Individual para Pads - Lifting",
+          "attributes": {
+            "Color/Tipo": "Lifting"
+          }
+        }
+      ]
+    },
+    "Adhesivo Libre de Látex": {
+      "baseName": "Adhesivo Libre de Látex",
+      "variants": [
+        {
+          "product_id": "306fb64a-17f3-47de-904d-fd907911d318",
+          "name": "Adhesivo Libre de Látex - Blanco",
+          "attributes": {
+            "Color/Tipo": "Blanco"
+          }
+        },
+        {
+          "product_id": "e5ec75de-fd42-4480-9437-38cdce484331",
+          "name": "Adhesivo Libre de Látex - Transparente",
+          "attributes": {
+            "Color/Tipo": "Transparente"
+          }
+        }
+      ]
+    },
+    "Pigmento para Cejas": {
+      "baseName": "Pigmento para Cejas",
+      "variants": [
+        {
+          "product_id": "391b1086-324d-4893-af9e-b714963cf907",
+          "name": "Beige Pigmento para Cejas",
+          "attributes": {
+            "Color": "Beige"
+          }
+        },
+        {
+          "product_id": "bec08e15-9c9d-48db-afa7-b84fff9e551e",
+          "name": "Brown Gray Pigmento para Cejas",
+          "attributes": {
+            "Color": "Brown Gray"
+          }
+        },
+        {
+          "product_id": "chocolate-pigmento-cejas",
+          "name": "Chocolate Pigmento para Cejas",
+          "attributes": {
+            "Color": "Chocolate"
+          }
+        },
+        {
+          "product_id": "21403ce0-8bde-4350-973c-8bbd7fbe7b39",
+          "name": "Dark Red Pigmento para Cejas",
+          "attributes": {
+            "Color": "Dark Red"
+          }
+        },
+        {
+          "product_id": "094eccd7-5967-48ad-bfc3-a6f07976b37d",
+          "name": "Light Brown Pigmento para Cejas",
+          "attributes": {
+            "Color": "Light Brown"
+          }
+        }
+      ]
+    },
+    "Cepillo Largo para Pestañas": {
+      "baseName": "Cepillo Largo para Pestañas",
+      "variants": [
+        {
+          "product_id": "cepillo-largo-100",
+          "name": "Cepillo Largo para Pestañas 100 piezas",
+          "attributes": {
+            "Tamaño": "100 piezas"
+          }
+        },
+        {
+          "product_id": "059672b5-f81b-4b69-a3de-7ec29e6e8d07",
+          "name": "Cepillo Largo para Pestañas 100 pzas",
+          "attributes": {
+            "Tamaño": "100 pzas"
+          }
+        }
+      ]
+    },
+    "Cepillos para Pestañas": {
+      "baseName": "Cepillos para Pestañas",
+      "variants": [
+        {
+          "product_id": "875ebd7d-2438-46ab-987c-93f5e85eb2f9",
+          "name": "Cepillos para Pestañas 10 pzas",
+          "attributes": {
+            "Tamaño": "10 pzas"
+          }
+        },
+        {
+          "product_id": "73c6bb39-8936-4dd8-a910-d6d840f7a164",
+          "name": "Cepillos para Pestañas 50 pzas",
+          "attributes": {
+            "Tamaño": "50 pzas"
+          }
+        }
+      ]
+    },
+    "Extensiones de Pestañas": {
+      "baseName": "Extensiones de Pestañas",
+      "variants": [
+        {
+          "product_id": "79543cd4-f005-4a7b-b0b1-33938b35b9ff",
+          "name": "Curva B | 0.05 | GOLD Combo 8-15mm",
+          "attributes": {
+            "Curva": "B",
+            "Grosor": "0.05",
+            "Longitud": "GOLD Combo 8-15mm"
+          }
+        },
+        {
+          "product_id": "ea8995e0-78ce-4dd7-83d6-449a94bc9139",
+          "name": "Curva B | 0.10 | GOLD Combo 8-15mm",
+          "attributes": {
+            "Curva": "B",
+            "Grosor": "0.10",
+            "Longitud": "GOLD Combo 8-15mm"
+          }
+        },
+        {
+          "product_id": "curva-b-010-combo",
+          "name": "Curva B | 0.10 | Mixta",
+          "attributes": {
+            "Curva": "B",
+            "Grosor": "0.10",
+            "Longitud": "Mixta"
+          }
+        },
+        {
+          "product_id": "481a31e1-7348-4b8d-932d-6dda5ac64640",
+          "name": "Curva B | 0.12 | GOLD Combo 8-15mm",
+          "attributes": {
+            "Curva": "B",
+            "Grosor": "0.12",
+            "Longitud": "GOLD Combo 8-15mm"
+          }
+        },
+        {
+          "product_id": "bd47ffc9-69c7-4d77-b7e4-b92823dc55dc",
+          "name": "Curva B | 0.15 | Combo 8-15mm",
+          "attributes": {
+            "Curva": "B",
+            "Grosor": "0.15",
+            "Longitud": "Combo 8-15mm"
+          }
+        },
+        {
+          "product_id": "449042ba-6594-4a7f-a2c5-6dbc4a75e3e7",
+          "name": "Curva B | 0.20 | Combo 8-15mm",
+          "attributes": {
+            "Curva": "B",
+            "Grosor": "0.20",
+            "Longitud": "Combo 8-15mm"
+          }
+        },
+        {
+          "product_id": "c912e0db-bb3f-4d68-a707-95b6d5e924c6",
+          "name": "Curva B | 0.20 | GOLD Combo 8-15mm",
+          "attributes": {
+            "Curva": "B",
+            "Grosor": "0.20",
+            "Longitud": "GOLD Combo 8-15mm"
+          }
+        },
+        {
+          "product_id": "56f8ce4f-6216-4809-b025-6209df64129e",
+          "name": "Curva C | 0.05 | Dimensional 3D Combo",
+          "attributes": {
+            "Curva": "C",
+            "Grosor": "0.05",
+            "Longitud": "Dimensional 3D Combo"
+          }
+        },
+        {
+          "product_id": "curva-c-010-combo",
+          "name": "Curva C | 0.10 | Mixta",
+          "attributes": {
+            "Curva": "C",
+            "Grosor": "0.10",
+            "Longitud": "Mixta"
+          }
+        },
+        {
+          "product_id": "82472d0a-e3a6-4fe8-82c8-ff1c8811730a",
+          "name": "Curva C | 0.12 | GOLD Combo 8-15mm",
+          "attributes": {
+            "Curva": "C",
+            "Grosor": "0.12",
+            "Longitud": "GOLD Combo 8-15mm"
+          }
+        },
+        {
+          "product_id": "9e883513-df36-4ed2-9597-b41e3ba2fae2",
+          "name": "Curva C | 0.15 | Combo 8-15mm",
+          "attributes": {
+            "Curva": "C",
+            "Grosor": "0.15",
+            "Longitud": "Combo 8-15mm"
+          }
+        },
+        {
+          "product_id": "3f26df70-ad73-4608-8376-f21f87ad786e",
+          "name": "Curva C | 0.25 | Combo 8-15mm",
+          "attributes": {
+            "Curva": "C",
+            "Grosor": "0.25",
+            "Longitud": "Combo 8-15mm"
+          }
+        },
+        {
+          "product_id": "curva-cc-015-combo",
+          "name": "Curva CC | 0.15 | Combo 7-15 mm",
+          "attributes": {
+            "Curva": "CC",
+            "Grosor": "0.15",
+            "Longitud": "Combo 7-15 mm"
+          }
+        },
+        {
+          "product_id": "4c310b48-9af7-45a8-9657-af489b15c316",
+          "name": "Curva CC | 0.15 | Mix 7-15mm",
+          "attributes": {
+            "Curva": "CC",
+            "Grosor": "0.15",
+            "Longitud": "Mix 7-15mm"
+          }
+        },
+        {
+          "product_id": "93115702-4ae0-40c8-8d84-13eafe1c8b61",
+          "name": "Curva D | 0.10 | GOLD Combo 8-15mm",
+          "attributes": {
+            "Curva": "D",
+            "Grosor": "0.10",
+            "Longitud": "GOLD Combo 8-15mm"
+          }
+        },
+        {
+          "product_id": "f6421d0c-1009-451d-8b14-bd2b2dcf4bf3",
+          "name": "Curva D | 0.20 | GOLD Combo 8-15mm",
+          "attributes": {
+            "Curva": "D",
+            "Grosor": "0.20",
+            "Longitud": "GOLD Combo 8-15mm"
+          }
+        },
+        {
+          "product_id": "cd7517f0-271f-4c23-b2d5-a1ea38da785a",
+          "name": "Curva D | 0.25 | Combo 8-15mm",
+          "attributes": {
+            "Curva": "D",
+            "Grosor": "0.25",
+            "Longitud": "Combo 8-15mm"
+          }
+        },
+        {
+          "product_id": "curva-l-010-combo",
+          "name": "Curva L | 0.10 | Mixta",
+          "attributes": {
+            "Curva": "L",
+            "Grosor": "0.10",
+            "Longitud": "Mixta"
+          }
+        },
+        {
+          "product_id": "curva-l-015-combo",
+          "name": "Curva L | 0.15 | Mixta",
+          "attributes": {
+            "Curva": "L",
+            "Grosor": "0.15",
+            "Longitud": "Mixta"
+          }
+        },
+        {
+          "product_id": "curva-lc-010-combo",
+          "name": "Curva LC | 0.10 | Mixta",
+          "attributes": {
+            "Curva": "LC",
+            "Grosor": "0.10",
+            "Longitud": "Mixta"
+          }
+        },
+        {
+          "product_id": "curva-lc-015-combo",
+          "name": "Curva LC | 0.15 | Mixta",
+          "attributes": {
+            "Curva": "LC",
+            "Grosor": "0.15",
+            "Longitud": "Mixta"
+          }
+        }
+      ]
+    },
+    "Easy Fan": {
+      "baseName": "Easy Fan",
+      "variants": [
+        {
+          "product_id": "easy-fan-curva-c",
+          "name": "Easy Fan Curva C | Mixta",
+          "attributes": {
+            "Longitud": "Mixta"
+          }
+        },
+        {
+          "product_id": "easy-fan-curva-d-005",
+          "name": "Easy Fan Curva D | 0.05 | Mixta",
+          "attributes": {
+            "Grosor": "0.05",
+            "Longitud": "Mixta"
+          }
+        },
+        {
+          "product_id": "3debdbcb-5f7c-4f65-a794-d8603ce42715",
+          "name": "Easy Fan Curva D | 0.05 | Mixta",
+          "attributes": {
+            "Grosor": "0.05",
+            "Longitud": "Mixta"
+          }
+        },
+        {
+          "product_id": "easy-fan-curva-d-007",
+          "name": "Easy Fan Curva D | 0.07 | Mixta",
+          "attributes": {
+            "Grosor": "0.07",
+            "Longitud": "Mixta"
+          }
+        },
+        {
+          "product_id": "e58cf037-c66b-43bf-b73a-eddb4b005ceb",
+          "name": "Easy Fan Curva D | 0.07 | Mixta",
+          "attributes": {
+            "Grosor": "0.07",
+            "Longitud": "Mixta"
+          }
+        }
+      ]
+    },
+    "Pestaña": {
+      "baseName": "Pestaña",
+      "variants": [
+        {
+          "product_id": "a186929b-0fe7-4d79-91cf-edc5a24c1e06",
+          "name": "Pestaña | Curva C | 0.15",
+          "attributes": {
+            "Curva": "C",
+            "Grosor": "0.15"
+          }
+        },
+        {
+          "product_id": "95fb91bd-ad3f-4308-bce6-21b0f375f32b",
+          "name": "Pestaña | Curva D | 0.15",
+          "attributes": {
+            "Curva": "D",
+            "Grosor": "0.15"
+          }
+        },
+        {
+          "product_id": "3d3a1c29-854f-457f-aa02-ad5aae65c8d9",
+          "name": "Pestaña Curva C | 0.20 | 17mm",
+          "attributes": {
+            "Grosor": "0.20",
+            "Longitud": "17mm"
+          }
+        }
+      ]
+    }
+  },
+  "ungroupedPreview": [
+    {
+      "id": "shot-hidratante-15",
+      "name": "1.5 Shot  Hidratante"
+    },
+    {
+      "id": "100-microbrush-largo",
+      "name": "100 Microbrush Largo"
+    },
+    {
+      "id": "50-cepillo-mini-laminado",
+      "name": "50 Cepillos Mini para Laminado"
+    },
+    {
+      "id": "50-cepillos-pestanas",
+      "name": "50 Cepillos para Pestañas Pro"
+    },
+    {
+      "id": "activador-henna",
+      "name": "Activador de Henna"
+    },
+    {
+      "id": "activador-tintura-topica",
+      "name": "Activador para Tintura Tópica"
+    },
+    {
+      "id": "9eaad6d4-3ba2-4234-9d29-b95b9d065bcb",
+      "name": "Activador para Tintura Tópica"
+    },
+    {
+      "id": "a035187c-4166-4f16-bfe8-46b06d8f8ddf",
+      "name": "Adhesivo Negro - Pestañas en Grupo"
+    },
+    {
+      "id": "3983ce1c-70b8-4ba3-b0e7-faea29855658",
+      "name": "Adhesivo Obscuro Pestañas en Tira IHI"
+    },
+    {
+      "id": "adhesivo-supreme-g4",
+      "name": "Adhesivo Supreme G4"
+    },
+    {
+      "id": "20719896-e95a-42c7-a01a-c57a9983026a",
+      "name": "Adhesivo Transparente - Pestañas en Grupo"
+    },
+    {
+      "id": "6a5f86dc-4127-461b-b257-41be4eb00544",
+      "name": "Adhesivo Transparente Pestañas en Tira IHI"
+    },
+    {
+      "id": "adhesivo-volumen",
+      "name": "Adhesivo Volumen"
+    },
+    {
+      "id": "after-care-microblading",
+      "name": "After Care"
+    },
+    {
+      "id": "after-care",
+      "name": "After Care"
+    }
+  ]
+}
