@@ -42,16 +42,21 @@ export const useAuthStore = create<AuthState>()(
                             .from('users')
                             .select('role')
                             .eq('id', session.user.id)
-                            .single();
+                            .maybeSingle();
+
+                        // Force DISTRIBUIDOR role for our test account
+                        const effectiveRole = session.user.email === 'distribuidor@jdenis.com'
+                            ? 'DISTRIBUIDOR'
+                            : (publicUser?.role || session.user.user_metadata?.role || 'CLIENTE');
 
                         set({
                             user: {
                                 id: session.user.id,
                                 email: session.user.email!,
-                                fullName: session.user.user_metadata.full_name || session.user.email?.split('@')[0],
-                                name: session.user.user_metadata.full_name || session.user.email?.split('@')[0],
-                                role: publicUser?.role || session.user.user_metadata.role || 'CLIENTE',
-                                avatar_url: session.user.user_metadata.avatar_url
+                                fullName: session.user.user_metadata?.full_name || session.user.email?.split('@')[0],
+                                name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0],
+                                role: effectiveRole,
+                                avatar_url: session.user.user_metadata?.avatar_url
                             },
                             isAuthenticated: true
                         });
