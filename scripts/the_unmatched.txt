@@ -1,0 +1,61 @@
+﻿[dotenv@17.2.4] injecting env (0) from website\.env -- tip: ­ƒøá´©Å  run anywhere with `dotenvx run -- yourcommand`
+Fetching sitemap...
+Unmatched count: 58
+- Pesta├▒as Mink Curva C
+- Pesta├▒as Mink Curva D
+- L├ímpara Media Luna LED
+- Abanicos | 2D | Curva B | 0.15 | 12 mm
+- Easy Fan Curva D | 0.05 | Mixta
+- Easy Fan Curva D | 0.07 | Mixta
+- Abanicos | 2D | Curva B | 0.15 | 10 mm
+- Easy Fan Curva C | Mixta
+- Abanicos | 3D | Curva C | 0.07 | Mixta
+- Abanicos | 2D | Curva C | 0.15 | 10 mm
+- Adhesivo Supreme G4
+- Rulos Desechables Curva Media M
+- Pesta├▒as Volumen Gold
+- Compass Silver Ratio
+- Lash Shampoo Espuma
+- Lash Tool 2 en 1
+- 1.5 Shot  Hidratante
+- Plantillas para Cejas
+- Abanicos | 5D | Curva C | 0.07 | Mixta
+- Stencil para Cejas
+- Botox Pesta├▒as
+- Gel Reestructurante - Blue
+- Lash Primer
+- M├íscara con Vitamina E y Queratina
+- M├íscara con Microfibras Alargadoras
+- Curva B | 0.20 | GOLD Combo 8-15mm
+- Curva CC | 0.15 | Mix 7-15mm
+- Pesta├▒a Curva C | 0.20 | 17mm
+- Curva B | 0.05 | GOLD Combo 8-15mm
+- Curva B | 0.10 | GOLD Combo 8-15mm
+- Curva B | 0.12 | GOLD Combo 8-15mm
+- Curva D | 0.20 | GOLD Combo 8-15mm
+- Pinza Extensiones en Grupo con Keratina
+- Clips para Lifting
+- Holder Cristal
+- Cepillo Individual para Pesta├▒as
+- Anillo con 10 Contenedores
+- Esp├ítula Cosm├®tica
+- Cepillos para Pesta├▒as 10 pzas
+- Cepillos para Pesta├▒as 50 pzas
+- J.EYEBROW
+- Abanicos | 4D | Curva B | 0.15 | 10 mm
+- Abanicos | 5D | Curva B | 0.15 | 10 mm
+- Abanicos | 4D | Curva C | 0.05 | Mixta
+- Abanicos | 5D | Curva C | 0.05 | Mixta
+- Abanicos | 4D | Curva B | 0.15 | 12 mm
+- Abanicos | 4D | Curva C | 0.07 | Mixta
+- Abanicos | 4D | Curva D | 0.05 | Mixta
+- Abanicos | 5D | Curva D | 0.05 | Mixta
+- Abanicos | 4D | Curva D | 0.07 | Mixta
+- Abanicos | 5D | Curva D | 0.07 | Mixta
+- Abanicos | 2D | Curva J | 0.15 | 10 mm
+- Abanicos | 5D | Curva J | 0.15 | 10 mm
+- Easy Fan Curva D | 0.05 | Mixta
+- Abanicos | 2D | Curva J | 0.15 | 12 mm
+- Easy Fan Curva D | 0.07 | Mixta
+- Rulos Desechables Curva Corta CH
+- Rulos Desechables Curva Amplia G
