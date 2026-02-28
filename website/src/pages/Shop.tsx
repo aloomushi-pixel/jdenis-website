@@ -82,13 +82,26 @@ export default function Shop() {
             const group = productToGroup.get(p.id);
             if (group && groupFirstProductIds.get(group.id) === p.id) {
                 // Rename the representative product to the group's base name
-                // e.g. "Abanicos 2D" instead of "Abanicos | 2D | Curva B..."
                 return { ...p, name: group.name };
             }
             return p;
         });
 
-        return { groupedProducts: grouped, variantCounts: counts };
+        // Add a hidden _searchData field to all returned products for deep search
+        const enriched = grouped.map(p => {
+            let searchStr = `${p.name} ${p.description || ''} ${p.category || ''}`;
+            const group = productToGroup.get(p.id);
+            if (group && groupFirstProductIds.get(group.id) === p.id) {
+                // Collect names of all variants in this group so their hidden attributes (like 10mm, curva C) become searchable
+                const variantNames = group.variants
+                    .map((v: any) => products.find(prod => prod.id === v.product_id)?.name || '')
+                    .join(' ');
+                searchStr += ` ${variantNames}`;
+            }
+            return { ...p, _searchData: searchStr };
+        });
+
+        return { groupedProducts: enriched, variantCounts: counts };
     }, [products, groups]);
 
     // ─── SEO: dynamic title, meta description & JSON-LD ───────────
@@ -187,6 +200,11 @@ export default function Shop() {
         setSortBy('name');
     };
 
+    const normalizeStr = (str?: string) => {
+        if (!str) return '';
+        return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    };
+
     const filteredProducts = useMemo(() => {
         let result = groupedProducts;
 
@@ -197,11 +215,11 @@ export default function Shop() {
         }
 
         if (searchQuery) {
-            const query = searchQuery.toLowerCase();
-            result = result.filter(p =>
-                p.name.toLowerCase().includes(query) ||
-                (p.description && p.description.toLowerCase().includes(query))
-            );
+            const query = normalizeStr(searchQuery);
+            result = result.filter(p => {
+                const searchableText = (p as any)._searchData || `${p.name} ${p.description || ''} ${p.category || ''}`;
+                return normalizeStr(searchableText).includes(query);
+            });
         }
 
         // Price range filter
