@@ -41,6 +41,26 @@ export default function RegistroDistribuidor() {
                 });
 
             if (dbError) throw dbError;
+
+            // Trigger email notification via Supabase Edge Function
+            try {
+                await supabase.functions.invoke('send-email', {
+                    body: {
+                        type: 'distributor',
+                        name: formData.fullName,
+                        email: formData.email,
+                        phone: formData.phone,
+                        business_name: formData.businessName,
+                        city: formData.city,
+                        state: formData.state,
+                        message: formData.message
+                    }
+                });
+            } catch (emailErr) {
+                console.error("Error al disparar notificación de correo:", emailErr);
+                // We don't block the UI success if email fails, but it gets logged.
+            }
+
             setSuccess(true);
         } catch (err) {
             setError('Hubo un error al enviar tu solicitud. Intenta nuevamente.');
