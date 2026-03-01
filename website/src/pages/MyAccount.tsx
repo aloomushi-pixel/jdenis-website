@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuthStore } from '../store/authStore';
+import { supabase } from '../lib/supabase';
 
 interface Order {
     id: string;
@@ -14,10 +15,49 @@ interface Order {
 export default function MyAccount() {
     const { user, logout, isAuthenticated } = useAuthStore();
     const [searchParams] = useSearchParams();
-    const [orders] = useState<Order[]>([
-        { id: 'ORD-2024-001', date: '2024-01-15', status: 'Entregado', total: 1850, items: 3 },
-        { id: 'ORD-2024-002', date: '2024-01-20', status: 'En camino', total: 950, items: 2 },
-    ]);
+    const [orders, setOrders] = useState<Order[]>([]);
+
+    useEffect(() => {
+        const fetchOrders = async () => {
+            if (!user?.id && !user?.email) return;
+
+            const { data, error } = await supabase
+                .from('website_orders')
+                .select('*')
+                .or(`user_id.eq.${user.id},user_email.eq.${user.email}`)
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.error('Error fetching orders:', error);
+                return;
+            }
+
+            if (data) {
+                const formattedOrders = data.map((order: any) => {
+                    const items = typeof order.items === 'string' ? JSON.parse(order.items) : order.items;
+                    // Count total items
+                    const numItems = Array.isArray(items)
+                        ? items.reduce((acc: number, item: any) => acc + (item.quantity || 1), 0)
+                        : 0;
+
+                    return {
+                        id: order.id.slice(0, 8).toUpperCase(), // Short ID for display
+                        date: order.created_at,
+                        status: order.status === 'pending' ? 'Procesando' :
+                            order.status === 'shipped' ? 'En camino' :
+                                order.status === 'delivered' ? 'Entregado' : 'Procesando',
+                        total: Number(order.total),
+                        items: numItems
+                    };
+                });
+                setOrders(formattedOrders);
+            }
+        };
+
+        if (isAuthenticated) {
+            fetchOrders();
+        }
+    }, [user, isAuthenticated]);
     const [activeTab, setActiveTab] = useState('orders');
     const [investmentAmount, setInvestmentAmount] = useState<number>(5000);
     const showSuccess = searchParams.get('pedido') === 'exito';

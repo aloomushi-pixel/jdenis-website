@@ -90,9 +90,12 @@ export default function Header() {
                                             {user?.role === 'DISTRIBUIDOR' ? 'Distribuidor' : 'Cliente'}
                                         </Link>
                                     )}
-                                    <span className="text-xs tracking-wider uppercase text-cream/70">
+                                    <Link
+                                        to={['ADMIN', 'EJECUTIVO', 'FABRICA', 'ALMACEN_MATERIA_PRIMA', 'ALMACEN_PRODUCTO_FINAL', 'TRANSPORTISTA'].includes(user?.role || '') ? '/admin' : '/mi-cuenta'}
+                                        className="text-xs tracking-wider uppercase text-cream/70 hover:text-gold transition-colors"
+                                    >
                                         {user?.fullName?.split(' ')[0]}
-                                    </span>
+                                    </Link>
                                     <button
                                         onClick={logout}
                                         className="text-xs text-cream/50 hover:text-gold transition-colors"
