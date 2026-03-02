@@ -171,7 +171,9 @@ export default function About() {
                                     <span className="text-2xl">📞</span>
                                     <div>
                                         <p className="font-medium text-forest">Teléfono</p>
-                                        <p className="text-charcoal/70">55 5781 3476</p>
+                                        <a href="https://wa.me/525527271067" target="_blank" rel="noopener noreferrer" className="text-charcoal/70 hover:text-gold transition-colors inline-block mt-1">
+                                            55 2727 1067
+                                        </a>
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-4">
