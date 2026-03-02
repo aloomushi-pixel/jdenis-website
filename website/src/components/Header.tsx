@@ -38,12 +38,12 @@ export default function Header() {
                     <div className="flex items-center justify-between">
                         {/* Logo */}
                         <Link to="/" className="flex items-center gap-3">
-                            <motion.div
+                            <motion.img
                                 whileHover={{ scale: 1.02 }}
-                                className="font-serif text-2xl text-cream tracking-wide"
-                            >
-                                J. Denis
-                            </motion.div>
+                                src="/logo-new.jpeg"
+                                alt="J. Denis Logo"
+                                className="h-12 w-auto object-contain"
+                            />
                             <span className="hidden sm:inline text-cream/50 text-xs tracking-[0.2em] uppercase">
                                 Desde 1998
                             </span>

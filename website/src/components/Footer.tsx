@@ -8,7 +8,7 @@ export default function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
                     {/* Brand */}
                     <div className="lg:col-span-1">
-                        <h3 className="font-serif text-2xl text-cream mb-4">J. Denis</h3>
+                        <img src="/logo-new.jpeg" alt="J. Denis Logo" className="h-12 w-auto object-contain mb-4" />
                         <p className="text-cream/50 text-sm leading-relaxed mb-6">
                             25 años de innovación técnica y patentes mexicanas para la mirada.
                             Elevamos la belleza profesional a una ciencia.
