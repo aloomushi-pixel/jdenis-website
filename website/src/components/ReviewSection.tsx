@@ -142,7 +142,7 @@ export default function ReviewSection({ productId, productName }: ReviewSectionP
             {/* Review Form Area */}
             <div className="mb-8">
                 {submitted ? (
-                    <div className="p-5 rounded-xl text-center" style={{ background: '#17204D10', border: '1px solid #17204D20' }}>
+                    <div className="p-5 rounded-xl text-center bg-charcoal/10 border border-charcoal/20">
                         <svg className="w-8 h-8 mx-auto mb-2 text-forest" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                         <p className="font-medium text-forest">¡Gracias por tu reseña!</p>
                         <p className="text-sm text-charcoal/60 mt-1">Tu comentario será revisado por nuestro equipo antes de publicarse.</p>
@@ -195,8 +195,7 @@ export default function ReviewSection({ productId, productName }: ReviewSectionP
                             <button
                                 type="button"
                                 onClick={() => setShowForm(false)}
-                                className="px-4 py-2.5 text-sm rounded-lg transition-colors hover:bg-gray-100"
-                                style={{ color: '#666' }}
+                                className="px-4 py-2.5 text-sm rounded-lg transition-colors hover:bg-gray-100 text-charcoal/70"
                             >
                                 Cancelar
                             </button>
@@ -240,8 +239,7 @@ export default function ReviewSection({ productId, productName }: ReviewSectionP
                                 </div>
                                 <div className="flex items-center gap-1.5">
                                     <StarRating rating={review.rating} />
-                                    <span className="text-xs px-2 py-0.5 rounded-full font-medium"
-                                        style={{ background: '#17204D10', color: '#17204D' }}>
+                                    <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-charcoal/10 text-charcoal">
                                         ✓ Compra verificada
                                     </span>
                                 </div>

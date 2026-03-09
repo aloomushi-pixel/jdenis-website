@@ -32,7 +32,7 @@ export default function Header() {
         <>
             <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled
                 ? 'bg-forest shadow-botanical py-3 border-b border-gold/20'
-                : 'bg-forest py-5'
+                : 'bg-forest py-6'
                 }`}>
                 <div className="container-luxury">
                     <div className="flex items-center justify-between">
@@ -42,7 +42,7 @@ export default function Header() {
                                 whileHover={{ scale: 1.02 }}
                                 src="/logo-new.jpeg"
                                 alt="J. Denis Logo"
-                                className="h-12 w-auto object-contain"
+                                className="h-10 sm:h-12 w-auto object-contain"
                             />
                             <span className="hidden sm:inline text-cream/50 text-xs tracking-[0.2em] uppercase">
                                 Desde 1998
@@ -119,7 +119,7 @@ export default function Header() {
                                 onClick={openCart}
                                 className="relative p-2 text-cream/70 hover:text-gold transition-colors"
                             >
-                                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
                                         d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                                 </svg>
@@ -139,7 +139,7 @@ export default function Header() {
                                 className="md:hidden p-2 text-cream/70"
                                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                             >
-                                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     {mobileMenuOpen ? (
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
                                     ) : (

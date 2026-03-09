@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { useCartStore } from '../store/cartStore';
 import { useCartPromotion } from '../hooks/useCartPromotion';
+import { useCartStore } from '../store/cartStore';
 import CartPromoBanner from './CartPromoBanner';
 
 export default function CartDrawer() {
@@ -27,7 +27,7 @@ export default function CartDrawer() {
                         animate={{ x: 0 }}
                         exit={{ x: '100%' }}
                         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                        className="fixed inset-y-0 right-0 w-full max-w-md bg-cream shadow-soft-xl z-50 flex flex-col rounded-l-4xl"
+                        className="fixed inset-y-0 right-0 w-full max-w-sm bg-white shadow-botanical-lg z-50 flex flex-col border-l border-kraft/30"
                     >
                         {/* Header */}
                         <div className="flex items-center justify-between p-6 border-b border-rose/20">
@@ -50,13 +50,13 @@ export default function CartDrawer() {
                             ) : (
                                 <div className="space-y-5">
                                     {items.map((item) => (
-                                        <div key={item.id} className="flex gap-4 p-4 bg-blush rounded-2xl">
+                                        <div key={item.id} className="flex gap-4 py-5 border-b border-kraft/30 last:border-0 relative">
                                             <img
                                                 src={item.image}
                                                 alt={item.name}
-                                                className="w-20 h-20 object-cover rounded-xl bg-white"
+                                                className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-sm bg-cream shadow-sm"
                                             />
-                                            <div className="flex-1">
+                                            <div className="flex-1 flex flex-col justify-between">
                                                 <h3 className="font-medium text-mauve">{item.name}</h3>
                                                 <p className="text-rose-deep font-semibold">${item.price}</p>
                                                 <div className="flex items-center gap-3 mt-2">
@@ -77,9 +77,10 @@ export default function CartDrawer() {
                                             </div>
                                             <button
                                                 onClick={() => removeItem(item.id)}
-                                                className="text-mauve/40 hover:text-rose-deep transition-colors"
+                                                className="text-charcoal/40 hover:text-red-600 transition-colors absolute top-5 right-0 p-1"
+                                                title="Eliminar producto"
                                             >
-                                                🗑️
+                                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" /></svg>
                                             </button>
                                         </div>
                                     ))}

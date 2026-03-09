@@ -104,8 +104,7 @@ export default function VariantSelector({ group, currentProductId, onVariantChan
         >
             {/* Variant group label */}
             <div className="flex items-center gap-2">
-                <span className="hidden sm:flex items-center gap-1.5 text-xs font-semibold py-1 px-2 rounded-md bg-gold/10 text-forest"
-                    style={{ color: 'var(--color-forest, #17204D)' }}>
+                <span className="hidden sm:flex items-center gap-1.5 text-xs font-semibold py-1 px-2 rounded-md bg-gold/10 text-forest">
                     {group.variants.length} opciones disponibles
                 </span>
                 {hasPriceRange && (
@@ -142,11 +141,11 @@ export default function VariantSelector({ group, currentProductId, onVariantChan
                                     key={opt.value}
                                     onClick={() => handleAttributeChange(attr.name, opt.value)}
                                     disabled={!isAvailable}
-                                    className={`px-4 mt-2 sm:mt-0 py-2.5 sm:py-2 text-sm font-medium rounded-lg transition-all duration-200 border text-center ${isSelected
-                                        ? 'border-gold bg-gold text-white shadow-md scale-[1.02]'
+                                    className={`min-w-10 h-10 px-3 flex items-center justify-center mt-2 sm:mt-0 py-2.5 sm:py-2 text-sm font-medium rounded-lg transition-all duration-200 border text-center ${isSelected
+                                        ? 'border-forest bg-forest text-white shadow-md scale-[1.02]'
                                         : !isAvailable
-                                            ? 'border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed hidden'
-                                            : 'border-gold/30 bg-white text-forest hover:border-gold hover:bg-gold/5'
+                                            ? 'border-kraft bg-kraft-light text-charcoal/40 cursor-not-allowed hidden'
+                                            : 'border-kraft/60 bg-white text-charcoal/80 hover:border-forest hover:text-forest hover:bg-forest/5'
                                         }`}
                                 >
                                     {opt.value}

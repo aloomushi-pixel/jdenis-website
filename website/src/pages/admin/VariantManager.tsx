@@ -112,8 +112,7 @@ export default function VariantManager({
         <div className="space-y-6">
             {/* Toast Notification */}
             {toast && (
-                <div className={`fixed top-4 right-4 z-50 px-6 py-3 rounded-xl shadow-lg text-white text-sm font-medium animate-pulse ${toast.type === 'success' ? 'bg-green-600' : 'bg-red-600'
-                    }`}>
+                <div className={`fixed top-4 right-4 z-50 px-4 py-2 rounded-lg shadow-md text-white text-xs font-medium animate-pulse ${toast.type === 'success' ? 'bg-green-600' : 'bg-red-600'} `}>
                     {toast.msg}
                 </div>
             )}

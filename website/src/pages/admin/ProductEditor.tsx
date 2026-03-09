@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion';
-import { useState, useMemo, useRef, useCallback, Fragment } from 'react';
-import type { Product } from '../../store/cartStore';
+import { Fragment, useCallback, useMemo, useRef, useState } from 'react';
 import * as XLSX from 'xlsx';
 import { useProducts } from '../../hooks/useProducts';
 import { useVariants } from '../../hooks/useVariants';
+import type { Product } from '../../store/cartStore';
 import VariantManager from './VariantManager';
 
 // ═══════════════════════════════════════════
@@ -490,7 +490,7 @@ export default function ProductEditor() {
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0 }}
-                    className={`fixed top - 4 right - 4 z - 50 px - 6 py - 3 rounded - xl shadow - lg text - white text - sm font - medium ${notification.type === 'success' ? 'bg-green-600'
+                    className={`fixed top-4 right-4 z-50 px-4 py-2 rounded-lg shadow-md text-white text-xs font-medium ${notification.type === 'success' ? 'bg-green-600'
                         : notification.type === 'info' ? 'bg-blue-600'
                             : 'bg-red-600'
                         } `}

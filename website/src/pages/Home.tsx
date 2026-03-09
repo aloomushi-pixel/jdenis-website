@@ -289,7 +289,7 @@ export default function Home() {
     return (
         <div className="min-h-screen bg-cream">
             {/* HERO SECTION - BOTANICAL APOTHECARY */}
-            <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
+            <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden">
                 {/* Background Video */}
                 <video
                     autoPlay
@@ -374,7 +374,7 @@ export default function Home() {
             </section>
 
             {/* BESTSELLERS - ROTATING GALLERY */}
-            <section className="py-20 relative overflow-hidden bg-gradient-to-b from-cream via-cream-dark/30 to-cream">
+            <section className="section relative overflow-hidden bg-gradient-to-b from-cream via-cream-dark/30 to-cream">
                 {/* Decorative accents */}
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
@@ -547,7 +547,7 @@ export default function Home() {
             </section>
 
             {/* ACADEMY MODULE - DYNAMIC SECTION */}
-            <section className="py-20 relative overflow-hidden bg-gradient-to-br from-cream via-cream-dark to-cream">
+            <section className="section relative overflow-hidden bg-gradient-to-br from-cream via-cream-dark to-cream">
                 {/* Dynamic pattern overlay */}
                 <div className="absolute inset-0 opacity-10">
                     <div className="absolute top-0 left-0 w-72 h-72 bg-gold/30 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
@@ -618,7 +618,7 @@ export default function Home() {
 
             {/* REELS & TIKTOKS GALLERY */}
             {reels.length > 0 && (
-                <section ref={reelsRef} className="py-20 relative overflow-hidden bg-forest">
+                <section ref={reelsRef} className="section relative overflow-hidden bg-forest">
                     {/* Dynamic glow overlay */}
                     <div className="absolute inset-0 opacity-30">
                         <div className="absolute top-0 left-1/4 w-80 h-80 bg-gold/40 rounded-full blur-3xl" />
@@ -702,7 +702,7 @@ export default function Home() {
             <GoogleReviews />
 
             {/* CTA FINAL - DYNAMIC SECTION */}
-            <section className="py-20 relative overflow-hidden bg-forest">
+            <section className="section relative overflow-hidden bg-forest">
                 {/* Dynamic pattern overlay */}
                 <div className="absolute inset-0 opacity-20">
                     <div className="absolute top-0 right-0 w-80 h-80 bg-gold/40 rounded-full blur-3xl translate-x-1/3 -translate-y-1/3" />

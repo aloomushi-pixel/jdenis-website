@@ -7,40 +7,51 @@ export default {
   theme: {
     extend: {
       colors: {
-        // J. Denis Brand Colors — based on jdenis.com
+        // J. Denis BRAND IDENTITY - DESIGN TOKENS
+        primary: '#1E56FF',
+        secondary: '#54CCFF',
+        surface: '#F0F7FF',
+        'accent-pink': '#FFD1E0',
+        'accent-yellow': '#FFD33D',
+        textMain: '#1A1A1A',
+        base: '#FFFFFF',
+
+        // Remapping existing variable names used throughout the project
         forest: {
-          DEFAULT: '#17204D',  // Deep navy (primary dark)
-          light: '#1E2B5E',    // Lighter navy
-          dark: '#0F1638',     // Darker navy
+          DEFAULT: '#1E56FF',  // Now mapped to New Primary
+          light: '#3B6AFF',
+          dark: '#0A3ACC',
         },
         cream: {
-          DEFAULT: '#ffffff',  // Pure white background
-          dark: '#f5f5f5',
-          light: '#ffffff',
+          DEFAULT: '#FFFFFF',  // Fondo Base
+          dark: '#F0F7FF',     // Surface/Ice Blue
+          light: '#FFFFFF',
         },
         gold: {
-          DEFAULT: '#1C50EF',  // Brand blue (accent)
-          light: '#4B73F5',
-          dark: '#1440C0',
+          DEFAULT: '#54CCFF',  // Now mapped to New Secondary
+          light: '#7EE0FF',
+          dark: '#26ADD4',
         },
         kraft: {
-          DEFAULT: '#E8ECF5',  // Light blue-grey accent
-          light: '#F0F3FA',
-          dark: '#C8D2E8',
+          DEFAULT: '#E5E5E5',  // Dividers / Subtle borders
+          light: '#F3F4F6',
+          dark: '#D1D5DB',
         },
-        charcoal: '#1A1A1A',
+        charcoal: '#1A1A1A',   // Texto Principal
+
         // Legacy mappings for compatibility
-        noir: '#17204D',
-        'rose-gold': '#1C50EF',
-        champagne: '#4B73F5',
+        noir: '#1A1A1A',
+        'rose-gold': '#FFD1E0',
+        champagne: '#FFD33D',
         pearl: '#ffffff',
       },
       fontFamily: {
-        serif: ['Playfair Display', 'Georgia', 'serif'],
-        sans: ['Lato', 'Source Sans Pro', 'system-ui', 'sans-serif'],
+        serif: ['Vidaloka', 'serif'],
+        sans: ['"Roboto Flex"', 'Nunito', 'sans-serif'],
       },
       borderRadius: {
-        'soft': '8px',
+        'soft': '4px',
+        'button': '4px',
         'botanical': '4px',
       },
       boxShadow: {

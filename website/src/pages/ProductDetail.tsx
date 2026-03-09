@@ -92,7 +92,7 @@ export default function ProductDetail() {
     if (productsLoading) {
         return (
             <div className="min-h-screen bg-cream flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gold"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gold"></div>
             </div>
         );
     }
@@ -111,9 +111,16 @@ export default function ProductDetail() {
         );
     }
 
+    const [isAdding, setIsAdding] = useState(false);
+
     const handleAddToCart = () => {
+        if (!product) return;
+        setIsAdding(true);
         addItem(product);
-        openCart();
+        setTimeout(() => {
+            setIsAdding(false);
+            openCart();
+        }, 400);
     };
 
     const handleVariantChange = (newProductId: string) => {
@@ -131,16 +138,16 @@ export default function ProductDetail() {
         <div className="min-h-screen bg-cream pt-24">
             <div className="container-luxury py-8 md:py-12">
                 {/* Breadcrumb */}
-                <nav className="text-sm mb-8" style={{ fontSize: '0.8rem' }}>
-                    <Link to="/" className="text-charcoal/50 hover:text-gold transition-colors">Inicio</Link>
-                    <span className="mx-2 text-charcoal/20">/</span>
-                    <Link to="/tienda" className="text-charcoal/50 hover:text-gold transition-colors">Tienda</Link>
-                    <span className="mx-2 text-charcoal/20">/</span>
-                    <span className="text-forest font-medium">{product.name}</span>
+                <nav className="text-xs uppercase tracking-wider mb-8 flex items-center gap-2 text-charcoal/50">
+                    <Link to="/" className="hover:text-gold transition-colors">Inicio</Link>
+                    <span className="text-charcoal/20">/</span>
+                    <Link to="/tienda" className="hover:text-gold transition-colors">Tienda</Link>
+                    <span className="text-charcoal/20">/</span>
+                    <span className="text-forest font-semibold">{product.name}</span>
                 </nav>
 
                 {/* Product Hero Section */}
-                <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 mb-12 lg:mb-16">
+                <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 mb-12 lg:mb-16">
                     {/* Image */}
                     <motion.div
                         initial={{ opacity: 0, x: -20 }}
@@ -169,10 +176,10 @@ export default function ProductDetail() {
                         animate={{ opacity: 1, x: 0 }}
                         className="flex flex-col"
                     >
-                        <span className="text-charcoal/40 text-xs uppercase tracking-[0.2em] mb-2">
+                        <span className="text-charcoal/40 text-xs uppercase tracking-[0.2em] mb-3 block">
                             {product.category}
                         </span>
-                        <h1 className="font-serif text-2xl sm:text-3xl lg:text-4xl text-forest mb-3 leading-tight">
+                        <h1 className="font-serif text-2xl sm:text-3xl lg:text-4xl text-forest mb-4 leading-tight">
                             {product.name}
                         </h1>
 
@@ -186,18 +193,22 @@ export default function ProductDetail() {
                             />
                         )}
 
-                        <p className="text-2xl sm:text-3xl font-bold mb-4 text-forest">
-                            ${product.price.toLocaleString()} <span className="text-base font-normal text-charcoal/40">MXN</span>
+                        <p className="text-2xl sm:text-3xl font-bold mb-6 text-forest">
+                            {product.price > 0 ? (
+                                <>${product.price.toLocaleString()} <span className="text-base font-normal text-charcoal/40">MXN</span></>
+                            ) : (
+                                <span className="text-charcoal/50 italic font-normal text-xl">Cotizar</span>
+                            )}
                         </p>
 
-                        <p className="text-charcoal/70 leading-relaxed mb-6 text-sm sm:text-base">
+                        <p className="text-charcoal/70 leading-relaxed mb-8 text-sm sm:text-base">
                             {product.description ||
                                 'Producto profesional de alta calidad diseñado para especialistas en belleza. Técnicas patentadas J. Denis con más de 25 años de experiencia.'}
                         </p>
 
                         {product.performance && (
                             <div className="mb-6 flex items-center gap-3 px-4 py-3 rounded-xl bg-forest/5 border border-forest/10">
-                                <svg className="w-6 h-6 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" /></svg>
+                                <svg className="w-5 h-5 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" /></svg>
                                 <div>
                                     <span className="text-xs uppercase tracking-wider text-charcoal/50 block">Rendimiento</span>
                                     <span className="font-semibold text-forest">{product.performance}</span>
@@ -225,16 +236,19 @@ export default function ProductDetail() {
                         <div className="mt-auto space-y-3">
                             <button
                                 onClick={handleAddToCart}
-                                className="w-full py-3.5 sm:py-4 text-sm sm:text-base font-semibold tracking-wider uppercase rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-[1.02] bg-forest text-white hover:bg-forest-light"
+                                disabled={isAdding}
+                                className={`w-full h-12 text-sm sm:text-base font-semibold tracking-wider uppercase rounded-sm transition-all duration-300 ${isAdding
+                                    ? 'bg-gold text-white scale-[1.02] shadow-md'
+                                    : 'bg-forest text-white hover:bg-forest-light hover:shadow-lg hover:-translate-y-0.5'
+                                    }`}
                             >
-                                Agregar al Carrito
+                                {isAdding ? '¡Agregado!' : 'Agregar al Carrito'}
                             </button>
                             <a
                                 href={`https://wa.me/525527271067?text=Hola! Estoy interesada en: ${product.name}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="block w-full py-3 text-center text-sm font-medium rounded-xl border-2 transition-all hover:shadow-md"
-                                style={{ borderColor: '#17204D40', color: '#17204D' }}
+                                className="block w-full py-3 text-center text-sm font-medium rounded-xl border-2 transition-all hover:shadow-md border-charcoal/40 text-charcoal group"
                             >
                                 <svg className="w-4 h-4 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" /></svg> Preguntar por WhatsApp
                             </a>
@@ -308,8 +322,8 @@ export default function ProductDetail() {
                                     <h3 className="font-serif text-xl text-forest mb-5">Beneficios del producto</h3>
                                     <div className="grid sm:grid-cols-2 gap-3">
                                         {product.benefits!.map((benefit, i) => (
-                                            <div key={i} className="flex items-start gap-3 p-3 rounded-xl transition-colors"
-                                                style={{ background: '#17204D08' }}>
+                                            <div key={i} className="flex items-start gap-3 p-3 rounded-xl transition-colors bg-charcoal/5"
+                                            >
                                                 <span className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold bg-gold text-white">
                                                     {i + 1}
                                                 </span>
@@ -331,8 +345,8 @@ export default function ProductDetail() {
                                     <h3 className="font-serif text-xl text-forest mb-5">¿Qué incluye?</h3>
                                     <div className="grid sm:grid-cols-2 gap-2">
                                         {product.includes!.map((item, i) => (
-                                            <div key={i} className="flex items-center gap-3 py-2.5 px-3 rounded-lg"
-                                                style={{ background: i % 2 === 0 ? '#F0F3FA08' : 'transparent' }}>
+                                            <div key={i} className={`flex items-center gap-3 py-2.5 px-3 rounded-lg ${i % 2 === 0 ? 'bg-kraft/5' : 'bg-transparent'}`}
+                                            >
                                                 <span className="text-sm text-gold">●</span>
                                                 <span className="text-charcoal/80 text-sm">{item}</span>
                                             </div>
@@ -362,11 +376,8 @@ export default function ProductDetail() {
                                     {product.specifications && (
                                         <div className="space-y-2 mb-5">
                                             {product.specifications.map((spec, i) => (
-                                                <div key={i} className="flex items-center gap-3 py-2.5 px-4 rounded-lg"
-                                                    style={{
-                                                        background: i % 2 === 0 ? '#F0F3FA' : 'transparent',
-                                                        borderBottom: '1px solid #E0E4ED20',
-                                                    }}>
+                                                <div key={i} className={`flex items-center gap-3 py-2.5 px-4 rounded-lg ${i % 2 === 0 ? 'bg-kraft-light' : 'bg-transparent'} border-b border-kraft/20`}
+                                                >
                                                     <span className="text-sm text-gold">◆</span>
                                                     <span className="text-charcoal/80 text-sm">{spec}</span>
                                                 </div>
@@ -399,8 +410,7 @@ export default function ProductDetail() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.4 }}
-                        className="pt-8 lg:pt-12"
-                        style={{ borderTop: '2px solid #E0E4ED' }}
+                        className="pt-8 lg:pt-12 border-t-2 border-kraft-light"
                     >
                         <div className="flex items-center justify-between mb-6">
                             <div>
@@ -431,14 +441,13 @@ export default function ProductDetail() {
                                 </div>
                             </div>
                             {/* Fade edges */}
-                            <div className="absolute top-0 right-0 bottom-4 w-12 pointer-events-none"
-                                style={{ background: 'linear-gradient(to left, #FFFFFF, transparent)' }} />
+                            <div className="absolute top-0 right-0 bottom-4 w-12 pointer-events-none bg-gradient-to-l from-white"
+                            />
                         </div>
 
                         <Link
                             to="/tienda"
-                            className="sm:hidden flex items-center justify-center gap-2 mt-4 py-3 text-sm font-medium rounded-xl border-2 transition-all"
-                            style={{ borderColor: '#1C50EF40', color: '#1C50EF' }}
+                            className="sm:hidden flex items-center justify-center gap-2 mt-4 py-3 text-sm font-medium rounded-xl border-2 transition-all border-forest/40 text-forest"
                         >
                             Ver todo el catálogo →
                         </Link>
@@ -459,15 +468,7 @@ function TabButton({ label, icon, isActive, onClick }: {
     return (
         <button
             onClick={onClick}
-            className="flex items-center gap-2 px-4 sm:px-6 py-3 text-sm font-medium transition-all whitespace-nowrap flex-shrink-0"
-            style={{
-                color: isActive ? '#17204D' : '#17204D80',
-                borderBottom: isActive ? '3px solid var(--color-gold, #D4AF37)' : '3px solid transparent',
-                background: isActive ? '#FFFFFF' : 'transparent',
-                marginBottom: '-2px',
-                borderTopLeftRadius: '0.75rem',
-                borderTopRightRadius: '0.75rem',
-            }}
+            className={`flex items-center gap-2 px-4 sm:px-6 py-3 text-sm font-medium transition-all whitespace-nowrap flex-shrink-0 ${isActive ? 'text-charcoal border-b-3 border-gold bg-white' : 'text-charcoal/50 border-b-3 border-transparent'} -mb-px rounded-t-xl`}
         >
             <span>{icon}</span>
             <span>{label}</span>

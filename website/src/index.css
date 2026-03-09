@@ -15,14 +15,14 @@
   }
 
   body {
-    @apply bg-cream text-charcoal font-sans antialiased;
+    @apply bg-cream text-charcoal font-sans antialiased leading-[1.6];
   }
 
   h1,
   h2,
   h3,
   h4 {
-    @apply font-serif text-forest;
+    @apply font-serif text-forest font-normal tracking-[-0.02em];
   }
 }
 
@@ -35,29 +35,29 @@
 
   /* ===== BUTTONS ===== */
   .btn {
-    @apply inline-flex items-center justify-center px-8 py-3 text-sm tracking-[0.15em] uppercase font-medium transition-all duration-300 border;
+    @apply inline-flex items-center justify-center px-8 text-sm tracking-[0.10em] uppercase font-medium transition-all duration-300 border rounded-button;
   }
 
   .btn-primary {
-    @apply bg-forest text-white border-forest hover:bg-forest-light;
+    @apply bg-forest text-white border-transparent hover:bg-forest-light hover:-translate-y-0.5 hover:shadow-lg;
   }
 
   .btn-secondary {
-    @apply bg-gold text-white border-gold hover:bg-gold-light;
+    @apply bg-gold text-white border-transparent hover:bg-gold-light hover:-translate-y-0.5 hover:shadow-md;
   }
 
   .btn-outline {
-    @apply bg-transparent text-forest border-forest hover:bg-forest hover:text-cream;
+    @apply bg-transparent text-forest border-forest hover:bg-forest hover:text-white hover:-translate-y-0.5 hover:shadow-md;
   }
 
   .btn-outline-light {
-    @apply bg-transparent text-cream border-cream hover:bg-cream hover:text-forest;
+    @apply bg-transparent text-cream border-cream hover:bg-cream hover:text-forest hover:-translate-y-0.5 hover:shadow-md;
   }
 
   /* ===== HERO ===== */
   .hero {
     @apply relative min-h-screen flex items-center justify-center overflow-hidden;
-    background: linear-gradient(135deg, #17204D 0%, #1E2B5E 50%, #17204D 100%);
+    background: theme('colors.primary');
   }
 
   .hero-content {
@@ -78,7 +78,7 @@
 
   /* ===== SECTIONS ===== */
   .section {
-    @apply py-20 lg:py-28;
+    @apply py-16 lg:py-24;
   }
 
   .section-cream {
@@ -115,41 +115,29 @@
 
   /* ===== PRODUCT CARDS ===== */
   .product-card {
-    @apply relative bg-cream border border-cream-dark overflow-hidden transition-all duration-300;
+    @apply relative bg-white border border-kraft overflow-hidden transition-all duration-300 rounded-sm;
   }
 
   .product-card:hover {
-    @apply shadow-card-hover border-gold/30;
+    @apply shadow-card-hover border-forest/30 -translate-y-1;
   }
 
   .product-card-image {
     @apply w-full aspect-square object-cover;
   }
 
-  .product-card-body {
-    @apply p-5 text-center;
-  }
-
-  .product-card-title {
-    @apply font-serif text-lg text-forest;
-  }
-
-  .product-card-price {
-    @apply text-gold font-semibold text-lg;
-  }
-
   /* ===== TESTIMONIALS ===== */
   .testimonial-card {
-    @apply relative p-8 bg-cream border border-cream-dark transition-all duration-300;
+    @apply relative p-8 bg-cream border border-kraft transition-all duration-300;
   }
 
   .testimonial-card:hover {
-    @apply shadow-card border-gold/20;
+    @apply shadow-sm border-forest/30;
   }
 
   /* ===== LEGACY STRIP ===== */
   .legacy-strip {
-    @apply bg-forest py-12 border-y border-gold/20;
+    @apply bg-forest py-16 border-y border-gold/20;
   }
 
   .legacy-card {
@@ -203,7 +191,7 @@
    100% Google-authentic styling
    ======================================== */
 .google-reviews {
-  padding: 4rem 0;
+  @apply py-16 md:py-24;
   background: #f8f9fa;
 }
 
@@ -356,8 +344,8 @@
 }
 
 .google-reviews__avatar {
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 2.5rem;
+  height: 2.5rem;
   border-radius: 50%;
   display: flex;
   align-items: center;

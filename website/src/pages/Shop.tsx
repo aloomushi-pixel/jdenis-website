@@ -256,7 +256,7 @@ export default function Shop() {
     if (loading) {
         return (
             <div className="min-h-screen bg-cream flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gold"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gold"></div>
             </div>
         );
     }
@@ -324,8 +324,9 @@ export default function Shop() {
     return (
         <div className="min-h-screen bg-cream">
             {/* Header */}
-            <section className="pt-24 pb-12 md:pt-32 md:pb-16 bg-forest relative overflow-hidden">
-                <div className="absolute inset-0 botanical-pattern opacity-20" />
+            <section className="pt-24 pb-12 md:pt-32 md:pb-16 relative overflow-hidden shadow-[0_10px_30px_rgba(0,0,0,0.15)] bg-forest" style={{ backgroundImage: "url('/images/bg_hero_jdenis.png')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
+                <div className="absolute inset-0 bg-forest/40 mix-blend-multiply" />
+                <div className="absolute inset-0 bg-gradient-to-t from-forest/80 to-transparent" />
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
 
                 <div className="container-luxury relative z-10">
@@ -334,26 +335,23 @@ export default function Shop() {
                         animate={{ opacity: 1, y: 0 }}
                         className="text-center"
                     >
-                        <span className="inline-block px-4 py-2 bg-gold/20 border border-gold/40 text-gold text-sm font-medium mb-4">
-                            Catálogo Profesional
-                        </span>
-                        <h1 className="font-serif text-3xl md:text-5xl text-cream mb-4">Insumos Profesionales para Cejas y Pestañas</h1>
-                        <p className="hidden md:block text-cream/70 max-w-xl mx-auto">
+                        <h1 className="font-serif text-3xl md:text-5xl text-cream mb-4 drop-shadow-md">Insumos Profesionales para Cejas y Pestañas</h1>
+                        <p className="hidden md:block text-cream/90 max-w-xl mx-auto drop-shadow-md">
                             Productos de laboratorio con calidad científica · Lash Lifting · Extensiones · Pigmentos · Envíos a todo México
                         </p>
                     </motion.div>
 
                     {/* Search Bar (in header) */}
-                    <div className="mt-6 max-w-md mx-auto px-4 md:px-0">
-                        <div className="relative">
+                    <div className="mt-8 mx-auto px-4 md:px-0 transition-all duration-300 w-full max-w-sm focus-within:max-w-md">
+                        <div className="relative group">
                             <input
                                 type="text"
-                                placeholder="Buscar productos..."
+                                placeholder="Busca productos..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-10 pr-4 py-3 bg-white/10 border border-gold/30 rounded-lg text-cream placeholder-cream/50 focus:outline-none focus:border-gold backdrop-blur-sm"
+                                className="w-full pl-10 pr-4 py-3 bg-white border border-gold/30 rounded-lg text-charcoal placeholder-charcoal/50 focus:outline-none focus:border-gold shadow-lg transition-all duration-300 focus:shadow-xl focus:-translate-y-0.5"
                             />
-                            <svg className="absolute left-3 top-3.5 w-5 h-5 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
+                            <svg className="absolute left-3 top-3.5 w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
                         </div>
                     </div>
                 </div>
@@ -416,9 +414,9 @@ export default function Shop() {
                             <div className="flex gap-2 pb-1">
                                 <button
                                     onClick={() => setActiveCategory('all')}
-                                    className={`flex-shrink-0 px-4 py-2 text-sm rounded-full border transition-all ${activeCategory === 'all'
-                                        ? 'bg-gold text-white border-gold font-medium shadow-sm'
-                                        : 'bg-white border-kraft/30 text-charcoal/70 hover:border-gold/40'
+                                    className={`flex-shrink-0 px-5 py-2.5 text-sm rounded-full border transition-all ${activeCategory === 'all'
+                                        ? 'bg-forest text-white border-forest font-medium shadow-sm'
+                                        : 'bg-white border-kraft/30 text-charcoal/70 hover:border-forest/40 hover:text-forest'
                                         }`}
                                 >
                                     Ver Todo
@@ -426,7 +424,7 @@ export default function Shop() {
                                 {/* Offers quick-filter pill */}
                                 <button
                                     onClick={() => setShowOffersOnly(!showOffersOnly)}
-                                    className={`flex-shrink-0 px-4 py-2 text-sm rounded-full border transition-all flex items-center gap-1.5 ${showOffersOnly
+                                    className={`flex-shrink-0 px-5 py-2.5 text-sm rounded-full border transition-all flex items-center gap-1.5 ${showOffersOnly
                                         ? 'bg-red-500 text-white border-red-500 font-medium shadow-sm'
                                         : 'bg-white border-kraft/30 text-charcoal/70 hover:border-red-300'
                                         }`}
@@ -442,12 +440,12 @@ export default function Shop() {
                                     <button
                                         key={cat.id}
                                         onClick={() => setActiveCategory(cat.id)}
-                                        className={`flex-shrink-0 px-4 py-2 text-sm rounded-full border transition-all flex items-center gap-2 ${activeCategory === cat.id
-                                            ? 'bg-gold text-white border-gold font-medium shadow-sm'
-                                            : 'bg-white border-kraft/30 text-charcoal/70 hover:border-gold/40'
+                                        className={`flex-shrink-0 group px-5 py-2.5 text-sm rounded-full border transition-all flex items-center gap-2 ${activeCategory === cat.id
+                                            ? 'bg-forest text-white border-forest font-medium shadow-sm'
+                                            : 'bg-white border-kraft/30 text-charcoal/70 hover:border-forest/40 hover:text-forest'
                                             }`}
                                     >
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3.5 h-3.5 shrink-0"><path strokeLinecap="round" strokeLinejoin="round" d={cat.icon} /></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3.5 h-3.5 shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:-translate-y-0.5"><path strokeLinecap="round" strokeLinejoin="round" d={cat.icon} /></svg>
                                         {cat.name}
                                     </button>
                                 ))}
@@ -501,7 +499,7 @@ export default function Shop() {
                     {renderActiveFilterChips()}
 
                     {/* Products Grid */}
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
                         {filteredProducts.map((product, index) => (
                             <ProductCard
                                 key={product.id}
@@ -554,8 +552,8 @@ export default function Shop() {
                             className="fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl z-50 max-h-[80vh] overflow-y-auto"
                         >
                             {/* Handle */}
-                            <div className="flex justify-center pt-3 pb-1">
-                                <div className="w-10 h-1 bg-kraft/40 rounded-full" />
+                            <div className="flex justify-center pt-4 pb-2 mb-2">
+                                <div className="w-10 h-1.5 bg-kraft/40 rounded-full" />
                             </div>
 
                             <div className="px-6 pb-6">

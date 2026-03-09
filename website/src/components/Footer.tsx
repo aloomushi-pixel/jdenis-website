@@ -37,7 +37,7 @@ export default function Footer() {
 
                     {/* Tienda */}
                     <div>
-                        <h4 className="text-xs tracking-[0.2em] uppercase text-gold mb-6">Tienda</h4>
+                        <h4 className="text-xs tracking-[0.2em] uppercase text-gold mb-5">Tienda</h4>
                         <ul className="space-y-3">
                             {[
                                 { to: '/tienda?cat=lash-lifting', label: 'Lash Lifting & Rizado' },
@@ -55,7 +55,7 @@ export default function Footer() {
 
                     {/* Academia */}
                     <div>
-                        <h4 className="text-xs tracking-[0.2em] uppercase text-gold mb-6">Academia</h4>
+                        <h4 className="text-xs tracking-[0.2em] uppercase text-gold mb-5">Academia</h4>
                         <ul className="space-y-3">
                             <li><Link to="/academia" className="text-sm text-cream/50 hover:text-gold transition-colors">Cursos Presenciales</Link></li>
                             <li><Link to="/academia" className="text-sm text-cream/50 hover:text-gold transition-colors">Certificaciones</Link></li>
@@ -66,8 +66,8 @@ export default function Footer() {
 
                     {/* Contacto */}
                     <div>
-                        <h4 className="text-xs tracking-[0.2em] uppercase text-gold mb-6">Contacto</h4>
-                        <ul className="space-y-4 text-sm">
+                        <h4 className="text-xs tracking-[0.2em] uppercase text-gold mb-5">Contacto</h4>
+                        <ul className="space-y-3 text-sm">
                             <li className="flex items-start gap-3 text-cream/50">
                                 <svg className="w-5 h-5 mt-0.5 text-gold flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -96,7 +96,7 @@ export default function Footer() {
 
             {/* Bottom Bar */}
             <div className="border-t border-cream/10">
-                <div className="container-luxury py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="container-luxury py-5 md:py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
                     <p className="text-cream/30 text-xs tracking-wider">
                         © {new Date().getFullYear()} J. Denis — Cosmética Profesional Mexicana
                     </p>
