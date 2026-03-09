@@ -74,7 +74,7 @@ export default function ProductCard({ product, index = 0, variantCount = 0 }: Pr
                             {product.promotion ? product.promotion : `-${discountPercent}% OFF`}
                         </div>
                     ) : product.isFeatured ? (
-                        <div className="absolute top-2 left-2 z-10 bg-gradient-to-r from-gold to-gold-light text-forest text-[10px] sm:text-xs font-bold px-2 py-0.5 sm:px-2.5 sm:py-1 tracking-wider uppercase shadow-lg animate-pulse" style={{ animationDuration: '3s' }}>
+                        <div className="absolute top-2 left-2 z-10 bg-gradient-to-r from-yellow-400 to-amber-500 text-amber-950 text-[10px] sm:text-xs font-bold px-2 py-0.5 sm:px-2.5 sm:py-1 tracking-wider uppercase shadow-lg animate-pulse" style={{ animationDuration: '3s' }}>
                             ⭐ Destacado
                         </div>
                     ) : null}
