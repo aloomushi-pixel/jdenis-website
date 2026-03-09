@@ -1,12 +1,12 @@
 import { motion } from 'framer-motion';
-import { useState, useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import ReviewSection from '../components/ReviewSection';
 import VariantSelector from '../components/VariantSelector';
 import { useProducts, type DisplayProduct } from '../hooks/useProducts';
-import { useCartStore } from '../store/cartStore';
 import { useVariants } from '../hooks/useVariants';
+import { useCartStore } from '../store/cartStore';
 
 // Local VariantGroup type (previously from data/products)
 interface VariantGroup {
@@ -225,7 +225,7 @@ export default function ProductDetail() {
                         <div className="mt-auto space-y-3">
                             <button
                                 onClick={handleAddToCart}
-                                className="w-full py-3.5 sm:py-4 text-sm sm:text-base font-semibold tracking-wider uppercase rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-[1.02] bg-gold text-forest hover:bg-gold-light"
+                                className="w-full py-3.5 sm:py-4 text-sm sm:text-base font-semibold tracking-wider uppercase rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-[1.02] bg-forest text-white hover:bg-forest-light"
                             >
                                 Agregar al Carrito
                             </button>

@@ -52,9 +52,9 @@ export default function ProductCard({ product, index = 0, variantCount = 0 }: Pr
                     {/* Quick Add Button - Always visible Mobile, Hover Desktop */}
                     <button
                         onClick={handleAddToCart}
-                        className="lg:absolute lg:bottom-4 lg:left-4 lg:right-4 bg-gold text-forest text-[10px] sm:text-xs tracking-widest uppercase font-semibold py-2 sm:py-3 
+                        className="lg:absolute lg:bottom-4 lg:left-4 lg:right-4 bg-forest text-white text-[10px] sm:text-xs tracking-widest uppercase font-semibold py-2 sm:py-3 
                         lg:opacity-0 lg:group-hover:opacity-100 lg:translate-y-4 lg:group-hover:translate-y-0 transition-all duration-300
-                        absolute bottom-0 left-0 right-0 w-full lg:w-auto lg:rounded-sm hover:bg-gold-light"
+                        absolute bottom-0 left-0 right-0 w-full lg:w-auto lg:rounded-sm hover:bg-forest-light"
                     >
                         <span className="flex items-center justify-center gap-2">
                             {hasVariants ? (
