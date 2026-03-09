@@ -81,7 +81,7 @@ export default function ProductCard({ product, index = 0, variantCount = 0 }: Pr
 
                     {/* Variant Count Badge */}
                     {hasVariants && (
-                        <div className="absolute top-2 right-2 z-10 px-2 py-0.5 text-[10px] sm:text-xs font-semibold tracking-wider rounded-sm bg-gold text-forest">
+                        <div className="absolute top-2 right-2 z-10 px-2 py-0.5 text-[10px] sm:text-xs font-semibold tracking-wider rounded-sm bg-gold text-white">
                             {variantCount} opciones
                         </div>
                     )}

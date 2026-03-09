@@ -157,7 +157,7 @@ export default function ProductDetail() {
                             />
                         </div>
                         <span
-                            className="absolute top-4 left-4 px-3 py-1.5 text-xs font-semibold tracking-wider uppercase rounded-full bg-gold text-forest shadow-md"
+                            className="absolute top-4 left-4 px-3 py-1.5 text-xs font-semibold tracking-wider uppercase rounded-full bg-gold text-white shadow-md"
                         >
                             {product.category}
                         </span>
@@ -310,7 +310,7 @@ export default function ProductDetail() {
                                         {product.benefits!.map((benefit, i) => (
                                             <div key={i} className="flex items-start gap-3 p-3 rounded-xl transition-colors"
                                                 style={{ background: '#17204D08' }}>
-                                                <span className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold bg-gold text-forest">
+                                                <span className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold bg-gold text-white">
                                                     {i + 1}
                                                 </span>
                                                 <span className="text-charcoal/80 text-sm leading-relaxed">{benefit}</span>

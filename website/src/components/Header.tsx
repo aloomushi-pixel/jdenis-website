@@ -127,7 +127,7 @@ export default function Header() {
                                     <motion.span
                                         initial={{ scale: 0 }}
                                         animate={{ scale: 1 }}
-                                        className="absolute -top-1 -right-1 w-5 h-5 bg-gold text-forest text-xs rounded-full flex items-center justify-center font-semibold"
+                                        className="absolute -top-1 -right-1 w-5 h-5 bg-gold text-white text-xs rounded-full flex items-center justify-center font-semibold"
                                     >
                                         {count}
                                     </motion.span>

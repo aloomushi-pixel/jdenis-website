@@ -143,7 +143,7 @@ export default function VariantSelector({ group, currentProductId, onVariantChan
                                     onClick={() => handleAttributeChange(attr.name, opt.value)}
                                     disabled={!isAvailable}
                                     className={`px-4 mt-2 sm:mt-0 py-2.5 sm:py-2 text-sm font-medium rounded-lg transition-all duration-200 border text-center ${isSelected
-                                        ? 'border-gold bg-gold text-forest shadow-md scale-[1.02]'
+                                        ? 'border-gold bg-gold text-white shadow-md scale-[1.02]'
                                         : !isAvailable
                                             ? 'border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed hidden'
                                             : 'border-gold/30 bg-white text-forest hover:border-gold hover:bg-gold/5'

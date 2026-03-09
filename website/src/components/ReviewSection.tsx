@@ -151,7 +151,7 @@ export default function ReviewSection({ productId, productName }: ReviewSectionP
                     <div className="p-5 rounded-xl text-center bg-forest/5 border border-forest/10">
                         <svg className="w-8 h-8 mx-auto mb-2 text-charcoal/50" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
                         <p className="text-sm text-charcoal/70 mb-3">Inicia sesión para dejar una reseña</p>
-                        <Link to="/login" className="inline-block px-6 py-2 text-sm font-medium rounded-lg transition-all hover:shadow-md bg-gold text-forest hover:bg-gold-light">
+                        <Link to="/login" className="inline-block px-6 py-2 text-sm font-medium rounded-lg transition-all hover:shadow-md bg-gold text-white hover:bg-gold-light">
                             Iniciar Sesión
                         </Link>
                     </div>
@@ -188,7 +188,7 @@ export default function ReviewSection({ productId, productName }: ReviewSectionP
                             <button
                                 type="submit"
                                 disabled={submitting || rating === 0}
-                                className="px-6 py-2.5 text-sm font-semibold rounded-lg transition-all hover:shadow-md disabled:opacity-50 bg-gold text-forest hover:bg-gold-light"
+                                className="px-6 py-2.5 text-sm font-semibold rounded-lg transition-all hover:shadow-md disabled:opacity-50 bg-gold text-white hover:bg-gold-light"
                             >
                                 {submitting ? 'Enviando...' : 'Enviar Reseña'}
                             </button>

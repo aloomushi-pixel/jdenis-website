@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
 import { ArrowRight, BookOpen, Clock, FileText, Leaf, Loader, Newspaper, Search, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getNewsPosts, getBlogPosts, type BlogPost } from '../lib/supabase';
+import { getBlogPosts, getNewsPosts, type BlogPost } from '../lib/supabase';
 
 export default function Blog() {
     const [searchTerm, setSearchTerm] = useState('');
@@ -92,7 +92,7 @@ export default function Blog() {
                             <button
                                 onClick={() => setActiveCategory(null)}
                                 className={`px-4 py-2 text-sm font-medium border transition-all duration-300 ${!activeCategory
-                                    ? 'bg-gold text-forest border-gold'
+                                    ? 'bg-gold text-white border-gold'
                                     : 'bg-transparent text-cream/70 border-cream/20 hover:border-gold/50 hover:text-cream'
                                     }`}
                             >
@@ -103,7 +103,7 @@ export default function Blog() {
                                     key={cat}
                                     onClick={() => setActiveCategory(activeCategory === cat ? null : cat)}
                                     className={`px-4 py-2 text-sm font-medium border transition-all duration-300 ${activeCategory === cat
-                                        ? 'bg-gold text-forest border-gold'
+                                        ? 'bg-gold text-white border-gold'
                                         : 'bg-transparent text-cream/70 border-cream/20 hover:border-gold/50 hover:text-cream'
                                         }`}
                                 >

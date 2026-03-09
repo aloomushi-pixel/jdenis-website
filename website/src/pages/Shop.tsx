@@ -417,7 +417,7 @@ export default function Shop() {
                                 <button
                                     onClick={() => setActiveCategory('all')}
                                     className={`flex-shrink-0 px-4 py-2 text-sm rounded-full border transition-all ${activeCategory === 'all'
-                                        ? 'bg-gold text-forest border-gold font-medium shadow-sm'
+                                        ? 'bg-gold text-white border-gold font-medium shadow-sm'
                                         : 'bg-white border-kraft/30 text-charcoal/70 hover:border-gold/40'
                                         }`}
                                 >
@@ -443,7 +443,7 @@ export default function Shop() {
                                         key={cat.id}
                                         onClick={() => setActiveCategory(cat.id)}
                                         className={`flex-shrink-0 px-4 py-2 text-sm rounded-full border transition-all flex items-center gap-2 ${activeCategory === cat.id
-                                            ? 'bg-gold text-forest border-gold font-medium shadow-sm'
+                                            ? 'bg-gold text-white border-gold font-medium shadow-sm'
                                             : 'bg-white border-kraft/30 text-charcoal/70 hover:border-gold/40'
                                             }`}
                                     >
@@ -672,7 +672,7 @@ export default function Shop() {
                                     )}
                                     <button
                                         onClick={() => setShowMobileFilters(false)}
-                                        className="flex-1 py-3 bg-gold text-forest text-sm font-semibold rounded-lg hover:bg-gold-light transition-colors"
+                                        className="flex-1 py-3 bg-gold text-white text-sm font-semibold rounded-lg hover:bg-gold-light transition-colors"
                                     >
                                         Ver {filteredProducts.length} productos
                                     </button>

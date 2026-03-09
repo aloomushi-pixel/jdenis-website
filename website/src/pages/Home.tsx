@@ -1,9 +1,9 @@
-import { motion, AnimatePresence, useInView } from 'framer-motion';
-import { useState, useEffect, useRef } from 'react';
+import { AnimatePresence, motion, useInView } from 'framer-motion';
+import { Pause, Play, Volume2, VolumeX } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Volume2, VolumeX, Pause, Play } from 'lucide-react';
-import { getFeaturedProducts, getReels, type SocialReel, type Product } from '../lib/supabase';
 import GoogleReviews from '../components/GoogleReviews';
+import { getFeaturedProducts, getReels, type Product, type SocialReel } from '../lib/supabase';
 
 const platformStyles: Record<string, { gradient: string; icon: React.ReactNode; label: string }> = {
     youtube: { gradient: 'from-red-600 to-red-800', icon: <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>, label: 'YouTube' },
@@ -576,7 +576,7 @@ export default function Home() {
                             </video>
                             <div className="absolute inset-0 bg-gradient-to-t from-forest/60 to-transparent" />
                             <div className="absolute bottom-4 left-4 right-4">
-                                <span className="inline-block px-3 py-1 bg-gold text-forest text-xs font-bold">
+                                <span className="inline-block px-3 py-1 bg-gold text-white text-xs font-bold">
                                     +50 años de experiencia
                                 </span>
                             </div>
