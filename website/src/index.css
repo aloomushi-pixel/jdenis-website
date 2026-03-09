@@ -39,11 +39,11 @@
   }
 
   .btn-primary {
-    @apply bg-forest text-cream border-forest hover:bg-forest-light;
+    @apply bg-forest text-white border-forest hover:bg-forest-light;
   }
 
   .btn-secondary {
-    @apply bg-gold text-cream border-gold hover:bg-gold-light;
+    @apply bg-gold text-white border-gold hover:bg-gold-light;
   }
 
   .btn-outline {
