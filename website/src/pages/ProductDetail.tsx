@@ -193,7 +193,7 @@ export default function ProductDetail() {
                             />
                         )}
 
-                        <p className="text-2xl sm:text-3xl font-bold mb-6 text-forest">
+                        <p className="text-2xl sm:text-3xl font-bold mb-6 text-black">
                             {product.price > 0 ? (
                                 <>${product.price.toLocaleString()} <span className="text-base font-normal text-charcoal/40">MXN</span></>
                             ) : (

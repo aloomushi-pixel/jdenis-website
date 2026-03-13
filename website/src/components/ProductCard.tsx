@@ -106,12 +106,12 @@ export default function ProductCard({ product, index = 0, variantCount = 0 }: Pr
                     <span className="text-[10px] sm:text-xs text-charcoal/50 uppercase tracking-[0.15em] mb-1.5 block">
                         {product.category}
                     </span>
-                    <h3 className="font-serif text-sm sm:text-base text-charcoal font-medium line-clamp-2 group-hover:text-forest transition-colors mb-auto">
+                    <h3 className="font-serif text-sm sm:text-base text-gold font-medium line-clamp-2 transition-colors mb-auto">
                         {product.name}
                     </h3>
                     <div className="flex items-center justify-between mt-2 pt-2 border-t border-kraft/20">
                         <div className="flex items-center gap-2">
-                            <p className={`text-sm sm:text-base font-semibold ${isOnSale ? 'text-[#D03027]' : 'text-charcoal'}`}>
+                            <p className="text-sm sm:text-base font-semibold text-black">
                                 {hasVariants ? (
                                     <span>Desde ${product.price.toLocaleString()}</span>
                                 ) : (
@@ -119,7 +119,7 @@ export default function ProductCard({ product, index = 0, variantCount = 0 }: Pr
                                 )}
                             </p>
                             {isOnSale && (
-                                <span className="text-[10px] sm:text-xs text-charcoal/40 line-through">
+                                <span className="text-[10px] sm:text-xs text-gray-500 line-through">
                                     ${product.originalPrice!.toLocaleString()}
                                 </span>
                             )}
