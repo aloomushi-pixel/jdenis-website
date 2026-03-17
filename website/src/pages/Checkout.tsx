@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useCartStore } from '../store/cartStore';
 import { useAuthStore } from '../store/authStore';
 import { useCartPromotion } from '../hooks/useCartPromotion';
 import CartPromoBanner from '../components/CartPromoBanner';
-import { createMercadoPagoCheckout } from '../lib/supabase';
+import { createMercadoPagoCheckout, supabase } from '../lib/supabase';
 
 export default function Checkout() {
     const { items } = useCartStore();
@@ -30,6 +30,42 @@ export default function Checkout() {
         zip: '',
         notes: '',
     });
+
+    // Guardado y actualización automática del carrito (para recuperar)
+    useEffect(() => {
+        if (!formData.email || !formData.email.includes('@') || items.length === 0 || loading) return;
+
+        const syncCart = async () => {
+            try {
+                // Verificar si ya existe carrito "pending" de este email
+                const { data } = await supabase.from('abandoned_carts')
+                    .select('id')
+                    .eq('email', formData.email)
+                    .eq('status', 'pending')
+                    .maybeSingle();
+
+                if (data) {
+                    await supabase.from('abandoned_carts').update({
+                        name: formData.fullName || formData.email.split('@')[0],
+                        cart_state: items,
+                        last_updated: new Date().toISOString()
+                    }).eq('id', data.id);
+                } else {
+                    await supabase.from('abandoned_carts').insert({
+                        email: formData.email,
+                        name: formData.fullName || formData.email.split('@')[0],
+                        cart_state: items,
+                        status: 'pending'
+                    });
+                }
+            } catch (err) {
+                console.error('Failed to sync abandoned cart:', err);
+            }
+        };
+
+        const timeoutId = setTimeout(syncCart, 2000); // Debounce de 2 segundos
+        return () => clearTimeout(timeoutId);
+    }, [formData.email, formData.fullName, items, loading]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -69,6 +105,15 @@ export default function Checkout() {
             };
 
             const result = await createMercadoPagoCheckout(checkoutData);
+
+            // Al crear la orden exitosamente en nuestra plataforma y enviarlo a MPago, 
+            // marcamos el carrito pendiente como completado para ya no recordárselo
+            try {
+                await supabase.from('abandoned_carts')
+                    .update({ status: 'completed' })
+                    .eq('email', formData.email)
+                    .eq('status', 'pending');
+            } catch(e) { /* silent fail logging sync issue */ }
 
             // Redirect to Mercado Pago checkout
             window.location.href = result.checkout_url;
