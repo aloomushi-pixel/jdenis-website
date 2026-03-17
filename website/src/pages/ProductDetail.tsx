@@ -97,6 +97,8 @@ export default function ProductDetail() {
         );
     }
 
+    const [isAdding, setIsAdding] = useState(false);
+
     if (!product) {
         return (
             <div className="min-h-screen bg-cream flex items-center justify-center">
@@ -111,7 +113,6 @@ export default function ProductDetail() {
         );
     }
 
-    const [isAdding, setIsAdding] = useState(false);
 
     const handleAddToCart = () => {
         if (!product) return;

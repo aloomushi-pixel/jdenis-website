@@ -1,0 +1,64 @@
+
+> website@0.0.0 lint
+> eslint .
+
+
+C:\Users\Usuario\OneDrive\Documentos\J. DENIS\jdenis-website\website\src\hooks\useProducts.ts
+  128:30  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\Usuario\OneDrive\Documentos\J. DENIS\jdenis-website\website\src\hooks\useVariants.ts
+  57:30  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\Usuario\OneDrive\Documentos\J. DENIS\jdenis-website\website\src\pages\Home.tsx
+   96:46  error  Unexpected any. Specify a different type        @typescript-eslint/no-explicit-any
+  217:45  error  Use the rest parameters instead of 'arguments'  prefer-rest-params
+  217:58  error  Unexpected any. Specify a different type        @typescript-eslint/no-explicit-any
+
+C:\Users\Usuario\OneDrive\Documentos\J. DENIS\jdenis-website\website\src\pages\MyAccount.tsx
+  36:58  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  40:60  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\Usuario\OneDrive\Documentos\J. DENIS\jdenis-website\website\src\pages\ProductDetail.tsx
+   31:9   warning  Unused eslint-disable directive (no problems were reported from 'react-hooks/set-state-in-effect')
+   58:48  error    Unexpected any. Specify a different type                                                                                                                                                    @typescript-eslint/no-explicit-any
+  114:37  error    React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+
+C:\Users\Usuario\OneDrive\Documentos\J. DENIS\jdenis-website\website\src\pages\Shop.tsx
+   59:48  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   97:30  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  220:46  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\Usuario\OneDrive\Documentos\J. DENIS\jdenis-website\website\src\pages\admin\AcademyManager.tsx
+  259:46  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\Usuario\OneDrive\Documentos\J. DENIS\jdenis-website\website\src\pages\admin\BlogManager.tsx
+  305:54  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  307:54  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\Usuario\OneDrive\Documentos\J. DENIS\jdenis-website\website\src\pages\admin\Dashboard.tsx
+  51:53   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  56:73   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  57:70   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  58:69   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  59:146  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\Usuario\OneDrive\Documentos\J. DENIS\jdenis-website\website\src\pages\admin\DistributorRequests.tsx
+  137:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\Usuario\OneDrive\Documentos\J. DENIS\jdenis-website\website\src\pages\admin\ProductEditor.tsx
+  202:56  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\Usuario\OneDrive\Documentos\J. DENIS\jdenis-website\website\src\pages\admin\TransportAssignments.tsx
+  27:24   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  60:98   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  60:128  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\Usuario\OneDrive\Documentos\J. DENIS\jdenis-website\website\src\pages\admin\VariantManager.tsx
+   53:67  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   78:72  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   92:70  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  105:73  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+✖ 30 problems (29 errors, 1 warning)
+  0 errors and 1 warning potentially fixable with the `--fix` option.
+

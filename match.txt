@@ -1,0 +1,1 @@
+:auto;margin-bottom:2.5rem;max-width:42rem;font-size:1.125rem;line-height:1.75rem;line-height:1.625;color:#ffffffb3}@media(min-width:768px){.hero-subtitle{font-size:1.25rem;line-height:1.75rem}}.secti
