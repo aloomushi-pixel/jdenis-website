@@ -110,50 +110,55 @@ export default function Checkout() {
                     <div className="lg:col-span-2">
                         <form onSubmit={handleSubmit} className="space-y-6">
                             {/* Contact Info */}
-                            <div className="bg-white rounded-2xl p-6 shadow-luxury">
-                                <h3 className="font-serif text-lg text-navy mb-4">1. Información de Contacto</h3>
+                            <div className="bg-white rounded-2xl p-8 shadow-luxury border border-charcoal/5">
+                                <h3 className="font-serif text-xl text-navy mb-6 flex items-center gap-2">
+                                    <span className="flex items-center justify-center w-8 h-8 rounded-full bg-gold/10 text-gold text-sm font-bold">1</span>
+                                    Información de Contacto
+                                </h3>
 
                                 {!user && (
-                                    <p className="text-sm text-charcoal-light mb-4">
-                                        ¿Ya tienes cuenta?{' '}
-                                        <Link to="/login" className="text-gold hover:underline">
-                                            Inicia sesión
+                                    <div className="mb-6 p-4 rounded-xl bg-charcoal/5 flex items-center justify-between">
+                                        <p className="text-sm text-charcoal flex-1">
+                                            ¿Ya tienes cuenta? Inicia sesión para guardar tu información.
+                                        </p>
+                                        <Link to="/login" className="text-gold font-medium hover:underline text-sm whitespace-nowrap">
+                                            Iniciar sesión
                                         </Link>
-                                    </p>
+                                    </div>
                                 )}
 
-                                <div className="grid md:grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="label">Nombre Completo</label>
+                                <div className="grid md:grid-cols-2 gap-6">
+                                    <div className="md:col-span-2">
+                                        <label className="block text-sm font-medium text-navy/80 mb-2">Nombre Completo</label>
                                         <input
                                             type="text"
                                             name="fullName"
                                             value={formData.fullName}
                                             onChange={handleInputChange}
                                             required
-                                            className="input"
+                                            className="w-full px-5 py-4 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all text-base bg-white shadow-sm"
                                         />
                                     </div>
-                                    <div>
-                                        <label className="label">Email</label>
+                                    <div className="md:col-span-1">
+                                        <label className="block text-sm font-medium text-navy/80 mb-2">Email</label>
                                         <input
                                             type="email"
                                             name="email"
                                             value={formData.email}
                                             onChange={handleInputChange}
                                             required
-                                            className="input"
+                                            className="w-full px-5 py-4 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all text-base bg-white shadow-sm"
                                         />
                                     </div>
-                                    <div className="md:col-span-2">
-                                        <label className="label">Teléfono / WhatsApp</label>
+                                    <div className="md:col-span-1">
+                                        <label className="block text-sm font-medium text-navy/80 mb-2">Teléfono / WhatsApp</label>
                                         <input
                                             type="tel"
                                             name="phone"
                                             value={formData.phone}
                                             onChange={handleInputChange}
                                             required
-                                            className="input"
+                                            className="w-full px-5 py-4 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all text-base bg-white shadow-sm"
                                             placeholder="55 1234 5678"
                                         />
                                     </div>
@@ -161,23 +166,26 @@ export default function Checkout() {
                             </div>
 
                             {/* Shipping */}
-                            <div className="bg-white rounded-2xl p-6 shadow-luxury">
-                                <h3 className="font-serif text-lg text-navy mb-4">2. Dirección de Envío</h3>
-                                <div className="grid md:grid-cols-2 gap-4">
+                            <div className="bg-white rounded-2xl p-8 shadow-luxury border border-charcoal/5">
+                                <h3 className="font-serif text-xl text-navy mb-6 flex items-center gap-2">
+                                    <span className="flex items-center justify-center w-8 h-8 rounded-full bg-gold/10 text-gold text-sm font-bold">2</span>
+                                    Dirección de Envío
+                                </h3>
+                                <div className="grid md:grid-cols-2 gap-6">
                                     <div className="md:col-span-2">
-                                        <label className="label">Dirección</label>
+                                        <label className="block text-sm font-medium text-navy/80 mb-2">Dirección Completa</label>
                                         <input
                                             type="text"
                                             name="address"
                                             value={formData.address}
                                             onChange={handleInputChange}
                                             required
-                                            className="input"
-                                            placeholder="Calle, número, colonia"
+                                            className="w-full px-5 py-4 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all text-base bg-white shadow-sm"
+                                            placeholder="Calle, número exterior/interior, colonia"
                                         />
                                     </div>
                                     <div className="md:col-span-2">
-                                        <label className="label">
+                                        <label className="block text-sm font-medium text-navy/80 mb-2">
                                             Referencias de entrega
                                             <span className="text-rose-deep ml-1">*</span>
                                         </label>
@@ -187,84 +195,97 @@ export default function Checkout() {
                                             onChange={handleInputChange}
                                             required
                                             rows={2}
-                                            className="input"
+                                            className="w-full px-5 py-4 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all text-base bg-white shadow-sm resize-none"
                                             placeholder="Ej: Entre calle Roble y calle Pino, fachada azul, portón negro, frente a la tienda OXXO"
                                         />
-                                        <p className="text-xs text-charcoal-light mt-1 flex items-center gap-1">
+                                        <p className="text-xs text-charcoal-light mt-2 flex items-center gap-1">
                                             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" /></svg>
                                             Indica entre qué calles se encuentra, color de fachada, referencias cercanas, etc.
                                         </p>
                                     </div>
                                     <div>
-                                        <label className="label">Ciudad</label>
+                                        <label className="block text-sm font-medium text-navy/80 mb-2">Ciudad</label>
                                         <input
                                             type="text"
                                             name="city"
                                             value={formData.city}
                                             onChange={handleInputChange}
                                             required
-                                            className="input"
+                                            className="w-full px-5 py-4 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all text-base bg-white shadow-sm"
                                         />
                                     </div>
                                     <div>
-                                        <label className="label">Estado</label>
+                                        <label className="block text-sm font-medium text-navy/80 mb-2">Estado</label>
                                         <input
                                             type="text"
                                             name="state"
                                             value={formData.state}
                                             onChange={handleInputChange}
                                             required
-                                            className="input"
+                                            className="w-full px-5 py-4 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all text-base bg-white shadow-sm"
                                         />
                                     </div>
                                     <div>
-                                        <label className="label">Código Postal</label>
+                                        <label className="block text-sm font-medium text-navy/80 mb-2">Código Postal</label>
                                         <input
                                             type="text"
                                             name="zip"
                                             value={formData.zip}
                                             onChange={handleInputChange}
                                             required
-                                            className="input"
+                                            className="w-full px-5 py-4 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all text-base bg-white shadow-sm"
                                         />
                                     </div>
                                 </div>
-                                <p className="text-sm text-charcoal-light mt-4">
-                                    <svg className="w-4 h-4 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M21 7.5l-2.25-1.313M21 7.5v2.25m0-2.25l-2.25 1.313M3 7.5l2.25-1.313M3 7.5l2.25 1.313M3 7.5v2.25m9 3l2.25-1.313M12 12.75l-2.25-1.313M12 12.75V15m0 6.75l2.25-1.313M12 21.75V19.5m0 2.25l-2.25-1.313m0-16.875L12 2.25l2.25 1.313M21 14.25v2.25l-2.25 1.313m-13.5 0L3 16.5v-2.25" /></svg>
-                                    {promotion.isFreeShipping ? (
-                                        <><strong className="text-emerald-600">¡Envío GRATIS!</strong> <span className="line-through text-charcoal-light/50">$200 MXN</span></>
-                                    ) : (
-                                        <>Envío vía FedEx: <strong>$200 MXN</strong> a todo México</>
-                                    )}
-                                </p>
+                                <div className="mt-6 p-5 bg-navy/5 rounded-xl border border-navy/10 flex items-start gap-4">
+                                    <svg className="w-6 h-6 text-navy mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" /></svg>
+                                    <div>
+                                        <p className="font-semibold text-navy text-base">Método de Envío</p>
+                                        <p className="text-sm text-charcoal-light mt-1">
+                                            {promotion.isFreeShipping ? (
+                                                <><strong className="text-emerald-600">¡Envío GRATIS vía FedEx!</strong> <span className="line-through text-charcoal-light/50 ml-2">$200 MXN</span></>
+                                            ) : (
+                                                <>Envío Estándar vía FedEx: <strong>$200 MXN</strong> a todo México</>
+                                            )}
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
 
                             {/* Payment */}
-                            <div className="bg-white rounded-2xl p-6 shadow-luxury">
-                                <h3 className="font-serif text-lg text-navy mb-4">3. Método de Pago</h3>
-                                <div className="space-y-3">
-                                    <div className="flex items-center gap-3 p-4 rounded-lg border border-gold bg-gold/5 cursor-default">
-                                        <span className="w-6 h-6 text-forest">
-                                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            <div className="bg-white rounded-2xl p-8 shadow-luxury border border-charcoal/5">
+                                <h3 className="font-serif text-xl text-navy mb-6 flex items-center gap-2">
+                                    <span className="flex items-center justify-center w-8 h-8 rounded-full bg-gold/10 text-gold text-sm font-bold">3</span>
+                                    Método de Pago
+                                </h3>
+                                <div className="space-y-4">
+                                    <div className="flex items-center gap-4 p-5 rounded-xl border-2 border-gold bg-gold/5 cursor-default relative overflow-hidden">
+                                        <div className="absolute top-0 right-0 w-24 h-24 bg-gold/10 rounded-full -mr-12 -mt-12 pointer-events-none"></div>
+                                        <span className="w-8 h-8 text-forest shrink-0 bg-white rounded-full flex items-center justify-center shadow-sm">
+                                            <svg className="w-5 h-5 text-[#009EE3]" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-9l6 4.5-6 4.5z" />
+                                            </svg>
                                         </span>
-                                        <span className="font-medium text-navy">Mercado Pago</span>
-                                        <p className="text-sm text-charcoal-light flex-1 text-center hidden md:block">
-                                            Tarjetas de Crédito/Débito, Transferencias y Efectivo
-                                        </p>
-                                        <svg className="ml-auto w-5 h-5 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                                        <div>
+                                            <span className="block font-bold text-navy text-lg">Mercado Pago</span>
+                                            <p className="text-sm text-charcoal-light mt-0.5">
+                                                Tarjetas, Transferencia (SPEI) y Efectivo (OXXO)
+                                            </p>
+                                        </div>
+                                        <svg className="ml-auto w-6 h-6 text-gold relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                     </div>
                                 </div>
                             </div>
 
                             {/* Notes */}
-                            <div className="bg-white rounded-2xl p-6 shadow-luxury">
-                                <label className="label">Notas del pedido (opcional)</label>
+                            <div className="bg-white rounded-2xl p-8 shadow-luxury border border-charcoal/5">
+                                <label className="block text-sm font-medium text-navy/80 mb-3">Notas del pedido (opcional)</label>
                                 <textarea
                                     name="notes"
                                     value={formData.notes}
                                     onChange={handleInputChange}
                                     rows={3}
-                                    className="input"
+                                    className="w-full px-5 py-4 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all text-base bg-white shadow-sm resize-none"
                                     placeholder="Instrucciones especiales, horarios de entrega, etc."
                                 />
                             </div>
@@ -290,25 +311,25 @@ export default function Checkout() {
 
                     {/* Order Summary */}
                     <div className="lg:col-span-1">
-                        <div className="bg-white rounded-2xl p-6 shadow-luxury sticky top-24">
-                            <h3 className="font-serif text-lg text-navy mb-4">Resumen del Pedido</h3>
+                        <div className="bg-white rounded-2xl p-8 shadow-luxury border border-charcoal/5 sticky top-24">
+                            <h3 className="font-serif text-xl text-navy mb-6">Resumen del Pedido</h3>
 
-                            <div className="space-y-4 mb-6">
+                            <div className="space-y-5 mb-8">
                                 {items.map((item) => (
-                                    <div key={item.id} className="flex gap-3">
+                                    <div key={item.id} className="flex gap-4">
                                         <img
                                             src={item.image}
                                             alt={item.name}
-                                            className="w-16 h-16 rounded-lg object-cover bg-blush"
+                                            className="w-20 h-20 rounded-xl object-cover bg-blush shadow-sm"
                                         />
-                                        <div className="flex-1">
-                                            <p className="text-sm font-medium text-navy line-clamp-1">
+                                        <div className="flex-1 flex flex-col justify-center">
+                                            <p className="font-medium text-navy line-clamp-2 leading-snug">
                                                 {item.name}
                                             </p>
-                                            <p className="text-xs text-charcoal-light">
+                                            <p className="text-sm text-charcoal-light mt-1">
                                                 Cant: {item.quantity}
                                             </p>
-                                            <p className="text-sm text-gold font-medium">
+                                            <p className="text-base text-gold font-bold mt-1">
                                                 ${(item.price * item.quantity).toLocaleString()}
                                             </p>
                                         </div>
@@ -317,43 +338,48 @@ export default function Checkout() {
                             </div>
 
                             {/* Promotion Banner */}
-                            <CartPromoBanner promotion={promotion} />
+                            <div className="mb-6">
+                                <CartPromoBanner promotion={promotion} />
+                            </div>
 
-                            <hr className="border-charcoal/10 my-4" />
+                            <div className="bg-charcoal/5 h-px w-full my-6"></div>
 
-                            <div className="space-y-2 text-sm">
-                                <div className="flex justify-between">
+                            <div className="space-y-4 text-base">
+                                <div className="flex justify-between items-center">
                                     <span className="text-charcoal-light">Subtotal</span>
-                                    <span>${subtotal.toLocaleString()}</span>
+                                    <span className="font-medium text-navy">${subtotal.toLocaleString()}</span>
                                 </div>
 
                                 {/* Descuento (si aplica) */}
                                 {discountAmount > 0 && (
-                                    <div className="flex justify-between">
+                                    <div className="flex justify-between items-center">
                                         <span className="text-emerald-600 font-medium">Descuento ({promotion.discountPercent}%)</span>
-                                        <span className="text-emerald-600 font-medium">-${discountAmount.toLocaleString()}</span>
+                                        <span className="text-emerald-600 font-medium whitespace-nowrap">-${discountAmount.toLocaleString()}</span>
                                     </div>
                                 )}
 
                                 {/* Envío */}
-                                <div className="flex justify-between">
+                                <div className="flex justify-between items-center">
                                     <span className="text-charcoal-light">Envío FedEx</span>
                                     {promotion.isFreeShipping ? (
-                                        <span className="font-medium">
+                                        <span className="font-medium whitespace-nowrap">
                                             <span className="text-emerald-600">GRATIS</span>{' '}
-                                            <span className="line-through text-charcoal-light/40 text-xs">$200</span>
+                                            <span className="line-through text-charcoal-light/40 text-sm ml-1">$200</span>
                                         </span>
                                     ) : (
-                                        <span>${shippingCost}</span>
+                                        <span className="font-medium text-navy">${shippingCost}</span>
                                     )}
                                 </div>
                             </div>
 
-                            <hr className="border-charcoal/10 my-4" />
+                            <div className="bg-charcoal/5 h-px w-full my-6"></div>
 
-                            <div className="flex justify-between text-lg font-semibold">
-                                <span className="text-navy">Total</span>
-                                <span className="text-gold">${grandTotal.toLocaleString()} MXN</span>
+                            <div className="flex justify-between items-end">
+                                <span className="text-lg font-medium text-navy">Total</span>
+                                <div className="text-right">
+                                    <span className="block text-3xl font-bold text-gold leading-none">${grandTotal.toLocaleString()}</span>
+                                    <span className="text-xs text-charcoal-light block mt-1">MXN (IVA incluido)</span>
+                                </div>
                             </div>
                         </div>
                     </div>
