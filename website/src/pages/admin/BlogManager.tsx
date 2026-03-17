@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { Plus, Edit2, Trash2, Loader, X, Save, Eye, EyeOff, Newspaper, Star } from 'lucide-react';
-import { getBlogPosts, createBlogPost, updateBlogPost, deleteBlogPost, getNewsPosts, createNewsPost, updateNewsPost, deleteNewsPost, toggleFeatureBlogPost, type BlogPost } from '../../lib/supabase';
+import { Plus, Edit2, Trash2, Loader, X, Save, Eye, EyeOff, Newspaper, Star, Upload } from 'lucide-react';
+import { getBlogPosts, createBlogPost, updateBlogPost, deleteBlogPost, getNewsPosts, createNewsPost, updateNewsPost, deleteNewsPost, toggleFeatureBlogPost, uploadBlogImage, type BlogPost } from '../../lib/supabase';
 
 type TabType = 'blog' | 'noticias' | 'destacados';
 
@@ -266,6 +266,8 @@ function PostFormModal({ initialData, postType, onClose, onSuccess }: {
         published_at: initialData?.published_at || null,
     });
 
+    const [uploadingImage, setUploadingImage] = useState(false);
+
     const generateSlug = (title: string) => {
         return title
             .toLowerCase()
@@ -283,6 +285,47 @@ function PostFormModal({ initialData, postType, onClose, onSuccess }: {
             slug: isEdit ? prev.slug : generateSlug(newTitle)
         }));
     };
+
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setUploadingImage(true);
+        try {
+            const url = await uploadBlogImage(file);
+            setFormData(prev => ({ ...prev, featured_image: url }));
+        } catch (error) {
+            console.error('Error uploading image:', error);
+            alert('Error al subir la imagen');
+        } finally {
+            setUploadingImage(false);
+        }
+    };
+
+    const ImageInputGroup = () => (
+        <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Imagen destacada (Sube un archivo o pega URL)</label>
+            <div className="flex gap-2 relative">
+                <input
+                    type="text"
+                    value={formData.featured_image || ''}
+                    onChange={(e) => setFormData({ ...formData, featured_image: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-lg pr-24"
+                    placeholder="https://..."
+                />
+                <label className={`absolute right-1 top-1 bottom-1 flex items-center justify-center px-4 rounded-md text-sm font-medium transition-colors ${uploadingImage ? 'bg-gray-100 text-gray-400 cursor-wait' : 'bg-gray-100 text-gray-700 hover:bg-gray-200 cursor-pointer'}`}>
+                    {uploadingImage ? <Loader className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                    <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleImageUpload}
+                        disabled={uploadingImage}
+                    />
+                </label>
+            </div>
+        </div>
+    );
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -380,16 +423,7 @@ function PostFormModal({ initialData, postType, onClose, onSuccess }: {
                                     placeholder="Ej: Nuevo Producto, Nuevo Lanzamiento"
                                 />
                             </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Imagen destacada (URL)</label>
-                                <input
-                                    type="text"
-                                    value={formData.featured_image || ''}
-                                    onChange={(e) => setFormData({ ...formData, featured_image: e.target.value })}
-                                    className="w-full px-3 py-2 border rounded-lg"
-                                    placeholder="https://..."
-                                />
-                            </div>
+                            <ImageInputGroup />
                         </div>
                     ) : (
                         <>
@@ -414,15 +448,7 @@ function PostFormModal({ initialData, postType, onClose, onSuccess }: {
                                         className="w-full px-3 py-2 border rounded-lg"
                                     />
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Imagen destacada (URL)</label>
-                                    <input
-                                        type="text"
-                                        value={formData.featured_image || ''}
-                                        onChange={(e) => setFormData({ ...formData, featured_image: e.target.value })}
-                                        className="w-full px-3 py-2 border rounded-lg"
-                                    />
-                                </div>
+                                <ImageInputGroup />
                             </div>
                         </>
                     )}
