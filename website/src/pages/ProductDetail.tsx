@@ -113,9 +113,10 @@ export default function ProductDetail() {
         );
     }
 
+    const isOutOfStock = product?.stock === 0;
 
     const handleAddToCart = () => {
-        if (!product) return;
+        if (!product || isOutOfStock) return;
         setIsAdding(true);
         addItem(product);
         setTimeout(() => {
@@ -237,13 +238,15 @@ export default function ProductDetail() {
                         <div className="mt-auto space-y-3">
                             <button
                                 onClick={handleAddToCart}
-                                disabled={isAdding}
-                                className={`w-full h-12 text-sm sm:text-base font-semibold tracking-wider uppercase rounded-sm transition-all duration-300 ${isAdding
-                                    ? 'bg-gold text-white scale-[1.02] shadow-md'
-                                    : 'bg-forest text-white hover:bg-forest-light hover:shadow-lg hover:-translate-y-0.5'
+                                disabled={isAdding || isOutOfStock}
+                                className={`w-full h-12 text-sm sm:text-base font-semibold tracking-wider uppercase rounded-sm transition-all duration-300 ${isOutOfStock
+                                    ? 'bg-charcoal/20 text-charcoal/50 cursor-not-allowed'
+                                    : isAdding
+                                        ? 'bg-gold text-white scale-[1.02] shadow-md'
+                                        : 'bg-forest text-white hover:bg-forest-light hover:shadow-lg hover:-translate-y-0.5'
                                     }`}
                             >
-                                {isAdding ? '¡Agregado!' : 'Agregar al Carrito'}
+                                {isOutOfStock ? 'Producto Agotado' : isAdding ? '¡Agregado!' : 'Agregar al Carrito'}
                             </button>
                             <a
                                 href={`https://wa.me/525527271067?text=Hola! Estoy interesada en: ${product.name}`}

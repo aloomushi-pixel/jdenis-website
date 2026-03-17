@@ -14,6 +14,7 @@ export default function ProductCard({ product, index = 0, variantCount = 0 }: Pr
     const { addItem, openCart } = useCartStore();
     const navigate = useNavigate();
     const hasVariants = variantCount > 1;
+    const isOutOfStock = !hasVariants && product.stock === 0;
     const isOnSale = product.originalPrice && product.originalPrice > product.price;
     const discountPercent = isOnSale
         ? Math.round(((product.originalPrice! - product.price) / product.originalPrice!) * 100)
@@ -28,6 +29,7 @@ export default function ProductCard({ product, index = 0, variantCount = 0 }: Pr
             // Redirect to product detail to select variant
             navigate(`/producto/${product.id}`);
         } else {
+            if (isOutOfStock) return;
             setIsAdding(true);
             addItem(product);
             setTimeout(() => {
@@ -59,11 +61,13 @@ export default function ProductCard({ product, index = 0, variantCount = 0 }: Pr
                     {/* Quick Add Button - Always visible Mobile, Hover Desktop */}
                     <button
                         onClick={handleAddToCart}
-                        disabled={isAdding}
-                        className={`lg:absolute lg:bottom-4 lg:left-4 lg:right-4 text-white text-[10px] sm:text-xs tracking-widest uppercase font-semibold h-10 lg:translate-y-4 absolute bottom-0 left-0 right-0 w-full lg:w-auto lg:rounded-sm transition-all duration-300 ${isAdding ? 'bg-gold scale-[1.02] lg:opacity-100 lg:translate-y-0 shadow-md' : 'bg-forest hover:bg-forest-light lg:opacity-0 lg:group-hover:opacity-100 lg:group-hover:translate-y-0'}`}
+                        disabled={isAdding || isOutOfStock}
+                        className={`lg:absolute lg:bottom-4 lg:left-4 lg:right-4 text-[10px] sm:text-xs tracking-widest uppercase font-semibold h-10 lg:translate-y-4 absolute bottom-0 left-0 right-0 w-full lg:w-auto lg:rounded-sm transition-all duration-300 ${isOutOfStock ? 'bg-charcoal/40 text-white/90 cursor-not-allowed lg:opacity-100 lg:translate-y-0' : isAdding ? 'bg-gold text-white scale-[1.02] lg:opacity-100 lg:translate-y-0 shadow-md' : 'bg-forest text-white hover:bg-forest-light lg:opacity-0 lg:group-hover:opacity-100 lg:group-hover:translate-y-0'}`}
                     >
                         <span className="flex items-center justify-center gap-2">
-                            {hasVariants ? (
+                            {isOutOfStock ? (
+                                <span>Agotado</span>
+                            ) : hasVariants ? (
                                 <span>Ver Opciones</span>
                             ) : isAdding ? (
                                 <span>¡Agregado!</span>
@@ -94,9 +98,18 @@ export default function ProductCard({ product, index = 0, variantCount = 0 }: Pr
                         </div>
                     )}
 
+                    {/* Out of Stock Badge */}
+                    {isOutOfStock && (
+                        <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+                            <span className="bg-red-500/90 backdrop-blur-sm text-white px-4 py-1.5 text-xs sm:text-sm font-bold tracking-[0.2em] rounded-sm transform -rotate-12 outline outline-2 outline-white shadow-lg">
+                                AGOTADO
+                            </span>
+                        </div>
+                    )}
+
                     {/* Stock Badge */}
-                    {!hasVariants && product.stock && product.stock < 10 && (
-                        <div className="absolute top-2 right-2 bg-forest/80 backdrop-blur-sm px-2.5 py-1 text-[10px] text-gold tracking-wider rounded-sm">
+                    {!hasVariants && product.stock && product.stock > 0 && product.stock < 10 && (
+                        <div className="absolute top-2 right-2 bg-forest/80 backdrop-blur-sm px-2.5 py-1 text-[10px] text-gold tracking-wider rounded-sm z-10">
                             Últimos {product.stock}
                         </div>
                     )}
