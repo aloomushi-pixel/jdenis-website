@@ -677,6 +677,34 @@ export interface WebsiteOrderItem {
     name: string;
     quantity: number;
     price: number;
+    image?: string;
+}
+
+export interface WebsiteOrder {
+    id: string;
+    user_id: string | null;
+    user_email: string | null;
+    total: number;
+    items: string | WebsiteOrderItem[];
+    created_at: string;
+    status: string;
+    merchant_order_id?: string | null;
+    payment_id?: string | null;
+    payment_status?: string | null;
+    payment_method?: string | null;
+    buyer_info?: {
+        email?: string;
+        phone?: string;
+        fullName?: string;
+    } | null;
+    shipping_address?: {
+        address?: string;
+        references?: string;
+        city?: string;
+        state?: string;
+        zip?: string;
+    } | null;
+    notes?: string;
 }
 
 export async function createWebsiteOrder(userId: string, userEmail: string, items: WebsiteOrderItem[], total: number) {
@@ -694,6 +722,33 @@ export async function createWebsiteOrder(userId: string, userEmail: string, item
 
     if (error) throw error;
     return data;
+}
+
+export async function getWebsiteOrders(status?: string): Promise<WebsiteOrder[]> {
+    let query = supabase
+        .from('website_orders')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (status) {
+        query = query.eq('status', status);
+    }
+
+    const { data, error } = await query;
+    if (error) throw error;
+    return data as WebsiteOrder[];
+}
+
+export async function updateWebsiteOrderStatus(orderId: string, status: string): Promise<WebsiteOrder> {
+    const { data, error } = await supabase
+        .from('website_orders')
+        .update({ status })
+        .eq('id', orderId)
+        .select()
+        .single();
+
+    if (error) throw error;
+    return data as WebsiteOrder;
 }
 
 export async function hasUserPurchasedProduct(userId: string, productId: string): Promise<boolean> {
