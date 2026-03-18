@@ -171,8 +171,8 @@ export default function About() {
                                     <span className="text-2xl">📞</span>
                                     <div>
                                         <p className="font-medium text-forest">Teléfono</p>
-                                        <a href="https://wa.me/525527271067" target="_blank" rel="noopener noreferrer" className="text-charcoal/70 hover:text-gold transition-colors inline-block mt-1">
-                                            55 2727 1067
+                                        <a href="https://wa.me/525565116087" target="_blank" rel="noopener noreferrer" className="text-charcoal/70 hover:text-gold transition-colors inline-block mt-1">
+                                            55 6511 6087
                                         </a>
                                     </div>
                                 </div>
@@ -189,7 +189,7 @@ export default function About() {
                             </div>
                             <div className="mt-8 flex gap-4">
                                 <a
-                                    href="https://wa.me/525527271067"
+                                    href="https://wa.me/525565116087"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="btn bg-green-600 text-white border-green-600 hover:bg-green-700"
