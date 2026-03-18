@@ -1,0 +1,28 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model InvoiceRequest {
+  id             String   @id @default(cuid())
+  businessName   String
+  rfc            String
+  postalCode     String
+  taxRegime      String
+  cfdiUse        String
+  email          String
+  ticketNumber   String
+  status         String   @default("Pendiente") // "Pendiente" or "Realizada"
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
