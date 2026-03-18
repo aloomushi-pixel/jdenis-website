@@ -1,0 +1,12 @@
+﻿
+C:\Users\Usuario\OneDrive\Documentos\J. DENIS\jdenis-website\website\src\pages\RegistroDistribuidor.tsx
+    1:18  error  'AnimatePresence' is defined but never used     @typescript-eslint/no-unused-vars
+  222:23  error  Unexpected any. Specify a different type        @typescript-eslint/no-explicit-any
+  302:35  error  'isCurrent' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\Usuario\OneDrive\Documentos\J. DENIS\jdenis-website\website\src\pages\admin\DistributorRequests.tsx
+    4:89  error  'Phone' is defined but never used         @typescript-eslint/no-unused-vars
+  152:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+Ô£û 5 problems (5 errors, 0 warnings)
+
