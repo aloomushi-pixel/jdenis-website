@@ -115,27 +115,29 @@ export default function ProductCard({ product, index = 0, variantCount = 0 }: Pr
                     )}
                 </div>
 
-                <div className="product-card-body p-4 sm:p-5 flex flex-col flex-1">
-                    <span className="text-[10px] sm:text-xs text-charcoal/50 uppercase tracking-[0.15em] mb-1.5 block">
-                        {product.category}
-                    </span>
-                    <h3 className="font-serif text-sm sm:text-base text-gold font-medium line-clamp-2 transition-colors mb-auto">
-                        {product.name}
-                    </h3>
-                    <div className="flex items-center justify-between mt-2 pt-2 border-t border-kraft/20">
-                        <div className="flex items-center gap-2">
-                            <p className="text-sm sm:text-base font-semibold text-black">
-                                {hasVariants ? (
-                                    <span>Desde ${product.price.toLocaleString()}</span>
-                                ) : (
-                                    <span>${product.price.toLocaleString()}</span>
-                                )}
-                            </p>
-                            {isOnSale && (
-                                <span className="text-[10px] sm:text-xs text-gray-500 line-through">
-                                    ${product.originalPrice!.toLocaleString()}
-                                </span>
+                <div className="product-card-body p-4 sm:p-5 flex flex-col flex-1 justify-between bg-white">
+                    <div>
+                        <span className="text-[10px] sm:text-xs text-gold uppercase tracking-[0.2em] mb-2 block font-bold">
+                            {product.category}
+                        </span>
+                        <h3 className="font-serif text-base sm:text-lg text-forest font-bold leading-tight line-clamp-2 transition-colors group-hover:text-gold mb-3">
+                            {product.name}
+                        </h3>
+                    </div>
+                    
+                    <div className="flex flex-col justify-end mt-auto pt-3 border-t border-kraft/20">
+                        {isOnSale && (
+                            <span className="text-xs sm:text-sm text-red-500/70 line-through mb-0.5 font-semibold">
+                                ${product.originalPrice!.toLocaleString()}
+                            </span>
+                        )}
+                        <div className="flex items-baseline gap-1.5">
+                            {hasVariants && (
+                                <span className="text-xs sm:text-sm font-medium text-charcoal/60 uppercase tracking-widest">Desde</span>
                             )}
+                            <p className="text-lg sm:text-xl font-extrabold text-charcoal tracking-tight">
+                                ${product.price.toLocaleString()}
+                            </p>
                         </div>
                     </div>
                 </div>
