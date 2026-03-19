@@ -314,9 +314,15 @@ export default function Academy() {
                                 href="https://youtube.com/@JDenismexico"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="btn bg-red-600 text-white border-red-600 hover:bg-red-700"
+                                className="inline-flex items-center gap-4 text-cream hover:text-gold transition-all duration-300 group mt-4"
                             >
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 inline-block mr-1"><path strokeLinecap="round" strokeLinejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 010 1.972l-11.54 6.347a1.125 1.125 0 01-1.667-.986V5.653z" /></svg> Ver Tutoriales en YouTube
+                                <span className="w-14 h-14 rounded-full border border-cream/30 flex items-center justify-center group-hover:border-gold/50 group-hover:bg-gold/10 group-hover:scale-105 transition-all duration-300">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" className="w-5 h-5 ml-1"><path d="M8 5v14l11-7z" /></svg>
+                                </span>
+                                <div className="text-left">
+                                    <span className="block text-[10px] tracking-[0.2em] uppercase text-cream/50 group-hover:text-gold/80 mb-1 transition-colors">Aprende con nosotros</span>
+                                    <span className="block text-base font-medium">Ver tutoriales en YouTube</span>
+                                </div>
                             </a>
                         </div>
                     </div>
