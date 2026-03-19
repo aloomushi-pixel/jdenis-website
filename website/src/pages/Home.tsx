@@ -373,6 +373,76 @@ export default function Home() {
                 </div>
             </section>
 
+            {/* ACADEMY MODULE - DYNAMIC SECTION */}
+            <section className="section relative overflow-hidden bg-gradient-to-br from-cream via-cream-dark to-cream">
+                {/* Dynamic pattern overlay */}
+                <div className="absolute inset-0 opacity-10">
+                    <div className="absolute top-0 left-0 w-72 h-72 bg-gold/30 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
+                    <div className="absolute bottom-0 right-0 w-96 h-96 bg-forest/20 rounded-full blur-3xl translate-x-1/3 translate-y-1/3" />
+                    <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-gold/20 rounded-full blur-2xl -translate-x-1/2 -translate-y-1/2" />
+                </div>
+                {/* Decorative lines */}
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
+                <div className="container-luxury relative z-10">
+                    <div className="grid lg:grid-cols-2 gap-12 items-center">
+                        <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            className="relative aspect-[4/3] overflow-hidden bg-forest"
+                        >
+                            <video
+                                autoPlay
+                                muted
+                                loop
+                                playsInline
+                                className="w-full h-full object-cover"
+                            >
+                                <source src="/videos/Video_con_logo_J_DENIS.mp4" type="video/mp4" />
+                            </video>
+                            <div className="absolute inset-0 bg-gradient-to-t from-forest/60 to-transparent" />
+                            <div className="absolute bottom-4 left-4 right-4">
+                                <span className="inline-block px-3 py-1 bg-gold text-white text-xs font-bold">
+                                    +50 años de experiencia
+                                </span>
+                            </div>
+                        </motion.div>
+
+                        <motion.div
+                            initial={{ opacity: 0, x: 20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                        >
+                            <span className="section-badge">Academia J. Denis</span>
+                            <h2 className="section-title mb-6">
+                                Aprende de la Pionera
+                            </h2>
+                            <p className="text-charcoal/70 leading-relaxed mb-8">
+                                La <strong className="text-forest">Maestra Gabriela Elizalde</strong>, con más de 50 años de experiencia,
+                                ha formado a miles de profesionales en técnicas patentadas que revolucionaron
+                                el mercado de cejas y pestañas en Latinoamérica.
+                            </p>
+                            <ul className="space-y-4 mb-8">
+                                {[
+                                    'Certificaciones oficiales con validez profesional',
+                                    'Técnicas exclusivas: Lash Lifting, Laminado, Henna',
+                                    'Grupos reducidos en sede Lindavista, CDMX',
+                                ].map((item, i) => (
+                                    <li key={i} className="flex items-center gap-3 text-charcoal/80">
+                                        <span className="w-6 h-6 flex items-center justify-center text-gold"><svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg></span>
+                                        {item}
+                                    </li>
+                                ))}
+                            </ul>
+                            <Link to="/academia" className="btn btn-primary">
+                                Ver Próximos Cursos
+                            </Link>
+                        </motion.div>
+                    </div>
+                </div>
+            </section>
+
             {/* BESTSELLERS - ROTATING GALLERY */}
             <section className="section relative overflow-hidden bg-gradient-to-b from-cream via-cream-dark/30 to-cream">
                 {/* Decorative accents */}
@@ -546,76 +616,6 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* ACADEMY MODULE - DYNAMIC SECTION */}
-            <section className="section relative overflow-hidden bg-gradient-to-br from-cream via-cream-dark to-cream">
-                {/* Dynamic pattern overlay */}
-                <div className="absolute inset-0 opacity-10">
-                    <div className="absolute top-0 left-0 w-72 h-72 bg-gold/30 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
-                    <div className="absolute bottom-0 right-0 w-96 h-96 bg-forest/20 rounded-full blur-3xl translate-x-1/3 translate-y-1/3" />
-                    <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-gold/20 rounded-full blur-2xl -translate-x-1/2 -translate-y-1/2" />
-                </div>
-                {/* Decorative lines */}
-                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
-                <div className="container-luxury relative z-10">
-                    <div className="grid lg:grid-cols-2 gap-12 items-center">
-                        <motion.div
-                            initial={{ opacity: 0, x: -20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                            className="relative aspect-[4/3] overflow-hidden bg-forest"
-                        >
-                            <video
-                                autoPlay
-                                muted
-                                loop
-                                playsInline
-                                className="w-full h-full object-cover"
-                            >
-                                <source src="/videos/Video_con_logo_J_DENIS.mp4" type="video/mp4" />
-                            </video>
-                            <div className="absolute inset-0 bg-gradient-to-t from-forest/60 to-transparent" />
-                            <div className="absolute bottom-4 left-4 right-4">
-                                <span className="inline-block px-3 py-1 bg-gold text-white text-xs font-bold">
-                                    +50 años de experiencia
-                                </span>
-                            </div>
-                        </motion.div>
-
-                        <motion.div
-                            initial={{ opacity: 0, x: 20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                        >
-                            <span className="section-badge">Academia J. Denis</span>
-                            <h2 className="section-title mb-6">
-                                Aprende de la Pionera
-                            </h2>
-                            <p className="text-charcoal/70 leading-relaxed mb-8">
-                                La <strong className="text-forest">Maestra Gabriela Elizalde</strong>, con más de 50 años de experiencia,
-                                ha formado a miles de profesionales en técnicas patentadas que revolucionaron
-                                el mercado de cejas y pestañas en Latinoamérica.
-                            </p>
-                            <ul className="space-y-4 mb-8">
-                                {[
-                                    'Certificaciones oficiales con validez profesional',
-                                    'Técnicas exclusivas: Lash Lifting, Laminado, Henna',
-                                    'Grupos reducidos en sede Lindavista, CDMX',
-                                ].map((item, i) => (
-                                    <li key={i} className="flex items-center gap-3 text-charcoal/80">
-                                        <span className="w-6 h-6 flex items-center justify-center text-gold"><svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg></span>
-                                        {item}
-                                    </li>
-                                ))}
-                            </ul>
-                            <Link to="/academia" className="btn btn-primary">
-                                Ver Próximos Cursos
-                            </Link>
-                        </motion.div>
-                    </div>
-                </div>
-            </section>
-
             {/* REELS & TIKTOKS GALLERY */}
             {reels.length > 0 && (
                 <section ref={reelsRef} className="section relative overflow-hidden bg-forest">
@@ -698,9 +698,6 @@ export default function Home() {
                 </section>
             )}
 
-            {/* GOOGLE REVIEWS */}
-            <GoogleReviews />
-
             {/* CTA FINAL - DYNAMIC SECTION */}
             <section className="section relative overflow-hidden bg-forest">
                 {/* Dynamic pattern overlay */}
@@ -744,6 +741,9 @@ export default function Home() {
                     </motion.div>
                 </div>
             </section>
+
+            {/* GOOGLE REVIEWS */}
+            <GoogleReviews />
         </div>
     );
 }
