@@ -47,7 +47,7 @@ export default function Academy() {
                     <motion.span
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className="inline-block px-4 py-2 bg-gold/20 border border-gold/40 text-gold text-sm font-medium mb-4"
+                        className="inline-block px-4 py-2 bg-gold/20 border border-gold/40 text-cream/70 text-sm font-medium mb-4"
                     >
                         ACADEMIA J. DENIS · CERTIFICACIÓN DC-3 / STPS
                     </motion.span>
@@ -63,7 +63,7 @@ export default function Academy() {
                         Aprende de la Maestra Gabriela Elizalde, agente capacitador externo
                         con más de 50 años de experiencia y 5,000+ profesionales formados.
                     </p>
-                    <div className="flex items-center justify-center gap-2 mt-4 text-emerald-400 text-sm font-medium">
+                    <div className="flex items-center justify-center gap-2 mt-4 text-cream/70 text-sm font-medium">
                         <Shield className="w-4 h-4" />
                         <span>Constancias DC-3 con validez oficial ante la Secretaría del Trabajo y Previsión Social</span>
                     </div>
