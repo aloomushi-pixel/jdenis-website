@@ -192,7 +192,7 @@ export default function Academy() {
                                         <div>
                                             {course.price > 0 ? (
                                                 <>
-                                                    <p className="text-2xl font-serif text-gold font-semibold">
+                                                    <p className="text-2xl font-serif text-charcoal font-semibold">
                                                         ${course.price.toLocaleString()}
                                                     </p>
                                                     <p className="text-xs text-charcoal/50">MXN / persona</p>
