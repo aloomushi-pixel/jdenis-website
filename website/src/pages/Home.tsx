@@ -237,7 +237,12 @@ export default function Home() {
 
     useEffect(() => {
         getReels(true).then(setReels).catch(console.error);
-        getFeaturedProducts(12).then(setBestsellers).catch(console.error);
+        getFeaturedProducts(12)
+            .then(products => {
+                const inStock = products.filter((p: Product) => p.stock === null || p.stock === undefined || p.stock >= 1);
+                setBestsellers(inStock);
+            })
+            .catch(console.error);
     }, []);
 
     // Fetch oEmbed thumbnails for TikTok/Instagram reels

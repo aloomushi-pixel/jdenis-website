@@ -108,9 +108,9 @@ export default function ProductCard({ product, index = 0, variantCount = 0 }: Pr
                     )}
 
                     {/* Stock Badge */}
-                    {!hasVariants && product.stock && product.stock > 0 && product.stock < 10 && (
+                    {!hasVariants && product.stock && product.stock > 0 && product.stock <= 10 && (
                         <div className="absolute top-2 right-2 bg-forest/80 backdrop-blur-sm px-2.5 py-1 text-[10px] text-gold tracking-wider rounded-sm z-10">
-                            Últimos {product.stock}
+                            Poca Existencia
                         </div>
                     )}
                 </div>

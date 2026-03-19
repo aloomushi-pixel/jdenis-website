@@ -206,7 +206,7 @@ export default function Shop() {
     };
 
     const filteredProducts = useMemo(() => {
-        let result = groupedProducts;
+        let result = groupedProducts.filter(p => p.stock === undefined || p.stock === null || p.stock >= 1);
 
         if (activeCategory !== 'all') {
             const cat = shopCategories.find(c => c.id === activeCategory);
