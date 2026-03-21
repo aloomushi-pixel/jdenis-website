@@ -2,8 +2,8 @@
 // Enhanced with E-commerce Manager Skill
 import { createClient } from '@supabase/supabase-js';
 
-export const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://vqcjxzsibywdxpvkyysa.supabase.co';
-export const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZxY2p4enNpYnl3ZHhwdmt5eXNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAyNDgxMDAsImV4cCI6MjA4NTgyNDEwMH0.SzIov9XDCl0nFsTx_pCpVdlqnMTLQ10l1v-e2YNE5Xg';
+export const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://kxoitidsrfeqxwvxjwsd.supabase.co';
+export const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4b2l0aWRzcmZlcXh3dnhqd3NkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMDk1NzMsImV4cCI6MjA4OTY4NTU3M30._Wvl1H6c2lMIMANP4D3QARvPOnBRtTaDBgoaG856S2Y';
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
