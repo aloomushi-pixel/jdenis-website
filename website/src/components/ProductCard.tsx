@@ -140,7 +140,7 @@ export default function ProductCard({ product, index = 0, variantCount = 0 }: Pr
                         )}
                         <div className="flex items-baseline gap-1.5">
                             {hasVariants && (
-                                <span className="text-xs sm:text-sm font-medium text-charcoal/60 uppercase tracking-widest">Desde</span>
+                                <span className="text-xs sm:text-sm font-medium text-charcoal/80 uppercase tracking-widest">Desde</span>
                             )}
                             <p className="text-lg sm:text-xl font-extrabold text-charcoal tracking-tight">
                                 ${product.price.toLocaleString()}
