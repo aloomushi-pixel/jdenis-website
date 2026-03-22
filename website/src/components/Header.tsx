@@ -159,9 +159,9 @@ export default function Header() {
                     opacity: mobileMenuOpen ? 1 : 0,
                     y: mobileMenuOpen ? 0 : -20
                 }}
-                className={`fixed inset-0 z-40 bg-forest/98 backdrop-blur-lg md:hidden ${mobileMenuOpen ? 'pointer-events-auto' : 'pointer-events-none'
+                className={`fixed inset-0 z-40 backdrop-blur-xl md:hidden ${mobileMenuOpen ? 'pointer-events-auto' : 'pointer-events-none'
                     }`}
-                style={{ paddingTop: '100px' }}
+                style={{ paddingTop: '100px', background: 'rgba(3, 10, 30, 0.98)' }}
             >
                 <nav className="container-luxury flex flex-col items-center gap-8 py-12">
                     {navLinks.map((link) => (
@@ -171,7 +171,7 @@ export default function Header() {
                             onClick={() => setMobileMenuOpen(false)}
                             className={`text-lg font-serif tracking-wider ${location.pathname === link.path
                                 ? 'text-gold'
-                                : 'text-cream/70 hover:text-gold'
+                                : 'text-white hover:text-gold'
                                 } transition-colors`}
                         >
                             {link.label}
