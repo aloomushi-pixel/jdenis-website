@@ -370,24 +370,50 @@ export default function Home() {
             </section>
 
             {/* LEGACY STRIP */}
-            <section className="legacy-strip" style={{ background: 'linear-gradient(135deg, #f8f5ef 0%, #fdfaf5 50%, #f4f0e8 100%)', borderTop: '1px solid rgba(184,134,11,0.12)', borderBottom: '1px solid rgba(184,134,11,0.12)' }}>
+            <section className="py-16 md:py-20 relative overflow-hidden" style={{ background: 'linear-gradient(160deg, #0a1847 0%, #0d1e55 40%, #112068 70%, #0a1640 100%)' }}>
+                {/* Grain */}
+                <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`, backgroundSize: '160px' }} />
+                {/* Top line */}
+                <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(84,204,255,0.4), transparent)' }} />
+                {/* Bottom line */}
+                <div className="absolute bottom-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(84,204,255,0.4), transparent)' }} />
+
                 <div className="container-luxury">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    {/* Mobile: horizontal snap carousel / Desktop: grid */}
+                    <div className="flex md:grid md:grid-cols-3 gap-4 md:gap-8 overflow-x-auto md:overflow-visible snap-x snap-mandatory md:snap-none pb-4 md:pb-0 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                         {[
                             {
+                                icon: (
+                                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.4}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                ),
                                 value: 'Desde 1998',
                                 label: 'Pioneros en México',
-                                description: 'Primera marca mexicana especializada en cejas y pestañas profesionales'
+                                description: 'Primera marca mexicana especializada en cejas y pestañas profesionales',
+                                accent: '#54CCFF',
                             },
                             {
+                                icon: (
+                                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.4}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                                    </svg>
+                                ),
                                 value: 'Patentes Propias',
                                 label: 'Técnicas Certificadas',
-                                description: 'Métodos exclusivos desarrollados y patentados por nuestro laboratorio'
+                                description: 'Métodos exclusivos desarrollados y patentados por nuestro laboratorio',
+                                accent: '#54CCFF',
                             },
                             {
+                                icon: (
+                                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.4}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 21h18M6 21V7l6-4 6 4v14M9 21v-4a1 1 0 011-1h4a1 1 0 011 1v4" />
+                                    </svg>
+                                ),
                                 value: '100% Mexicano',
                                 label: 'Manufactura Nacional',
-                                description: 'Control de calidad total en nuestras instalaciones de CDMX'
+                                description: 'Control de calidad total en nuestras instalaciones de CDMX',
+                                accent: '#54CCFF',
                             },
                         ].map((stat, i) => (
                             <motion.div
@@ -396,12 +422,22 @@ export default function Home() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ delay: i * 0.15 }}
-                                className="legacy-card"
-                                style={{ background: 'rgba(255,255,255,0.95)', border: '1px solid rgba(26,58,138,0.12)', boxShadow: '0 4px 24px rgba(26,58,138,0.08)' }}
+                                className="flex-none w-[78vw] sm:w-[60vw] md:w-auto snap-center md:snap-align-none"
                             >
-                                <span className="text-[#1a3a8a] text-xl font-serif font-semibold block">{stat.value}</span>
-                                <p className="text-[#3aa3d8] text-sm font-semibold uppercase tracking-widest mt-1 mb-2">{stat.label}</p>
-                                <p className="text-charcoal/60 text-xs leading-relaxed font-sans">{stat.description}</p>
+                                <div className="h-full rounded-2xl p-7 flex flex-col gap-4" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(84,204,255,0.15)', backdropFilter: 'blur(8px)' }}>
+                                    {/* Icon */}
+                                    <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(84,204,255,0.12)', color: stat.accent }}>
+                                        {stat.icon}
+                                    </div>
+                                    {/* Text */}
+                                    <div>
+                                        <p className="font-serif text-2xl text-white font-semibold leading-tight mb-1">{stat.value}</p>
+                                        <p className="text-xs font-semibold uppercase tracking-[0.18em] mb-3" style={{ color: stat.accent }}>{stat.label}</p>
+                                        <p className="text-white/50 text-sm leading-relaxed font-sans">{stat.description}</p>
+                                    </div>
+                                    {/* Bottom accent line */}
+                                    <div className="mt-auto h-px w-full" style={{ background: `linear-gradient(90deg, ${stat.accent}33, transparent)` }} />
+                                </div>
                             </motion.div>
                         ))}
                     </div>
