@@ -55,9 +55,9 @@ export default function Header() {
                                 <Link
                                     key={link.path}
                                     to={link.path}
-                                    className={`text-sm tracking-wider transition-colors ${location.pathname === link.path
-                                        ? 'text-gold'
-                                        : 'text-cream hover:text-gold'
+                                    className={`text-sm tracking-wider transition-colors font-medium ${location.pathname === link.path
+                                        ? 'text-white font-semibold'
+                                        : 'text-cream hover:text-white'
                                         }`}
                                 >
                                     {link.label}
@@ -175,8 +175,8 @@ export default function Header() {
                             to={link.path}
                             onClick={() => setMobileMenuOpen(false)}
                             className={`text-lg font-serif tracking-wider ${location.pathname === link.path
-                                ? 'text-gold'
-                                : 'text-white hover:text-gold'
+                                ? 'text-white font-semibold'
+                                : 'text-cream/90 hover:text-white'
                                 } transition-colors`}
                         >
                             {link.label}
@@ -189,7 +189,7 @@ export default function Header() {
                                 <Link
                                     to="/admin"
                                     onClick={() => setMobileMenuOpen(false)}
-                                    className="text-gold hover:text-white"
+                                    className="text-cream hover:text-white"
                                 >
                                     Panel Interno
                                 </Link>
@@ -198,19 +198,19 @@ export default function Header() {
                                 <Link
                                     to="/mi-cuenta"
                                     onClick={() => setMobileMenuOpen(false)}
-                                    className="text-gold hover:text-white"
+                                    className="text-cream hover:text-white"
                                 >
                                     Dashboard
                                 </Link>
                             )}
-                            <div className="text-cream/70">
+                            <div className="text-cream">
                                 {user?.fullName?.split(' ')[0]}
                             </div>
                             <button
                                 type="button"
                                 onClick={() => { logout(); setMobileMenuOpen(false); }}
                                 aria-label="Cerrar sesión"
-                                className="text-cream/50"
+                                className="text-cream hover:text-white"
                             >
                                 Cerrar Sesión
                             </button>
