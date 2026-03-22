@@ -389,121 +389,92 @@ export default function Home() {
             </section>
 
             {/* DISTRIBUIDORES CTA */}
-            <section className="section relative overflow-hidden">
-                {/* === DYNAMIC BACKGROUND === */}
-                {/* 1. Photo layer */}
-                <div
-                    className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-                    style={{ backgroundImage: "url('/hero-products.jpg')" }}
-                />
-                {/* 2. Dark color wash */}
-                <div className="absolute inset-0 bg-[#0d1a0f]/85" />
-                {/* 3. Diagonal gold gradient sweep */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-[#0d1a0f] via-transparent to-[#b8860b]/20" />
-                {/* 4. Radial gold accent top-right */}
-                <div className="absolute -top-20 -right-20 w-[480px] h-[480px] rounded-full bg-[radial-gradient(circle,rgba(184,134,11,0.25)_0%,transparent_70%)]" />
-                {/* 5. Radial gold accent bottom-left */}
-                <div className="absolute -bottom-20 -left-20 w-[380px] h-[380px] rounded-full bg-[radial-gradient(circle,rgba(184,134,11,0.18)_0%,transparent_70%)]" />
-                {/* 6. Subtle mesh grid */}
-                <div
-                    className="absolute inset-0 opacity-[0.04]"
-                    style={{
-                        backgroundImage: 'linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)',
-                        backgroundSize: '60px 60px'
-                    }}
-                />
-                {/* 7. Top/bottom gold lines */}
-                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#b8860b]/60 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#b8860b]/60 to-transparent" />
+            <section className="section relative overflow-hidden bg-[#fdfaf5]">
+                {/* Subtle botanical pattern */}
+                <div className="absolute inset-0 botanical-pattern opacity-[0.04]" />
+                {/* Radial gold accents */}
+                <div className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full bg-[radial-gradient(circle,rgba(184,134,11,0.10)_0%,transparent_70%)]" />
+                <div className="absolute -bottom-32 -left-32 w-[400px] h-[400px] rounded-full bg-[radial-gradient(circle,rgba(184,134,11,0.07)_0%,transparent_70%)]" />
+                {/* Diagonal cream to white sweep */}
+                <div className="absolute inset-0 bg-gradient-to-br from-white via-[#fdfaf5] to-[#f5f0e6]/70" />
+                {/* Top/bottom gold lines */}
+                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#b8860b]/35 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#b8860b]/35 to-transparent" />
 
                 <div className="container-luxury relative z-10">
-                    <div className="grid lg:grid-cols-2 gap-12 items-center">
-                        {/* Left: Text + CTA */}
-                        <motion.div
-                            initial={{ opacity: 0, x: -20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                        >
-                            <span className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gold/15 border border-gold/50 text-gold text-[11px] font-semibold tracking-[0.25em] uppercase mb-5">
-                                <span className="w-1.5 h-1.5 rounded-full bg-gold inline-block" />
-                                Programa de Distribuidores
-                            </span>
-                            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.1] mb-6">
-                                <span className="text-white">Distribuye la marca</span>
-                                <br />
-                                <span style={{ background: 'linear-gradient(90deg, #d4a832 0%, #f5d281 50%, #c8941c 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>#1 de México</span>
-                            </h2>
-                            <p className="text-white/75 leading-relaxed mb-8 text-base md:text-lg tracking-wide">
-                                Lleva J. Denis a tu ciudad. Obtén precios especiales,
-                                material de apoyo y el respaldo de una marca con más de
-                                <strong className="text-white font-semibold"> 25 años en el mercado.</strong>
-                            </p>
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.7 }}
+                        className="text-center max-w-3xl mx-auto"
+                    >
+                        {/* Badge — same as Hero */}
+                        <span className="hero-badge">Programa de Distribuidores</span>
 
-                            {/* Benefits */}
-                            <ul className="space-y-3 mb-10">
-                                {[
-                                    'Precios de mayoreo exclusivos para distribuidores',
-                                    'Catálogo completo con +80 productos certificados',
-                                    'Soporte de ventas y material de marketing incluido',
-                                    'Sin cuota mensual — solo por volumen de compra',
-                                ].map((item, i) => (
-                                    <li key={i} className="flex items-start gap-3 text-white/85 text-sm md:text-base">
-                                        <span className="w-5 h-5 mt-0.5 flex-shrink-0 flex items-center justify-center bg-gold rounded-full text-[#0d1a0f]">
-                                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                                            </svg>
-                                        </span>
-                                        {item}
-                                    </li>
-                                ))}
-                            </ul>
+                        {/* Headline */}
+                        <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.1] mb-6 text-forest">
+                            Distribuye la marca{' '}
+                            <span style={{
+                                background: 'linear-gradient(90deg, #c8941c 0%, #d4a832 45%, #f5d281 70%, #c8941c 100%)',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                                backgroundClip: 'text',
+                            }}>#1 de México</span>
+                        </h2>
 
-                            <div className="flex flex-wrap gap-4">
-                                <Link to="/registro-distribuidor" className="btn btn-secondary">
-                                    Quiero ser Distribuidor
-                                </Link>
-                                <a
-                                    href="https://wa.me/525527271067?text=Hola%2C%20me%20interesa%20ser%20distribuidor%20de%20J.%20Denis"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="btn btn-outline-light flex items-center gap-2"
-                                >
-                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-                                    </svg>
-                                    Consultar por WhatsApp
-                                </a>
-                            </div>
-                        </motion.div>
+                        {/* Subtitle */}
+                        <p className="text-charcoal/65 text-base md:text-lg leading-relaxed mb-10 max-w-xl mx-auto">
+                            Lleva J. Denis a tu ciudad. Obtén precios de mayoreo, material
+                            de apoyo y el respaldo de una marca con{' '}
+                            <strong className="text-forest font-semibold">+25 años en el mercado</strong>.
+                        </p>
 
-                        {/* Right: Stats grid */}
-                        <motion.div
-                            initial={{ opacity: 0, x: 20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                            className="grid grid-cols-2 gap-4"
-                        >
+                        {/* Benefits inline chips */}
+                        <div className="flex flex-wrap justify-center gap-x-6 gap-y-3 mb-12 text-charcoal/65 text-sm">
                             {[
-                                { value: '+25 años', label: 'En el mercado', icon: '🏆' },
-                                { value: '+5,000', label: 'Distribuidoras activas', icon: '🤝' },
-                                { value: '+80', label: 'Productos certificados', icon: '🧪' },
-                                { value: '100%', label: 'Manufactura mexicana', icon: '🇲🇽' },
-                            ].map((stat, i) => (
-                                <motion.div
-                                    key={i}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true }}
-                                    transition={{ delay: i * 0.1 }}
-                                    className="backdrop-blur-sm bg-white/[0.07] border border-gold/30 rounded-2xl p-6 text-center hover:bg-white/[0.13] hover:border-gold/60 hover:scale-[1.02] transition-all duration-300 cursor-default"
-                                >
-                                    <span className="text-4xl block mb-3">{stat.icon}</span>
-                                    <span className="text-4xl font-serif font-bold block leading-none" style={{ background: 'linear-gradient(135deg, #d4a832, #f5d281)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>{stat.value}</span>
-                                    <p className="text-white/60 text-xs font-medium mt-2 tracking-wide uppercase leading-tight">{stat.label}</p>
-                                </motion.div>
+                                'Precios de mayoreo exclusivos',
+                                '+80 productos certificados',
+                                'Soporte de ventas incluido',
+                                'Sin cuota mensual fija',
+                            ].map((item) => (
+                                <span key={item} className="flex items-center gap-2">
+                                    <span className="w-4 h-4 flex-shrink-0 flex items-center justify-center bg-gold rounded-full text-white">
+                                        <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </span>
+                                    {item}
+                                </span>
                             ))}
-                        </motion.div>
-                    </div>
+                        </div>
+
+                        {/* Premium Buttons */}
+                        <div className="flex flex-wrap justify-center gap-4">
+                            <Link
+                                to="/registro-distribuidor"
+                                className="group inline-flex items-center gap-3 px-8 py-4 rounded-full font-semibold text-white text-[15px] tracking-wide shadow-[0_4px_20px_rgba(184,134,11,0.30)] transition-all duration-300 hover:shadow-[0_6px_32px_rgba(184,134,11,0.50)] hover:scale-[1.03]"
+                                style={{ background: 'linear-gradient(135deg, #c8941c 0%, #d4a832 50%, #b8860b 100%)' }}
+                            >
+                                Quiero ser Distribuidor
+                                <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                </svg>
+                            </Link>
+                            <a
+                                href="https://wa.me/525527271067?text=Hola%2C%20me%20interesa%20ser%20distribuidor%20de%20J.%20Denis"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="group inline-flex items-center gap-3 px-8 py-4 rounded-full font-semibold text-white text-[15px] tracking-wide transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_6px_28px_rgba(37,211,102,0.38)]"
+                                style={{ background: 'linear-gradient(135deg, #128C7E 0%, #25D366 100%)' }}
+                            >
+                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                                </svg>
+                                Consultar por WhatsApp
+                            </a>
+                        </div>
+                    </motion.div>
                 </div>
             </section>
 
