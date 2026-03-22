@@ -174,12 +174,18 @@ export default function Shop() {
 
     // Products with promotions
     const promoProducts = useMemo(() => {
-        return groupedProducts.filter(p => p.originalPrice && p.originalPrice > p.price);
+        return groupedProducts.filter(p =>
+            p.originalPrice && p.originalPrice > p.price &&
+            (p.stock === null || p.stock === undefined || p.stock > 0)
+        );
     }, [groupedProducts]);
 
     // Featured products
     const featuredProducts = useMemo(() => {
-        return groupedProducts.filter(p => p.isFeatured);
+        return groupedProducts.filter(p =>
+            p.isFeatured &&
+            (p.stock === null || p.stock === undefined || p.stock > 0)
+        );
     }, [groupedProducts]);
 
     // Check if any advanced filter is active
