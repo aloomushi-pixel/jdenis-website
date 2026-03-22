@@ -256,8 +256,12 @@ export default function Shop() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-cream flex items-center justify-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gold"></div>
+            <div className="min-h-screen bg-cream">
+                <div className="container-luxury py-12">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                        <ProductSkeleton count={8} />
+                    </div>
+                </div>
             </div>
         );
     }
