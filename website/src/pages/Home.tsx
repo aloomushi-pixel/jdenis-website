@@ -724,10 +724,7 @@ export default function Home() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                             >
-                                <h2 className="font-serif text-3xl md:text-4xl text-cream mb-4">
-                                    Reels y TikToks
-                                </h2>
-                                <p className="text-cream/55 text-lg max-w-2xl mx-auto font-sans">
+                                <p className="text-cream/50 text-sm uppercase tracking-[0.2em] font-sans">
                                     Tutoriales, tips y tendencias en cejas y pestañas
                                 </p>
                             </motion.div>
@@ -739,7 +736,7 @@ export default function Home() {
                             onMouseEnter={() => setIsReelPaused(true)}
                             onMouseLeave={() => setIsReelPaused(false)}
                         >
-                            <div className="relative w-[260px] sm:w-[280px] md:w-[300px] aspect-[9/16]">
+                            <div className="relative w-[320px] sm:w-[380px] md:w-[440px] aspect-[9/16]">
                                 <AnimatePresence mode="wait">
                                     {reels.length > 0 && (() => {
                                         const reel = reels[currentReel];
