@@ -44,7 +44,7 @@ export default function Header() {
                                 alt="J. Denis Logo"
                                 className="h-10 sm:h-12 w-auto object-contain"
                             />
-                            <span className="hidden sm:inline text-cream/50 text-xs tracking-[0.2em] uppercase">
+                            <span className="hidden sm:inline text-cream/80 text-xs tracking-[0.2em] uppercase">
                                 Desde 1998
                             </span>
                         </Link>
@@ -57,7 +57,7 @@ export default function Header() {
                                     to={link.path}
                                     className={`text-sm tracking-wider transition-colors ${location.pathname === link.path
                                         ? 'text-gold'
-                                        : 'text-cream/70 hover:text-gold'
+                                        : 'text-cream hover:text-gold'
                                         }`}
                                 >
                                     {link.label}
@@ -92,7 +92,7 @@ export default function Header() {
                                     )}
                                     <Link
                                         to={['ADMIN', 'EJECUTIVO', 'FABRICA', 'ALMACEN_MATERIA_PRIMA', 'ALMACEN_PRODUCTO_FINAL', 'TRANSPORTISTA'].includes(user?.role || '') ? '/admin' : '/mi-cuenta'}
-                                        className="text-xs tracking-wider uppercase text-cream/70 hover:text-gold transition-colors"
+                                        className="text-xs tracking-wider uppercase text-cream hover:text-gold transition-colors"
                                     >
                                         {user?.fullName?.split(' ')[0]}
                                     </Link>
@@ -100,7 +100,7 @@ export default function Header() {
                                         type="button"
                                         onClick={logout}
                                         aria-label="Cerrar sesión"
-                                        className="text-xs text-cream/50 hover:text-gold transition-colors"
+                                        className="text-xs text-cream hover:text-gold transition-colors"
                                     >
                                         Salir
                                     </button>
@@ -108,7 +108,7 @@ export default function Header() {
                             ) : (
                                 <Link
                                     to="/login"
-                                    className="hidden sm:block text-xs tracking-wider uppercase text-cream/70 hover:text-gold transition-colors"
+                                    className="hidden sm:block text-xs tracking-wider uppercase text-cream hover:text-gold transition-colors"
                                 >
                                     Acceso
                                 </Link>
@@ -120,7 +120,7 @@ export default function Header() {
                                 whileTap={{ scale: 0.95 }}
                                 onClick={openCart}
                                 aria-label="Abrir carrito de compras"
-                                className="relative p-2 text-cream/70 hover:text-gold transition-colors"
+                                className="relative p-2 text-cream hover:text-gold transition-colors"
                             >
                                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}

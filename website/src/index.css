@@ -43,7 +43,7 @@
   }
 
   .btn-secondary {
-    @apply bg-gold text-white border-transparent hover:bg-gold-light hover:-translate-y-0.5 hover:shadow-md;
+    @apply bg-forest text-cream border-forest hover:bg-forest-light hover:text-white hover:-translate-y-0.5 hover:shadow-md;
   }
 
   .btn-outline {
