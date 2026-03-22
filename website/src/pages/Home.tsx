@@ -703,7 +703,7 @@ export default function Home() {
 
             {/* REELS & TIKTOKS GALLERY */}
             {reels.length > 0 && (
-                <section ref={reelsRef} className="section relative overflow-hidden" style={{ background: 'linear-gradient(160deg, #0b1847 0%, #0d1e55 35%, #112068 65%, #0a1640 100%)' }}>
+                <section ref={reelsRef} className="section relative overflow-hidden min-h-screen flex flex-col justify-center" style={{ background: 'linear-gradient(160deg, #0b1847 0%, #0d1e55 35%, #112068 65%, #0a1640 100%)' }}>
                     {/* Grain / cinematic texture overlay */}
                     <div
                         className="absolute inset-0 opacity-[0.35] pointer-events-none"
