@@ -388,15 +388,33 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* DISTRIBUIDORES CTA - formerly Academia section */}
-            <section className="section relative overflow-hidden bg-gradient-to-br from-forest via-forest to-forest-dark">
-                {/* Decorative glows */}
-                <div className="absolute inset-0 opacity-20 pointer-events-none">
-                    <div className="absolute top-0 left-0 w-80 h-80 bg-gold/40 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
-                    <div className="absolute bottom-0 right-0 w-96 h-96 bg-gold/30 rounded-full blur-3xl translate-x-1/3 translate-y-1/3" />
-                </div>
-                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
+            {/* DISTRIBUIDORES CTA */}
+            <section className="section relative overflow-hidden">
+                {/* === DYNAMIC BACKGROUND === */}
+                {/* 1. Photo layer */}
+                <div
+                    className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+                    style={{ backgroundImage: "url('/hero-products.jpg')" }}
+                />
+                {/* 2. Dark color wash */}
+                <div className="absolute inset-0 bg-[#0d1a0f]/85" />
+                {/* 3. Diagonal gold gradient sweep */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-[#0d1a0f] via-transparent to-[#b8860b]/20" />
+                {/* 4. Radial gold accent top-right */}
+                <div className="absolute -top-20 -right-20 w-[480px] h-[480px] rounded-full bg-[radial-gradient(circle,rgba(184,134,11,0.25)_0%,transparent_70%)]" />
+                {/* 5. Radial gold accent bottom-left */}
+                <div className="absolute -bottom-20 -left-20 w-[380px] h-[380px] rounded-full bg-[radial-gradient(circle,rgba(184,134,11,0.18)_0%,transparent_70%)]" />
+                {/* 6. Subtle mesh grid */}
+                <div
+                    className="absolute inset-0 opacity-[0.04]"
+                    style={{
+                        backgroundImage: 'linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)',
+                        backgroundSize: '60px 60px'
+                    }}
+                />
+                {/* 7. Top/bottom gold lines */}
+                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#b8860b]/60 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#b8860b]/60 to-transparent" />
 
                 <div className="container-luxury relative z-10">
                     <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -406,15 +424,19 @@ export default function Home() {
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
                         >
-                            <span className="inline-block px-4 py-2 bg-gold/20 border border-gold/40 text-gold text-xs tracking-[0.2em] uppercase mb-4">Programa de Distribuidores</span>
-                            <h2 className="font-serif text-4xl md:text-5xl text-cream mb-6 leading-tight">
-                                Distribuye la marca
-                                <br /><span className="text-gold">#1 de México</span>
+                            <span className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gold/15 border border-gold/50 text-gold text-[11px] font-semibold tracking-[0.25em] uppercase mb-5">
+                                <span className="w-1.5 h-1.5 rounded-full bg-gold inline-block" />
+                                Programa de Distribuidores
+                            </span>
+                            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.1] mb-6">
+                                <span className="text-white">Distribuye la marca</span>
+                                <br />
+                                <span style={{ background: 'linear-gradient(90deg, #d4a832 0%, #f5d281 50%, #c8941c 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>#1 de México</span>
                             </h2>
-                            <p className="text-cream/70 leading-relaxed mb-8 text-lg">
+                            <p className="text-white/75 leading-relaxed mb-8 text-base md:text-lg tracking-wide">
                                 Lleva J. Denis a tu ciudad. Obtén precios especiales,
-                                material de apoyo y respaldo de una marca con más de
-                                <strong className="text-cream"> 25 años en el mercado.</strong>
+                                material de apoyo y el respaldo de una marca con más de
+                                <strong className="text-white font-semibold"> 25 años en el mercado.</strong>
                             </p>
 
                             {/* Benefits */}
@@ -425,9 +447,9 @@ export default function Home() {
                                     'Soporte de ventas y material de marketing incluido',
                                     'Sin cuota mensual — solo por volumen de compra',
                                 ].map((item, i) => (
-                                    <li key={i} className="flex items-center gap-3 text-cream/80">
-                                        <span className="w-6 h-6 flex-shrink-0 flex items-center justify-center bg-gold/20 rounded-full text-gold">
-                                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                    <li key={i} className="flex items-start gap-3 text-white/85 text-sm md:text-base">
+                                        <span className="w-5 h-5 mt-0.5 flex-shrink-0 flex items-center justify-center bg-gold rounded-full text-[#0d1a0f]">
+                                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                                             </svg>
                                         </span>
@@ -473,11 +495,11 @@ export default function Home() {
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
                                     transition={{ delay: i * 0.1 }}
-                                    className="bg-white/5 border border-gold/20 rounded-2xl p-6 text-center hover:bg-white/10 hover:border-gold/40 transition-all duration-300"
+                                    className="backdrop-blur-sm bg-white/[0.07] border border-gold/30 rounded-2xl p-6 text-center hover:bg-white/[0.13] hover:border-gold/60 hover:scale-[1.02] transition-all duration-300 cursor-default"
                                 >
-                                    <span className="text-3xl block mb-2">{stat.icon}</span>
-                                    <span className="text-gold text-2xl font-serif font-semibold block">{stat.value}</span>
-                                    <p className="text-cream/60 text-xs mt-1 leading-tight">{stat.label}</p>
+                                    <span className="text-4xl block mb-3">{stat.icon}</span>
+                                    <span className="text-4xl font-serif font-bold block leading-none" style={{ background: 'linear-gradient(135deg, #d4a832, #f5d281)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>{stat.value}</span>
+                                    <p className="text-white/60 text-xs font-medium mt-2 tracking-wide uppercase leading-tight">{stat.label}</p>
                                 </motion.div>
                             ))}
                         </motion.div>
