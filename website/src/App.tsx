@@ -3,7 +3,6 @@ import { BrowserRouter, Route, Routes, useLocation, useParams } from 'react-rout
 import CartDrawer from './components/CartDrawer';
 import Footer from './components/Footer';
 import Header from './components/Header';
-import MobileBottomNav from './components/MobileBottomNav';
 import PWAInstallBanner from './components/PWAInstallBanner';
 import AdminLayout from './components/layouts/AdminLayout';
 import About from './pages/About';
@@ -83,7 +82,7 @@ function App() {
   return (
     <BrowserRouter>
       <ScrollToTop />
-      <div className="flex flex-col min-h-screen has-bottom-nav md:pb-0">
+      <div className="flex flex-col min-h-screen">
         <Header />
         <main className="flex-1">
           <Routes>
@@ -132,7 +131,6 @@ function App() {
         </main>
         <Footer />
         <CartDrawer />
-        <MobileBottomNav />
         <PWAInstallBanner show={showPWA} />
       </div>
     </BrowserRouter>
