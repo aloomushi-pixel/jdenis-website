@@ -32,7 +32,7 @@ export default function MobileBottomNav() {
             </Link>
 
             {/* Carrito */}
-            <button onClick={openCart} className="relative">
+            <button onClick={openCart} aria-label="Abrir carrito de compras" className="relative">
                 <div className="relative">
                     <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8}

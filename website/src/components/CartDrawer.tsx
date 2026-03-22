@@ -34,6 +34,7 @@ export default function CartDrawer() {
                             <h2 className="font-serif text-xl text-mauve">Tu Carrito</h2>
                             <button
                                 onClick={closeCart}
+                                aria-label="Cerrar carrito"
                                 className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-rose/20 transition-colors text-mauve"
                             >
                                 ✕
@@ -62,6 +63,7 @@ export default function CartDrawer() {
                                                 <div className="flex items-center gap-3 mt-2">
                                                     <button
                                                         onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                                        aria-label="Reducir cantidad"
                                                         className="w-8 h-8 rounded-full bg-white text-mauve hover:bg-rose/20 flex items-center justify-center transition-colors shadow-sm"
                                                     >
                                                         −
@@ -69,6 +71,7 @@ export default function CartDrawer() {
                                                     <span className="text-ink font-medium">{item.quantity}</span>
                                                     <button
                                                         onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                                        aria-label="Aumentar cantidad"
                                                         className="w-8 h-8 rounded-full bg-white text-mauve hover:bg-rose/20 flex items-center justify-center transition-colors shadow-sm"
                                                     >
                                                         +
@@ -77,6 +80,7 @@ export default function CartDrawer() {
                                             </div>
                                             <button
                                                 onClick={() => removeItem(item.id)}
+                                                aria-label={`Eliminar ${item.name} del carrito`}
                                                 className="text-charcoal/40 hover:text-red-600 transition-colors absolute top-5 right-0 p-1"
                                                 title="Eliminar producto"
                                             >

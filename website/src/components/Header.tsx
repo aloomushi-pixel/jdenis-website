@@ -117,6 +117,7 @@ export default function Header() {
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                                 onClick={openCart}
+                                aria-label="Abrir carrito de compras"
                                 className="relative p-2 text-cream/70 hover:text-gold transition-colors"
                             >
                                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -137,6 +138,8 @@ export default function Header() {
                             {/* Mobile Menu Toggle */}
                             <button
                                 className="md:hidden p-2 text-cream/70"
+                                aria-label={mobileMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
+                                aria-expanded={mobileMenuOpen}
                                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                             >
                                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
