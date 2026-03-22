@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import GoogleReviews from '../components/GoogleReviews';
 import { getFeaturedProducts, getReels, type Product, type SocialReel } from '../lib/supabase';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 const platformStyles: Record<string, { gradient: string; icon: React.ReactNode; label: string }> = {
     youtube: { gradient: 'from-red-600 to-red-800', icon: <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>, label: 'YouTube' },
@@ -200,6 +201,43 @@ export default function Home() {
 
     const reelsRef = useRef<HTMLDivElement>(null);
     const isReelsInView = useInView(reelsRef, { amount: 0.1 });
+
+    // SEO: meta tags + JSON-LD Website + BreadcrumbList
+    usePageMeta({
+        title: 'J. Denis México | Academia y Tienda Profesional de Cejas y Pestañas',
+        description: 'Formación profesional, insumos de laboratorio y técnicas avanzadas para lash lifting, extensiones y microblading. Más de 25 años de experiencia - J. Denis desde 1998.',
+        canonical: 'https://jdenis.store',
+        type: 'website',
+        jsonLd: {
+            '@context': 'https://schema.org',
+            '@graph': [
+                {
+                    '@type': 'WebSite',
+                    '@id': 'https://jdenis.store/#website',
+                    'url': 'https://jdenis.store',
+                    'name': 'J. Denis México',
+                    'description': 'Academia y tienda profesional de cejas y pestañas',
+                    'potentialAction': {
+                        '@type': 'SearchAction',
+                        'target': 'https://jdenis.store/tienda?q={search_term_string}',
+                        'query-input': 'required name=search_term_string',
+                    },
+                },
+                {
+                    '@type': 'Organization',
+                    '@id': 'https://jdenis.store/#organization',
+                    'name': 'J. Denis México',
+                    'url': 'https://jdenis.store',
+                    'foundingDate': '1998',
+                    'description': 'Líderes en formación e insumos profesionales para cejas y pestañas en México.',
+                    'sameAs': [
+                        'https://www.instagram.com/jdenisoficial',
+                        'https://www.facebook.com/jdenisoficial',
+                    ],
+                },
+            ],
+        },
+    });
 
     // Bestsellers from Supabase
     const [bestsellers, setBestsellers] = useState<Product[]>([]);

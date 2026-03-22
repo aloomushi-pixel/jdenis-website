@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Clock, Share2, BookmarkPlus, Eye, Sparkles, BookOpen, AlertTriangle, CheckCircle, XCircle, FlaskConical, Droplets, Star, Zap, Loader } from 'lucide-react';
 import { supabase, type BlogPost as BlogPostType } from '../lib/supabase';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 // Blog content data
 const blogContent: Record<string, {
@@ -121,6 +122,44 @@ export default function BlogPost() {
 
         fetchPost();
     }, [slug]);
+
+    // Dynamic meta + JSON-LD for this blog post
+    usePageMeta({
+        title: post ? `${post.title} | Blog J. Denis` : 'Artículo | Blog J. Denis',
+        description: post?.excerpt
+            ? post.excerpt.slice(0, 155)
+            : 'Artículo de formación profesional sobre lifting de pestañas, laminado de cejas y certificación DC-3 STPS por J. Denis México.',
+        canonical: post ? `https://jdenis.store/blog/${slug}` : undefined,
+        image: post?.image_url || '/hero-products.jpg',
+        type: 'article',
+        jsonLd: post ? [
+            {
+                '@context': 'https://schema.org',
+                '@type': 'Article',
+                headline: post.title,
+                description: post.excerpt || 'Artículo de J. Denis México',
+                image: post.image_url || 'https://jdenis.store/hero-products.jpg',
+                url: `https://jdenis.store/blog/${slug}`,
+                datePublished: post.published_at || new Date().toISOString(),
+                author: { '@type': 'Person', name: 'Gabriela Elizalde' },
+                publisher: {
+                    '@type': 'Organization',
+                    name: 'J. Denis México',
+                    logo: { '@type': 'ImageObject', url: 'https://jdenis.store/jdenis-logo.png' },
+                },
+                inLanguage: 'es-MX',
+            },
+            {
+                '@context': 'https://schema.org',
+                '@type': 'BreadcrumbList',
+                itemListElement: [
+                    { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://jdenis.store' },
+                    { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://jdenis.store/blog' },
+                    { '@type': 'ListItem', position: 3, name: post.title, item: `https://jdenis.store/blog/${slug}` },
+                ],
+            },
+        ] : undefined,
+    });
 
     if (loading) {
         return (

@@ -5,6 +5,7 @@ import ProductCard from '../components/ProductCard';
 import ProductSkeleton from '../components/ProductSkeleton';
 import { useProducts } from '../hooks/useProducts';
 import { useVariants } from '../hooks/useVariants';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 // Category filter definitions (UI constants with SVG icon paths)
 const shopCategories = [
@@ -105,55 +106,33 @@ export default function Shop() {
         return { groupedProducts: enriched, variantCounts: counts };
     }, [products, groups]);
 
-    // ─── SEO: dynamic title, meta description & JSON-LD ───────────
-    useEffect(() => {
-        const prevTitle = document.title;
-        document.title = 'Tienda Profesional de Cejas y Pestañas | Insumos J. Denis México';
-
-        const setMeta = (name: string, content: string) => {
-            let el = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement | null;
-            if (!el) {
-                el = document.createElement('meta');
-                el.name = name;
-                document.head.appendChild(el);
-            }
-            el.content = content;
-        };
-
-        setMeta('description', 'Compra insumos profesionales para cejas y pestañas: lash lifting, extensiones, pigmentos, adhesivos y herramientas. Calidad de laboratorio, envíos a todo México. J. Denis desde 1998.');
-        setMeta('keywords', 'insumos cejas pestañas, lash lifting profesional, extensiones de pestañas México, pigmentos microblading, adhesivos pestañas, productos belleza profesional, J Denis tienda');
-
-        // JSON-LD structured data for product listing
-        const jsonLd = document.createElement('script');
-        jsonLd.type = 'application/ld+json';
-        jsonLd.id = 'shop-jsonld';
-        jsonLd.textContent = JSON.stringify({
+    // ─── SEO: dynamic title, meta description & JSON-LD via usePageMeta ───
+    usePageMeta({
+        title: 'Tienda Profesional de Cejas y Pestañas | Insumos J. Denis México',
+        description: 'Compra insumos profesionales para cejas y pestañas: lash lifting, extensiones, pigmentos, adhesivos y herramientas. Calidad de laboratorio, envíos a todo México. J. Denis desde 1998.',
+        canonical: 'https://jdenis.store/tienda',
+        type: 'website',
+        jsonLd: {
             '@context': 'https://schema.org',
             '@type': 'CollectionPage',
             'name': 'Tienda Profesional J. Denis',
             'description': 'Catálogo de insumos profesionales para cejas y pestañas con calidad de laboratorio.',
-            'url': window.location.href,
+            'url': 'https://jdenis.store/tienda',
             'provider': {
                 '@type': 'Organization',
                 'name': 'J. Denis México',
                 'foundingDate': '1998',
-                'url': window.location.origin,
+                'url': 'https://jdenis.store',
             },
             'breadcrumb': {
                 '@type': 'BreadcrumbList',
                 'itemListElement': [
-                    { '@type': 'ListItem', 'position': 1, 'name': 'Inicio', 'item': window.location.origin },
-                    { '@type': 'ListItem', 'position': 2, 'name': 'Tienda', 'item': window.location.href },
+                    { '@type': 'ListItem', 'position': 1, 'name': 'Inicio', 'item': 'https://jdenis.store' },
+                    { '@type': 'ListItem', 'position': 2, 'name': 'Tienda', 'item': 'https://jdenis.store/tienda' },
                 ],
             },
-        });
-        document.head.appendChild(jsonLd);
-
-        return () => {
-            document.title = prevTitle;
-            document.getElementById('shop-jsonld')?.remove();
-        };
-    }, []);
+        },
+    });
 
     // Calculate max price once when products change (via ref to avoid re-render cascade)
     const maxPriceRef = useRef(DEFAULT_PRICE_MAX);

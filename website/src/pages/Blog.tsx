@@ -2,8 +2,36 @@ import { ArrowRight, BookOpen, Clock, FileText, Leaf, Loader, Newspaper, Search,
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getBlogPosts, getNewsPosts, type BlogPost } from '../lib/supabase';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 export default function Blog() {
+    usePageMeta({
+        title: 'Blog J. Denis — Formación Profesional en Cejas y Pestañas',
+        description: 'Artículos sobre química cosmética, cisteamina, lifting de pestañas, laminado de cejas, certificación DC-3 STPS y técnicas profesionales de belleza.',
+        canonical: 'https://jdenis.store/blog',
+        jsonLd: [
+            {
+                '@context': 'https://schema.org',
+                '@type': 'Blog',
+                name: 'Blog J. Denis México',
+                description: 'Educación profesional en química cosmética, certificación STPS y técnicas de vanguardia',
+                url: 'https://jdenis.store/blog',
+                publisher: {
+                    '@type': 'Organization',
+                    name: 'J. Denis México',
+                    logo: { '@type': 'ImageObject', url: 'https://jdenis.store/jdenis-logo.png' },
+                },
+            },
+            {
+                '@context': 'https://schema.org',
+                '@type': 'BreadcrumbList',
+                itemListElement: [
+                    { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://jdenis.store' },
+                    { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://jdenis.store/blog' },
+                ],
+            },
+        ],
+    });
     const [searchTerm, setSearchTerm] = useState('');
     const [activeCategory, setActiveCategory] = useState<string | null>(null);
     const [newsItems, setNewsItems] = useState<BlogPost[]>([]);

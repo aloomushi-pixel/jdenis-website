@@ -4,9 +4,11 @@ import { Link, useParams } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import ReviewSection from '../components/ReviewSection';
 import VariantSelector from '../components/VariantSelector';
+import { usePageMeta } from '../hooks/usePageMeta';
 import { useProducts, type DisplayProduct } from '../hooks/useProducts';
 import { useVariants } from '../hooks/useVariants';
 import { useCartStore } from '../store/cartStore';
+
 
 // Local VariantGroup type (previously from data/products)
 interface VariantGroup {
@@ -89,6 +91,52 @@ export default function ProductDetail() {
             .slice(0, 8);
     }, [groupedProducts, product, dbGroup]);
 
+    const [isAdding, setIsAdding] = useState(false);
+
+    // Dynamic meta tags + structured data for this product
+    usePageMeta({
+        title: product
+            ? `${product.name} — ${product.category} | J. Denis México`
+            : 'Producto | J. Denis México',
+        description: product?.description
+            ? `${product.description.slice(0, 155)}…`
+            : 'Producto profesional de alta calidad. Técnicas patentadas J. Denis con más de 25 años de experiencia.',
+        image: product?.image || '/hero-products.jpg',
+        type: 'product',
+        canonical: product ? `https://jdenis.store/producto/${product.id}` : undefined,
+        jsonLd: product ? [
+            {
+                '@context': 'https://schema.org',
+                '@type': 'Product',
+                name: product.name,
+                description: product.description || 'Producto profesional J. Denis',
+                image: product.image,
+                sku: product.id,
+                brand: { '@type': 'Brand', name: 'J. Denis' },
+                category: product.category,
+                offers: {
+                    '@type': 'Offer',
+                    priceCurrency: 'MXN',
+                    price: product.price > 0 ? product.price.toString() : '0',
+                    availability: product.stock === 0
+                        ? 'https://schema.org/OutOfStock'
+                        : 'https://schema.org/InStock',
+                    seller: { '@type': 'Organization', name: 'J. Denis México' },
+                    url: `https://jdenis.store/producto/${product.id}`,
+                },
+            },
+            {
+                '@context': 'https://schema.org',
+                '@type': 'BreadcrumbList',
+                itemListElement: [
+                    { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://jdenis.store' },
+                    { '@type': 'ListItem', position: 2, name: 'Tienda', item: 'https://jdenis.store/tienda' },
+                    { '@type': 'ListItem', position: 3, name: product.name, item: `https://jdenis.store/producto/${product.id}` },
+                ],
+            },
+        ] : undefined,
+    });
+
     if (productsLoading) {
         return (
             <div className="min-h-screen bg-cream flex items-center justify-center">
@@ -96,8 +144,6 @@ export default function ProductDetail() {
             </div>
         );
     }
-
-    const [isAdding, setIsAdding] = useState(false);
 
     if (!product) {
         return (

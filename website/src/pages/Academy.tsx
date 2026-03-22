@@ -4,11 +4,43 @@ import { Calendar, MapPin, Radio, Monitor, Shield } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { getAcademyCourses, getAcademyEvents, type AcademyCourse, type AcademyEvent } from '../lib/supabase';
 import ImageGallery from '../components/ImageGallery';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 export default function Academy() {
     const [courses, setCourses] = useState<AcademyCourse[]>([]);
     const [events, setEvents] = useState<AcademyEvent[]>([]);
     const [loading, setLoading] = useState(true);
+
+    usePageMeta({
+        title: 'Academia J. Denis — Cursos con Constancia DC-3 y Certificación STPS',
+        description: 'Cursos profesionales de lash lifting, laminado de cejas y cisteamina estabilizada con constancia DC-3 válida ante la STPS. Imparte la Maestra Gabriela Elizalde.',
+        canonical: 'https://jdenis.store/academia',
+        jsonLd: [
+            {
+                '@context': 'https://schema.org',
+                '@type': 'EducationOrganization',
+                name: 'Academia J. Denis',
+                description: 'Formación profesional certificada DC-3 STPS en cejas, pestañas y lifting',
+                url: 'https://jdenis.store/academia',
+                address: {
+                    '@type': 'PostalAddress',
+                    addressLocality: 'Lindavista',
+                    addressRegion: 'Ciudad de México',
+                    addressCountry: 'MX',
+                    streetAddress: 'Av. Montevideo #136',
+                },
+                founder: { '@type': 'Person', name: 'Gabriela Elizalde' },
+            },
+            {
+                '@context': 'https://schema.org',
+                '@type': 'BreadcrumbList',
+                itemListElement: [
+                    { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://jdenis.store' },
+                    { '@type': 'ListItem', position: 2, name: 'Academia', item: 'https://jdenis.store/academia' },
+                ],
+            },
+        ],
+    });
 
     useEffect(() => {
         const loadData = async () => {
