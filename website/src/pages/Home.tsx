@@ -317,30 +317,49 @@ export default function Home() {
                         transition={{ duration: 0.8 }}
                         className="text-center max-w-3xl mx-auto"
                     >
-                        <span className="hero-badge">Academia J. Denis — Desde 1998</span>
-                        <h1 className="hero-title">
+                        {/* Badge pill */}
+                        <span className="hero-badge">
+                            <span className="w-1.5 h-1.5 rounded-full bg-gold inline-block flex-shrink-0" />
+                            Academia J. Denis — Desde 1998
+                        </span>
+
+                        {/* Headline — Perandory / Cormorant Garamond */}
+                        <h1
+                            className="hero-title"
+                            style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif" }}
+                        >
                             Certifícate con la
                             <br />
                             <span className="text-gold">Pionera de México</span>
                         </h1>
+
+                        {/* Subtitle — simple, no jargon */}
                         <p className="hero-subtitle">
-                            Aprende lash lifting, laminado de cejas y extensiones con la
-                            Maestra Gabriela Elizalde — técnicas patentadas con constancia DC-3 ante la STPS.
+                            Cursos de cejas y pestañas con técnica profesional,
+                            constancia oficial y grupos reducidos en CDMX.
                         </p>
-                        {/* Stats mini-bar */}
-                        <div className="flex flex-wrap justify-center gap-6 mb-8 text-cream/80 text-sm">
-                            {['+5,000 alumnas certificadas', 'Grupos reducidos · CDMX', 'Constancia DC-3 oficial'].map((s) => (
+
+                        {/* Credential chips */}
+                        <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-10 text-cream/75 text-sm font-sans">
+                            {['+5,000 certificadas', 'CDMX · grupos pequeños', 'Cert. oficial STPS'].map((s) => (
                                 <span key={s} className="flex items-center gap-1.5">
-                                    <svg className="w-4 h-4 text-gold flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                                    </svg>
+                                    <span className="w-3.5 h-3.5 flex-shrink-0 flex items-center justify-center bg-gold rounded-full">
+                                        <svg className="w-2 h-2" fill="none" viewBox="0 0 24 24" stroke="#000" strokeWidth={3}>
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </span>
                                     {s}
                                 </span>
                             ))}
                         </div>
+
+                        {/* Buttons */}
                         <div className="flex flex-wrap justify-center gap-4">
-                            <Link to="/academia" className="btn btn-secondary">
+                            <Link to="/academia" className="btn btn-secondary group">
                                 Ver Próximos Cursos
+                                <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                </svg>
                             </Link>
                             <Link to="/tienda" className="btn btn-outline-light">
                                 Ver Tienda

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -35,7 +35,7 @@
 
   /* ===== BUTTONS ===== */
   .btn {
-    @apply inline-flex items-center justify-center px-8 text-sm tracking-[0.10em] uppercase font-medium transition-all duration-300 border rounded-button;
+    @apply inline-flex items-center justify-center px-10 py-[14px] text-sm tracking-[0.10em] uppercase font-medium transition-all duration-300 border rounded-full;
   }
 
   .btn-primary {
@@ -65,15 +65,17 @@
   }
 
   .hero-badge {
-    @apply inline-block px-4 py-2 bg-gold/20 border border-gold/40 text-gold text-xs tracking-[0.2em] uppercase mb-6;
+    @apply inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gold/15 border border-gold/50 text-gold text-[11px] font-sans font-semibold tracking-[0.22em] uppercase mb-6;
   }
 
   .hero-title {
-    @apply font-serif text-4xl md:text-5xl lg:text-6xl text-cream leading-tight mb-6;
+    @apply text-[clamp(2.8rem,6vw,5.5rem)] leading-[1.08] text-cream mb-6 tracking-[-0.02em];
+    font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+    font-weight: 700;
   }
 
   .hero-subtitle {
-    @apply text-cream/70 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed;
+    @apply font-sans text-cream/75 text-base md:text-[17px] max-w-xl mx-auto mb-10 leading-relaxed tracking-wide;
   }
 
   /* ===== SECTIONS ===== */
