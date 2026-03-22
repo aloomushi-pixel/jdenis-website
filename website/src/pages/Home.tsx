@@ -370,13 +370,11 @@ export default function Home() {
             </section>
 
             {/* LEGACY STRIP */}
-            <section className="py-16 md:py-20 relative overflow-hidden" style={{ background: 'linear-gradient(160deg, #0a1847 0%, #0d1e55 40%, #112068 70%, #0a1640 100%)' }}>
-                {/* Grain */}
-                <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`, backgroundSize: '160px' }} />
-                {/* Top line */}
-                <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(84,204,255,0.4), transparent)' }} />
-                {/* Bottom line */}
-                <div className="absolute bottom-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(84,204,255,0.4), transparent)' }} />
+            <section className="py-16 md:py-20 relative overflow-hidden" style={{ background: 'linear-gradient(160deg, #f8f9fc 0%, #ffffff 50%, #f0f4fa 100%)' }}>
+                {/* Top border */}
+                <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(10,24,71,0.2), transparent)' }} />
+                {/* Bottom border */}
+                <div className="absolute bottom-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(10,24,71,0.2), transparent)' }} />
 
                 <div className="container-luxury">
                     {/* Mobile: horizontal snap carousel / Desktop: grid */}
@@ -391,7 +389,7 @@ export default function Home() {
                                 value: 'Desde 1998',
                                 label: 'Pioneros en México',
                                 description: 'Primera marca mexicana especializada en cejas y pestañas profesionales',
-                                accent: '#54CCFF',
+                                accent: '#0a1847',
                             },
                             {
                                 icon: (
@@ -402,7 +400,7 @@ export default function Home() {
                                 value: 'Patentes Propias',
                                 label: 'Técnicas Certificadas',
                                 description: 'Métodos exclusivos desarrollados y patentados por nuestro laboratorio',
-                                accent: '#54CCFF',
+                                accent: '#0a1847',
                             },
                             {
                                 icon: (
@@ -413,7 +411,7 @@ export default function Home() {
                                 value: '100% Mexicano',
                                 label: 'Manufactura Nacional',
                                 description: 'Control de calidad total en nuestras instalaciones de CDMX',
-                                accent: '#54CCFF',
+                                accent: '#0a1847',
                             },
                         ].map((stat, i) => (
                             <motion.div
@@ -424,15 +422,15 @@ export default function Home() {
                                 transition={{ delay: i * 0.15 }}
                                 className="flex-none w-[78vw] sm:w-[60vw] md:w-auto snap-center md:snap-align-none"
                             >
-                                <div className="h-full rounded-2xl p-7 flex flex-col gap-4" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(84,204,255,0.15)', backdropFilter: 'blur(8px)' }}>
+                                <div className="h-full rounded-2xl p-7 flex flex-col gap-4" style={{ background: '#ffffff', border: '1px solid rgba(10,24,71,0.1)', boxShadow: '0 4px 32px rgba(10,24,71,0.07)' }}>
                                     {/* Icon */}
-                                    <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(84,204,255,0.12)', color: stat.accent }}>
+                                    <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(10,24,71,0.07)', color: stat.accent }}>
                                         {stat.icon}
                                     </div>
                                     {/* Text */}
                                     <div>
-                                        <p className="font-serif text-2xl text-white font-semibold leading-tight mb-1">{stat.value}</p>
-                                        <p className="text-xs font-semibold uppercase tracking-[0.18em] mb-3" style={{ color: stat.accent }}>{stat.label}</p>
+                                        <p className="font-serif text-2xl font-semibold leading-tight mb-1" style={{ color: '#0a1847' }}>{stat.value}</p>
+                                        <p className="text-xs font-semibold uppercase tracking-[0.18em] mb-3" style={{ color: '#1a3a8a' }}>{stat.label}</p>
                                         <p className="text-white/50 text-sm leading-relaxed font-sans">{stat.description}</p>
                                     </div>
                                     {/* Bottom accent line */}
