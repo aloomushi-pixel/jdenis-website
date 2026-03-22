@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Lato:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -467,3 +467,190 @@
   width: 1rem;
   height: 1rem;
 }
+/* =====================================================
+   DESIGN PLAN - 25 PUNTOS - PREMIUM UPGRADE
+   J.Denis Store - Visual Enhancement System
+   ===================================================== */
+
+/* PUNTO 1: DM Sans Font Override */
+body, p, span, a, li, td, th, input, textarea, button, label {
+  font-family: 'DM Sans', 'Lato', system-ui, -apple-system, sans-serif;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Playfair Display', Georgia, serif;
+  letter-spacing: -0.025em;
+}
+
+/* PUNTO 2: Hero Title Scale */
+.hero-title {
+  font-size: clamp(2.5rem, 6vw, 5rem) !important;
+  letter-spacing: -0.03em !important;
+  line-height: 1.05 !important;
+}
+@media (min-width: 1024px) {
+  .hero-title { font-size: clamp(3.5rem, 7vw, 6.5rem) !important; }
+}
+
+/* PUNTO 4: Base Text Legible Mobile */
+@media (max-width: 767px) {
+  body { font-size: 16px; line-height: 1.7; }
+  p { line-height: 1.75; }
+}
+
+/* PUNTO 5: Enhanced Color Variables */
+:root {
+  --accent-cyan: #00C4D4;
+  --accent-gold: #C9A227;
+  --accent-royal: #1438C8;
+  --forest-deep: #0E1738;
+}
+
+/* PUNTO 6: Hero Cinematic Overlay */
+.hero-overlay-cinematic {
+  background: linear-gradient(135deg, rgba(14,23,56,0.55) 0%, rgba(20,56,200,0.35) 60%, rgba(0,196,212,0.15) 100%);
+}
+
+/* PUNTO 7: Glassmorphism Cards */
+.product-card {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  background: rgba(255,255,255,0.92) !important;
+  border: 1px solid rgba(255,255,255,0.5) !important;
+  border-radius: 12px !important;
+  transition: transform 0.3s cubic-bezier(.25,.8,.25,1), box-shadow 0.3s cubic-bezier(.25,.8,.25,1), border-color 0.3s ease !important;
+}
+.product-card:hover {
+  transform: translateY(-6px) !important;
+  box-shadow: 0 20px 40px -10px rgba(20,56,200,0.18), 0 8px 20px -5px rgba(0,0,0,0.1) !important;
+  border-color: rgba(20,56,200,0.2) !important;
+}
+
+/* PUNTO 8: Header Glass Scroll */
+.header-glass {
+  background: rgba(23,32,77,0.95) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-bottom: 1px solid rgba(201,162,39,0.15) !important;
+  box-shadow: 0 4px 30px rgba(0,0,0,0.15) !important;
+}
+
+/* PUNTO 9: Mobile Bottom Navigation */
+.mobile-bottom-nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 50;
+  background: rgba(23,32,77,0.97);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(201,162,39,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0.5rem 0 max(0.5rem, env(safe-area-inset-bottom));
+}
+.mobile-bottom-nav a,
+.mobile-bottom-nav button {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 0.2rem;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.65rem;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: rgba(245,240,230,0.5);
+  text-decoration: none;
+  border: none; background: none; cursor: pointer;
+  transition: color 0.2s ease, transform 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.mobile-bottom-nav a.active,
+.mobile-bottom-nav a:hover,
+.mobile-bottom-nav button:hover { color: #C9A227; }
+.mobile-bottom-nav svg { width: 1.35rem; height: 1.35rem; transition: transform 0.2s ease; }
+.mobile-bottom-nav a:hover svg,
+.mobile-bottom-nav button:hover svg { transform: translateY(-2px); }
+
+/* PUNTO 10: Grid 2 Columnas Mobile */
+@media (max-width: 639px) {
+  .product-grid-mobile { grid-template-columns: repeat(2,1fr) !important; gap: 0.625rem !important; }
+}
+
+/* PUNTO 11: Hero Mobile */
+@media (max-width: 639px) {
+  .hero-actions { flex-direction: column; gap: 0.75rem; }
+  .hero-actions .btn { width: 100%; justify-content: center; padding-top: 1rem; padding-bottom: 1rem; }
+}
+
+/* PUNTO 13: 4-Column Grid Desktop */
+@media (min-width: 1280px) {
+  .xl-grid-4 { grid-template-columns: repeat(4,minmax(0,1fr)) !important; }
+}
+
+/* PUNTO 20: Skeleton Loaders */
+@keyframes skeleton-shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+.skeleton {
+  border-radius: 8px;
+  background: linear-gradient(90deg, #e8e8e8 25%, #f5f5f5 50%, #e8e8e8 75%);
+  background-size: 800px 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+.skeleton-card { border-radius: 12px; overflow: hidden; background: white; border: 1px solid rgba(0,0,0,0.06); }
+.skeleton-image { width: 100%; aspect-ratio: 4/5; background: linear-gradient(90deg,#e8e8e8 25%,#f5f5f5 50%,#e8e8e8 75%); background-size: 800px 100%; animation: skeleton-shimmer 1.4s ease-in-out infinite; }
+.skeleton-text { height: 0.875rem; margin-bottom: 0.5rem; background: linear-gradient(90deg,#e8e8e8 25%,#f5f5f5 50%,#e8e8e8 75%); background-size: 800px 100%; animation: skeleton-shimmer 1.4s ease-in-out infinite; border-radius: 4px; }
+.skeleton-text.short { width: 60%; }
+.skeleton-text.medium { width: 80%; }
+.skeleton-text.full { width: 100%; }
+.skeleton-text.price { width: 40%; height: 1.25rem; }
+
+/* PUNTO 21: Cards 3D Hover (Desktop) */
+@media (min-width: 768px) {
+  .product-card-3d { transform-style: preserve-3d; }
+  .product-card-3d:hover { transform: perspective(1000px) rotateY(2deg) translateY(-6px) !important; }
+}
+
+/* PUNTO 22: Scroll Reveal */
+.reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.65s cubic-bezier(.25,.8,.25,1), transform 0.65s cubic-bezier(.25,.8,.25,1); }
+.reveal.revealed { opacity: 1; transform: translateY(0); }
+.reveal-left { opacity: 0; transform: translateX(-32px); transition: opacity 0.65s cubic-bezier(.25,.8,.25,1), transform 0.65s cubic-bezier(.25,.8,.25,1); }
+.reveal-left.revealed { opacity: 1; transform: translateX(0); }
+.reveal-right { opacity: 0; transform: translateX(32px); transition: opacity 0.65s cubic-bezier(.25,.8,.25,1), transform 0.65s cubic-bezier(.25,.8,.25,1); }
+.reveal-right.revealed { opacity: 1; transform: translateX(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+.reveal-delay-5 { transition-delay: 0.5s; }
+
+/* PUNTO 23: Ripple Effect */
+.btn-ripple { position: relative; overflow: hidden; -webkit-tap-highlight-color: transparent; }
+.btn-ripple::after { content: ''; display: block; position: absolute; width: 100%; height: 100%; top: 0; left: 0; pointer-events: none; background-image: radial-gradient(circle,rgba(255,255,255,0.35) 10%,transparent 10.01%); background-repeat: no-repeat; background-position: 50%; transform: scale(10,10); opacity: 0; transition: transform .5s, opacity .8s; }
+.btn-ripple:active::after { transform: scale(0,0); opacity: 0.3; transition: 0s; }
+
+/* PUNTO 24: Premium Product Badges */
+.badge-bestseller { background: linear-gradient(135deg,#FF6B2B,#FF3D00); color: white; font-family: 'DM Sans',sans-serif; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.25rem 0.5rem; border-radius: 4px; box-shadow: 0 2px 8px rgba(255,107,43,0.45); }
+.badge-new { background: linear-gradient(135deg,#00C4D4,#0090A0); color: white; font-family: 'DM Sans',sans-serif; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.25rem 0.5rem; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,196,212,0.4); }
+.badge-featured { background: linear-gradient(135deg,#C9A227,#A07A10); color: white; font-family: 'DM Sans',sans-serif; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.25rem 0.5rem; border-radius: 4px; box-shadow: 0 2px 8px rgba(201,162,39,0.45); }
+
+/* PUNTO 25: Footer Premium */
+.footer-premium { background: linear-gradient(180deg,#0E1738 0%,#080E22 100%); position: relative; }
+.footer-premium::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg,transparent,#C9A227,transparent); opacity: 0.5; }
+.footer-trust-badge { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.35rem 0.75rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; font-family: 'DM Sans',sans-serif; font-size: 0.7rem; font-weight: 500; color: rgba(245,240,230,0.5); letter-spacing: 0.04em; }
+.footer-social-btn { width: 2.5rem; height: 2.5rem; border-radius: 50%; border: 1px solid rgba(201,162,39,0.2); display: flex; align-items: center; justify-content: center; color: rgba(245,240,230,0.4); transition: all 0.25s ease; }
+.footer-social-btn:hover { background: #C9A227; border-color: #C9A227; color: #0E1738; transform: translateY(-2px); box-shadow: 0 6px 16px rgba(201,162,39,0.3); }
+
+/* Safe area for mobile nav */
+.has-bottom-nav { padding-bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px)); }
+
+/* Image zoom on product cards */
+.product-card .product-card-image,
+.product-card img { transition: transform 0.5s cubic-bezier(.25,.8,.25,1) !important; }
+.product-card:hover .product-card-image,
+.product-card:hover > a > div > img { transform: scale(1.07) !important; }
+
+/* Button font */
+.btn-primary, .btn-secondary, .btn, button { font-family: 'DM Sans', sans-serif; font-weight: 600; }
