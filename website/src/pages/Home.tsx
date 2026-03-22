@@ -378,14 +378,12 @@ export default function Home() {
                 <div className="container-luxury">
                     {/* Header */}
                     <div className="mb-4">
-                        <p className="text-[10px] uppercase tracking-[0.25em] font-sans mb-0.5" style={{ color: '#1a3a8a' }}>Tienda Profesional</p>
                         <h2 className="font-serif text-xl leading-tight" style={{ color: '#0a1847' }}>Explora por Categoría</h2>
                     </div>
 
-                    {/* Top SEO categories — horizontal scroll on mobile, wrap on desktop */}
+                    {/* Top SEO categories — 2 filas desktop, 3 filas móvil */}
                     <div
-                        className="flex gap-2.5 overflow-x-auto md:flex-wrap md:overflow-visible pb-1 md:pb-0"
-                        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                        className="flex flex-wrap gap-2.5 overflow-hidden max-h-[136px] md:max-h-[90px]"
                     >
                         {[
                             { id: 'lash-lifting',  name: 'Lash Lifting',    icon: 'M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z M15 12a3 3 0 11-6 0 3 3 0 016 0z' },
@@ -399,7 +397,7 @@ export default function Home() {
                             <Link
                                 key={cat.id}
                                 to={`/tienda?cat=${cat.id}`}
-                                className="flex-none flex items-center gap-2 px-4 py-2.5 rounded-full font-sans transition-all duration-200 group hover:shadow-md"
+                                className="flex items-center gap-2 px-4 py-2.5 rounded-full font-sans transition-all duration-200 group hover:shadow-md"
                                 style={{ background: '#ffffff', border: '1px solid rgba(10,24,71,0.12)', color: '#0a1847', whiteSpace: 'nowrap' }}
                             >
                                 <svg className="w-4 h-4 flex-shrink-0 transition-transform duration-200 group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} style={{ color: '#1a3a8a' }}>
