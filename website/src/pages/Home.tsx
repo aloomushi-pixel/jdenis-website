@@ -130,19 +130,26 @@ function ReelCard({
                                 }
                             }}
                             className="reel-video absolute inset-0 w-full h-full object-cover"
-                        />
+                            aria-label={reel.title || 'Video de tendencias'}
+                        >
+                            <track kind="captions" label="Sin subtítulos" />
+                        </video>
                         <div className="absolute top-4 right-4 flex flex-col gap-3 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                             <button
+                                type="button"
                                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); setIsMuted(!isMuted); }}
+                                aria-label={isMuted ? 'Activar sonido' : 'Silenciar video'}
                                 className="w-10 h-10 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/80 transition-colors"
                             >
-                                {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+                                {isMuted ? <VolumeX size={18} aria-hidden="true" /> : <Volume2 size={18} aria-hidden="true" />}
                             </button>
                             <button
+                                type="button"
                                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); setIsManualPaused(!isManualPaused); }}
+                                aria-label={isManualPaused ? 'Reproducir video' : 'Pausar video'}
                                 className="w-10 h-10 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/80 transition-colors"
                             >
-                                {isManualPaused ? <Play size={18} fill="currentColor" /> : <Pause size={18} fill="currentColor" />}
+                                {isManualPaused ? <Play size={18} fill="currentColor" aria-hidden="true" /> : <Pause size={18} fill="currentColor" aria-hidden="true" />}
                             </button>
                         </div>
                     </>
@@ -341,8 +348,10 @@ export default function Home() {
                     playsInline
                     poster="/hero-products.jpg"
                     className="absolute inset-0 w-full h-full object-cover"
+                    aria-hidden="true"
                 >
                     <source src="/videos/Video_con_logo_J_DENIS.mp4" type="video/mp4" />
+                    <track kind="captions" label="Sin subtítulos" />
                 </video>
                 <div className="absolute inset-0 bg-black/55" />
                 <div className="absolute inset-0 bg-gradient-to-t from-forest/90 via-forest/40 to-transparent" />
