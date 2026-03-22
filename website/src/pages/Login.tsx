@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
@@ -13,6 +13,7 @@ export default function Login() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [successMsg, setSuccessMsg] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
 
     const [formData, setFormData] = useState({
         email: '',
@@ -66,206 +67,300 @@ export default function Login() {
         setError('');
         try {
             await loginWithOAuth('google');
-            // Supabase redirects to jdenis.store/mi-cuenta automatically
         } catch {
             setError('No se pudo iniciar sesión con Google. Intenta de nuevo.');
             setOauthLoading(false);
         }
     };
 
-    const subtitle = {
-        login: 'Accede a tu cuenta',
-        register: 'Crea tu cuenta profesional',
-        forgot: 'Recupera tu contraseña',
+    const titles = {
+        login: { heading: 'Bienvenida de nuevo', sub: 'Accede a tu cuenta profesional' },
+        register: { heading: 'Crea tu cuenta', sub: 'Únete a +5,000 profesionales certificadas' },
+        forgot: { heading: 'Recuperar acceso', sub: 'Te enviaremos un enlace a tu correo' },
     };
 
     const buttonLabel = {
         login: 'Iniciar Sesión',
         register: 'Crear Cuenta',
-        forgot: 'Enviar enlace de recuperación',
+        forgot: 'Enviar enlace',
     };
 
     return (
-        <div className="min-h-screen bg-cream flex items-center justify-center py-12 px-4">
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="w-full max-w-md"
+        <div className="min-h-screen flex">
+
+            {/* ── LEFT PANEL – Brand ── */}
+            <div
+                className="hidden lg:flex lg:w-1/2 relative overflow-hidden flex-col items-center justify-center"
+                style={{ background: 'linear-gradient(160deg, #0a1847 0%, #0d1e55 40%, #1a3580 100%)' }}
             >
-                <div className="text-center mb-8">
-                    <Link to="/" className="font-serif text-3xl text-navy font-bold">
-                        J. DENIS
+                {/* Grain texture */}
+                <div
+                    className="absolute inset-0 opacity-20 pointer-events-none"
+                    style={{
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`,
+                        backgroundSize: '180px',
+                    }}
+                />
+                {/* Radial glow */}
+                <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 70% 60% at 50% 40%, rgba(84,204,255,0.12) 0%, transparent 70%)' }} />
+                {/* Vignette */}
+                <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 90% 90% at 50% 50%, transparent 50%, rgba(0,0,0,0.45) 100%)' }} />
+
+                {/* Top gold line */}
+                <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(84,204,255,0.5), transparent)' }} />
+
+                <div className="relative z-10 flex flex-col items-center text-center px-12">
+                    {/* Logo */}
+                    <Link to="/">
+                        <img
+                            src="/logo-new.jpeg"
+                            alt="J. Denis"
+                            className="h-20 w-auto object-contain mb-10 drop-shadow-2xl"
+                            style={{ filter: 'brightness(1.08) drop-shadow(0 4px 24px rgba(84,204,255,0.25))' }}
+                        />
                     </Link>
-                    <p className="text-charcoal-light mt-2">
-                        {subtitle[mode]}
+
+                    <h1 className="font-serif text-white text-4xl font-normal leading-tight mb-4">
+                        La Pionera de<br />
+                        <span style={{ color: '#54CCFF' }}>México en Cejas</span>
+                    </h1>
+                    <p className="text-white/50 text-sm leading-relaxed max-w-xs font-sans">
+                        Más de 25 años formando profesionales de belleza con técnicas patentadas y certificación oficial STPS.
                     </p>
-                </div>
 
-                <div className="bg-white rounded-2xl p-8 shadow-luxury">
-                    {successMsg ? (
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            className="text-center py-4"
-                        >
-                            <div className="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
-                                <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                </svg>
+                    {/* Stats row */}
+                    <div className="flex items-center gap-8 mt-10 pt-10 border-t border-white/10">
+                        {[
+                            { value: '+5K', label: 'Certificadas' },
+                            { value: '1998', label: 'Fundada' },
+                            { value: '100%', label: 'Mexicana' },
+                        ].map((s) => (
+                            <div key={s.label} className="text-center">
+                                <p className="font-serif text-2xl text-white font-semibold">{s.value}</p>
+                                <p className="text-white/40 text-xs uppercase tracking-widest mt-0.5">{s.label}</p>
                             </div>
-                            <p className="text-green-700 font-medium mb-4">{successMsg}</p>
-                            <button
-                                onClick={() => { setMode('login'); setSuccessMsg(''); }}
-                                className="text-gold font-medium hover:underline"
-                            >
-                                Volver a Iniciar Sesión
-                            </button>
-                        </motion.div>
-                    ) : (
-                        <form onSubmit={handleSubmit} className="space-y-5">
-                            {mode === 'register' && (
-                                <div>
-                                    <label className="label">Nombre Completo</label>
-                                    <input
-                                        type="text"
-                                        name="fullName"
-                                        value={formData.fullName}
-                                        onChange={handleInputChange}
-                                        required
-                                        className="input"
-                                        placeholder="María González"
-                                    />
-                                </div>
-                            )}
-
-                            <div>
-                                <label className="label">Email</label>
-                                <input
-                                    type="email"
-                                    name="email"
-                                    value={formData.email}
-                                    onChange={handleInputChange}
-                                    required
-                                    className="input"
-                                    placeholder="tu@email.com"
-                                />
-                            </div>
-
-                            {mode !== 'forgot' && (
-                                <div>
-                                    <label className="label">Contraseña</label>
-                                    <input
-                                        type="password"
-                                        name="password"
-                                        value={formData.password}
-                                        onChange={handleInputChange}
-                                        required
-                                        className="input"
-                                        placeholder="••••••••"
-                                    />
-                                    {mode === 'login' && (
-                                        <button
-                                            type="button"
-                                            onClick={() => setMode('forgot')}
-                                            className="text-xs text-gold hover:underline mt-1 float-right"
-                                        >
-                                            ¿Olvidaste tu contraseña?
-                                        </button>
-                                    )}
-                                </div>
-                            )}
-
-                            {mode === 'register' && (
-                                <div>
-                                    <label className="label">Confirmar Contraseña</label>
-                                    <input
-                                        type="password"
-                                        name="confirmPassword"
-                                        value={formData.confirmPassword}
-                                        onChange={handleInputChange}
-                                        required
-                                        className="input"
-                                        placeholder="••••••••"
-                                    />
-                                </div>
-                            )}
-
-                            {error && (
-                                <p className="text-red-500 text-sm text-center">{error}</p>
-                            )}
-
-                        <button
-                                type="submit"
-                                disabled={loading}
-                                className="btn btn-primary w-full disabled:opacity-50"
-                            >
-                                {loading ? 'Procesando...' : buttonLabel[mode]}
-                            </button>
-
-                            {/* Google OAuth — pendiente configuración Google Cloud Console */}
-                            {false && mode !== 'forgot' && (
-                                <>
-                                    <div className="relative flex items-center gap-3 my-1">
-                                        <div className="flex-1 h-px bg-charcoal/10" />
-                                        <span className="text-xs text-charcoal-light">o continúa con</span>
-                                        <div className="flex-1 h-px bg-charcoal/10" />
-                                    </div>
-
-                                    <button
-                                        type="button"
-                                        onClick={handleGoogle}
-                                        disabled={oauthLoading}
-                                        className="w-full flex items-center justify-center gap-3 px-4 py-2.5 border border-charcoal/20 rounded-lg bg-white hover:bg-gray-50 transition-all duration-200 text-sm font-medium text-charcoal shadow-sm disabled:opacity-60"
-                                    >
-                                        {oauthLoading ? (
-                                            <span className="w-5 h-5 border-2 border-charcoal/30 border-t-charcoal rounded-full animate-spin" />
-                                        ) : (
-                                            <svg className="w-5 h-5" viewBox="0 0 24 24">
-                                                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                                                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                                                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
-                                                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                                            </svg>
-                                        )}
-                                        {oauthLoading ? 'Redirigiendo...' : 'Continuar con Google'}
-                                    </button>
-                                </>
-                            )}
-                        </form>
-                    )}
-
-                    <div className="mt-6 pt-6 border-t border-charcoal/10 text-center space-y-2">
-                        {mode === 'forgot' ? (
-                            <p className="text-sm text-charcoal-light">
-                                ¿Recordaste tu contraseña?{' '}
-                                <button
-                                    onClick={() => { setMode('login'); setError(''); setSuccessMsg(''); }}
-                                    className="text-gold font-medium hover:underline"
-                                >
-                                    Inicia Sesión
-                                </button>
-                            </p>
-                        ) : (
-                            <p className="text-sm text-charcoal-light">
-                                {mode === 'register' ? '¿Ya tienes cuenta?' : '¿No tienes cuenta?'}{' '}
-                                <button
-                                    onClick={() => { setMode(mode === 'register' ? 'login' : 'register'); setError(''); }}
-                                    className="text-gold font-medium hover:underline"
-                                >
-                                    {mode === 'register' ? 'Inicia Sesión' : 'Regístrate'}
-                                </button>
-                            </p>
-                        )}
+                        ))}
                     </div>
                 </div>
 
-                <p className="text-center text-sm text-charcoal-light mt-6">
-                    Al registrarte aceptas nuestros{' '}
-                    <Link to="/terminos" className="text-gold hover:underline">
-                        Términos y Condiciones
+                {/* Bottom link */}
+                <div className="absolute bottom-8 left-0 right-0 text-center">
+                    <Link to="/" className="text-white/30 text-xs hover:text-white/60 transition-colors tracking-widest uppercase">
+                        ← Volver al sitio
                     </Link>
-                </p>
-            </motion.div>
+                </div>
+            </div>
+
+            {/* ── RIGHT PANEL – Form ── */}
+            <div className="w-full lg:w-1/2 flex items-center justify-center bg-white px-6 py-12 relative">
+
+                {/* Mobile logo */}
+                <div className="absolute top-6 left-0 right-0 flex justify-center lg:hidden">
+                    <Link to="/">
+                        <img src="/logo-new.jpeg" alt="J. Denis" className="h-12 w-auto object-contain" />
+                    </Link>
+                </div>
+
+                <motion.div
+                    initial={{ opacity: 0, y: 24 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="w-full max-w-md mt-16 lg:mt-0"
+                >
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={mode}
+                            initial={{ opacity: 0, x: 12 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -12 }}
+                            transition={{ duration: 0.25 }}
+                        >
+                            {/* Header */}
+                            <div className="mb-8">
+                                <span className="inline-block px-3 py-1 text-xs font-medium tracking-widest uppercase rounded-full mb-4"
+                                    style={{ background: 'rgba(10,24,71,0.06)', color: '#0a1847' }}>
+                                    Academia J. Denis
+                                </span>
+                                <h2 className="font-serif text-3xl text-gray-900 font-semibold mb-1">
+                                    {titles[mode].heading}
+                                </h2>
+                                <p className="text-gray-400 text-sm">{titles[mode].sub}</p>
+                            </div>
+
+                            {successMsg ? (
+                                <motion.div
+                                    initial={{ opacity: 0, scale: 0.95 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    className="text-center py-10"
+                                >
+                                    <div
+                                        className="w-16 h-16 mx-auto mb-5 rounded-full flex items-center justify-center"
+                                        style={{ background: 'rgba(10,24,71,0.08)' }}
+                                    >
+                                        <svg className="w-8 h-8" fill="none" stroke="#0a1847" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </div>
+                                    <p className="text-gray-700 font-medium mb-5 text-sm leading-relaxed">{successMsg}</p>
+                                    <button
+                                        onClick={() => { setMode('login'); setSuccessMsg(''); }}
+                                        className="text-sm font-medium underline underline-offset-4"
+                                        style={{ color: '#0a1847' }}
+                                    >
+                                        Volver a Iniciar Sesión
+                                    </button>
+                                </motion.div>
+                            ) : (
+                                <form onSubmit={handleSubmit} className="space-y-4">
+                                    {mode === 'register' && (
+                                        <div>
+                                            <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5">Nombre Completo</label>
+                                            <input
+                                                type="text"
+                                                name="fullName"
+                                                value={formData.fullName}
+                                                onChange={handleInputChange}
+                                                required
+                                                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:border-transparent transition-all"
+                                                style={{ '--tw-ring-color': 'rgba(10,24,71,0.25)' } as React.CSSProperties}
+                                                placeholder="María González"
+                                            />
+                                        </div>
+                                    )}
+
+                                    <div>
+                                        <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5">Correo Electrónico</label>
+                                        <input
+                                            type="email"
+                                            name="email"
+                                            value={formData.email}
+                                            onChange={handleInputChange}
+                                            required
+                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:border-transparent transition-all"
+                                            placeholder="tu@email.com"
+                                        />
+                                    </div>
+
+                                    {mode !== 'forgot' && (
+                                        <div>
+                                            <div className="flex items-center justify-between mb-1.5">
+                                                <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider">Contraseña</label>
+                                                {mode === 'login' && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setMode('forgot')}
+                                                        className="text-xs font-medium hover:underline transition-colors"
+                                                        style={{ color: '#0a1847' }}
+                                                    >
+                                                        ¿Olvidaste tu contraseña?
+                                                    </button>
+                                                )}
+                                            </div>
+                                            <div className="relative">
+                                                <input
+                                                    type={showPassword ? 'text' : 'password'}
+                                                    name="password"
+                                                    value={formData.password}
+                                                    onChange={handleInputChange}
+                                                    required
+                                                    className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:border-transparent transition-all pr-11"
+                                                    placeholder="••••••••"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setShowPassword(!showPassword)}
+                                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                                >
+                                                    {showPassword ? (
+                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" /></svg>
+                                                    ) : (
+                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                                    )}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {mode === 'register' && (
+                                        <div>
+                                            <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5">Confirmar Contraseña</label>
+                                            <input
+                                                type="password"
+                                                name="confirmPassword"
+                                                value={formData.confirmPassword}
+                                                onChange={handleInputChange}
+                                                required
+                                                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:border-transparent transition-all"
+                                                placeholder="••••••••"
+                                            />
+                                        </div>
+                                    )}
+
+                                    {error && (
+                                        <motion.p
+                                            initial={{ opacity: 0, y: -4 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            className="text-red-500 text-xs text-center bg-red-50 rounded-lg py-2 px-3"
+                                        >
+                                            {error}
+                                        </motion.p>
+                                    )}
+
+                                    <button
+                                        type="submit"
+                                        disabled={loading}
+                                        className="w-full py-3.5 rounded-xl text-sm font-semibold tracking-wider uppercase text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl disabled:opacity-60 disabled:cursor-not-allowed mt-2"
+                                        style={{ background: 'linear-gradient(135deg, #0a1847 0%, #1a3580 100%)', boxShadow: '0 4px 20px rgba(10,24,71,0.3)' }}
+                                    >
+                                        {loading ? (
+                                            <span className="flex items-center justify-center gap-2">
+                                                <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                                                </svg>
+                                                Procesando...
+                                            </span>
+                                        ) : buttonLabel[mode]}
+                                    </button>
+                                </form>
+                            )}
+
+                            {/* Footer links */}
+                            <div className="mt-8 pt-6 border-t border-gray-100 text-center">
+                                {mode === 'forgot' ? (
+                                    <p className="text-sm text-gray-400">
+                                        ¿Recordaste tu contraseña?{' '}
+                                        <button
+                                            onClick={() => { setMode('login'); setError(''); setSuccessMsg(''); }}
+                                            className="font-semibold hover:underline transition-colors"
+                                            style={{ color: '#0a1847' }}
+                                        >
+                                            Inicia Sesión
+                                        </button>
+                                    </p>
+                                ) : (
+                                    <p className="text-sm text-gray-400">
+                                        {mode === 'register' ? '¿Ya tienes cuenta?' : '¿No tienes cuenta?'}{' '}
+                                        <button
+                                            onClick={() => { setMode(mode === 'register' ? 'login' : 'register'); setError(''); }}
+                                            className="font-semibold hover:underline transition-colors"
+                                            style={{ color: '#0a1847' }}
+                                        >
+                                            {mode === 'register' ? 'Inicia Sesión' : 'Regístrate'}
+                                        </button>
+                                    </p>
+                                )}
+                                <p className="text-xs text-gray-300 mt-4">
+                                    Al registrarte aceptas nuestros{' '}
+                                    <Link to="/terminos" className="hover:underline" style={{ color: '#0a1847' }}>
+                                        Términos y Condiciones
+                                    </Link>
+                                </p>
+                            </div>
+                        </motion.div>
+                    </AnimatePresence>
+                </motion.div>
+            </div>
         </div>
     );
 }
