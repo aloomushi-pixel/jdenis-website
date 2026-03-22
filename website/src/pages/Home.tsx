@@ -589,19 +589,21 @@ export default function Home() {
                         {/* Prev / Next arrows */}
                         <button
                             onClick={() => setFavSlide(prev => (prev - 1 + favTotal) % favTotal)}
+                            type="button"
                             className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 sm:-translate-x-4 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/90 shadow-lg backdrop-blur-sm flex items-center justify-center text-forest hover:bg-gold hover:text-forest transition-all duration-300 hover:scale-110"
-                            aria-label="Anterior"
+                            aria-label="Producto anterior"
                         >
-                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
                             </svg>
                         </button>
                         <button
                             onClick={() => setFavSlide(prev => (prev + 1) % favTotal)}
+                            type="button"
                             className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 sm:translate-x-4 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/90 shadow-lg backdrop-blur-sm flex items-center justify-center text-forest hover:bg-gold hover:text-forest transition-all duration-300 hover:scale-110"
-                            aria-label="Siguiente"
+                            aria-label="Producto siguiente"
                         >
-                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                             </svg>
                         </button>
@@ -701,17 +703,23 @@ export default function Home() {
                         </div>
 
                         {/* Dots navigation */}
-                        <div className="flex items-center justify-center gap-2 mt-8">
-                            {bestsellers.map((_, i) => (
+                        <div className="flex items-center justify-center gap-2 mt-8" role="tablist" aria-label="Seleccionar producto">
+                            {bestsellers.map((prod, i) => (
                                 <button
                                     key={i}
+                                    type="button"
+                                    role="tab"
+                                    aria-selected={i === favSlide}
                                     onClick={() => setFavSlide(i)}
-                                    className={`transition-all duration-300 rounded-full ${i === favSlide
-                                        ? 'w-8 h-2.5 bg-gold shadow-md'
-                                        : 'w-2.5 h-2.5 bg-charcoal/20 hover:bg-charcoal/40'
-                                        }`}
-                                    aria-label={`Producto ${i + 1}`}
-                                />
+                                    className="p-3 flex items-center justify-center transition-all duration-300"
+                                    aria-label={`Ver producto ${prod.name || (i + 1)}`}
+                                >
+                                    <span className={`block transition-all duration-300 rounded-full ${
+                                        i === favSlide
+                                            ? 'w-8 h-2.5 bg-gold shadow-md'
+                                            : 'w-2.5 h-2.5 bg-charcoal/20 hover:bg-charcoal/40'
+                                    }`} />
+                                </button>
                             ))}
                         </div>
 
@@ -806,17 +814,23 @@ export default function Home() {
                             </div>
 
                             {/* Navigation dots */}
-                            <div className="flex items-center gap-2 mt-6">
-                                {reels.map((_, i) => (
+                            <div className="flex items-center gap-2 mt-6" role="tablist" aria-label="Seleccionar reel">
+                                {reels.map((reel, i) => (
                                     <button
                                         key={i}
+                                        type="button"
+                                        role="tab"
+                                        aria-selected={i === currentReel}
                                         onClick={() => setCurrentReel(i)}
-                                        className={`transition-all duration-300 rounded-full ${i === currentReel
-                                            ? 'w-8 h-2 bg-gold'
-                                            : 'w-2 h-2 bg-cream/30 hover:bg-cream/50'
-                                            }`}
-                                        aria-label={`Ver reel ${i + 1}`}
-                                    />
+                                        className="p-3 flex items-center justify-center transition-all duration-300"
+                                        aria-label={`Ver reel ${reel.title || (i + 1)}`}
+                                    >
+                                        <span className={`block transition-all duration-300 rounded-full ${
+                                            i === currentReel
+                                                ? 'w-8 h-2 bg-gold'
+                                                : 'w-2 h-2 bg-cream/30 hover:bg-cream/50'
+                                        }`} />
+                                    </button>
                                 ))}
                             </div>
 

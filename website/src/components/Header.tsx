@@ -97,7 +97,9 @@ export default function Header() {
                                         {user?.fullName?.split(' ')[0]}
                                     </Link>
                                     <button
+                                        type="button"
                                         onClick={logout}
+                                        aria-label="Cerrar sesión"
                                         className="text-xs text-cream/50 hover:text-gold transition-colors"
                                     >
                                         Salir
@@ -204,7 +206,12 @@ export default function Header() {
                             <div className="text-cream/70">
                                 {user?.fullName?.split(' ')[0]}
                             </div>
-                            <button onClick={() => { logout(); setMobileMenuOpen(false); }} className="text-cream/50">
+                            <button
+                                type="button"
+                                onClick={() => { logout(); setMobileMenuOpen(false); }}
+                                aria-label="Cerrar sesión"
+                                className="text-cream/50"
+                            >
                                 Cerrar Sesión
                             </button>
                         </>

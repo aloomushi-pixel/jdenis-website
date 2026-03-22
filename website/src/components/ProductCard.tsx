@@ -61,7 +61,14 @@ export default function ProductCard({ product, index = 0, variantCount = 0 }: Pr
                     {/* Quick Add Button - Always visible Mobile, Hover Desktop */}
                     <button
                         onClick={handleAddToCart}
+                        type="button"
                         disabled={isAdding || isOutOfStock}
+                        aria-label={
+                            isOutOfStock ? `${product.name} - Agotado` :
+                            hasVariants ? `Ver opciones de ${product.name}` :
+                            isAdding ? `${product.name} agregado al carrito` :
+                            `Agregar ${product.name} al carrito`
+                        }
                         className={`lg:absolute lg:bottom-4 lg:left-4 lg:right-4 text-[10px] sm:text-xs tracking-widest uppercase font-semibold h-10 lg:translate-y-4 absolute bottom-0 left-0 right-0 w-full lg:w-auto lg:rounded-sm transition-all duration-300 ${isOutOfStock ? 'bg-charcoal/40 text-white/90 cursor-not-allowed lg:opacity-100 lg:translate-y-0' : isAdding ? 'bg-gold text-white scale-[1.02] lg:opacity-100 lg:translate-y-0 shadow-md' : 'bg-forest text-white hover:bg-forest-light lg:opacity-0 lg:group-hover:opacity-100 lg:group-hover:translate-y-0'}`}
                     >
                         <span className="flex items-center justify-center gap-2">

@@ -112,9 +112,11 @@ export default function ImageGallery({ images, title, variant = 'academy' }: Ima
                         {/* Close button */}
                         <button
                             onClick={closeLightbox}
+                            type="button"
+                            aria-label="Cerrar galería"
                             className="absolute top-4 right-4 z-10 p-2 text-white/70 hover:text-white bg-white/10 rounded-full backdrop-blur-sm transition-colors"
                         >
-                            <X className="w-6 h-6" />
+                            <X className="w-6 h-6" aria-hidden="true" />
                         </button>
 
                         {/* Counter */}
@@ -129,15 +131,19 @@ export default function ImageGallery({ images, title, variant = 'academy' }: Ima
                             <>
                                 <button
                                     onClick={(e) => { e.stopPropagation(); goPrev(); }}
+                                    type="button"
+                                    aria-label="Imagen anterior"
                                     className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-3 text-white/70 hover:text-white bg-white/10 hover:bg-white/20 rounded-full backdrop-blur-sm transition-all"
                                 >
-                                    <ChevronLeft className="w-6 h-6" />
+                                    <ChevronLeft className="w-6 h-6" aria-hidden="true" />
                                 </button>
                                 <button
                                     onClick={(e) => { e.stopPropagation(); goNext(); }}
+                                    type="button"
+                                    aria-label="Siguiente imagen"
                                     className="absolute right-4 top-1/2 -translate-y-1/2 z-10 p-3 text-white/70 hover:text-white bg-white/10 hover:bg-white/20 rounded-full backdrop-blur-sm transition-all"
                                 >
-                                    <ChevronRight className="w-6 h-6" />
+                                    <ChevronRight className="w-6 h-6" aria-hidden="true" />
                                 </button>
                             </>
                         )}
@@ -161,11 +167,14 @@ export default function ImageGallery({ images, title, variant = 'academy' }: Ima
                                 {images.map((img, i) => (
                                     <button
                                         key={i}
+                                        type="button"
                                         onClick={(e) => { e.stopPropagation(); setActiveIndex(i); }}
+                                        aria-label={`Ver imagen ${i + 1}`}
+                                        aria-current={i === activeIndex ? 'true' : undefined}
                                         className={`w-12 h-12 rounded-lg overflow-hidden border-2 transition-all ${i === activeIndex ? 'border-gold scale-110 shadow-lg' : 'border-transparent opacity-60 hover:opacity-100'
                                             }`}
                                     >
-                                        <img src={img} alt="" className="w-full h-full object-cover" />
+                                        <img src={img} alt={`Miniatura ${i + 1}`} className="w-full h-full object-cover" />
                                     </button>
                                 ))}
                             </div>

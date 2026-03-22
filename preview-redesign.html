@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>J. Denis — Preview Rediseño Home</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   DESIGN TOKENS — Perandory/Souncer Theme
+   ============================================================ */
+:root {
+  /* Colors from brand sheet */
+  --navy:      #1A3A8A;   /* C88 M66 Y0 K0  — primary dark */
+  --sky:       #3AA3D8;   /* C67 M20 Y0 K0  — accent light blue */
+  --lavender:  #EAF0FF;   /* C6  M3  Y0 K0  — ultra-light bg */
+  --blush:     #FFE8E8;   /* C0  M18 Y12 K0 — warm accent */
+  --gold:      #E8B800;   /* C0  M17 Y76 K0 — headline accent */
+  --charcoal:  #111111;   /* K100 */
+  --white:     #FFFFFF;
+
+  /* Derived */
+  --navy-deep: #0F2660;
+  --navy-mid:  #1E4499;
+  --sky-light: #6EC4E8;
+  --gold-light:#F5D156;
+  --cream:     #F8F6FF;
+  --text-body: #2C3A5A;
+  --text-muted:#5A6A8A;
+
+  /* Typography */
+  --font-serif: 'Cormorant Garamond', 'Georgia', serif;   /* ≈ Perandory */
+  --font-sans:  'DM Sans', system-ui, sans-serif;          /* ≈ Souncer Sans */
+
+  /* Spacing */
+  --section-gap: 96px;
+  --container: 1140px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--font-sans); color: var(--charcoal); background: var(--white); -webkit-font-smoothing: antialiased; }
+
+/* ── Containers ── */
+.container { max-width: var(--container); margin: 0 auto; padding: 0 32px; }
+.section    { padding: var(--section-gap) 0; position: relative; overflow: hidden; }
+
+/* ── Gold gradient text util ── */
+.grad-gold {
+  background: linear-gradient(90deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.grad-sky {
+  background: linear-gradient(90deg, var(--navy) 0%, var(--sky) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+
+/* ── Badge ── */
+.badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 20px; border-radius: 9999px;
+  border: 1.5px solid var(--sky); color: var(--sky);
+  font-family: var(--font-sans); font-size: 11px; font-weight: 600;
+  letter-spacing: .22em; text-transform: uppercase; margin-bottom: 20px;
+  background: rgba(58,163,216,.08);
+}
+.badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--sky); }
+
+/* on dark bg */
+.badge-light {
+  border-color: rgba(255,255,255,.4); color: rgba(255,255,255,.85);
+  background: rgba(255,255,255,.08);
+}
+.badge-light .badge-dot { background: var(--gold); }
+
+/* ── Buttons ── */
+.btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 14px 32px; border-radius: 9999px;
+  font-family: var(--font-sans); font-size: 15px; font-weight: 600;
+  letter-spacing: .01em; text-decoration: none;
+  transition: transform .25s, box-shadow .25s, opacity .25s;
+  cursor: pointer; border: none;
+}
+.btn:hover { transform: scale(1.03); }
+
+.btn-navy {
+  background: var(--navy); color: var(--white);
+  box-shadow: 0 4px 20px rgba(26,58,138,.35);
+}
+.btn-navy:hover { box-shadow: 0 8px 32px rgba(26,58,138,.55); }
+
+.btn-sky {
+  background: linear-gradient(135deg, var(--sky) 0%, var(--navy-mid) 100%);
+  color: var(--white);
+  box-shadow: 0 4px 20px rgba(58,163,216,.35);
+}
+.btn-sky:hover { box-shadow: 0 8px 32px rgba(58,163,216,.55); }
+
+.btn-gold {
+  background: linear-gradient(135deg, #c8941c 0%, var(--gold) 50%, #b8860b 100%);
+  color: var(--white);
+  box-shadow: 0 4px 20px rgba(232,184,0,.35);
+}
+.btn-gold:hover { box-shadow: 0 8px 32px rgba(232,184,0,.55); }
+
+.btn-outline-navy {
+  background: transparent;
+  border: 2px solid rgba(255,255,255,.55); color: var(--white);
+}
+.btn-outline-navy:hover { background: rgba(255,255,255,.1); }
+
+.btn-wa {
+  background: linear-gradient(135deg, #128C7E 0%, #25D366 100%);
+  color: var(--white);
+  box-shadow: 0 4px 18px rgba(37,211,102,.30);
+}
+.btn-wa:hover { box-shadow: 0 8px 28px rgba(37,211,102,.50); }
+
+/* arrow icon bounce */
+.btn svg { transition: transform .28s; }
+.btn:hover svg { transform: translateX(4px); }
+
+/* ============================================================
+   NAVBAR
+   ============================================================ */
+.navbar {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(15,38,96,.92); backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  padding: 0 32px; height: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-logo {
+  font-family: var(--font-serif); font-size: 24px; font-weight: 700;
+  color: var(--white); letter-spacing: .08em; text-decoration: none;
+}
+.nav-logo span { color: var(--gold); }
+.nav-links { display: flex; gap: 32px; list-style: none; }
+.nav-links a { color: rgba(255,255,255,.75); text-decoration: none; font-size: 14px; font-weight: 500; transition: color .2s; }
+.nav-links a:hover { color: var(--white); }
+.nav-cta { padding: 8px 22px; font-size: 13px; }
+
+/* ============================================================
+   HERO — Navy dark with video overlay
+   ============================================================ */
+.hero {
+  min-height: 88vh;
+  background: linear-gradient(145deg, var(--navy-deep) 0%, var(--navy) 40%, #22508A 70%, var(--navy-deep) 100%);
+  display: flex; align-items: center; justify-content: center;
+  text-align: center;
+  position: relative; overflow: hidden;
+}
+
+/* Diagonal line texture */
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    repeating-linear-gradient(
+      -55deg,
+      transparent,
+      transparent 60px,
+      rgba(255,255,255,.025) 60px,
+      rgba(255,255,255,.025) 61px
+    );
+}
+
+/* Radial glow center */
+.hero::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 30%, rgba(58,163,216,.18) 0%, transparent 70%);
+}
+
+/* Gold accent top-right */
+.hero-glow-tr {
+  position: absolute; top: -80px; right: -80px;
+  width: 500px; height: 500px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(232,184,0,.15) 0%, transparent 65%);
+}
+.hero-glow-bl {
+  position: absolute; bottom: -60px; left: -60px;
+  width: 360px; height: 360px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(58,163,216,.12) 0%, transparent 70%);
+}
+
+/* Bottom separator */
+.hero-line-bottom {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(232,184,0,.5), transparent);
+}
+
+.hero-content { position: relative; z-index: 2; max-width: 800px; padding: 0 20px; }
+
+.hero-headline {
+  font-family: var(--font-serif);
+  font-size: clamp(42px, 6vw, 76px);
+  font-weight: 700;
+  line-height: 1.08;
+  color: var(--white);
+  margin-bottom: 20px;
+  letter-spacing: -.01em;
+}
+
+.hero-subtitle {
+  font-family: var(--font-sans);
+  font-size: clamp(16px, 2vw, 19px);
+  color: rgba(255,255,255,.72);
+  line-height: 1.65;
+  margin-bottom: 32px;
+  max-width: 560px;
+  margin-left: auto; margin-right: auto;
+}
+
+.hero-credentials {
+  display: flex; flex-wrap: wrap; justify-content: center;
+  gap: 24px; margin-bottom: 40px;
+}
+.hero-credential {
+  display: flex; align-items: center; gap: 8px;
+  color: rgba(255,255,255,.75); font-size: 14px;
+}
+.cred-check {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--gold); display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.hero-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; }
+
+/* ============================================================
+   LEGACY STRIP
+   ============================================================ */
+.legacy-strip {
+  background: var(--lavender);
+  padding: 48px 0;
+  border-top: 2px solid rgba(58,163,216,.15);
+  border-bottom: 2px solid rgba(58,163,216,.15);
+}
+.legacy-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 40px; }
+.legacy-card { text-align: center; }
+.legacy-value { font-family: var(--font-serif); font-size: 22px; font-weight: 700; color: var(--navy); }
+.legacy-label { font-size: 13px; font-weight: 600; color: var(--sky); margin: 4px 0; text-transform: uppercase; letter-spacing: .1em; }
+.legacy-desc  { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+
+/* ============================================================
+   DISTRIBUIDORES CTA — Light cream
+   ============================================================ */
+.dist { background: var(--cream); }
+.dist-inner { text-align: center; max-width: 780px; margin: 0 auto; }
+.dist-headline {
+  font-family: var(--font-serif);
+  font-size: clamp(36px, 5vw, 64px);
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--navy-deep);
+  margin-bottom: 20px;
+}
+.dist-subtitle {
+  font-size: 17px; color: var(--text-body); line-height: 1.68;
+  margin-bottom: 36px; max-width: 560px; margin-left: auto; margin-right: auto;
+}
+.dist-benefits {
+  display: flex; flex-wrap: wrap; justify-content: center;
+  gap: 12px 32px; margin-bottom: 44px;
+}
+.dist-chip {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 14px; color: var(--text-body);
+}
+.chip-check {
+  width: 18px; height: 18px; border-radius: 50%; flex-shrink: 0;
+  background: var(--navy); display: flex; align-items: center; justify-content: center;
+}
+.dist-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; }
+
+/* Decorative accent lines */
+.dist::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(26,58,138,.3), transparent);
+}
+
+/* ============================================================
+   BESTSELLERS TEASER
+   ============================================================ */
+.best { background: var(--white); }
+.section-header { text-align: center; margin-bottom: 56px; }
+.section-headline {
+  font-family: var(--font-serif);
+  font-size: clamp(30px, 4vw, 52px);
+  font-weight: 700;
+  color: var(--navy-deep);
+  line-height: 1.15;
+  margin-bottom: 12px;
+}
+.section-sub { font-size: 16px; color: var(--text-muted); max-width: 480px; margin: 0 auto; }
+
+.product-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 24px; }
+.product-card {
+  border-radius: 20px; overflow: hidden;
+  border: 1.5px solid rgba(26,58,138,.10);
+  transition: transform .3s, box-shadow .3s;
+  background: var(--white);
+}
+.product-card:hover { transform: translateY(-6px); box-shadow: 0 16px 48px rgba(26,58,138,.15); }
+.product-img {
+  width: 100%; aspect-ratio: 3/4; object-fit: cover;
+  background: var(--lavender);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-serif); font-size: 40px; color: rgba(26,58,138,.25);
+}
+.product-info { padding: 16px 20px; }
+.product-name { font-family: var(--font-serif); font-size: 18px; font-weight: 600; color: var(--navy-deep); margin-bottom: 4px; }
+.product-cat  { font-size: 12px; color: var(--sky); font-weight: 600; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 10px; }
+.product-price { font-size: 20px; font-weight: 700; color: var(--navy); }
+.product-btn {
+  display: inline-flex; align-items: center; gap-6px;
+  margin-top: 12px; width: 100%; justify-content: center;
+  padding: 10px; border-radius: 9999px;
+  background: var(--navy); color: var(--white);
+  font-size: 13px; font-weight: 600;
+  text-decoration: none; transition: background .2s, transform .2s;
+}
+.product-btn:hover { background: var(--sky); transform: translateY(-1px); }
+
+/* ============================================================
+   ACADEMIA TEASER
+   ============================================================ */
+.academia {
+  background: linear-gradient(135deg, var(--navy-deep) 0%, var(--navy) 50%, #1E4499 100%);
+  position: relative; overflow: hidden;
+}
+.academia::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: repeating-linear-gradient(
+    -45deg, transparent, transparent 80px,
+    rgba(255,255,255,.02) 80px, rgba(255,255,255,.02) 81px
+  );
+}
+.academia-inner { position: relative; z-index: 2; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+.academia-headline { font-family: var(--font-serif); font-size: clamp(32px,4vw,56px); font-weight: 700; color: var(--white); line-height: 1.1; margin-bottom: 18px; }
+.academia-text { font-size: 16px; color: rgba(255,255,255,.72); line-height: 1.7; margin-bottom: 28px; }
+.academia-courses { display: flex; flex-direction: column; gap: 16px; }
+.course-card {
+  background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12);
+  border-radius: 16px; padding: 20px 24px;
+  backdrop-filter: blur(8px);
+  transition: background .25s, border-color .25s;
+}
+.course-card:hover { background: rgba(255,255,255,.12); border-color: rgba(232,184,0,.35); }
+.course-name { font-family: var(--font-serif); font-size: 20px; font-weight: 600; color: var(--white); margin-bottom: 4px; }
+.course-meta { font-size: 13px; color: rgba(255,255,255,.55); }
+.course-price { font-family: var(--font-serif); font-size: 22px; font-weight: 700; color: var(--gold); margin-top: 8px; }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.footer {
+  background: var(--charcoal); color: rgba(255,255,255,.55);
+  padding: 48px 32px 24px;
+  border-top: 2px solid rgba(232,184,0,.25);
+}
+.footer-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; }
+.footer-brand { font-family: var(--font-serif); font-size: 26px; font-weight: 700; color: var(--white); }
+.footer-brand span { color: var(--gold); }
+.footer-tagline { font-size: 13px; color: rgba(255,255,255,.4); margin-top: 4px; }
+.footer-links { display: flex; gap: 32px; }
+.footer-links a { color: rgba(255,255,255,.5); text-decoration: none; font-size: 14px; transition: color .2s; }
+.footer-links a:hover { color: var(--white); }
+.footer-bottom { border-top: 1px solid rgba(255,255,255,.08); padding-top: 20px; font-size: 13px; text-align: center; }
+
+/* ============================================================
+   SECTION DIVIDERS
+   ============================================================ */
+.divider {
+  width: 100%; height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(26,58,138,.2), transparent);
+}
+
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--lavender); }
+::-webkit-scrollbar-thumb { background: var(--navy); border-radius: 4px; }
+
+/* ============================================================
+   RESPONSIVE (simple)
+   ============================================================ */
+@media (max-width: 900px) {
+  .legacy-grid, .product-grid, .academia-inner { grid-template-columns: 1fr; }
+  .nav-links, .nav-cta { display: none; }
+  .footer-top { flex-direction: column; gap: 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     NAVBAR
+════════════════════════════════════════════ -->
+<nav class="navbar">
+  <a href="#" class="nav-logo">J. <span>Denis</span></a>
+  <ul class="nav-links">
+    <li><a href="#">Tienda</a></li>
+    <li><a href="#">Academia</a></li>
+    <li><a href="#">Distribuidores</a></li>
+    <li><a href="#">Nosotros</a></li>
+  </ul>
+  <a href="#" class="btn btn-sky nav-cta">Iniciar Sesión</a>
+</nav>
+
+<!-- ═══════════════════════════════════════════
+     HERO
+════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-glow-tr"></div>
+  <div class="hero-glow-bl"></div>
+
+  <div class="hero-content">
+    <!-- Badge -->
+    <div class="badge badge-light">
+      <span class="badge-dot"></span>
+      Academia J. Denis — Desde 1998
+    </div>
+
+    <!-- Headline -->
+    <h1 class="hero-headline">
+      Certifícate con la<br>
+      <span class="grad-gold">Pionera de México</span>
+    </h1>
+
+    <!-- Subtitle -->
+    <p class="hero-subtitle">
+      Aprende lash lifting, laminado de cejas y extensiones con técnicas
+      patentadas y constancia DC-3 ante la STPS.
+    </p>
+
+    <!-- Credentials -->
+    <div class="hero-credentials">
+      <div class="hero-credential">
+        <span class="cred-check">
+          <svg width="10" height="8" fill="none" viewBox="0 0 10 8"><path d="M1 4l2.5 2.5L9 1" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        +5,000 alumnas certificadas
+      </div>
+      <div class="hero-credential">
+        <span class="cred-check">
+          <svg width="10" height="8" fill="none" viewBox="0 0 10 8"><path d="M1 4l2.5 2.5L9 1" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        Grupos reducidos · CDMX
+      </div>
+      <div class="hero-credential">
+        <span class="cred-check">
+          <svg width="10" height="8" fill="none" viewBox="0 0 10 8"><path d="M1 4l2.5 2.5L9 1" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        Constancia DC-3 oficial
+      </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="hero-buttons">
+      <a href="#" class="btn btn-gold">
+        Ver Próximos Cursos
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+      </a>
+      <a href="#" class="btn btn-outline-navy">
+        Ver Tienda
+      </a>
+    </div>
+  </div>
+
+  <div class="hero-line-bottom"></div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     LEGACY STRIP
+════════════════════════════════════════════ -->
+<div class="legacy-strip">
+  <div class="container">
+    <div class="legacy-grid">
+      <div class="legacy-card">
+        <div class="legacy-value">Desde 1998</div>
+        <div class="legacy-label">Pioneros en México</div>
+        <div class="legacy-desc">Primera marca mexicana especializada en cejas y pestañas profesionales</div>
+      </div>
+      <div class="legacy-card">
+        <div class="legacy-value">Patentes Propias</div>
+        <div class="legacy-label">Técnicas Certificadas</div>
+        <div class="legacy-desc">Métodos exclusivos desarrollados y patentados por nuestro laboratorio</div>
+      </div>
+      <div class="legacy-card">
+        <div class="legacy-value">100% Mexicano</div>
+        <div class="legacy-label">Manufactura Nacional</div>
+        <div class="legacy-desc">Control de calidad total en nuestras instalaciones de CDMX</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     DISTRIBUIDORES CTA
+════════════════════════════════════════════ -->
+<section class="section dist">
+  <div class="container">
+    <div class="dist-inner">
+      <!-- Badge -->
+      <div class="badge">
+        <span class="badge-dot"></span>
+        Programa de Distribuidores
+      </div>
+
+      <!-- Headline -->
+      <h2 class="dist-headline">
+        Distribuye la marca<br>
+        <span class="grad-gold">#1 de México</span>
+      </h2>
+
+      <!-- Subtitle -->
+      <p class="dist-subtitle">
+        Lleva J. Denis a tu ciudad. Obtén precios de mayoreo, material de apoyo
+        y el respaldo de una marca con <strong style="color:var(--navy);font-weight:700">+25 años en el mercado</strong>.
+      </p>
+
+      <!-- Benefits -->
+      <div class="dist-benefits">
+        <div class="dist-chip">
+          <span class="chip-check">
+            <svg width="10" height="8" fill="none" viewBox="0 0 10 8"><path d="M1 4l2.5 2.5L9 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          Precios de mayoreo exclusivos
+        </div>
+        <div class="dist-chip">
+          <span class="chip-check">
+            <svg width="10" height="8" fill="none" viewBox="0 0 10 8"><path d="M1 4l2.5 2.5L9 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          +80 productos certificados
+        </div>
+        <div class="dist-chip">
+          <span class="chip-check">
+            <svg width="10" height="8" fill="none" viewBox="0 0 10 8"><path d="M1 4l2.5 2.5L9 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          Soporte de ventas incluido
+        </div>
+        <div class="dist-chip">
+          <span class="chip-check">
+            <svg width="10" height="8" fill="none" viewBox="0 0 10 8"><path d="M1 4l2.5 2.5L9 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          Sin cuota mensual fija
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="dist-buttons">
+        <a href="#" class="btn btn-navy">
+          Quiero ser Distribuidor
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+        </a>
+        <a href="https://wa.me/525527271067" target="_blank" class="btn btn-wa">
+          <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Consultar por WhatsApp
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════
+     BESTSELLERS TEASER
+════════════════════════════════════════════ -->
+<section class="section best">
+  <div class="container">
+    <div class="section-header">
+      <div class="badge" style="margin:0 auto 16px">
+        <span class="badge-dot"></span>
+        Productos Destacados
+      </div>
+      <h2 class="section-headline">
+        Los favoritos de<br>
+        <span class="grad-sky">nuestras clientas</span>
+      </h2>
+      <p class="section-sub">Fórmulas patentadas, resultados profesionales. +80 productos certificados.</p>
+    </div>
+
+    <div class="product-grid">
+      <!-- Card 1 -->
+      <div class="product-card">
+        <div class="product-img">💄</div>
+        <div class="product-info">
+          <div class="product-cat">Cejas</div>
+          <div class="product-name">Lifting Fix Pro</div>
+          <div class="product-price">$385</div>
+          <a href="#" class="product-btn">Ver producto</a>
+        </div>
+      </div>
+      <!-- Card 2 -->
+      <div class="product-card">
+        <div class="product-img">✨</div>
+        <div class="product-info">
+          <div class="product-cat">Pestañas</div>
+          <div class="product-name">Lash Tint Extra</div>
+          <div class="product-price">$290</div>
+          <a href="#" class="product-btn">Ver producto</a>
+        </div>
+      </div>
+      <!-- Card 3 -->
+      <div class="product-card">
+        <div class="product-img">🔬</div>
+        <div class="product-info">
+          <div class="product-cat">Adhesivos</div>
+          <div class="product-name">Pegamento Black</div>
+          <div class="product-price">$450</div>
+          <a href="#" class="product-btn">Ver producto</a>
+        </div>
+      </div>
+      <!-- Card 4 -->
+      <div class="product-card">
+        <div class="product-img">🌿</div>
+        <div class="product-info">
+          <div class="product-cat">Kits</div>
+          <div class="product-name">Kit Starter Pro</div>
+          <div class="product-price">$1,200</div>
+          <a href="#" class="product-btn">Ver producto</a>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:48px">
+      <a href="#" class="btn btn-navy">
+        Ver toda la tienda
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════
+     ACADEMIA TEASER
+════════════════════════════════════════════ -->
+<section class="section academia">
+  <div class="container">
+    <div class="academia-inner">
+      <!-- Left -->
+      <div>
+        <div class="badge badge-light">
+          <span class="badge-dot"></span>
+          Academia J. Denis
+        </div>
+        <h2 class="academia-headline">
+          Aprende con las<br>
+          <span class="grad-gold">mejores del país</span>
+        </h2>
+        <p class="academia-text">
+          Cursos presenciales y online certificados con constancia DC-3 ante la STPS.
+          Únete a más de 5,000 alumnas que ya transformaron su carrera.
+        </p>
+        <a href="#" class="btn btn-gold">
+          Ver próximos cursos
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+        </a>
+      </div>
+      <!-- Right: course cards -->
+      <div class="academia-courses">
+        <div class="course-card">
+          <div class="course-name">Lash Lifting Profesional</div>
+          <div class="course-meta">Próxima fecha: 5 de Abril · CDMX · 2 días</div>
+          <div class="course-price">$2,800</div>
+        </div>
+        <div class="course-card">
+          <div class="course-name">Laminado de Cejas</div>
+          <div class="course-meta">Próxima fecha: 12 de Abril · Online + presencial</div>
+          <div class="course-price">$1,900</div>
+        </div>
+        <div class="course-card">
+          <div class="course-name">Extensiones Pelo a Pelo</div>
+          <div class="course-meta">Próxima fecha: 19 de Abril · CDMX · 3 días</div>
+          <div class="course-price">$4,500</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="footer-top">
+    <div>
+      <div class="footer-brand">J. <span>Denis</span></div>
+      <div class="footer-tagline">Pionera en México desde 1998</div>
+    </div>
+    <div class="footer-links">
+      <a href="#">Tienda</a>
+      <a href="#">Academia</a>
+      <a href="#">Distribuidores</a>
+      <a href="#">Contacto</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    © 2025 J. Denis. Todos los derechos reservados. Manufactura 100% mexicana.
+  </div>
+</footer>
+
+</body>
+</html>
