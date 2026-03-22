@@ -369,80 +369,85 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* LEGACY STRIP */}
-            <section className="py-16 md:py-20 relative overflow-hidden" style={{ background: 'linear-gradient(160deg, #f8f9fc 0%, #ffffff 50%, #f0f4fa 100%)' }}>
-                {/* Top border */}
-                <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(10,24,71,0.2), transparent)' }} />
-                {/* Bottom border */}
-                <div className="absolute bottom-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(10,24,71,0.2), transparent)' }} />
-
+            {/* CATEGORY EXPLORER */}
+            <section
+                aria-label="Explorador de categorías de tienda"
+                className="py-8 relative overflow-hidden"
+                style={{ background: 'linear-gradient(160deg, #f8f9fc 0%, #ffffff 60%, #f0f4fa 100%)', borderTop: '1px solid rgba(10,24,71,0.08)', borderBottom: '1px solid rgba(10,24,71,0.08)' }}
+            >
                 <div className="container-luxury">
-                    {/* Mobile: horizontal snap carousel / Desktop: grid */}
-                    <div className="flex md:grid md:grid-cols-3 gap-4 md:gap-8 overflow-x-auto md:overflow-visible snap-x snap-mandatory md:snap-none pb-4 md:pb-0 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                    {/* Header row */}
+                    <div className="flex items-center justify-between mb-5">
+                        <div>
+                            <p className="text-[10px] uppercase tracking-[0.25em] font-sans mb-1" style={{ color: '#1a3a8a' }}>Tienda Profesional</p>
+                            <h2 className="font-serif text-xl leading-tight" style={{ color: '#0a1847' }}>Explora por Categoría</h2>
+                        </div>
+                        <Link
+                            to="/tienda"
+                            className="flex items-center gap-1.5 text-xs font-sans uppercase tracking-wider transition-colors hover:opacity-70 flex-shrink-0"
+                            style={{ color: '#1a3a8a' }}
+                        >
+                            Ver todo
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                            </svg>
+                        </Link>
+                    </div>
+
+                    {/* Category chips — horizontal scroll on mobile, wrap on desktop */}
+                    <div
+                        className="flex gap-2.5 overflow-x-auto md:flex-wrap md:overflow-visible pb-1 md:pb-0"
+                        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                    >
                         {[
-                            {
-                                icon: (
-                                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.4}>
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                ),
-                                value: 'Desde 1998',
-                                label: 'Pioneros en México',
-                                description: 'Primera marca mexicana especializada en cejas y pestañas profesionales',
-                                accent: '#0a1847',
-                            },
-                            {
-                                icon: (
-                                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.4}>
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-                                    </svg>
-                                ),
-                                value: 'Patentes Propias',
-                                label: 'Técnicas Certificadas',
-                                description: 'Métodos exclusivos desarrollados y patentados por nuestro laboratorio',
-                                accent: '#0a1847',
-                            },
-                            {
-                                icon: (
-                                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.4}>
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 21h18M6 21V7l6-4 6 4v14M9 21v-4a1 1 0 011-1h4a1 1 0 011 1v4" />
-                                    </svg>
-                                ),
-                                value: '100% Mexicano',
-                                label: 'Manufactura Nacional',
-                                description: 'Control de calidad total en nuestras instalaciones de CDMX',
-                                accent: '#0a1847',
-                            },
-                        ].map((stat, i) => (
-                            <motion.div
-                                key={i}
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: i * 0.15 }}
-                                className="flex-none w-[78vw] sm:w-[60vw] md:w-auto snap-center md:snap-align-none"
+                            { id: 'lash-lifting', name: 'Lash Lifting', icon: 'M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z M15 12a3 3 0 11-6 0 3 3 0 016 0z' },
+                            { id: 'brow-henna', name: 'Brow Henna', icon: 'M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487z' },
+                            { id: 'cejas', name: 'Diseño de Cejas', icon: 'M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42' },
+                            { id: 'extensiones', name: 'Extensiones', icon: 'M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z' },
+                            { id: 'pigmentos', name: 'Pigmentos', icon: 'M4.098 19.902a3.75 3.75 0 005.304 0l6.401-6.402M6.75 21A3.75 3.75 0 013 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M6.75 21a3.75 3.75 0 003.75-3.75V8.197M6.75 21h13.125c.621 0 1.125-.504 1.125-1.125v-5.25c0-.621-.504-1.125-1.125-1.125h-4.072M10.5 8.197l2.88-2.88c.438-.439 1.15-.439 1.59 0l3.712 3.713c.44.44.44 1.152 0 1.59l-2.879 2.88M6.75 17.25h.008v.008H6.75v-.008z' },
+                            { id: 'microblading', name: 'Microblading', icon: 'M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10' },
+                            { id: 'adhesivos', name: 'Adhesivos', icon: 'M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 5.608a2.25 2.25 0 01-2.024 2.842 47.28 47.28 0 01-6.178.326 47.28 47.28 0 01-6.178-.326 2.25 2.25 0 01-2.024-2.842L5 14.5' },
+                            { id: 'tratamientos', name: 'Tratamientos', icon: 'M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z' },
+                            { id: 'herramientas', name: 'Herramientas', icon: 'M11.42 15.17l-5.384 5.384a2.625 2.625 0 01-3.712-3.712l5.384-5.384M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.049.58.025 1.193-.14 1.743' },
+                            { id: 'accesorios', name: 'Accesorios', icon: 'M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18' },
+                            { id: 'higiene', name: 'Higiene', icon: 'M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 5.608a2.25 2.25 0 01-2.024 2.842 47.28 47.28 0 01-6.178.326 47.28 47.28 0 01-6.178-.326 2.25 2.25 0 01-2.024-2.842L5 14.5' },
+                            { id: 'lash-curling', name: 'Lash Curling', icon: 'M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.678 48.678 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3l-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3l-3 3' },
+                            { id: 'pestanas-en-tira', name: 'Pestañas en Tira', icon: 'M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z M15 12a3 3 0 11-6 0 3 3 0 016 0z' },
+                        ].map((cat) => (
+                            <Link
+                                key={cat.id}
+                                to={`/tienda?cat=${cat.id}`}
+                                className="flex-none flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-sans transition-all duration-200 group hover:shadow-md"
+                                style={{
+                                    background: '#ffffff',
+                                    border: '1px solid rgba(10,24,71,0.12)',
+                                    color: '#0a1847',
+                                    whiteSpace: 'nowrap',
+                                }}
                             >
-                                <div className="h-full rounded-2xl p-7 flex flex-col gap-4" style={{ background: '#ffffff', border: '1px solid rgba(10,24,71,0.1)', boxShadow: '0 4px 32px rgba(10,24,71,0.07)' }}>
-                                    {/* Icon */}
-                                    <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(10,24,71,0.07)', color: stat.accent }}>
-                                        {stat.icon}
-                                    </div>
-                                    {/* Text */}
-                                    <div>
-                                        <p className="font-serif text-2xl font-semibold leading-tight mb-1" style={{ color: '#0a1847' }}>{stat.value}</p>
-                                        <p className="text-xs font-semibold uppercase tracking-[0.18em] mb-3" style={{ color: '#1a3a8a' }}>{stat.label}</p>
-                                        <p className="text-sm leading-relaxed font-sans" style={{ color: '#4a5568' }}>{stat.description}</p>
-                                    </div>
-                                    {/* Bottom accent line */}
-                                    <div className="mt-auto h-px w-full" style={{ background: `linear-gradient(90deg, ${stat.accent}33, transparent)` }} />
-                                </div>
-                            </motion.div>
+                                <svg
+                                    className="w-4 h-4 flex-shrink-0 transition-transform duration-200 group-hover:scale-110"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    strokeWidth={1.5}
+                                    style={{ color: '#1a3a8a' }}
+                                >
+                                    <path strokeLinecap="round" strokeLinejoin="round" d={cat.icon} />
+                                </svg>
+                                <span className="text-xs md:text-sm">{cat.name}</span>
+                            </Link>
                         ))}
                     </div>
                 </div>
             </section>
 
+
+                {/* Top border */}
+                <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(10,24,71,0.2), transparent)' }} />
+
             {/* DISTRIBUIDORES CTA */}
+
             {/* DISTRIBUIDORES CTA — Blue premium */}
             <section className="section relative overflow-hidden min-h-screen flex flex-col justify-center" style={{ background: 'linear-gradient(145deg, #0a1f5c 0%, #1a3a8a 35%, #1e4499 65%, #0f2660 100%)' }}>
                 {/* Background image soft overlay */}
