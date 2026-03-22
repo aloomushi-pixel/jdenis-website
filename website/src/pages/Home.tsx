@@ -431,7 +431,7 @@ export default function Home() {
                                     <div>
                                         <p className="font-serif text-2xl font-semibold leading-tight mb-1" style={{ color: '#0a1847' }}>{stat.value}</p>
                                         <p className="text-xs font-semibold uppercase tracking-[0.18em] mb-3" style={{ color: '#1a3a8a' }}>{stat.label}</p>
-                                        <p className="text-white/50 text-sm leading-relaxed font-sans">{stat.description}</p>
+                                        <p className="text-sm leading-relaxed font-sans" style={{ color: '#4a5568' }}>{stat.description}</p>
                                     </div>
                                     {/* Bottom accent line */}
                                     <div className="mt-auto h-px w-full" style={{ background: `linear-gradient(90deg, ${stat.accent}33, transparent)` }} />
