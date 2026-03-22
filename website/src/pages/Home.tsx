@@ -310,7 +310,7 @@ export default function Home() {
                 <div className="absolute inset-0 bg-gradient-to-t from-forest/90 via-forest/40 to-transparent" />
                 <div className="absolute inset-0 botanical-pattern opacity-20" />
 
-                <div className="hero-content relative z-10">
+                <div className="hero-content relative z-10 pt-20 md:pt-28">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -370,7 +370,7 @@ export default function Home() {
             </section>
 
             {/* LEGACY STRIP */}
-            <section className="legacy-strip">
+            <section className="legacy-strip" style={{ background: 'linear-gradient(135deg, #f8f5ef 0%, #fdfaf5 50%, #f4f0e8 100%)', borderTop: '1px solid rgba(184,134,11,0.12)', borderBottom: '1px solid rgba(184,134,11,0.12)' }}>
                 <div className="container-luxury">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {[
@@ -398,9 +398,9 @@ export default function Home() {
                                 transition={{ delay: i * 0.15 }}
                                 className="legacy-card"
                             >
-                                <span className="text-gold text-xl font-serif font-semibold block">{stat.value}</span>
-                                <p className="text-cream/80 text-sm font-medium mt-1 mb-2">{stat.label}</p>
-                                <p className="text-cream/50 text-xs leading-relaxed">{stat.description}</p>
+                                <span className="text-[#1a3a8a] text-xl font-serif font-semibold block">{stat.value}</span>
+                                <p className="text-[#3aa3d8] text-sm font-semibold uppercase tracking-widest mt-1 mb-2">{stat.label}</p>
+                                <p className="text-charcoal/55 text-xs leading-relaxed">{stat.description}</p>
                             </motion.div>
                         ))}
                     </div>
@@ -408,17 +408,20 @@ export default function Home() {
             </section>
 
             {/* DISTRIBUIDORES CTA */}
-            <section className="section relative overflow-hidden bg-[#fdfaf5]">
-                {/* Subtle botanical pattern */}
-                <div className="absolute inset-0 botanical-pattern opacity-[0.04]" />
-                {/* Radial gold accents */}
-                <div className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full bg-[radial-gradient(circle,rgba(184,134,11,0.10)_0%,transparent_70%)]" />
-                <div className="absolute -bottom-32 -left-32 w-[400px] h-[400px] rounded-full bg-[radial-gradient(circle,rgba(184,134,11,0.07)_0%,transparent_70%)]" />
-                {/* Diagonal cream to white sweep */}
-                <div className="absolute inset-0 bg-gradient-to-br from-white via-[#fdfaf5] to-[#f5f0e6]/70" />
-                {/* Top/bottom gold lines */}
-                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#b8860b]/35 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#b8860b]/35 to-transparent" />
+            {/* DISTRIBUIDORES CTA — Blue premium */}
+            <section className="section relative overflow-hidden" style={{ background: 'linear-gradient(145deg, #0a1f5c 0%, #1a3a8a 35%, #1e4499 65%, #0f2660 100%)' }}>
+                {/* Background image soft overlay */}
+                <div
+                    className="absolute inset-0 bg-center bg-cover"
+                    style={{ backgroundImage: 'url(/hero-products.jpg)', opacity: 0.08 }}
+                />
+                {/* Gradient overlays for premium depth */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0a1f5c]/80 via-transparent to-[#0a1f5c]/40" />
+                {/* Radial sky-blue glow center */}
+                <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse 70% 50% at 50% 40%, rgba(58,163,216,0.15) 0%, transparent 70%)' }} />
+                {/* Gold accent lines */}
+                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#d4a832]/60 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#d4a832]/60 to-transparent" />
 
                 <div className="container-luxury relative z-10">
                     <motion.div
@@ -428,29 +431,35 @@ export default function Home() {
                         transition={{ duration: 0.7 }}
                         className="text-center max-w-3xl mx-auto"
                     >
-                        {/* Badge — same as Hero */}
-                        <span className="hero-badge">Programa de Distribuidores</span>
+                        {/* Badge */}
+                        <span className="hero-badge badge-light inline-flex items-center gap-2 px-5 py-2 rounded-full border border-white/30 text-white/80 text-[11px] font-sans font-semibold tracking-[0.22em] uppercase mb-6">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#d4a832] inline-block flex-shrink-0" />
+                            Fabricante de Cosméticos
+                        </span>
 
                         {/* Headline */}
-                        <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.1] mb-6 text-forest">
-                            Distribuye la marca{' '}
+                        <h2
+                            className="text-[clamp(2.2rem,5vw,4.5rem)] leading-[1.08] font-bold mb-6 text-white tracking-[-0.02em]"
+                            style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif" }}
+                        >
+                            Registro para ser distribuidor{' '}
                             <span style={{
-                                background: 'linear-gradient(90deg, #c8941c 0%, #d4a832 45%, #f5d281 70%, #c8941c 100%)',
+                                background: 'linear-gradient(90deg, #d4a832 0%, #f5d281 50%, #d4a832 100%)',
                                 WebkitBackgroundClip: 'text',
                                 WebkitTextFillColor: 'transparent',
                                 backgroundClip: 'text',
-                            }}>#1 de México</span>
+                            }}>de cosméticos</span>
                         </h2>
 
                         {/* Subtitle */}
-                        <p className="text-charcoal/65 text-base md:text-lg leading-relaxed mb-10 max-w-xl mx-auto">
+                        <p className="text-white/65 text-base md:text-lg leading-relaxed mb-10 max-w-xl mx-auto font-sans">
                             Lleva J. Denis a tu ciudad. Obtén precios de mayoreo, material
                             de apoyo y el respaldo de una marca con{' '}
-                            <strong className="text-forest font-semibold">+25 años en el mercado</strong>.
+                            <strong className="text-white/90 font-semibold">+25 años en el mercado</strong>.
                         </p>
 
                         {/* Benefits inline chips */}
-                        <div className="flex flex-wrap justify-center gap-x-6 gap-y-3 mb-12 text-charcoal/65 text-sm">
+                        <div className="flex flex-wrap justify-center gap-x-6 gap-y-3 mb-12 text-white/65 text-sm font-sans">
                             {[
                                 'Precios de mayoreo exclusivos',
                                 '+80 productos certificados',
@@ -458,8 +467,8 @@ export default function Home() {
                                 'Sin cuota mensual fija',
                             ].map((item) => (
                                 <span key={item} className="flex items-center gap-2">
-                                    <span className="w-4 h-4 flex-shrink-0 flex items-center justify-center bg-gold rounded-full text-white">
-                                        <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                                    <span className="w-4 h-4 flex-shrink-0 flex items-center justify-center bg-[#d4a832] rounded-full">
+                                        <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="#000" strokeWidth={3}>
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                                         </svg>
                                     </span>
@@ -468,30 +477,21 @@ export default function Home() {
                             ))}
                         </div>
 
-                        {/* Premium Buttons */}
+                        {/* Single CTA Button */}
                         <div className="flex flex-wrap justify-center gap-4">
                             <Link
                                 to="/registro-distribuidor"
-                                className="group inline-flex items-center gap-3 px-8 py-4 rounded-full font-semibold text-white text-[15px] tracking-wide shadow-[0_4px_20px_rgba(184,134,11,0.30)] transition-all duration-300 hover:shadow-[0_6px_32px_rgba(184,134,11,0.50)] hover:scale-[1.03]"
-                                style={{ background: 'linear-gradient(135deg, #c8941c 0%, #d4a832 50%, #b8860b 100%)' }}
+                                className="group inline-flex items-center gap-3 px-10 py-[14px] rounded-full font-semibold text-white text-[15px] tracking-wide transition-all duration-300 hover:scale-[1.03]"
+                                style={{
+                                    background: 'linear-gradient(135deg, #1e4499 0%, #3aa3d8 100%)',
+                                    boxShadow: '0 4px 24px rgba(58,163,216,0.40)'
+                                }}
                             >
                                 Quiero ser Distribuidor
                                 <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                                 </svg>
                             </Link>
-                            <a
-                                href="https://wa.me/525527271067?text=Hola%2C%20me%20interesa%20ser%20distribuidor%20de%20J.%20Denis"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="group inline-flex items-center gap-3 px-8 py-4 rounded-full font-semibold text-white text-[15px] tracking-wide transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_6px_28px_rgba(37,211,102,0.38)]"
-                                style={{ background: 'linear-gradient(135deg, #128C7E 0%, #25D366 100%)' }}
-                            >
-                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-                                </svg>
-                                Consultar por WhatsApp
-                            </a>
                         </div>
                     </motion.div>
                 </div>
@@ -513,12 +513,7 @@ export default function Home() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                         >
-                            <span className="section-badge">Los Más Buscados</span>
                             <h2 className="section-title">Favoritos de la Marca</h2>
-                            <p className="section-subtitle max-w-2xl mx-auto">
-                                Los productos que nos dieron la fama — resultados de salón en casa,
-                                calidad profesional a precio accesible
-                            </p>
                         </motion.div>
                     </div>
 
@@ -673,14 +668,19 @@ export default function Home() {
 
             {/* REELS & TIKTOKS GALLERY */}
             {reels.length > 0 && (
-                <section ref={reelsRef} className="section relative overflow-hidden bg-forest">
-                    {/* Dynamic glow overlay */}
-                    <div className="absolute inset-0 opacity-30">
-                        <div className="absolute top-0 left-1/4 w-80 h-80 bg-gold/40 rounded-full blur-3xl" />
-                        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-gold/20 rounded-full blur-3xl" />
-                    </div>
-                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
+                <section ref={reelsRef} className="section relative overflow-hidden" style={{ background: 'linear-gradient(160deg, #080c14 0%, #0d1520 40%, #111a28 70%, #070b12 100%)' }}>
+                    {/* Grain / cinematic texture overlay */}
+                    <div
+                        className="absolute inset-0 opacity-[0.35] pointer-events-none"
+                        style={{
+                            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E")`,
+                            backgroundSize: '200px 200px',
+                        }}
+                    />
+                    {/* Subtle vignette */}
+                    <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse 80% 80% at 50% 50%, transparent 40%, rgba(0,0,0,0.55) 100%)' }} />
+                    {/* Very subtle gold top line */}
+                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#d4a832]/30 to-transparent" />
 
                     <div className="container-luxury relative z-10">
                         <div className="section-header">
@@ -689,13 +689,10 @@ export default function Home() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                             >
-                                <span className="inline-block px-4 py-2 bg-gold/20 border border-gold/40 text-gold text-xs tracking-[0.2em] uppercase mb-4">
-                                    #J.DENIS
-                                </span>
                                 <h2 className="font-serif text-3xl md:text-4xl text-cream mb-4">
                                     Reels y TikToks
                                 </h2>
-                                <p className="text-cream/60 text-lg max-w-2xl mx-auto">
+                                <p className="text-cream/55 text-lg max-w-2xl mx-auto font-sans">
                                     Tutoriales, tips y tendencias en cejas y pestañas
                                 </p>
                             </motion.div>
