@@ -1,11 +1,11 @@
-﻿import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 export default function Footer() {
     return (
         <footer className="footer-premium">
             {/* Main Footer */}
             <div className="container-luxury py-16">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
                     {/* Brand */}
                     <div className="lg:col-span-1">
                         <img src="/logo-new.jpeg" alt="J. Denis Logo" className="h-12 w-auto object-contain mb-4" />
@@ -74,14 +74,7 @@ export default function Footer() {
                 </div>
             </div>
 
-            {/* Trust Badges Bar */}
-            <div className="border-t border-cream/5 py-4">
-                <div className="container-luxury flex flex-wrap items-center justify-center gap-3">
-                    {['Pago Seguro', 'Envio a todo Mexico', '4.9 Google Reviews', 'Fabricado en Mexico'].map((badge, i) => (
-                        <span key={i} className="footer-trust-badge">{badge}</span>
-                    ))}
-                </div>
-            </div>
+
 
             {/* Bottom Bar */}
             <div className="border-t border-cream/5">

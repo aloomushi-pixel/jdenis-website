@@ -403,7 +403,7 @@ export default function Home() {
                             <Link
                                 key={cat.id}
                                 to={`/tienda?cat=${cat.id}`}
-                                className="flex items-center gap-2 px-4 py-2.5 rounded-full font-sans transition-all duration-200 group hover:shadow-md"
+                                className="flex items-center gap-2 px-4 py-2.5 rounded-full font-sans font-medium transition-all duration-200 group hover:shadow-md"
                                 style={{ background: '#ffffff', border: '1px solid rgba(10,24,71,0.12)', color: '#0a1847', whiteSpace: 'nowrap' }}
                             >
                                 <svg className="w-4 h-4 flex-shrink-0 transition-transform duration-200 group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} style={{ color: '#1a3a8a' }}>
