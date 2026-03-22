@@ -202,7 +202,8 @@ export default function Login() {
                                 {loading ? 'Procesando...' : buttonLabel[mode]}
                             </button>
 
-                            {mode !== 'forgot' && (
+                            {/* Google OAuth — pendiente configuración Google Cloud Console */}
+                            {false && mode !== 'forgot' && (
                                 <>
                                     <div className="relative flex items-center gap-3 my-1">
                                         <div className="flex-1 h-px bg-charcoal/10" />
