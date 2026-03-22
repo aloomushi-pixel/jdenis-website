@@ -381,9 +381,9 @@ export default function Home() {
                         <h2 className="font-serif text-xl leading-tight" style={{ color: '#0a1847' }}>Explora por Categoría</h2>
                     </div>
 
-                    {/* Top SEO categories — 2 filas desktop, 3 filas móvil */}
+                    {/* max-h: mobile 38px×3+10px×2=134, 4ª fila en 144 → usamos 140. desktop 42px×3+10×2=146, 4ª en 156 → usamos 152 */}
                     <div
-                        className="flex flex-wrap gap-2.5 overflow-hidden max-h-[160px] md:max-h-[90px]"
+                        className="flex flex-wrap gap-2.5 overflow-hidden max-h-[140px] md:max-h-[152px]"
                     >
                         {[
                             { id: 'lash-lifting',      name: 'Lash Lifting',      icon: 'M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z M15 12a3 3 0 11-6 0 3 3 0 016 0z' },
