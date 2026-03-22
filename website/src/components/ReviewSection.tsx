@@ -134,7 +134,7 @@ export default function ReviewSection({ productId, productName }: ReviewSectionP
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
         >
-            <h3 className="font-serif text-xl text-forest mb-5">Reseñas de clientes</h3>
+            <h2 className="font-serif text-xl text-forest mb-5">Reseñas de clientes</h2>
 
             {/* Average Rating */}
             <AverageRatingBadge reviews={reviews} />

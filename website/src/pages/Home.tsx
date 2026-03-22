@@ -139,17 +139,17 @@ function ReelCard({
                                 type="button"
                                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); setIsMuted(!isMuted); }}
                                 aria-label={isMuted ? 'Activar sonido' : 'Silenciar video'}
-                                className="w-10 h-10 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/80 transition-colors"
+                                className="w-12 h-12 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/80 transition-colors"
                             >
-                                {isMuted ? <VolumeX size={18} aria-hidden="true" /> : <Volume2 size={18} aria-hidden="true" />}
+                                {isMuted ? <VolumeX size={20} aria-hidden="true" /> : <Volume2 size={20} aria-hidden="true" />}
                             </button>
                             <button
                                 type="button"
                                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); setIsManualPaused(!isManualPaused); }}
                                 aria-label={isManualPaused ? 'Reproducir video' : 'Pausar video'}
-                                className="w-10 h-10 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/80 transition-colors"
+                                className="w-12 h-12 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/80 transition-colors"
                             >
-                                {isManualPaused ? <Play size={18} fill="currentColor" aria-hidden="true" /> : <Pause size={18} fill="currentColor" aria-hidden="true" />}
+                                {isManualPaused ? <Play size={20} fill="currentColor" aria-hidden="true" /> : <Pause size={20} fill="currentColor" aria-hidden="true" />}
                             </button>
                         </div>
                     </>
@@ -290,29 +290,16 @@ export default function Home() {
             .catch(console.error);
     }, []);
 
-    // Fetch oEmbed thumbnails for TikTok/Instagram reels
+    // Fetch oEmbed thumbnails - NOTE: TikTok oembed blocked by CORS, skip silently
     useEffect(() => {
         if (reels.length === 0) return;
         const fetchThumbs = async () => {
             const map: Record<string, string> = {};
             await Promise.all(reels.map(async (reel) => {
-                // Skip if already has thumbnail_url or is YouTube (handled statically)
-                if (reel.thumbnail_url || reel.platform === 'youtube') return;
-                try {
-                    if (reel.platform === 'tiktok') {
-                        const res = await fetch(`https://www.tiktok.com/oembed?url=${encodeURIComponent(reel.url)}`);
-                        if (res.ok) {
-                            const data = await res.json();
-                            if (data.thumbnail_url) map[reel.id] = data.thumbnail_url;
-                        }
-                    } else if (reel.platform === 'instagram') {
-                        const res = await fetch(`https://graph.facebook.com/v18.0/instagram_oembed?url=${encodeURIComponent(reel.url)}&access_token=public`);
-                        if (res.ok) {
-                            const data = await res.json();
-                            if (data.thumbnail_url) map[reel.id] = data.thumbnail_url;
-                        }
-                    }
-                } catch { /* silently skip failed fetches */ }
+                // Skip if already has thumbnail_url, is YouTube, or TikTok (CORS blocked)
+                if (reel.thumbnail_url || reel.platform === 'youtube' || reel.platform === 'tiktok') return;
+                // Instagram oEmbed also blocked without proper token - skip
+                // Thumbnails will load from reel.thumbnail_url stored in DB instead
             }));
             if (Object.keys(map).length > 0) setThumbs(map);
         };
