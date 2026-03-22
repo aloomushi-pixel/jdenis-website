@@ -1,9 +1,10 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { BrowserRouter, Route, Routes, useLocation, useParams } from 'react-router-dom';
 import CartDrawer from './components/CartDrawer';
 import Footer from './components/Footer';
 import Header from './components/Header';
 import MobileBottomNav from './components/MobileBottomNav';
+import PWAInstallBanner from './components/PWAInstallBanner';
 import AdminLayout from './components/layouts/AdminLayout';
 import About from './pages/About';
 import Academy from './pages/Academy';
@@ -59,10 +60,25 @@ function ProductDetailWrapper() {
 
 function App() {
   const checkSession = useAuthStore((s) => s.checkSession);
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const [showPWA, setShowPWA] = useState(false);
 
   useEffect(() => {
     checkSession();
   }, [checkSession]);
+
+  // Show PWA banner 3 seconds after login — max once per week
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    const lastShown = localStorage.getItem('pwa-prompt-shown');
+    const oneWeek = 7 * 24 * 60 * 60 * 1000;
+    if (lastShown && Date.now() - Number(lastShown) < oneWeek) return;
+    const t = setTimeout(() => {
+      setShowPWA(true);
+      localStorage.setItem('pwa-prompt-shown', String(Date.now()));
+    }, 3000);
+    return () => clearTimeout(t);
+  }, [isAuthenticated]);
 
   return (
     <BrowserRouter>
@@ -117,6 +133,7 @@ function App() {
         <Footer />
         <CartDrawer />
         <MobileBottomNav />
+        <PWAInstallBanner show={showPWA} />
       </div>
     </BrowserRouter>
   );

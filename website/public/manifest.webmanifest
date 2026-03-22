@@ -1,0 +1,35 @@
+{
+  "name": "J. Denis — Insumos Profesionales",
+  "short_name": "J. Denis",
+  "description": "Tienda profesional de cejas, pestañas e insumos de belleza",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8f4ef",
+  "theme_color": "#1a1a2e",
+  "orientation": "portrait-primary",
+  "lang": "es-MX",
+  "icons": [
+    {
+      "src": "/logo-new.jpeg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo-new.jpeg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["shopping", "beauty"],
+  "screenshots": [
+    {
+      "src": "/hero-products.jpg",
+      "sizes": "1280x720",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "Tienda J. Denis"
+    }
+  ]
+}
