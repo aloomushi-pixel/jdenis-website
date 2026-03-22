@@ -310,7 +310,7 @@ export default function Home() {
                 <div className="absolute inset-0 bg-gradient-to-t from-forest/90 via-forest/40 to-transparent" />
                 <div className="absolute inset-0 botanical-pattern opacity-20" />
 
-                <div className="hero-content relative z-10 pt-20 md:pt-28">
+                <div className="hero-content relative z-10 pt-28 md:pt-40">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -397,10 +397,11 @@ export default function Home() {
                                 viewport={{ once: true }}
                                 transition={{ delay: i * 0.15 }}
                                 className="legacy-card"
+                                style={{ background: 'rgba(255,255,255,0.95)', border: '1px solid rgba(26,58,138,0.12)', boxShadow: '0 4px 24px rgba(26,58,138,0.08)' }}
                             >
                                 <span className="text-[#1a3a8a] text-xl font-serif font-semibold block">{stat.value}</span>
                                 <p className="text-[#3aa3d8] text-sm font-semibold uppercase tracking-widest mt-1 mb-2">{stat.label}</p>
-                                <p className="text-charcoal/55 text-xs leading-relaxed">{stat.description}</p>
+                                <p className="text-charcoal/60 text-xs leading-relaxed font-sans">{stat.description}</p>
                             </motion.div>
                         ))}
                     </div>
@@ -499,7 +500,7 @@ export default function Home() {
 
             {/* BESTSELLERS - ROTATING GALLERY */}
 
-            <section className="section relative overflow-hidden bg-gradient-to-b from-cream via-cream-dark/30 to-cream">
+            <section className="section py-24 md:py-32 relative overflow-hidden bg-gradient-to-b from-cream via-cream-dark/30 to-cream">
                 {/* Decorative accents */}
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
@@ -668,7 +669,7 @@ export default function Home() {
 
             {/* REELS & TIKTOKS GALLERY */}
             {reels.length > 0 && (
-                <section ref={reelsRef} className="section relative overflow-hidden" style={{ background: 'linear-gradient(160deg, #080c14 0%, #0d1520 40%, #111a28 70%, #070b12 100%)' }}>
+                <section ref={reelsRef} className="section relative overflow-hidden" style={{ background: 'linear-gradient(160deg, #0b1847 0%, #0d1e55 35%, #112068 65%, #0a1640 100%)' }}>
                     {/* Grain / cinematic texture overlay */}
                     <div
                         className="absolute inset-0 opacity-[0.35] pointer-events-none"
@@ -750,6 +751,9 @@ export default function Home() {
                 </section>
             )}
 
+            {/* GOOGLE REVIEWS */}
+            <GoogleReviews />
+
             {/* CTA FINAL - DYNAMIC SECTION */}
             <section className="section relative overflow-hidden bg-forest">
                 {/* Dynamic pattern overlay */}
@@ -793,9 +797,6 @@ export default function Home() {
                     </motion.div>
                 </div>
             </section>
-
-            {/* GOOGLE REVIEWS */}
-            <GoogleReviews />
         </div>
     );
 }
