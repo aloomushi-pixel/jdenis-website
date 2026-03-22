@@ -46,7 +46,7 @@ export default {
         pearl: '#ffffff',
       },
       fontFamily: {
-        serif: ['Vidaloka', 'serif'],
+        serif: ['"Cormorant Garamond"', '"Playfair Display"', 'Georgia', 'serif'],
         sans: ['"Roboto Flex"', 'Nunito', 'sans-serif'],
       },
       borderRadius: {
