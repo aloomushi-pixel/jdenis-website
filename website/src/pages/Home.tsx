@@ -724,19 +724,38 @@ export default function Home() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                             >
+                                <h2 className="font-serif text-3xl md:text-4xl text-cream mb-3">
+                                    Tendencias <span className="text-[#d4a832]">#JDenis</span>
+                                </h2>
                                 <p className="text-cream/50 text-sm uppercase tracking-[0.2em] font-sans">
                                     Tutoriales, tips y tendencias en cejas y pestañas
                                 </p>
                             </motion.div>
                         </div>
 
-                        {/* Auto-rotating centered carousel */}
+                        {/* Auto-rotating centered carousel + touch swipe */}
                         <div
                             className="flex flex-col items-center"
                             onMouseEnter={() => setIsReelPaused(true)}
                             onMouseLeave={() => setIsReelPaused(false)}
+                            onTouchStart={(e) => {
+                                const touch = e.touches[0];
+                                (e.currentTarget as HTMLDivElement & { _swipeStartX?: number })._swipeStartX = touch.clientX;
+                            }}
+                            onTouchEnd={(e) => {
+                                const startX = (e.currentTarget as HTMLDivElement & { _swipeStartX?: number })._swipeStartX;
+                                if (startX === undefined) return;
+                                const deltaX = e.changedTouches[0].clientX - startX;
+                                if (Math.abs(deltaX) > 50) {
+                                    if (deltaX < 0) {
+                                        setCurrentReel(prev => (prev + 1) % reels.length);
+                                    } else {
+                                        setCurrentReel(prev => (prev - 1 + reels.length) % reels.length);
+                                    }
+                                }
+                            }}
                         >
-                            <div className="relative w-[320px] sm:w-[380px] md:w-[440px] aspect-[9/16]">
+                            <div className="relative w-[370px] sm:w-[430px] md:w-[500px] aspect-[9/16]">
                                 <AnimatePresence mode="wait">
                                     {reels.length > 0 && (() => {
                                         const reel = reels[currentReel];
