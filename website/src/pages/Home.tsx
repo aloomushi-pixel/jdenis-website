@@ -293,7 +293,7 @@ export default function Home() {
 
     return (
         <div className="min-h-screen bg-cream">
-            {/* HERO SECTION - BOTANICAL APOTHECARY */}
+            {/* HERO SECTION - ACADEMIA FOCUS */}
             <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden">
                 {/* Background Video */}
                 <video
@@ -306,10 +306,8 @@ export default function Home() {
                 >
                     <source src="/videos/Video_con_logo_J_DENIS.mp4" type="video/mp4" />
                 </video>
-                {/* Stronger overlay for text readability */}
-                <div className="absolute inset-0 bg-black/50" />
-                <div className="absolute inset-0 bg-gradient-to-t from-forest/90 via-forest/50 to-transparent" />
-                {/* Subtle botanical pattern overlay */}
+                <div className="absolute inset-0 bg-black/55" />
+                <div className="absolute inset-0 bg-gradient-to-t from-forest/90 via-forest/40 to-transparent" />
                 <div className="absolute inset-0 botanical-pattern opacity-20" />
 
                 <div className="hero-content relative z-10">
@@ -319,21 +317,33 @@ export default function Home() {
                         transition={{ duration: 0.8 }}
                         className="text-center max-w-3xl mx-auto"
                     >
-                        <span className="hero-badge">Desde 1998</span>
+                        <span className="hero-badge">Academia J. Denis — Desde 1998</span>
                         <h1 className="hero-title">
-                            El Arte de la<br />
-                            <span className="text-gold">Mirada Perfecta</span>
+                            Certifícate con la
+                            <br />
+                            <span className="text-gold">Pionera de México</span>
                         </h1>
                         <p className="hero-subtitle">
-                            Fórmulas de laboratorio con ingredientes naturales para profesionales
-                            que buscan resultados extraordinarios.
+                            Aprende lash lifting, laminado de cejas y extensiones con la
+                            Maestra Gabriela Elizalde — técnicas patentadas con constancia DC-3 ante la STPS.
                         </p>
+                        {/* Stats mini-bar */}
+                        <div className="flex flex-wrap justify-center gap-6 mb-8 text-cream/80 text-sm">
+                            {['+5,000 alumnas certificadas', 'Grupos reducidos · CDMX', 'Constancia DC-3 oficial'].map((s) => (
+                                <span key={s} className="flex items-center gap-1.5">
+                                    <svg className="w-4 h-4 text-gold flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    {s}
+                                </span>
+                            ))}
+                        </div>
                         <div className="flex flex-wrap justify-center gap-4">
-                            <Link to="/tienda" className="btn btn-secondary">
-                                Ver Productos
+                            <Link to="/academia" className="btn btn-secondary">
+                                Ver Próximos Cursos
                             </Link>
-                            <Link to="/registro-distribuidor" className="btn btn-outline-light">
-                                Registro Distribuidor
+                            <Link to="/tienda" className="btn btn-outline-light">
+                                Ver Tienda
                             </Link>
                         </div>
                     </motion.div>
@@ -378,77 +388,105 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* ACADEMY MODULE - DYNAMIC SECTION */}
-            <section className="section relative overflow-hidden bg-gradient-to-br from-cream via-cream-dark to-cream">
-                {/* Dynamic pattern overlay */}
-                <div className="absolute inset-0 opacity-10">
-                    <div className="absolute top-0 left-0 w-72 h-72 bg-gold/30 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
-                    <div className="absolute bottom-0 right-0 w-96 h-96 bg-forest/20 rounded-full blur-3xl translate-x-1/3 translate-y-1/3" />
-                    <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-gold/20 rounded-full blur-2xl -translate-x-1/2 -translate-y-1/2" />
+            {/* DISTRIBUIDORES CTA - formerly Academia section */}
+            <section className="section relative overflow-hidden bg-gradient-to-br from-forest via-forest to-forest-dark">
+                {/* Decorative glows */}
+                <div className="absolute inset-0 opacity-20 pointer-events-none">
+                    <div className="absolute top-0 left-0 w-80 h-80 bg-gold/40 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
+                    <div className="absolute bottom-0 right-0 w-96 h-96 bg-gold/30 rounded-full blur-3xl translate-x-1/3 translate-y-1/3" />
                 </div>
-                {/* Decorative lines */}
-                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
+
                 <div className="container-luxury relative z-10">
                     <div className="grid lg:grid-cols-2 gap-12 items-center">
+                        {/* Left: Text + CTA */}
                         <motion.div
                             initial={{ opacity: 0, x: -20 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
-                            className="relative aspect-[4/3] overflow-hidden bg-forest"
                         >
-                            <video
-                                autoPlay
-                                muted
-                                loop
-                                playsInline
-                                className="w-full h-full object-cover"
-                            >
-                                <source src="/videos/Video_con_logo_J_DENIS.mp4" type="video/mp4" />
-                            </video>
-                            <div className="absolute inset-0 bg-gradient-to-t from-forest/60 to-transparent" />
-                            <div className="absolute bottom-4 left-4 right-4">
-                                <span className="inline-block px-3 py-1 bg-gold text-white text-xs font-bold">
-                                    +50 años de experiencia
-                                </span>
-                            </div>
-                        </motion.div>
-
-                        <motion.div
-                            initial={{ opacity: 0, x: 20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                        >
-                            <span className="section-badge">Academia J. Denis</span>
-                            <h2 className="section-title mb-6">
-                                Aprende de la Pionera
+                            <span className="inline-block px-4 py-2 bg-gold/20 border border-gold/40 text-gold text-xs tracking-[0.2em] uppercase mb-4">Programa de Distribuidores</span>
+                            <h2 className="font-serif text-4xl md:text-5xl text-cream mb-6 leading-tight">
+                                Distribuye la marca
+                                <br /><span className="text-gold">#1 de México</span>
                             </h2>
-                            <p className="text-charcoal/70 leading-relaxed mb-8">
-                                La <strong className="text-forest">Maestra Gabriela Elizalde</strong>, con más de 50 años de experiencia,
-                                ha formado a miles de profesionales en técnicas patentadas que revolucionaron
-                                el mercado de cejas y pestañas en Latinoamérica.
+                            <p className="text-cream/70 leading-relaxed mb-8 text-lg">
+                                Lleva J. Denis a tu ciudad. Obtén precios especiales,
+                                material de apoyo y respaldo de una marca con más de
+                                <strong className="text-cream"> 25 años en el mercado.</strong>
                             </p>
-                            <ul className="space-y-4 mb-8">
+
+                            {/* Benefits */}
+                            <ul className="space-y-3 mb-10">
                                 {[
-                                    'Certificaciones oficiales con validez profesional',
-                                    'Técnicas exclusivas: Lash Lifting, Laminado, Henna',
-                                    'Grupos reducidos en sede Lindavista, CDMX',
+                                    'Precios de mayoreo exclusivos para distribuidores',
+                                    'Catálogo completo con +80 productos certificados',
+                                    'Soporte de ventas y material de marketing incluido',
+                                    'Sin cuota mensual — solo por volumen de compra',
                                 ].map((item, i) => (
-                                    <li key={i} className="flex items-center gap-3 text-charcoal/80">
-                                        <span className="w-6 h-6 flex items-center justify-center text-gold"><svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg></span>
+                                    <li key={i} className="flex items-center gap-3 text-cream/80">
+                                        <span className="w-6 h-6 flex-shrink-0 flex items-center justify-center bg-gold/20 rounded-full text-gold">
+                                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                            </svg>
+                                        </span>
                                         {item}
                                     </li>
                                 ))}
                             </ul>
-                            <Link to="/academia" className="btn btn-primary">
-                                Ver Próximos Cursos
-                            </Link>
+
+                            <div className="flex flex-wrap gap-4">
+                                <Link to="/registro-distribuidor" className="btn btn-secondary">
+                                    Quiero ser Distribuidor
+                                </Link>
+                                <a
+                                    href="https://wa.me/525527271067?text=Hola%2C%20me%20interesa%20ser%20distribuidor%20de%20J.%20Denis"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="btn btn-outline-light flex items-center gap-2"
+                                >
+                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                                    </svg>
+                                    Consultar por WhatsApp
+                                </a>
+                            </div>
+                        </motion.div>
+
+                        {/* Right: Stats grid */}
+                        <motion.div
+                            initial={{ opacity: 0, x: 20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            className="grid grid-cols-2 gap-4"
+                        >
+                            {[
+                                { value: '+25 años', label: 'En el mercado', icon: '🏆' },
+                                { value: '+5,000', label: 'Distribuidoras activas', icon: '🤝' },
+                                { value: '+80', label: 'Productos certificados', icon: '🧪' },
+                                { value: '100%', label: 'Manufactura mexicana', icon: '🇲🇽' },
+                            ].map((stat, i) => (
+                                <motion.div
+                                    key={i}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: i * 0.1 }}
+                                    className="bg-white/5 border border-gold/20 rounded-2xl p-6 text-center hover:bg-white/10 hover:border-gold/40 transition-all duration-300"
+                                >
+                                    <span className="text-3xl block mb-2">{stat.icon}</span>
+                                    <span className="text-gold text-2xl font-serif font-semibold block">{stat.value}</span>
+                                    <p className="text-cream/60 text-xs mt-1 leading-tight">{stat.label}</p>
+                                </motion.div>
+                            ))}
                         </motion.div>
                     </div>
                 </div>
             </section>
 
             {/* BESTSELLERS - ROTATING GALLERY */}
+
             <section className="section relative overflow-hidden bg-gradient-to-b from-cream via-cream-dark/30 to-cream">
                 {/* Decorative accents */}
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
