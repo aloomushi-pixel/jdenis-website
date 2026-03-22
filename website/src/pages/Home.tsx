@@ -444,7 +444,7 @@ export default function Home() {
 
             {/* DISTRIBUIDORES CTA */}
             {/* DISTRIBUIDORES CTA — Blue premium */}
-            <section className="section relative overflow-hidden" style={{ background: 'linear-gradient(145deg, #0a1f5c 0%, #1a3a8a 35%, #1e4499 65%, #0f2660 100%)' }}>
+            <section className="section relative overflow-hidden min-h-screen flex flex-col justify-center" style={{ background: 'linear-gradient(145deg, #0a1f5c 0%, #1a3a8a 35%, #1e4499 65%, #0f2660 100%)' }}>
                 {/* Background image soft overlay */}
                 <div
                     className="absolute inset-0 bg-center bg-cover"
