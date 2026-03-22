@@ -7,8 +7,7 @@ type FormMode = 'login' | 'register' | 'forgot';
 
 export default function Login() {
     const navigate = useNavigate();
-    const { login, register, resetPassword, loginWithOAuth } = useAuthStore();
-    const [oauthLoading, setOauthLoading] = useState(false);
+    const { login, register, resetPassword } = useAuthStore();
     const [mode, setMode] = useState<FormMode>('login');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -62,16 +61,7 @@ export default function Login() {
         }
     };
 
-    const handleGoogle = async () => {
-        setOauthLoading(true);
-        setError('');
-        try {
-            await loginWithOAuth('google');
-        } catch {
-            setError('No se pudo iniciar sesión con Google. Intenta de nuevo.');
-            setOauthLoading(false);
-        }
-    };
+
 
     const titles = {
         login: { heading: 'Bienvenida de nuevo', sub: 'Accede a tu cuenta profesional' },
