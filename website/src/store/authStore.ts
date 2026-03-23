@@ -81,7 +81,7 @@ export const useAuthStore = create<AuthState>()(
                         .from('users')
                         .select('role')
                         .eq('id', data.user.id)
-                        .single();
+                        .maybeSingle();
 
                     set({
                         user: {
