@@ -130,7 +130,7 @@ export default function BlogPost() {
             ? post.excerpt.slice(0, 155)
             : 'Artículo de formación profesional sobre lifting de pestañas, laminado de cejas y certificación DC-3 STPS por J. Denis México.',
         canonical: post ? `https://jdenis.store/blog/${slug}` : undefined,
-        image: post?.image_url || '/hero-products.jpg',
+        image: post?.featured_image || '/hero-products.jpg',
         type: 'article',
         jsonLd: post ? [
             {
@@ -138,7 +138,7 @@ export default function BlogPost() {
                 '@type': 'Article',
                 headline: post.title,
                 description: post.excerpt || 'Artículo de J. Denis México',
-                image: post.image_url || 'https://jdenis.store/hero-products.jpg',
+                image: post.featured_image || 'https://jdenis.store/hero-products.jpg',
                 url: `https://jdenis.store/blog/${slug}`,
                 datePublished: post.published_at || new Date().toISOString(),
                 author: { '@type': 'Person', name: 'Gabriela Elizalde' },
