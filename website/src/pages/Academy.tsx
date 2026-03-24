@@ -241,7 +241,7 @@ export default function Academy() {
                                             rel="noopener noreferrer"
                                             className="btn btn-primary"
                                         >
-                                            {course.badge === 'replay' ? 'Ver Replay' : 'Más información'}
+                                            {course.badge === 'replay' ? 'Ver Replay' : 'Más Información'}
                                         </a>
                                     </div>
                                 </div>
