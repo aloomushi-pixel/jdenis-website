@@ -84,10 +84,16 @@ export default function ProductDetail() {
     }, [products, dbGroups]);
 
     // Related products: same category, different product (and not in the identical variant group to avoid showing its own variants)
+    // Products with stock === 0 are excluded; stock 1-10 shows "Poca Existencia" badge via ProductCard
     const relatedProducts = useMemo(() => {
         if (!product) return [];
         return groupedProducts
-            .filter(p => p.category === product?.category && p.id !== product?.id && (!dbGroup || !dbGroup.variants.some(v => v.product_id === p.id)))
+            .filter(p =>
+                p.category === product?.category &&
+                p.id !== product?.id &&
+                (!dbGroup || !dbGroup.variants.some(v => v.product_id === p.id)) &&
+                (p.stock === undefined || p.stock > 0)
+            )
             .slice(0, 8);
     }, [groupedProducts, product, dbGroup]);
 
