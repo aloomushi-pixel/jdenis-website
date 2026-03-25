@@ -40,8 +40,8 @@ const EMPTY_FORM: CouponForm = {
     max_uses: '',
     is_active: true,
     visual_design: {
-        backgroundColor: '#1a1a1a',
-        textColor: '#D4AF37',
+        backgroundColor: '#4f46e5',
+        textColor: '#ffffff',
         theme: undefined,
     },
 };
