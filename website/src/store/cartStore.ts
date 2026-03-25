@@ -42,6 +42,7 @@ interface CartState {
     appliedCoupon: Coupon | null;
     applyCoupon: (coupon: Coupon) => void;
     removeCoupon: () => void;
+    total: () => number;
 }
 
 export const useCartStore = create<CartState>()(

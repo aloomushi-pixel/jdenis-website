@@ -5,7 +5,6 @@ import CouponCard from './CouponCard';
 import { useCartPromotion } from '../hooks/useCartPromotion';
 import { useCartStore } from '../store/cartStore';
 import CartPromoBanner from './CartPromoBanner';
-import type { Coupon } from '../lib/supabase';
 import { validateCoupon } from '../lib/supabase';
 
 // ─── Coupon state ─────────────────────────────────────────────────────────────
