@@ -8,16 +8,33 @@ import CartPromoBanner from '../components/CartPromoBanner';
 import { createMercadoPagoCheckout, supabase } from '../lib/supabase';
 
 export default function Checkout() {
-    const { items } = useCartStore();
+    const { items, appliedCoupon } = useCartStore();
     const { user } = useAuthStore();
     const promotion = useCartPromotion();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+    // ── Check if applied coupon is still valid
+    const isCouponValid = appliedCoupon && promotion.subtotal >= appliedCoupon.min_purchase;
+
+    // ── Coupon discount amount
+    const rawCouponDiscount = appliedCoupon
+        ? (appliedCoupon.discount_type === 'percentage'
+            ? Math.round((promotion.subtotal * appliedCoupon.discount_value) / 100 * 100) / 100
+            : Math.min(appliedCoupon.discount_value, promotion.subtotal))
+        : 0;
+
+    const couponDiscount = isCouponValid ? rawCouponDiscount : 0;
+
     const subtotal = promotion.subtotal;
     const shippingCost = promotion.shippingCost;
-    const discountAmount = promotion.discountAmount;
-    const grandTotal = promotion.grandTotal;
+    const promoDiscountAmount = promotion.discountAmount;
+    
+    // Total discount is promo + coupon
+    const totalDiscountAmount = promoDiscountAmount + couponDiscount;
+    
+    // Adjusted grand total ensures it doesn't go below 0 (shipping might apply)
+    const finalTotal = Math.max(0, promotion.grandTotal - couponDiscount);
 
     const [formData, setFormData] = useState({
         fullName: user?.fullName || '',
@@ -99,9 +116,10 @@ export default function Checkout() {
                     state: formData.state,
                     zip: formData.zip,
                 },
-                total: grandTotal,
-                discount: discountAmount,
+                total: finalTotal,
+                discount: totalDiscountAmount,
                 shipping_cost: shippingCost,
+                coupon_code: isCouponValid && appliedCoupon ? appliedCoupon.code : null,
             };
 
             const result = await createMercadoPagoCheckout(checkoutData);
@@ -348,7 +366,7 @@ export default function Checkout() {
                             >
                                 {loading
                                     ? 'Procesando...'
-                                    : `Pagar con Mercado Pago - $${grandTotal.toLocaleString()} MXN`
+                                    : `Pagar con Mercado Pago - $${finalTotal.toLocaleString()} MXN`
                                 }
                             </button>
                         </form>
@@ -395,11 +413,26 @@ export default function Checkout() {
                                     <span className="font-medium text-navy">${subtotal.toLocaleString()}</span>
                                 </div>
 
-                                {/* Descuento (si aplica) */}
-                                {discountAmount > 0 && (
+                                {/* Descuento promo (si aplica) */}
+                                {promoDiscountAmount > 0 && (
                                     <div className="flex justify-between items-center">
                                         <span className="text-emerald-600 font-medium">Descuento ({promotion.discountPercent}%)</span>
-                                        <span className="text-emerald-600 font-medium whitespace-nowrap">-${discountAmount.toLocaleString()}</span>
+                                        <span className="text-emerald-600 font-medium whitespace-nowrap">-${promoDiscountAmount.toLocaleString()}</span>
+                                    </div>
+                                )}
+
+                                {/* Descuento Cupón (si aplica) */}
+                                {isCouponValid && appliedCoupon && (
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-emerald-600 font-medium">
+                                            Cupón {appliedCoupon.code}
+                                            {appliedCoupon.discount_type === 'percentage'
+                                                ? ` (${appliedCoupon.discount_value}%)`
+                                                : ''}
+                                        </span>
+                                        <span className="text-emerald-600 font-medium whitespace-nowrap">
+                                            -${couponDiscount.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+                                        </span>
                                     </div>
                                 )}
 
@@ -422,7 +455,7 @@ export default function Checkout() {
                             <div className="flex justify-between items-end">
                                 <span className="text-lg font-medium text-navy">Total</span>
                                 <div className="text-right">
-                                    <span className="block text-3xl font-bold text-gold leading-none">${grandTotal.toLocaleString()}</span>
+                                    <span className="block text-3xl font-bold text-gold leading-none">${finalTotal.toLocaleString()}</span>
                                     <span className="text-xs text-charcoal-light block mt-1">MXN (IVA incluido)</span>
                                 </div>
                             </div>

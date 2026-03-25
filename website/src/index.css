@@ -656,3 +656,527 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Button font */
 .btn-primary, .btn-secondary, .btn, button { font-family: 'DM Sans', sans-serif; font-weight: 600; }
+
+/* =====================================================
+   MÓDULO DE CUPONES — J.Denis
+   Brand: Blanco Elegante · Negro Profundo · Oro Lujo
+   ===================================================== */
+
+/* ── CouponCard (shared: cart + admin preview) ─────── */
+.coupon-card {
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.coupon-card--preview {
+  animation: coupon-shimmer 2.5s ease-in-out infinite;
+}
+@keyframes coupon-shimmer {
+  0%, 100% { box-shadow: 0 0 0 0 transparent; }
+  50% { box-shadow: 0 0 16px 2px rgba(212,175,55,0.25); }
+}
+.coupon-card__inner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  border: 1px dashed;
+  border-radius: 8px;
+  margin: 4px;
+}
+.coupon-card__left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  flex-shrink: 0;
+}
+.coupon-card__icon {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+.coupon-card__theme {
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-family: 'DM Sans', sans-serif;
+}
+.coupon-card__center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+.coupon-card__code {
+  font-family: 'DM Sans', monospace;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+.coupon-card__discount {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.coupon-card__tag {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.coupon-card__remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 0.25rem;
+  border-radius: 50%;
+  line-height: 1;
+  transition: opacity 0.2s;
+  flex-shrink: 0;
+}
+.coupon-card__remove:hover { opacity: 1 !important; transform: scale(1.2); }
+
+/* ── Coupon discount line in cart summary ────────── */
+.coupon-discount-label {
+  color: #D4AF37;
+  font-weight: 600;
+  font-size: 0.875rem;
+  font-family: 'DM Sans', sans-serif;
+}
+.coupon-discount-value {
+  color: #D4AF37;
+  font-weight: 700;
+  font-size: 0.875rem;
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* ── Coupon input section in CartDrawer ──────────── */
+.coupon-input-wrap {
+  margin-bottom: 0.25rem;
+}
+.coupon-input-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #555;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.4rem;
+  text-transform: uppercase;
+}
+.coupon-input-row {
+  display: flex;
+  gap: 0.5rem;
+}
+.coupon-input {
+  flex: 1;
+  padding: 0.6rem 0.875rem;
+  border: 1.5px solid #1a1a1a;
+  border-radius: 6px;
+  font-family: 'DM Sans', monospace;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #1a1a1a;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.coupon-input:focus {
+  border-color: #D4AF37;
+  box-shadow: 0 0 0 3px rgba(212,175,55,0.15);
+}
+.coupon-input::placeholder {
+  color: #aaa;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+}
+.coupon-input:disabled { background: #f5f5f5; opacity: 0.8; }
+.coupon-apply-btn {
+  padding: 0.6rem 1.1rem;
+  background: #D4AF37;
+  color: #1a1a1a;
+  border: none;
+  border-radius: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.coupon-apply-btn:hover:not(:disabled) {
+  background: #b8962d;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212,175,55,0.35);
+}
+.coupon-apply-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+.coupon-error {
+  margin-top: 0.4rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  color: #c0392b;
+  font-weight: 500;
+  animation: coupon-error-in 0.25s ease;
+}
+@keyframes coupon-error-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── CouponManager Admin Page ─────────────────────── */
+.cm-root {
+  position: relative;
+  font-family: 'DM Sans', sans-serif;
+}
+.cm-toast {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 9999;
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  animation: cm-toast-in 0.3s ease;
+}
+@keyframes cm-toast-in {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.cm-toast--success { background: #1a1a1a; color: #D4AF37; }
+.cm-toast--error { background: #c0392b; color: #fff; }
+
+.cm-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+.cm-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+}
+.cm-subtitle {
+  font-size: 0.8rem;
+  color: #888;
+  margin: 0.25rem 0 0;
+  letter-spacing: 0.04em;
+}
+
+.cm-btn-primary {
+  padding: 0.65rem 1.4rem;
+  background: #1a1a1a;
+  color: #D4AF37;
+  border: 1.5px solid #D4AF37;
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, transform 0.15s;
+}
+.cm-btn-primary:hover:not(:disabled) {
+  background: #D4AF37;
+  color: #1a1a1a;
+  transform: translateY(-1px);
+}
+.cm-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.cm-btn-ghost {
+  padding: 0.65rem 1.4rem;
+  background: transparent;
+  color: #555;
+  border: 1.5px solid #ddd;
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.cm-btn-ghost:hover:not(:disabled) { border-color: #999; }
+
+.cm-loading, .cm-empty {
+  text-align: center;
+  padding: 3rem;
+  color: #888;
+}
+.cm-empty-icon { font-size: 3rem; display: block; margin-bottom: 0.75rem; }
+
+.cm-table-wrap { overflow-x: auto; border-radius: 10px; border: 1px solid #e5e5e5; }
+.cm-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+.cm-table th {
+  background: #1a1a1a;
+  color: #D4AF37;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  white-space: nowrap;
+}
+.cm-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #f0f0f0;
+  color: #333;
+  vertical-align: middle;
+}
+.cm-table tr:last-child td { border-bottom: none; }
+.cm-table tr:hover td { background: #fafafa; }
+.cm-row--inactive td { opacity: 0.5; }
+
+.cm-code {
+  font-family: 'DM Sans', monospace;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  font-size: 0.9rem;
+  color: #1a1a1a;
+}
+.cm-theme-badge { margin-left: 0.4rem; font-size: 1rem; }
+
+.cm-toggle {
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.cm-toggle--on { background: #D4AF37; color: #1a1a1a; }
+.cm-toggle--off { background: #e5e5e5; color: #888; }
+
+.cm-actions { display: flex; gap: 0.5rem; }
+.cm-btn-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+.cm-btn-icon:hover { background: #f5f5f5; }
+.cm-btn-icon--danger:hover { background: #fff0f0; }
+
+/* Modal */
+.cm-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+.cm-modal {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.2);
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.cm-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #e5e5e5;
+  background: #1a1a1a;
+}
+.cm-modal-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #D4AF37;
+  margin: 0;
+}
+.cm-modal-close {
+  background: none;
+  border: none;
+  color: #D4AF37;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+.cm-modal-close:hover { opacity: 1; }
+.cm-modal-body {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 0;
+  overflow-y: auto;
+  flex: 1;
+}
+@media (max-width: 768px) {
+  .cm-modal-body { grid-template-columns: 1fr; }
+}
+.cm-form-col {
+  padding: 1.5rem;
+  border-right: 1px solid #f0f0f0;
+  overflow-y: auto;
+}
+.cm-preview-col {
+  padding: 1.5rem;
+  background: #1a1a1a;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.cm-preview-col .cm-section-title { color: #D4AF37 !important; }
+.cm-preview-hint {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.5);
+  margin: 0;
+  line-height: 1.5;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.cm-section { margin-bottom: 1.5rem; }
+.cm-section-title {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #888;
+  margin: 0 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+.cm-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #555;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.875rem;
+}
+.cm-input {
+  padding: 0.6rem 0.875rem;
+  border: 1.5px solid #ddd;
+  border-radius: 7px;
+  font-size: 0.875rem;
+  font-family: 'DM Sans', sans-serif;
+  color: #1a1a1a;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+.cm-input:focus {
+  border-color: #D4AF37;
+  box-shadow: 0 0 0 3px rgba(212,175,55,0.15);
+}
+.cm-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+.cm-radio-group { display: flex; gap: 1rem; }
+.cm-radio {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #333;
+  cursor: pointer;
+  flex-direction: row;
+  margin: 0;
+}
+.cm-radio input { accent-color: #D4AF37; }
+.cm-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem;
+  background: #fafafa;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Color picker */
+.cm-color-row { display: flex; align-items: center; gap: 0.75rem; }
+.cm-color-picker {
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 2px solid #e5e5e5;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 0;
+  background: none;
+  outline: none;
+}
+.cm-color-hex {
+  font-family: 'DM Sans', monospace;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #555;
+  letter-spacing: 0.05em;
+}
+
+/* Theme buttons */
+.cm-theme-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.cm-theme-btn {
+  padding: 0.4rem 0.875rem;
+  border: 1.5px solid #ddd;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: #fff;
+  color: #555;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+  font-family: 'DM Sans', sans-serif;
+}
+.cm-theme-btn:hover { border-color: #D4AF37; color: #1a1a1a; }
+.cm-theme-btn--active { background: #1a1a1a; color: #D4AF37; border-color: #D4AF37; }
+
+.cm-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #e5e5e5;
+  background: #fafafa;
+}
+

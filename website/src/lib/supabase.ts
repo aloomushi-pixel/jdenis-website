@@ -1531,3 +1531,155 @@ export async function toggleFeatureBlogPost(id: string, is_featured: boolean): P
 
     if (error) throw error;
 }
+
+// =============================================
+// COUPON FUNCTIONS
+// =============================================
+
+export interface CouponVisualDesign {
+    backgroundColor: string;
+    textColor: string;
+    theme?: 'spring' | 'summer' | 'autumn' | 'winter';
+}
+
+export interface Coupon {
+    id: string;
+    code: string;
+    discount_type: 'percentage' | 'fixed_amount';
+    discount_value: number;
+    min_purchase: number;
+    expiration_date: string | null;
+    is_active: boolean;
+    visual_design: CouponVisualDesign;
+    usage_count: number;
+    max_uses: number | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export type CouponValidationResult =
+    | { valid: true; coupon: Coupon; discountAmount: number }
+    | { valid: false; error: string };
+
+/** Validates a coupon code against cart total. Returns discount amount if valid. */
+export async function validateCoupon(
+    code: string,
+    cartTotal: number
+): Promise<CouponValidationResult> {
+    const { data, error } = await supabase
+        .from('coupons')
+        .select('*')
+        .eq('code', code.trim().toUpperCase())
+        .eq('is_active', true)
+        .maybeSingle();
+
+    if (error) return { valid: false, error: 'Error al validar el cupón' };
+    if (!data) return { valid: false, error: 'Código no válido' };
+
+    const coupon = data as Coupon;
+
+    // Check expiry
+    if (coupon.expiration_date && new Date(coupon.expiration_date) < new Date()) {
+        return { valid: false, error: 'Cupón expirado' };
+    }
+
+    // Check max uses
+    if (coupon.max_uses !== null && coupon.usage_count >= coupon.max_uses) {
+        return { valid: false, error: 'Cupón agotado' };
+    }
+
+    // Check minimum purchase
+    if (cartTotal < coupon.min_purchase) {
+        return {
+            valid: false,
+            error: `Mínimo de compra no alcanzado: $${coupon.min_purchase.toLocaleString('es-MX')} MXN`,
+        };
+    }
+
+    // Calculate discount
+    const discountAmount =
+        coupon.discount_type === 'percentage'
+            ? Math.round((cartTotal * coupon.discount_value) / 100 * 100) / 100
+            : Math.min(coupon.discount_value, cartTotal);
+
+    return { valid: true, coupon, discountAmount };
+}
+
+/** Admin: fetch all coupons ordered by creation date */
+export async function getCoupons(): Promise<Coupon[]> {
+    const { data, error } = await supabase
+        .from('coupons')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return (data || []) as Coupon[];
+}
+
+/** Admin: create a new coupon */
+export async function createCoupon(
+    payload: Omit<Coupon, 'id' | 'created_at' | 'updated_at' | 'usage_count'>
+): Promise<Coupon> {
+    const normalized = { ...payload, code: payload.code.trim().toUpperCase() };
+    const { data, error } = await supabase
+        .from('coupons')
+        .insert(normalized)
+        .select()
+        .single();
+
+    if (error) throw error;
+    return data as Coupon;
+}
+
+/** Admin: update an existing coupon */
+export async function updateCoupon(
+    id: string,
+    payload: Partial<Omit<Coupon, 'id' | 'created_at' | 'updated_at' | 'usage_count'>>
+): Promise<Coupon> {
+    const normalized = payload.code
+        ? { ...payload, code: payload.code.trim().toUpperCase() }
+        : payload;
+
+    const { data, error } = await supabase
+        .from('coupons')
+        .update(normalized)
+        .eq('id', id)
+        .select()
+        .single();
+
+    if (error) throw error;
+    return data as Coupon;
+}
+
+/** Admin: soft-delete a coupon (sets is_active to false) */
+export async function deleteCoupon(id: string): Promise<void> {
+    const { error } = await supabase
+        .from('coupons')
+        .update({ is_active: false })
+        .eq('id', id);
+
+    if (error) throw error;
+}
+
+/** Increments usage_count after a successful order with a coupon */
+export async function incrementCouponUsage(couponId: string): Promise<void> {
+    const { error } = await supabase.rpc('increment', {
+        table_name: 'coupons',
+        column_name: 'usage_count',
+        row_id: couponId,
+    });
+    // Fallback: if RPC not available, do a read-then-write
+    if (error) {
+        const { data } = await supabase
+            .from('coupons')
+            .select('usage_count')
+            .eq('id', couponId)
+            .single();
+        if (data) {
+            await supabase
+                .from('coupons')
+                .update({ usage_count: (data.usage_count || 0) + 1 })
+                .eq('id', couponId);
+        }
+    }
+}

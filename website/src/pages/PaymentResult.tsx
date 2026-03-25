@@ -1,11 +1,13 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useCartStore } from '../store/cartStore';
+import { incrementCouponUsage } from '../lib/supabase';
 
 export default function PaymentResult() {
     const [searchParams] = useSearchParams();
-    const { clearCart } = useCartStore();
+    const { clearCart, appliedCoupon } = useCartStore();
+    const hasIncremented = useRef(false);
 
     const status = searchParams.get('collection_status') || searchParams.get('status') || 'unknown';
     const paymentId = searchParams.get('payment_id') || searchParams.get('collection_id') || '';
@@ -13,9 +15,13 @@ export default function PaymentResult() {
 
     useEffect(() => {
         if (status === 'approved') {
+            if (appliedCoupon && !hasIncremented.current) {
+                hasIncremented.current = true;
+                incrementCouponUsage(appliedCoupon.id).catch(console.error);
+            }
             clearCart();
         }
-    }, [status, clearCart]);
+    }, [status, clearCart, appliedCoupon]);
 
     const statusConfig: Record<string, { icon: string; title: string; message: string; color: string }> = {
         approved: {

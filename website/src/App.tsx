@@ -28,6 +28,7 @@ import CartPromoSettings from './pages/admin/CartPromoSettings';
 import WarehouseQueue from './pages/admin/WarehouseQueue';
 import DistributorRequests from './pages/admin/DistributorRequests';
 import FacturacionAdmin from './pages/admin/Facturacion';
+import CouponManager from './pages/admin/CouponManager';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
 import NewsPost from './pages/NewsPost';
@@ -126,6 +127,7 @@ function App() {
               <Route path="warehouse-queue" element={<WarehouseQueue />} />
               <Route path="distributors" element={<DistributorRequests />} />
               <Route path="facturacion" element={<FacturacionAdmin />} />
+              <Route path="coupons" element={<CouponManager />} />
             </Route>
           </Routes>
         </main>

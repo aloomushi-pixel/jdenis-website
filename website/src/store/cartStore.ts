@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import type { Coupon } from '../lib/supabase';
 
 export interface Product {
     id: string;
@@ -37,8 +38,10 @@ interface CartState {
     toggleCart: () => void;
     openCart: () => void;
     closeCart: () => void;
-    total: () => number;
     itemCount: () => number;
+    appliedCoupon: Coupon | null;
+    applyCoupon: (coupon: Coupon) => void;
+    removeCoupon: () => void;
 }
 
 export const useCartStore = create<CartState>()(
@@ -46,6 +49,7 @@ export const useCartStore = create<CartState>()(
         (set, get) => ({
             items: [],
             isOpen: false,
+            appliedCoupon: null,
 
             addItem: (product: Product) => {
                 set((state) => {
@@ -81,10 +85,13 @@ export const useCartStore = create<CartState>()(
                 }));
             },
 
-            clearCart: () => set({ items: [] }),
+            clearCart: () => set({ items: [], appliedCoupon: null }),
             toggleCart: () => set((state) => ({ isOpen: !state.isOpen })),
             openCart: () => set({ isOpen: true }),
             closeCart: () => set({ isOpen: false }),
+
+            applyCoupon: (coupon: Coupon) => set({ appliedCoupon: coupon }),
+            removeCoupon: () => set({ appliedCoupon: null }),
 
             total: () => {
                 const state = get();

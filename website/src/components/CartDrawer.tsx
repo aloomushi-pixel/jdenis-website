@@ -1,12 +1,65 @@
 import { AnimatePresence, motion } from 'framer-motion';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import CouponCard from './CouponCard';
 import { useCartPromotion } from '../hooks/useCartPromotion';
 import { useCartStore } from '../store/cartStore';
 import CartPromoBanner from './CartPromoBanner';
+import type { Coupon } from '../lib/supabase';
+import { validateCoupon } from '../lib/supabase';
+
+// ─── Coupon state ─────────────────────────────────────────────────────────────
 
 export default function CartDrawer() {
-    const { isOpen, closeCart, items, removeItem, updateQuantity } = useCartStore();
+    const { isOpen, closeCart, items, removeItem, updateQuantity, appliedCoupon, applyCoupon, removeCoupon } = useCartStore();
     const promotion = useCartPromotion();
+
+    const [couponInput, setCouponInput] = useState('');
+    const [couponLoading, setCouponLoading] = useState(false);
+    const [couponError, setCouponError] = useState<string | null>(null);
+
+    // ── Check if applied coupon is still valid (e.g. min purchase) ──────
+    const isCouponValid = appliedCoupon && promotion.subtotal >= appliedCoupon.min_purchase;
+    
+    // ── Coupon discount amount (0 if none applied or invalid)
+    const rawCouponDiscount = appliedCoupon
+        ? (appliedCoupon.discount_type === 'percentage'
+            ? Math.round((promotion.subtotal * appliedCoupon.discount_value) / 100 * 100) / 100
+            : Math.min(appliedCoupon.discount_value, promotion.subtotal))
+        : 0;
+    
+    const couponDiscount = isCouponValid ? rawCouponDiscount : 0;
+
+    // ── Adjusted grand total
+    const adjustedTotal = Math.max(0, promotion.grandTotal - couponDiscount);
+
+    // ── Apply coupon handler ───────────────────────────────────────────────────
+    async function handleApplyCoupon() {
+        const code = couponInput.trim();
+        if (!code) return;
+        setCouponLoading(true);
+        setCouponError(null);
+
+        const result = await validateCoupon(code, promotion.subtotal);
+
+        if (result.valid) {
+            applyCoupon(result.coupon);
+            setCouponInput('');
+        } else {
+            setCouponError(result.error);
+        }
+        setCouponLoading(false);
+    }
+
+    function handleRemoveCoupon() {
+        removeCoupon();
+        setCouponInput('');
+        setCouponError(null);
+    }
+
+    function handleKeyDown(e: React.KeyboardEvent) {
+        if (e.key === 'Enter') handleApplyCoupon();
+    }
 
     return (
         <AnimatePresence>
@@ -102,6 +155,60 @@ export default function CartDrawer() {
                         {/* Footer */}
                         {items.length > 0 && (
                             <div className="p-6 border-t border-rose/20 bg-blush/50 rounded-bl-4xl">
+
+                                {/* ── Cupón section ───────────────────────────────── */}
+                                <div className="mb-4">
+                                    {isCouponValid && appliedCoupon ? (
+                                        /* Applied coupon card */
+                                        <CouponCard
+                                            code={appliedCoupon.code}
+                                            discountType={appliedCoupon.discount_type}
+                                            discountValue={appliedCoupon.discount_value}
+                                            visualDesign={appliedCoupon.visual_design}
+                                            onRemove={handleRemoveCoupon}
+                                        />
+                                    ) : (
+                                        /* Coupon input */
+                                        <div className="coupon-input-wrap">
+                                            {appliedCoupon && !isCouponValid && (
+                                                <p className="coupon-error text-sm mb-2" role="alert">
+                                                    ⚠ El cupón {appliedCoupon.code} requiere un mínimo de compra de ${appliedCoupon.min_purchase.toLocaleString('es-MX')} MXN.
+                                                </p>
+                                            )}
+                                            <p className="coupon-input-label">¿Tienes un código de descuento?</p>
+                                            <div className="coupon-input-row">
+                                                <input
+                                                    type="text"
+                                                    className="coupon-input"
+                                                    placeholder="Ej. INVIERNO20"
+                                                    value={couponInput}
+                                                    onChange={(e) => {
+                                                        setCouponInput(e.target.value.toUpperCase());
+                                                        if (couponError) setCouponError(null);
+                                                    }}
+                                                    onKeyDown={handleKeyDown}
+                                                    maxLength={30}
+                                                    disabled={couponLoading}
+                                                    aria-label="Código de descuento"
+                                                />
+                                                <button
+                                                    className="coupon-apply-btn"
+                                                    onClick={handleApplyCoupon}
+                                                    disabled={!couponInput.trim() || couponLoading}
+                                                >
+                                                    {couponLoading ? '…' : 'Aplicar'}
+                                                </button>
+                                            </div>
+                                            {couponError && (
+                                                <p className="coupon-error" role="alert">
+                                                    ⚠ {couponError}
+                                                </p>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                                {/* ── End cupón section ─────────────────────────── */}
+
                                 <div className="space-y-2 mb-4">
                                     {/* Subtotal */}
                                     <div className="flex justify-between text-sm">
@@ -109,11 +216,26 @@ export default function CartDrawer() {
                                         <span className="text-ink">${promotion.subtotal.toLocaleString()} MXN</span>
                                     </div>
 
-                                    {/* Descuento (si aplica) */}
+                                    {/* Descuento promo (si aplica) */}
                                     {promotion.discountAmount > 0 && (
                                         <div className="flex justify-between text-sm">
                                             <span className="text-emerald-600 font-medium">Descuento ({promotion.discountPercent}%)</span>
                                             <span className="text-emerald-600 font-medium">-${promotion.discountAmount.toLocaleString()} MXN</span>
+                                        </div>
+                                    )}
+
+                                    {/* Descuento cupón */}
+                                    {isCouponValid && appliedCoupon && (
+                                        <div className="flex justify-between text-sm">
+                                            <span className="coupon-discount-label">
+                                                Cupón {appliedCoupon.code}
+                                                {appliedCoupon.discount_type === 'percentage'
+                                                    ? ` (${appliedCoupon.discount_value}%)`
+                                                    : ''}
+                                            </span>
+                                            <span className="coupon-discount-value">
+                                                -${couponDiscount.toLocaleString('es-MX', { minimumFractionDigits: 2 })} MXN
+                                            </span>
                                         </div>
                                     )}
 
@@ -135,7 +257,7 @@ export default function CartDrawer() {
                                 <div className="flex justify-between pt-2 border-t border-rose/20 mb-4">
                                     <span className="text-ink font-semibold">Total</span>
                                     <span className="text-rose-deep font-bold text-xl">
-                                        ${promotion.grandTotal.toLocaleString()} MXN
+                                        ${adjustedTotal.toLocaleString('es-MX', { minimumFractionDigits: 2 })} MXN
                                     </span>
                                 </div>
 
