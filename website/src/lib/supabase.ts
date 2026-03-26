@@ -2,9 +2,9 @@
 // Enhanced with E-commerce Manager Skill
 import { createClient } from '@supabase/supabase-js';
 
-// Forzamos el uso del nuevo proyecto ignorando las variables de entorno obsoletas en Dokploy
-export const supabaseUrl = 'https://vqcjxzsibywdxpvkyysa.supabase.co';
-export const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZxY2p4enNpYnl3ZHhwdmt5eXNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAyNDgxMDAsImV4cCI6MjA4NTgyNDEwMH0.SzIov9XDCl0nFsTx_pCpVdlqnMTLQ10l1v-e2YNE5Xg';
+// Proyecto J DENIS (kxoitidsrfeqxwvxjwsd) — proyecto activo de producción
+export const supabaseUrl = 'https://kxoitidsrfeqxwvxjwsd.supabase.co';
+export const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4b2l0aWRzcmZlcXh3dnhqd3NkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMDk1NzMsImV4cCI6MjA4OTY4NTU3M30._Wvl1H6c2lMIMANP4D3QARvPOnBRtTaDBgoaG856S2Y';
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
