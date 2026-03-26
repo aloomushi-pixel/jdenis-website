@@ -1684,3 +1684,90 @@ export async function incrementCouponUsage(couponId: string): Promise<void> {
         }
     }
 }
+
+// ═══════════════════════════════════════════════════════
+// Client Dashboard Functions
+// ═══════════════════════════════════════════════════════
+
+export interface ClientOrder {
+    id: string;
+    user_id: string | null;
+    user_email: string | null;
+    items: any[];
+    total: number;
+    status: string;
+    created_at: string;
+    payment_id: string | null;
+    payment_status: string | null;
+    payment_method: string | null;
+    merchant_order_id: string | null;
+    shipping_address: any | null;
+    buyer_info: any | null;
+}
+
+/** Fetch all orders for a client (by user_id or email) */
+export async function getClientOrders(userId?: string, email?: string): Promise<ClientOrder[]> {
+    if (!userId && !email) return [];
+
+    let query = supabase
+        .from('website_orders')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (userId && email) {
+        query = query.or(`user_id.eq.${userId},user_email.eq.${email}`);
+    } else if (userId) {
+        query = query.eq('user_id', userId);
+    } else if (email) {
+        query = query.eq('user_email', email);
+    }
+
+    const { data, error } = await query;
+    if (error) { console.error('Error fetching client orders:', error); return []; }
+    return (data || []) as ClientOrder[];
+}
+
+/** Fetch available coupons (active, not expired, with uses remaining) */
+export async function getAvailableCoupons(): Promise<Coupon[]> {
+    const { data, error } = await supabase
+        .from('coupons')
+        .select('*')
+        .eq('is_active', true)
+        .order('created_at', { ascending: false });
+
+    if (error) { console.error('Error fetching coupons:', error); return []; }
+
+    const now = new Date();
+    return (data || []).filter((c: Coupon) => {
+        if (c.expiration_date && new Date(c.expiration_date) < now) return false;
+        if (c.max_uses && c.usage_count >= c.max_uses) return false;
+        return true;
+    }) as Coupon[];
+}
+
+export interface ActivePromotion {
+    id: string;
+    name: string;
+    description: string | null;
+    discount_type: string;
+    discount_value: number;
+    min_purchase: number;
+    start_date: string;
+    end_date: string;
+    code: string | null;
+}
+
+/** Fetch active promotions */
+export async function getActivePromotions(): Promise<ActivePromotion[]> {
+    const now = new Date().toISOString();
+    const { data, error } = await supabase
+        .from('promotions')
+        .select('*')
+        .eq('is_active', true)
+        .lte('start_date', now)
+        .gte('end_date', now)
+        .order('created_at', { ascending: false });
+
+    if (error) { console.error('Error fetching promotions:', error); return []; }
+    return (data || []) as ActivePromotion[];
+}
