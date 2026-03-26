@@ -404,7 +404,7 @@ export default function MyAccount() {
                                 <h3 className="font-serif text-lg text-cream truncate">{user?.fullName}</h3>
                                 <p className="text-sm text-cream/60 truncate">{user?.email}</p>
                                 <span className="inline-block mt-2 px-3 py-0.5 rounded-full text-xs font-medium bg-gold/20 text-gold border border-gold/30">
-                                    {user?.role === 'DISTRIBUIDOR' ? 'Distribuidor' : 'Cliente'}
+                                    {ROLE_LABELS[user?.role || ''] || user?.role}
                                 </span>
                             </div>
 

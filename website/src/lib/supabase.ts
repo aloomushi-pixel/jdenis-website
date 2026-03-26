@@ -1778,7 +1778,7 @@ export async function getActivePromotions(): Promise<ActivePromotion[]> {
 export async function getTransportistaDeliveries(userId: string) {
     const { data, error } = await supabase
         .from('deliveries')
-        .select('*, sales_orders(customer_id, total_amount, shipping_address)')
+        .select('*')
         .eq('driver_id', userId)
         .order('created_at', { ascending: false })
         .limit(50);
