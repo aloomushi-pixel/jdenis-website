@@ -1771,3 +1771,97 @@ export async function getActivePromotions(): Promise<ActivePromotion[]> {
     if (error) { console.error('Error fetching promotions:', error); return []; }
     return (data || []) as ActivePromotion[];
 }
+
+// ── ERP Role Dashboard Functions ──
+
+/** Fetch deliveries assigned to a specific driver */
+export async function getTransportistaDeliveries(userId: string) {
+    const { data, error } = await supabase
+        .from('deliveries')
+        .select('*, sales_orders(customer_id, total_amount, shipping_address)')
+        .eq('driver_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(50);
+    if (error) { console.error('Error fetching deliveries:', error); return []; }
+    return data || [];
+}
+
+/** Get counts for warehouse queue summary */
+export async function getWarehouseStats() {
+    const { data: pending } = await supabase
+        .from('sales_orders')
+        .select('id', { count: 'exact' })
+        .in('status', ['PENDING', 'PROCESSING']);
+
+    const { data: dispatched } = await supabase
+        .from('sales_orders')
+        .select('id', { count: 'exact' })
+        .eq('status', 'DISPATCHED');
+
+    return {
+        pendingOrders: pending?.length || 0,
+        dispatchedOrders: dispatched?.length || 0,
+    };
+}
+
+/** Get production batch summary */
+export async function getProductionStats() {
+    const { data: inProgress } = await supabase
+        .from('production_batches')
+        .select('id', { count: 'exact' })
+        .eq('status', 'IN_PROGRESS');
+
+    const { data: completed } = await supabase
+        .from('production_batches')
+        .select('id', { count: 'exact' })
+        .eq('status', 'COMPLETED');
+
+    return {
+        inProgress: inProgress?.length || 0,
+        completed: completed?.length || 0,
+    };
+}
+
+/** Get recent website orders count */
+export async function getRecentOrdersCount() {
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const { data } = await supabase
+        .from('website_orders')
+        .select('id', { count: 'exact' })
+        .gte('created_at', thirtyDaysAgo.toISOString());
+    return data?.length || 0;
+}
+
+/** Get low stock products count */
+export async function getLowStockCount() {
+    const { data } = await supabase
+        .from('products')
+        .select('id', { count: 'exact' })
+        .lt('stock', 10)
+        .eq('is_active', true);
+    return data?.length || 0;
+}
+
+/** Get distributor applications count */
+export async function getPendingDistributorCount() {
+    const { data } = await supabase
+        .from('distributor_applications')
+        .select('id', { count: 'exact' })
+        .eq('status', 'pending');
+    return data?.length || 0;
+}
+
+/** Get vehicle status summary */
+export async function getVehicleStats() {
+    const { data } = await supabase
+        .from('vehicles')
+        .select('status');
+    const vehicles = data || [];
+    return {
+        total: vehicles.length,
+        available: vehicles.filter((v: any) => v.status === 'AVAILABLE').length,
+        inUse: vehicles.filter((v: any) => v.status === 'IN_USE').length,
+        maintenance: vehicles.filter((v: any) => v.status === 'MAINTENANCE').length,
+    };
+}

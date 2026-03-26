@@ -7,6 +7,13 @@ import {
     getClientOrders,
     getAvailableCoupons,
     getActivePromotions,
+    getTransportistaDeliveries,
+    getWarehouseStats,
+    getProductionStats,
+    getRecentOrdersCount,
+    getLowStockCount,
+    getPendingDistributorCount,
+    getVehicleStats,
     type ClientOrder,
     type Coupon,
     type ActivePromotion,
@@ -45,6 +52,73 @@ const clientTabs = [
 const distributorTabs = [
     { id: 'solicitud', label: 'Status Proveedor', icon: '✅' },
     { id: 'calculadora', label: 'Calculadora', icon: '📈' },
+];
+
+const adminTabs = [
+    { id: 'home', label: 'Inicio', icon: '🏠' },
+    { id: 'quicklinks', label: 'Módulos', icon: '⚡' },
+    { id: 'profile', label: 'Mi Perfil', icon: '👤' },
+];
+const ejecutivoTabs = [
+    { id: 'home', label: 'Inicio', icon: '🏠' },
+    { id: 'quicklinks', label: 'Módulos', icon: '⚡' },
+    { id: 'profile', label: 'Mi Perfil', icon: '👤' },
+];
+const fabricaTabs = [
+    { id: 'home', label: 'Inicio', icon: '🏠' },
+    { id: 'quicklinks', label: 'Módulos', icon: '⚡' },
+    { id: 'profile', label: 'Mi Perfil', icon: '👤' },
+];
+const almacenTabs = [
+    { id: 'home', label: 'Inicio', icon: '🏠' },
+    { id: 'quicklinks', label: 'Módulos', icon: '⚡' },
+    { id: 'profile', label: 'Mi Perfil', icon: '👤' },
+];
+const transportistaTabs = [
+    { id: 'home', label: 'Inicio', icon: '🏠' },
+    { id: 'deliveries', label: 'Mis Entregas', icon: '🚛' },
+    { id: 'profile', label: 'Mi Perfil', icon: '👤' },
+];
+
+const ROLE_LABELS: Record<string, string> = {
+    ADMIN: 'Administrador', EJECUTIVO: 'Ejecutivo', FABRICA: 'Fábrica',
+    ALMACEN_MATERIA_PRIMA: 'Almacén MP', ALMACEN_PRODUCTO_FINAL: 'Almacén PF',
+    TRANSPORTISTA: 'Transportista', DISTRIBUIDOR: 'Distribuidor', CLIENTE: 'Cliente',
+};
+
+type QuickLink = { label: string; path: string; icon: string; desc: string };
+const adminLinks: QuickLink[] = [
+    { label: 'Usuarios', path: '/admin/users', icon: '👥', desc: 'Gestionar cuentas' },
+    { label: 'Catálogo', path: '/admin/catalog', icon: '📦', desc: 'Editar productos' },
+    { label: 'Pedidos B2B', path: '/admin/orders', icon: '📋', desc: 'Órdenes B2B' },
+    { label: 'Ventas', path: '/admin/sales', icon: '💰', desc: 'Ventas y cotizaciones' },
+    { label: 'Academia', path: '/admin/academy', icon: '🎓', desc: 'Cursos y eventos' },
+    { label: 'Blog', path: '/admin/blog', icon: '✏️', desc: 'Artículos y noticias' },
+    { label: 'Cupones', path: '/admin/coupons', icon: '🏷️', desc: 'Descuentos' },
+    { label: 'Reseñas', path: '/admin/reviews', icon: '⭐', desc: 'Moderar reseñas' },
+    { label: 'Distribuidores', path: '/admin/distributors', icon: '🤝', desc: 'Solicitudes' },
+    { label: 'Facturación', path: '/admin/facturacion', icon: '🧾', desc: 'CFDI y facturas' },
+    { label: 'Reels', path: '/admin/reels', icon: '🎬', desc: 'Videos sociales' },
+    { label: 'Promos Carrito', path: '/admin/cart-promos', icon: '🛒', desc: 'Banners' },
+];
+const ejecutivoLinks: QuickLink[] = [
+    { label: 'Ventas', path: '/admin/sales', icon: '💰', desc: 'Ventas y cotizaciones' },
+    { label: 'Pedidos B2B', path: '/admin/orders', icon: '📋', desc: 'Órdenes B2B' },
+    { label: 'Catálogo', path: '/admin/catalog', icon: '📦', desc: 'Editar productos' },
+    { label: 'Distribuidores', path: '/admin/distributors', icon: '🤝', desc: 'Solicitudes' },
+    { label: 'Academia', path: '/admin/academy', icon: '🎓', desc: 'Cursos' },
+    { label: 'Blog', path: '/admin/blog', icon: '✏️', desc: 'Artículos' },
+    { label: 'Cupones', path: '/admin/coupons', icon: '🏷️', desc: 'Descuentos' },
+    { label: 'Facturación', path: '/admin/facturacion', icon: '🧾', desc: 'CFDI' },
+];
+const fabricaLinks: QuickLink[] = [
+    { label: 'Embalaje', path: '/admin/packaging', icon: '📦', desc: 'Registros de embalaje' },
+    { label: 'Cola de Envíos', path: '/admin/warehouse-queue', icon: '🚛', desc: 'Despachos' },
+    { label: 'Pedidos B2B', path: '/admin/orders', icon: '📋', desc: 'Órdenes' },
+];
+const almacenLinks: QuickLink[] = [
+    { label: 'Embalaje', path: '/admin/packaging', icon: '📦', desc: 'Registros' },
+    { label: 'Cola de Envíos', path: '/admin/warehouse-queue', icon: '🚛', desc: 'Despachos' },
 ];
 
 // ─── Helpers ───
@@ -97,7 +171,8 @@ export default function MyAccount() {
     const { user, logout, isAuthenticated } = useAuthStore();
     const { addItem } = useCartStore();
     const [searchParams] = useSearchParams();
-    const [activeTab, setActiveTab] = useState('orders');
+    const isERP = ['ADMIN','EJECUTIVO','FABRICA','ALMACEN_MATERIA_PRIMA','ALMACEN_PRODUCTO_FINAL','TRANSPORTISTA'].includes(user?.role || '');
+    const [activeTab, setActiveTab] = useState(isERP ? 'home' : 'orders');
 
     // Data states
     const [orders, setOrders] = useState<ClientOrder[]>([]);
@@ -125,6 +200,10 @@ export default function MyAccount() {
     // Coupon copy feedback
     const [copiedCode, setCopiedCode] = useState('');
 
+    // ERP role stats
+    const [erpStats, setErpStats] = useState<any>({});
+    const [deliveries, setDeliveries] = useState<any[]>([]);
+
     const showSuccess = searchParams.get('pedido') === 'exito';
 
     // ─── Load data ───
@@ -132,14 +211,41 @@ export default function MyAccount() {
         if (!user) return;
         setLoading(true);
         try {
-            const [ordersData, couponsData, promosData] = await Promise.all([
-                getClientOrders(user.id, user.email),
-                getAvailableCoupons(),
-                getActivePromotions(),
-            ]);
-            setOrders(ordersData);
-            setCoupons(couponsData);
-            setPromotions(promosData);
+            const role = user.role || 'CLIENTE';
+            if (role === 'CLIENTE' || role === 'DISTRIBUIDOR') {
+                const [ordersData, couponsData, promosData] = await Promise.all([
+                    getClientOrders(user.id, user.email),
+                    getAvailableCoupons(),
+                    getActivePromotions(),
+                ]);
+                setOrders(ordersData);
+                setCoupons(couponsData);
+                setPromotions(promosData);
+            } else if (role === 'TRANSPORTISTA') {
+                const [del, veh] = await Promise.all([
+                    getTransportistaDeliveries(user.id),
+                    getVehicleStats(),
+                ]);
+                setDeliveries(del);
+                setErpStats((p: any) => ({ ...p, vehicles: veh }));
+            } else if (role === 'ADMIN') {
+                const [rc, ls, dc, wh, pr] = await Promise.all([
+                    getRecentOrdersCount(), getLowStockCount(), getPendingDistributorCount(),
+                    getWarehouseStats(), getProductionStats(),
+                ]);
+                setErpStats({ recentOrders: rc, lowStock: ls, pendingDist: dc, warehouse: wh, production: pr });
+            } else if (role === 'EJECUTIVO') {
+                const [rc, ls, dc] = await Promise.all([
+                    getRecentOrdersCount(), getLowStockCount(), getPendingDistributorCount(),
+                ]);
+                setErpStats({ recentOrders: rc, lowStock: ls, pendingDist: dc });
+            } else if (role === 'FABRICA') {
+                const [pr, wh] = await Promise.all([getProductionStats(), getWarehouseStats()]);
+                setErpStats({ production: pr, warehouse: wh });
+            } else {
+                const wh = await getWarehouseStats();
+                setErpStats({ warehouse: wh });
+            }
         } catch (e) {
             console.error('Error loading dashboard data:', e);
         } finally {
@@ -229,10 +335,26 @@ export default function MyAccount() {
         saveAddresses(updated);
     };
 
-    const allTabs = [
-        ...clientTabs,
-        ...(user?.role === 'DISTRIBUIDOR' ? distributorTabs : []),
-    ];
+    const getTabsForRole = () => {
+        const r = user?.role || 'CLIENTE';
+        if (r === 'ADMIN') return adminTabs;
+        if (r === 'EJECUTIVO') return ejecutivoTabs;
+        if (r === 'FABRICA') return fabricaTabs;
+        if (r === 'ALMACEN_MATERIA_PRIMA' || r === 'ALMACEN_PRODUCTO_FINAL') return almacenTabs;
+        if (r === 'TRANSPORTISTA') return transportistaTabs;
+        if (r === 'DISTRIBUIDOR') return [...clientTabs, ...distributorTabs];
+        return clientTabs;
+    };
+    const allTabs = getTabsForRole();
+
+    const getLinksForRole = (): QuickLink[] => {
+        const r = user?.role || '';
+        if (r === 'ADMIN') return adminLinks;
+        if (r === 'EJECUTIVO') return ejecutivoLinks;
+        if (r === 'FABRICA') return fabricaLinks;
+        if (r === 'ALMACEN_MATERIA_PRIMA' || r === 'ALMACEN_PRODUCTO_FINAL') return almacenLinks;
+        return [];
+    };
 
     const orderItems = (order: ClientOrder) => {
         const items = typeof order.items === 'string' ? JSON.parse(order.items) : order.items;
@@ -811,6 +933,145 @@ export default function MyAccount() {
                                         </div>
                                     </div>
                                 )}
+
+                                {/* ══════ ERP: HOME DASHBOARD ══════ */}
+                                {activeTab === 'home' && isERP && (
+                                    <div className="space-y-6">
+                                        <div className="flex items-center justify-between">
+                                            <h2 className="font-serif text-xl text-navy">
+                                                Panel de {ROLE_LABELS[user?.role || ''] || user?.role}
+                                            </h2>
+                                            <Link to="/admin" className="btn btn-primary text-sm py-2 px-4 flex items-center gap-2">
+                                                🛡️ Ir al Panel Completo
+                                            </Link>
+                                        </div>
+
+                                        {loading ? (
+                                            <div className="bg-white rounded-2xl p-12 shadow-luxury text-center">
+                                                <div className="animate-spin w-8 h-8 border-2 border-gold border-t-transparent rounded-full mx-auto"></div>
+                                            </div>
+                                        ) : (
+                                            <>
+                                                {/* ADMIN stats */}
+                                                {user?.role === 'ADMIN' && (
+                                                    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                                        <StatCard icon="📦" label="Pedidos (30 días)" value={erpStats.recentOrders || 0} color="bg-blue-50 text-blue-600" />
+                                                        <StatCard icon="⚠️" label="Productos Stock Bajo" value={erpStats.lowStock || 0} color="bg-amber-50 text-amber-600" />
+                                                        <StatCard icon="🤝" label="Solicitudes Dist." value={erpStats.pendingDist || 0} color="bg-purple-50 text-purple-600" />
+                                                        <StatCard icon="🏭" label="Producción Activa" value={erpStats.production?.inProgress || 0} color="bg-emerald-50 text-emerald-600" />
+                                                    </div>
+                                                )}
+                                                {/* EJECUTIVO stats */}
+                                                {user?.role === 'EJECUTIVO' && (
+                                                    <div className="grid sm:grid-cols-3 gap-4">
+                                                        <StatCard icon="📦" label="Pedidos (30 días)" value={erpStats.recentOrders || 0} color="bg-blue-50 text-blue-600" />
+                                                        <StatCard icon="⚠️" label="Stock Bajo" value={erpStats.lowStock || 0} color="bg-amber-50 text-amber-600" />
+                                                        <StatCard icon="🤝" label="Solicitudes Dist." value={erpStats.pendingDist || 0} color="bg-purple-50 text-purple-600" />
+                                                    </div>
+                                                )}
+                                                {/* FABRICA stats */}
+                                                {user?.role === 'FABRICA' && (
+                                                    <div className="grid sm:grid-cols-3 gap-4">
+                                                        <StatCard icon="🏭" label="Producción Activa" value={erpStats.production?.inProgress || 0} color="bg-blue-50 text-blue-600" />
+                                                        <StatCard icon="✅" label="Completadas" value={erpStats.production?.completed || 0} color="bg-emerald-50 text-emerald-600" />
+                                                        <StatCard icon="📤" label="Pendientes Envío" value={erpStats.warehouse?.pendingOrders || 0} color="bg-amber-50 text-amber-600" />
+                                                    </div>
+                                                )}
+                                                {/* ALMACEN stats */}
+                                                {(user?.role === 'ALMACEN_MATERIA_PRIMA' || user?.role === 'ALMACEN_PRODUCTO_FINAL') && (
+                                                    <div className="grid sm:grid-cols-2 gap-4">
+                                                        <StatCard icon="📤" label="Pendientes Despacho" value={erpStats.warehouse?.pendingOrders || 0} color="bg-amber-50 text-amber-600" />
+                                                        <StatCard icon="🚛" label="Despachados" value={erpStats.warehouse?.dispatchedOrders || 0} color="bg-emerald-50 text-emerald-600" />
+                                                    </div>
+                                                )}
+                                                {/* TRANSPORTISTA stats */}
+                                                {user?.role === 'TRANSPORTISTA' && (
+                                                    <div className="grid sm:grid-cols-3 gap-4">
+                                                        <StatCard icon="🚛" label="Entregas Asignadas" value={deliveries.length} color="bg-blue-50 text-blue-600" />
+                                                        <StatCard icon="✅" label="Vehículos Disponibles" value={erpStats.vehicles?.available || 0} color="bg-emerald-50 text-emerald-600" />
+                                                        <StatCard icon="🔧" label="En Mantenimiento" value={erpStats.vehicles?.maintenance || 0} color="bg-amber-50 text-amber-600" />
+                                                    </div>
+                                                )}
+
+                                                {/* Quick access for all ERP */}
+                                                <div className="bg-white rounded-2xl p-6 shadow-luxury">
+                                                    <h3 className="font-serif text-lg text-navy mb-4">Acceso Rápido</h3>
+                                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                                                        {getLinksForRole().slice(0, 4).map((link) => (
+                                                            <Link key={link.path} to={link.path}
+                                                                className="flex flex-col items-center p-4 bg-cream/50 hover:bg-gold/10 rounded-xl transition-colors group border border-charcoal/5 hover:border-gold/20">
+                                                                <span className="text-2xl mb-2">{link.icon}</span>
+                                                                <span className="text-sm font-medium text-navy group-hover:text-gold">{link.label}</span>
+                                                                <span className="text-xs text-charcoal-light mt-0.5">{link.desc}</span>
+                                                            </Link>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* ══════ ERP: MÓDULOS (QUICKLINKS) ══════ */}
+                                {activeTab === 'quicklinks' && isERP && (
+                                    <div className="space-y-4">
+                                        <h2 className="font-serif text-xl text-navy mb-2">Módulos del Sistema</h2>
+                                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                                            {getLinksForRole().map((link) => (
+                                                <Link key={link.path} to={link.path}
+                                                    className="bg-white rounded-2xl p-5 shadow-luxury border border-charcoal/5 hover:border-gold/20 hover:shadow-md transition-all group flex flex-col items-center text-center">
+                                                    <span className="text-3xl mb-3">{link.icon}</span>
+                                                    <span className="font-medium text-navy group-hover:text-gold text-sm">{link.label}</span>
+                                                    <span className="text-xs text-charcoal-light mt-1">{link.desc}</span>
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* ══════ TRANSPORTISTA: MIS ENTREGAS ══════ */}
+                                {activeTab === 'deliveries' && user?.role === 'TRANSPORTISTA' && (
+                                    <div className="space-y-4">
+                                        <h2 className="font-serif text-xl text-navy mb-2">Mis Entregas</h2>
+                                        {deliveries.length === 0 ? (
+                                            <div className="bg-white rounded-2xl p-12 shadow-luxury text-center">
+                                                <div className="text-5xl mb-4">🚛</div>
+                                                <h3 className="font-serif text-lg text-navy mb-2">Sin entregas asignadas</h3>
+                                                <p className="text-charcoal-light text-sm">Las entregas asignadas aparecerán aquí</p>
+                                            </div>
+                                        ) : (
+                                            <div className="bg-white rounded-2xl shadow-luxury overflow-hidden">
+                                                <div className="divide-y divide-charcoal/5">
+                                                    {deliveries.map((d: any) => (
+                                                        <div key={d.id} className="p-4 flex items-center gap-4 hover:bg-cream/40 transition-colors">
+                                                            <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
+                                                                <span className="text-lg">{d.status === 'COMPLETED' ? '✅' : d.status === 'IN_TRANSIT' ? '🚛' : '📋'}</span>
+                                                            </div>
+                                                            <div className="flex-1 min-w-0">
+                                                                <p className="font-mono text-sm font-bold text-navy">#{d.id?.slice(0, 8).toUpperCase()}</p>
+                                                                <p className="text-xs text-charcoal-light">
+                                                                    {d.status === 'ASSIGNED' && 'Asignada'}
+                                                                    {d.status === 'IN_TRANSIT' && 'En Tránsito'}
+                                                                    {d.status === 'COMPLETED' && 'Completada'}
+                                                                    {d.status === 'CANCELLED' && 'Cancelada'}
+                                                                    {d.created_at && ` · ${fmtDate(d.created_at)}`}
+                                                                </p>
+                                                            </div>
+                                                            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                                                                d.status === 'COMPLETED' ? 'bg-emerald-100 text-emerald-700' :
+                                                                d.status === 'IN_TRANSIT' ? 'bg-blue-100 text-blue-700' :
+                                                                d.status === 'CANCELLED' ? 'bg-red-100 text-red-700' :
+                                                                'bg-amber-100 text-amber-700'
+                                                            }`}>
+                                                                {d.status === 'ASSIGNED' ? 'Asignada' : d.status === 'IN_TRANSIT' ? 'En Tránsito' : d.status === 'COMPLETED' ? 'Completada' : 'Cancelada'}
+                                                            </span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                             </motion.div>
                         </AnimatePresence>
                     </main>
@@ -893,5 +1154,25 @@ function AddressForm({ address, onSave, onCancel }: {
                 <button onClick={onCancel} className="btn btn-ghost">Cancelar</button>
             </div>
         </div>
+    );
+}
+
+// ═══════════════════════════════════════════════════════
+// Stat Card Sub-component (ERP dashboards)
+// ═══════════════════════════════════════════════════════
+function StatCard({ icon, label, value, color }: { icon: string; label: string; value: number | string; color: string }) {
+    return (
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+            className="bg-white rounded-2xl p-5 shadow-luxury border border-charcoal/5">
+            <div className="flex items-center gap-3">
+                <div className={`w-11 h-11 rounded-xl ${color} flex items-center justify-center`}>
+                    <span className="text-xl">{icon}</span>
+                </div>
+                <div>
+                    <p className="text-2xl font-bold text-navy">{value}</p>
+                    <p className="text-xs text-charcoal-light">{label}</p>
+                </div>
+            </div>
+        </motion.div>
     );
 }
