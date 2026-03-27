@@ -164,6 +164,14 @@ export default function Shop() {
         return groupedProducts.filter(p =>
             p.isFeatured &&
             (p.stock === null || p.stock === undefined || p.stock > 0)
+        ).slice(0, 40);
+    }, [groupedProducts]);
+
+    // Non-featured products for the catalog section
+    const catalogProducts = useMemo(() => {
+        return groupedProducts.filter(p =>
+            !p.isFeatured &&
+            (p.stock === null || p.stock === undefined || p.stock > 0)
         );
     }, [groupedProducts]);
 
@@ -191,8 +199,15 @@ export default function Shop() {
         return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     };
 
+    // Check if user is actively filtering/searching (to decide layout)
+    const isFiltering = useMemo(() => {
+        return searchQuery.length > 0 || activeCategory !== 'all' || showOffersOnly || priceRange[0] > PRICE_MIN || priceRange[1] < computedMax;
+    }, [searchQuery, activeCategory, showOffersOnly, priceRange, computedMax]);
+
     const filteredProducts = useMemo(() => {
-        let result = groupedProducts.filter(p => p.stock === undefined || p.stock === null || p.stock >= 1);
+        // When filtering, search across ALL products (featured + non-featured)
+        let source = isFiltering ? groupedProducts : catalogProducts;
+        let result = source.filter(p => p.stock === undefined || p.stock === null || p.stock >= 1);
 
         if (activeCategory !== 'all') {
             const cat = shopCategories.find(c => c.id === activeCategory);
@@ -237,7 +252,7 @@ export default function Shop() {
         });
 
         return result;
-    }, [groupedProducts, activeCategory, sortBy, searchQuery, priceRange, showOffersOnly]);
+    }, [groupedProducts, catalogProducts, isFiltering, activeCategory, sortBy, searchQuery, priceRange, showOffersOnly]);
 
     if (loading) {
         return (
@@ -348,53 +363,74 @@ export default function Shop() {
             </section>
 
             {/* ═══════════════════════════════════════════════════
-                FEATURED PRODUCTS SECTION — Highlighted products
+                FEATURED PRODUCTS — Main storefront grid (up to 40)
                ═══════════════════════════════════════════════════ */}
-            {featuredProducts.length > 0 && (
-                <section className="py-8 md:py-12 bg-gradient-to-b from-forest/5 to-cream">
+            {featuredProducts.length > 0 && !isFiltering && (
+                <section className="py-10 md:py-14 bg-gradient-to-b from-forest/5 via-cream to-cream">
                     <div className="container-luxury">
-                        <div className="flex items-center justify-between mb-6">
-                            <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 bg-gold/10 rounded-full flex items-center justify-center">
-                                    <span className="text-lg">⭐</span>
-                                </div>
-                                <div>
-                                    <h2 className="font-serif text-xl md:text-2xl text-forest">Productos Destacados</h2>
-                                    <p className="text-xs text-charcoal/50 mt-0.5">Los favoritos de nuestros profesionales</p>
-                                </div>
+                        {/* Section Header */}
+                        <div className="text-center mb-8 md:mb-10">
+                            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-gold/10 border border-gold/20 rounded-full mb-4">
+                                <span className="text-sm">⭐</span>
+                                <span className="text-xs font-semibold uppercase tracking-[0.15em] text-gold">Selección Profesional</span>
                             </div>
-                            <button
-                                onClick={() => { setSortBy('featured'); window.scrollTo({ top: document.getElementById('shop-grid')?.offsetTop ? document.getElementById('shop-grid')!.offsetTop - 100 : 500, behavior: 'smooth' }); }}
-                                className="hidden md:flex items-center gap-1.5 text-sm text-gold hover:text-gold-light transition-colors font-medium"
-                            >
-                                Ver todos
-                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
-                            </button>
+                            <h2 className="font-serif text-2xl md:text-3xl lg:text-4xl text-forest mb-2">Nuestros Favoritos</h2>
+                            <p className="text-charcoal/50 text-sm md:text-base max-w-lg mx-auto">Los productos más populares y recomendados por profesionales de la belleza</p>
                         </div>
 
-                        {/* Horizontal scroll of featured products */}
-                        <div className="-mx-4 px-4 overflow-x-auto scrollbar-hide">
-                            <div className="flex gap-4 pb-2" style={{ minWidth: 'max-content' }}>
-                                {featuredProducts.slice(0, 8).map((product, index) => (
-                                    <div key={product.id} className="w-[160px] sm:w-[200px] md:w-[220px] flex-shrink-0">
-                                        <ProductCard
-                                            product={product}
-                                            index={index}
-                                            variantCount={variantCounts.get(product.id) || 0}
-                                        />
-                                    </div>
-                                ))}
-                            </div>
+                        {/* Featured Products Grid */}
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+                            {featuredProducts.map((product, index) => (
+                                <ProductCard
+                                    key={product.id}
+                                    product={product}
+                                    index={index}
+                                    variantCount={variantCounts.get(product.id) || 0}
+                                />
+                            ))}
+                        </div>
+
+                        {/* Scroll-to-catalog CTA */}
+                        <div className="text-center mt-10">
+                            <button
+                                onClick={() => {
+                                    const el = document.getElementById('shop-catalog');
+                                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                }}
+                                className="inline-flex items-center gap-2.5 px-8 py-3.5 bg-white border-2 border-forest/20 text-forest text-sm font-semibold rounded-full hover:border-gold hover:text-gold hover:shadow-lg transition-all duration-300 group"
+                            >
+                                <span>Explorar catálogo completo</span>
+                                <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-y-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" />
+                                </svg>
+                            </button>
                         </div>
                     </div>
                 </section>
             )}
 
             {/* ═══════════════════════════════════════════════════
-                MAIN SHOP — Category pills + Filter bar top-right + Grid
+                CATALOG SECTION — Full catalog with categories & filters
                ═══════════════════════════════════════════════════ */}
-            <section id="shop-grid" className="section section-cream py-8 md:py-12">
+            <section id="shop-catalog" className="section section-cream py-8 md:py-12">
                 <div className="container-luxury">
+
+                    {/* Section Divider & Title (only when not filtering and featured exist) */}
+                    {!isFiltering && featuredProducts.length > 0 && (
+                        <div className="mb-8">
+                            <div className="flex items-center gap-4 mb-2">
+                                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-kraft/30 to-transparent" />
+                                <div className="flex items-center gap-2">
+                                    <svg className="w-5 h-5 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+                                    </svg>
+                                    <h2 className="font-serif text-xl md:text-2xl text-forest">Explorar Catálogo Completo</h2>
+                                </div>
+                                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-kraft/30 to-transparent" />
+                            </div>
+                            <p className="text-center text-charcoal/50 text-sm">Descubre toda nuestra línea de productos profesionales por categoría</p>
+                        </div>
+                    )}
 
                     {/* ─── Top Filter Bar ─── */}
                     <div className="flex flex-col gap-4 mb-6">
@@ -446,6 +482,7 @@ export default function Shop() {
                         <div className="flex items-center justify-between">
                             <p className="text-charcoal/60 text-sm">
                                 <span className="text-gold font-semibold">{filteredProducts.length}</span> productos
+                                {isFiltering && <span className="text-charcoal/40 ml-1">(resultados de búsqueda)</span>}
                             </p>
 
                             <div className="flex items-center gap-2">
