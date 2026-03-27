@@ -124,7 +124,7 @@ export default function ProductEditor() {
         setHasChanges(true);
 
         // Auto-save to Supabase for supported fields
-        const supabaseFields = ['name', 'price', 'originalPrice', 'isFeatured', 'stock', 'category'];
+        const supabaseFields = ['name', 'price', 'originalPrice', 'distributorPrice', 'isFeatured', 'stock', 'category', 'description', 'promotion', 'image', 'performance'];
         if (supabaseFields.includes(field)) {
             saveProduct(id, field, value).then(ok => {
                 if (ok) showNotification('success', `✅ "${field}" guardado en tienda`);
