@@ -266,19 +266,8 @@ export default function Home() {
         };
     }, []);
 
-    // Favorites carousel state
-    const [favSlide, setFavSlide] = useState(0);
-    const [favPaused, setFavPaused] = useState(false);
-    const favTotal = bestsellers.length;
 
-    // Auto-rotate favorites every 4s
-    useEffect(() => {
-        if (favPaused || favTotal <= 1) return;
-        const timer = setInterval(() => {
-            setFavSlide(prev => (prev + 1) % favTotal);
-        }, 4000);
-        return () => clearInterval(timer);
-    }, [favPaused, favTotal]);
+
 
     useEffect(() => {
         getReels(true).then(setReels).catch(console.error);
@@ -556,7 +545,7 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* BESTSELLERS - ROTATING GALLERY */}
+            {/* BESTSELLERS - GRID GALLERY */}
 
             <section className="section py-24 md:py-32 relative overflow-hidden bg-gradient-to-b from-cream via-cream-dark/30 to-cream">
                 {/* Decorative accents */}
@@ -573,156 +562,78 @@ export default function Home() {
                             viewport={{ once: true }}
                         >
                             <h2 className="section-title">Favoritos de la Marca</h2>
+                            <p className="text-charcoal/50 text-sm uppercase tracking-[0.2em] font-sans mt-2">
+                                Los productos más elegidos por profesionales
+                            </p>
                         </motion.div>
                     </div>
 
-                    {/* Rotating Carousel */}
-                    <div
-                        className="relative"
-                        onMouseEnter={() => setFavPaused(true)}
-                        onMouseLeave={() => setFavPaused(false)}
-                    >
-                        {/* Prev / Next arrows */}
-                        <button
-                            onClick={() => setFavSlide(prev => (prev - 1 + favTotal) % favTotal)}
-                            type="button"
-                            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 sm:-translate-x-4 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/90 shadow-lg backdrop-blur-sm flex items-center justify-center text-forest hover:bg-gold hover:text-forest transition-all duration-300 hover:scale-110"
-                            aria-label="Producto anterior"
-                        >
-                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-                            </svg>
-                        </button>
-                        <button
-                            onClick={() => setFavSlide(prev => (prev + 1) % favTotal)}
-                            type="button"
-                            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 sm:translate-x-4 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/90 shadow-lg backdrop-blur-sm flex items-center justify-center text-forest hover:bg-gold hover:text-forest transition-all duration-300 hover:scale-110"
-                            aria-label="Producto siguiente"
-                        >
-                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                            </svg>
-                        </button>
-
-                        {/* Carousel track */}
-                        <div className="overflow-hidden mx-6 sm:mx-10">
-                            <AnimatePresence mode="wait">
-                                <motion.div
-                                    key={favSlide}
-                                    initial={{ opacity: 0, x: 80 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    exit={{ opacity: 0, x: -80 }}
-                                    transition={{ duration: 0.45, ease: 'easeInOut' }}
-                                    className="w-full"
+                    {/* Products Grid — all visible at once */}
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                        {bestsellers.map((product, i) => (
+                            <motion.div
+                                key={product.id}
+                                initial={{ opacity: 0, y: 24 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: i * 0.06, duration: 0.5 }}
+                            >
+                                <Link
+                                    to={`/producto/${product.id}`}
+                                    className="group block bg-white shadow-md hover:shadow-xl transition-all duration-400 overflow-hidden h-full flex flex-col"
                                 >
-                                    {(() => {
-                                        const product = bestsellers[favSlide];
-                                        if (!product) return (
-                                            <div className="max-w-4xl mx-auto bg-white/50 animate-pulse rounded-lg h-[420px] flex items-center justify-center">
-                                                <p className="text-charcoal/40 text-sm">Cargando favoritos…</p>
-                                            </div>
-                                        );
-                                        const rankLabels = [
-                                            '#1 Más Vendido',
-                                            '#2 Top Favorito',
-                                            '#3 Imprescindible',
-                                            '#4 Profesional',
-                                            '#5 Trending',
-                                            '#6 Básico Pro',
-                                        ];
-                                        return (
-                                            <Link
-                                                to={`/producto/${product.id}`}
-                                                className="group relative block overflow-hidden bg-white shadow-lg hover:shadow-2xl transition-all duration-500 max-w-4xl mx-auto"
-                                            >
-                                                <div className="grid grid-cols-1 md:grid-cols-2">
-                                                    {/* Image side */}
-                                                    <div className="relative overflow-hidden bg-cream-dark aspect-square md:aspect-auto md:min-h-[420px]">
-                                                        <img
-                                                            src={product.image_url || '/placeholder.webp'}
-                                                            alt={product.name}
-                                                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                                        />
-                                                        {/* Gradient overlay */}
-                                                        <div className="absolute inset-0 bg-gradient-to-t from-forest/60 via-transparent to-transparent md:bg-gradient-to-r md:from-transparent md:via-transparent md:to-forest/30" />
+                                    {/* Image */}
+                                    <div className="relative overflow-hidden bg-cream-dark aspect-[4/5]">
+                                        <img
+                                            src={product.image_url || '/placeholder.webp'}
+                                            alt={product.name}
+                                            loading="lazy"
+                                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                        />
+                                        {/* Hover overlay (desktop) */}
+                                        <div className="hidden lg:block absolute inset-0 bg-forest/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                                                        {/* Rank Badge */}
-                                                        <div className="absolute top-4 left-4 z-10">
-                                                            <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold tracking-wider uppercase shadow-lg ${favSlide === 0
-                                                                ? 'bg-gradient-to-r from-gold to-gold-light text-forest'
-                                                                : 'bg-white/90 backdrop-blur-sm text-forest'
-                                                                }`}>
-                                                                {favSlide === 0 && (
-                                                                    <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
-                                                                )}
-                                                                {rankLabels[favSlide]}
-                                                            </span>
-                                                        </div>
+                                        {/* Featured badge */}
+                                        <div className="absolute top-2 left-2 z-10">
+                                            <span className="inline-flex items-center gap-1 px-2 py-1 text-[10px] sm:text-[11px] font-bold tracking-wider uppercase shadow-lg bg-gradient-to-r from-yellow-400 to-amber-500 text-amber-950">
+                                                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
+                                                Favorito
+                                            </span>
+                                        </div>
 
-                                                        {/* Category pill */}
-                                                        <div className="absolute top-4 right-4 z-10">
-                                                            <span className="px-2.5 py-1 text-[10px] font-medium tracking-wider uppercase bg-black/30 backdrop-blur-sm text-white/90 rounded-full">
-                                                                {product.category}
-                                                            </span>
-                                                        </div>
-                                                    </div>
+                                        {/* Category pill */}
+                                        <div className="absolute top-2 right-2 z-10">
+                                            <span className="px-2 py-0.5 text-[9px] sm:text-[10px] font-medium tracking-wider uppercase bg-black/30 backdrop-blur-sm text-white/90 rounded-full">
+                                                {product.category}
+                                            </span>
+                                        </div>
+                                    </div>
 
-                                                    {/* Info side */}
-                                                    <div className="p-6 sm:p-8 md:p-10 flex flex-col justify-center">
-                                                        <span className="text-[11px] text-charcoal/40 uppercase tracking-[0.2em] mb-2 block">{product.category}</span>
-                                                        <h3 className="font-serif text-2xl md:text-3xl text-forest leading-tight mb-4 group-hover:text-gold transition-colors duration-300">
-                                                            {product.name}
-                                                        </h3>
-                                                        {product.description && (
-                                                            <p className="text-charcoal/60 text-sm leading-relaxed mb-6 line-clamp-3">
-                                                                {product.description}
-                                                            </p>
-                                                        )}
-                                                        <div className="flex items-center justify-between mt-auto pt-4 border-t border-kraft/20">
-                                                            <p className="text-forest font-semibold text-2xl">
-                                                                ${product.price.toLocaleString()} <span className="text-charcoal/40 text-sm font-normal">MXN</span>
-                                                            </p>
-                                                            <span className="inline-flex items-center gap-2 text-gold text-sm font-medium group-hover:gap-3 transition-all">
-                                                                Ver producto
-                                                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                                                                </svg>
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </Link>
-                                        );
-                                    })()}
-                                </motion.div>
-                            </AnimatePresence>
-                        </div>
-
-                        {/* Dots navigation */}
-                        <div className="flex items-center justify-center gap-2 mt-8" role="tablist" aria-label="Seleccionar producto">
-                            {bestsellers.map((prod, i) => (
-                                <button
-                                    key={i}
-                                    type="button"
-                                    role="tab"
-                                    aria-selected={i === favSlide}
-                                    onClick={() => setFavSlide(i)}
-                                    className="p-3 flex items-center justify-center transition-all duration-300"
-                                    aria-label={`Ver producto ${prod.name || (i + 1)}`}
-                                >
-                                    <span className={`block transition-all duration-300 rounded-full ${
-                                        i === favSlide
-                                            ? 'w-8 h-2.5 bg-gold shadow-md'
-                                            : 'w-2.5 h-2.5 bg-charcoal/20 hover:bg-charcoal/40'
-                                    }`} />
-                                </button>
-                            ))}
-                        </div>
-
-                        {/* Counter */}
-                        <p className="text-charcoal/30 text-xs mt-3 tracking-wider text-center">
-                            {favSlide + 1} / {favTotal}
-                        </p>
+                                    {/* Info */}
+                                    <div className="p-3 sm:p-4 flex flex-col flex-1 justify-between">
+                                        <div>
+                                            <span className="text-[10px] text-gold uppercase tracking-[0.2em] mb-1 block font-bold">
+                                                {product.category}
+                                            </span>
+                                            <h3 className="font-serif text-sm sm:text-base text-forest font-bold leading-tight line-clamp-2 group-hover:text-gold transition-colors duration-300 mb-2">
+                                                {product.name}
+                                            </h3>
+                                        </div>
+                                        <div className="flex items-center justify-between pt-2 border-t border-kraft/20 mt-auto">
+                                            <p className="text-charcoal font-extrabold text-base sm:text-lg tracking-tight">
+                                                ${product.price.toLocaleString()}
+                                            </p>
+                                            <span className="text-gold text-xs font-medium hidden sm:inline-flex items-center gap-1 group-hover:gap-2 transition-all">
+                                                Ver
+                                                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                                                </svg>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </Link>
+                            </motion.div>
+                        ))}
                     </div>
 
                     <div className="text-center mt-14">
