@@ -127,8 +127,7 @@ export interface CartPromotion {
  * Se recalcula automáticamente cuando cambia el estado del carrito.
  */
 export function useCartPromotion(): CartPromotion {
-    const total = useCartStore((s) => s.total);
-    const itemCount = useCartStore((s) => s.itemCount);
+    const items = useCartStore((s) => s.items);
 
     // Trigger re-render when async config arrives
     const [config, setConfig] = useState<ResolvedConfig>(_cachedConfig || { ...PROMO_CONFIG_DEFAULTS });
@@ -146,8 +145,8 @@ export function useCartPromotion(): CartPromotion {
     }, []);
 
     return useMemo(() => {
-        const subtotal = total();
-        const count = itemCount();
+        const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        const count = items.reduce((sum, item) => sum + item.quantity, 0);
 
         // --- Evaluar condiciones ---
         const meetsAmount = config.minAmount > 0 && subtotal >= config.minAmount;
@@ -211,5 +210,5 @@ export function useCartPromotion(): CartPromotion {
             progressPercent,
             isFreeShipping,
         };
-    }, [total, itemCount, config]);
+    }, [items, config]);
 }
