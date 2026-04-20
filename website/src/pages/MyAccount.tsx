@@ -1,6 +1,10 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState, useCallback } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import Quoter from '../components/crm/Quoter';
+import KanbanLogistics from '../components/crm/KanbanLogistics';
+import CRMDirectory from '../components/crm/CRMDirectory';
+import AnalyticsDashboard from '../components/crm/AnalyticsDashboard';
 import { useAuthStore } from '../store/authStore';
 import { useCartStore } from '../store/cartStore';
 import {
@@ -61,6 +65,10 @@ const adminTabs = [
 ];
 const ejecutivoTabs = [
     { id: 'home', label: 'Inicio', icon: '🏠' },
+    { id: 'crm', label: 'CRM & Clientes', icon: '👥' },
+    { id: 'quoter', label: 'Cotizador B2B', icon: '🧮' },
+    { id: 'kanban', label: 'Logística', icon: '🚛' },
+    { id: 'analytics', label: 'Analítica', icon: '📊' },
     { id: 'quicklinks', label: 'Módulos', icon: '⚡' },
     { id: 'profile', label: 'Mi Perfil', icon: '👤' },
 ];
@@ -1010,6 +1018,20 @@ export default function MyAccount() {
                                             </>
                                         )}
                                     </div>
+                                )}
+
+                                {/* ══════ ERP: CRM MODULES ══════ */}
+                                {activeTab === 'crm' && (
+                                    <CRMDirectory />
+                                )}
+                                {activeTab === 'quoter' && (
+                                    <Quoter />
+                                )}
+                                {activeTab === 'kanban' && (
+                                    <KanbanLogistics />
+                                )}
+                                {activeTab === 'analytics' && (
+                                    <AnalyticsDashboard />
                                 )}
 
                                 {/* ══════ ERP: MÓDULOS (QUICKLINKS) ══════ */}
