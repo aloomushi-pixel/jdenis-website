@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { MOCK_CLIENTS, Client } from '../../lib/mockData';
-import { User, Phone, Mail, AlertTriangle, Building, Search, Activity, Calendar } from 'lucide-react';
+import { useState } from 'react';
+import { MOCK_CLIENTS, type Client } from '../../lib/mockData';
+import { User, Phone, Mail, AlertTriangle, Building, Search, Activity } from 'lucide-react';
 
 export default function CRMDirectory() {
   const [searchTerm, setSearchTerm] = useState('');

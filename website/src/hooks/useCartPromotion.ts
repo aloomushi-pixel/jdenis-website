@@ -1,5 +1,6 @@
 import { useMemo, useEffect, useState } from 'react';
 import { useCartStore } from '../store/cartStore';
+import { useAuthStore } from '../store/authStore';
 import { getActiveCartPromoConfig } from '../lib/supabase';
 
 /**
@@ -128,6 +129,7 @@ export interface CartPromotion {
  */
 export function useCartPromotion(): CartPromotion {
     const items = useCartStore((s) => s.items);
+    const userRole = useAuthStore((s) => s.user?.role);
 
     // Trigger re-render when async config arrives
     const [config, setConfig] = useState<ResolvedConfig>(_cachedConfig || { ...PROMO_CONFIG_DEFAULTS });
@@ -145,7 +147,11 @@ export function useCartPromotion(): CartPromotion {
     }, []);
 
     return useMemo(() => {
-        const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        const subtotal = items.reduce((sum, item) => {
+            const isWholesale = userRole === 'DISTRIBUIDOR' && item.quantity >= 12;
+            const activePrice = isWholesale && item.distributorPrice ? item.distributorPrice : item.price;
+            return sum + activePrice * item.quantity;
+        }, 0);
         const count = items.reduce((sum, item) => sum + item.quantity, 0);
 
         // --- Evaluar condiciones ---

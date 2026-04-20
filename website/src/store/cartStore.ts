@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Coupon } from '../lib/supabase';
+import { useAuthStore } from './authStore';
 
 export interface Product {
     id: string;
@@ -96,7 +97,12 @@ export const useCartStore = create<CartState>()(
 
             total: () => {
                 const state = get();
-                return state.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+                const user = useAuthStore.getState().user;
+                return state.items.reduce((sum, item) => {
+                    const isWholesale = user?.role === 'DISTRIBUIDOR' && item.quantity >= 12;
+                    const activePrice = isWholesale && item.distributorPrice ? item.distributorPrice : item.price;
+                    return sum + activePrice * item.quantity;
+                }, 0);
             },
 
             itemCount: () => {

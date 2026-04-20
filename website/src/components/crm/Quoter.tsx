@@ -1,8 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { jsPDF } from 'jspdf';
-import { MOCK_PRODUCTS, Product } from '../../lib/mockData';
+import { MOCK_PRODUCTS, type Product } from '../../lib/mockData';
 import { cn } from '../../lib/utils';
-import { Search, Plus, ShoppingCart, Download, MessageCircle, AlertCircle, FileText } from 'lucide-react';
+import { Search, Plus, ShoppingCart, MessageCircle, AlertCircle, FileText } from 'lucide-react';
 
 interface CartItem extends Product {
   cartQuantity: number;

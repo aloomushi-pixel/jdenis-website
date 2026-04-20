@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
-import { MOCK_ORDERS, Order, OrderStatus } from '../../lib/mockData';
+import { MOCK_ORDERS, type Order, type OrderStatus } from '../../lib/mockData';
 import { Truck, Package, CheckCircle, Clock } from 'lucide-react';
 
 const COLUMNS: { id: OrderStatus; title: string; icon: React.ReactNode; color: string }[] = [

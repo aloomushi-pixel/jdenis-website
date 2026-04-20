@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import CouponCard from './CouponCard';
 import { useCartPromotion } from '../hooks/useCartPromotion';
 import { useCartStore } from '../store/cartStore';
+import { useAuthStore } from '../store/authStore';
 import CartPromoBanner from './CartPromoBanner';
 import { validateCoupon } from '../lib/supabase';
 
@@ -11,6 +12,7 @@ import { validateCoupon } from '../lib/supabase';
 
 export default function CartDrawer() {
     const { isOpen, closeCart, items, removeItem, updateQuantity, appliedCoupon, applyCoupon, removeCoupon } = useCartStore();
+    const userRole = useAuthStore((s) => s.user?.role);
     const promotion = useCartPromotion();
 
     const [couponInput, setCouponInput] = useState('');
@@ -111,7 +113,20 @@ export default function CartDrawer() {
                                             />
                                             <div className="flex-1 flex flex-col justify-between">
                                                 <h3 className="font-medium text-mauve">{item.name}</h3>
-                                                <p className="text-rose-deep font-semibold">${item.price}</p>
+                                                {(() => {
+                                                    const isWholesale = userRole === 'DISTRIBUIDOR' && item.quantity >= 12;
+                                                    const activePrice = isWholesale && item.distributorPrice ? item.distributorPrice : item.price;
+                                                    return (
+                                                        <div className="flex items-center gap-2">
+                                                            <p className="text-rose-deep font-semibold">${activePrice}</p>
+                                                            {isWholesale && (
+                                                                <span className="text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-medium uppercase tracking-wide">
+                                                                    Mayoreo
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    );
+                                                })()}
                                                 <div className="flex items-center gap-3 mt-2">
                                                     <button
                                                         onClick={() => updateQuantity(item.id, item.quantity - 1)}
