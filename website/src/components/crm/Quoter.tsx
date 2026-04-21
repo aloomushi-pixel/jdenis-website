@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
-import { jsPDF } from 'jspdf';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import { MOCK_PRODUCTS, type Product } from '../../lib/mockData';
 import { cn } from '../../lib/utils';
 import { Search, Plus, ShoppingCart, MessageCircle, AlertCircle, FileText } from 'lucide-react';
@@ -65,34 +66,114 @@ export default function Quoter() {
     }
   };
 
-  const exportPDF = () => {
-    const doc = new jsPDF();
-    doc.setFontSize(22);
-    doc.text('Cotización J. Denis', 20, 20);
-    doc.setFontSize(14);
-    doc.text(`Fecha: ${new Date().toLocaleDateString()}`, 20, 30);
-    
-    let y = 45;
-    doc.setFontSize(12);
-    doc.text('SKU', 20, y);
-    doc.text('Producto', 50, y);
-    doc.text('Cant', 140, y);
-    doc.text('Total', 160, y);
-    
-    y += 10;
-    cart.forEach(item => {
-      doc.text(item.sku, 20, y);
-      doc.text(item.name.substring(0, 30), 50, y);
-      doc.text(item.cartQuantity.toString(), 145, y);
-      doc.text('$' + (getPrice(item) * item.cartQuantity).toString(), 160, y);
-      y += 10;
-    });
+  const getBase64ImageFromUrl = async (imageUrl: string): Promise<string | null> => {
+    try {
+      const res = await fetch(imageUrl);
+      const blob = await res.blob();
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    } catch (e) {
+      return null;
+    }
+  };
 
-    y += 10;
-    doc.setFontSize(14);
-    doc.text(`Total: $${total.toLocaleString('es-MX')}`, 150, y);
-    
-    doc.save('Cotizacion_JDenis.pdf');
+  const exportPDF = async () => {
+    try {
+      showToast('Generando PDF...');
+      const doc = new jsPDF();
+      
+      // Load J. Denis Logo
+      const logoBase64 = await getBase64ImageFromUrl('/logo-new.jpeg');
+      if (logoBase64) {
+        doc.addImage(logoBase64, 'JPEG', 20, 15, 30, 30);
+      }
+      
+      // Document Header
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(24);
+      doc.setTextColor(10, 25, 47); // Navy
+      doc.text('Cotización Ejecutiva', 55, 25);
+      
+      doc.setFontSize(12);
+      doc.setTextColor(100, 100, 100);
+      doc.text('Distribuidora J. Denis', 55, 33);
+      doc.text(`Fecha: ${new Date().toLocaleDateString()}`, 55, 39);
+      doc.text(`ID Cotización: JD-${Math.floor(1000 + Math.random() * 9000)}`, 55, 45);
+
+      // Pre-load all product images to base64
+      const cartWithImages = await Promise.all(cart.map(async (item) => {
+        const imgSrc = item.image ? item.image : '/logo-new.jpeg'; // fallback to logo
+        const base64 = await getBase64ImageFromUrl(imgSrc);
+        return { ...item, base64 };
+      }));
+      
+      // AutoTable
+      autoTable(doc, {
+        startY: 55,
+        head: [['Img', 'SKU', 'Producto', 'Cant', 'Precio U.', 'Total']],
+        body: cartWithImages.map(item => [
+          '', // image placeholder
+          item.sku,
+          item.name,
+          item.cartQuantity,
+          `$${getPrice(item).toFixed(2)}`,
+          `$${(getPrice(item) * item.cartQuantity).toFixed(2)}`
+        ]),
+        headStyles: {
+          fillColor: [10, 25, 47], // Navy
+          textColor: [255, 255, 255],
+          fontStyle: 'bold'
+        },
+        alternateRowStyles: {
+          fillColor: [253, 251, 247] // Cream
+        },
+        bodyStyles: {
+          valign: 'middle'
+        },
+        columnStyles: {
+          0: { cellWidth: 20, minCellHeight: 20 }, // Img column
+          1: { cellWidth: 30 }, // SKU
+          2: { cellWidth: 'auto' }, // Producto
+          3: { cellWidth: 20, halign: 'center' }, // Cant
+          4: { cellWidth: 25, halign: 'right' }, // Precio
+          5: { cellWidth: 30, halign: 'right', fontStyle: 'bold' } // Total
+        },
+        didDrawCell: (data) => {
+          if (data.column.index === 0 && data.cell.section === 'body') {
+            const item = cartWithImages[data.row.index];
+            if (item.base64) {
+              const dim = data.cell.height - 4;
+              doc.addImage(item.base64, 'JPEG', data.cell.x + 2, data.cell.y + 2, dim, dim);
+            }
+          }
+        }
+      });
+
+      // Total Footer
+      // @ts-ignore
+      const finalY = doc.lastAutoTable.finalY || 60;
+      doc.setFontSize(16);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(212, 175, 55); // Gold
+      doc.text(`Total Final: $${total.toLocaleString('es-MX', { minimumFractionDigits: 2 })}`, 190, finalY + 15, { align: 'right' });
+      
+      // Footer text
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(150, 150, 150);
+      doc.text('Gracias por su preferencia.', 105, finalY + 30, { align: 'center' });
+      doc.text('jdenis.store', 105, finalY + 35, { align: 'center' });
+      
+      doc.save('Cotizacion_JDenis.pdf');
+      showToast('✅ PDF Generado Exitosamente');
+    } catch (e) {
+      console.error(e);
+      showToast('❌ Error genarando PDF');
+    }
   };
 
   return (
