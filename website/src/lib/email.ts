@@ -106,7 +106,7 @@ const BUTTON_STYLES = `
 `;
 
 /**
- * Modern J.Denis template inspired by Stitch layout.
+ * Modern J.Denis template inspired by Stitch layout - PRODUCT LAUNCH
  */
 export function getProductLaunchTemplate(title: string, headline: string, bodyText: string, imageUrl: string, buttonText: string, buttonUrl: string) {
     return `
@@ -129,6 +129,82 @@ export function getProductLaunchTemplate(title: string, headline: string, bodyTe
                 <p style="color: #6b7280; font-size: 12px; margin: 0;">
                     Recibes este correo porque te suscribiste al newsletter de J. Denis.<br/>
                     © ${new Date().getFullYear()} J. Denis. Todos los derechos reservados.
+                </p>
+            </div>
+        </div>
+    </div>
+    `;
+}
+
+/**
+ * Modern J.Denis template inspired by Stitch layout - PROMO/SALE
+ */
+export function getPromoTemplate(title: string, headline: string, bodyText: string, imageUrl: string, buttonText: string, buttonUrl: string) {
+    return `
+    <div style="${BASE_STYLES} padding: 40px 20px; background-color: #000F21;">
+        <div style="${CONTAINER_STYLES} box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+            <div style="background-color: #18898F; padding: 24px; text-align: center;">
+                <h1 style="color: white; margin: 0; font-size: 28px; font-weight: bold; letter-spacing: 2px;">OFERTA EXCLUSIVA</h1>
+            </div>
+            
+            ${imageUrl ? `<img src="${imageUrl}" alt="${title}" style="width: 100%; height: auto; display: block; border-bottom: 4px solid #000F21;" />` : ''}
+            
+            <div style="padding: 40px 32px; text-align: center; background-color: white;">
+                <span style="display: inline-block; padding: 4px 12px; background-color: #fce7f3; color: #be185d; border-radius: 999px; font-weight: bold; font-size: 14px; margin-bottom: 16px; text-transform: uppercase;">${title}</span>
+                <h2 style="color: #000F21; font-size: 28px; margin-top: 0; margin-bottom: 16px; font-weight: 800;">${headline}</h2>
+                <p style="color: #374151; font-size: 18px; margin-bottom: 32px; white-space: pre-wrap; line-height: 1.8;">${bodyText}</p>
+                
+                ${buttonText && buttonUrl ? `<a href="${buttonUrl}" style="${BUTTON_STYLES} font-size: 18px; padding: 16px 32px; background-color: #000F21;">${buttonText}</a>` : ''}
+            </div>
+            
+            <div style="background-color: #111827; padding: 24px; text-align: center;">
+                <img src="https://jdenis.store/logo-blanco.png" alt="J. Denis" style="height: 30px; margin-bottom: 16px; opacity: 0.5;" onerror="this.style.display='none'"/>
+                <p style="color: #6b7280; font-size: 12px; margin: 0;">
+                    Recibes esta promoción porque eres un cliente VIP de J. Denis.<br/>
+                    © ${new Date().getFullYear()} J. Denis. Todos los derechos reservados.
+                </p>
+            </div>
+        </div>
+    </div>
+    `;
+}
+
+/**
+ * Modern J.Denis template inspired by Stitch layout - NEWSLETTER/INFORMATIVE
+ */
+export function getNewsletterTemplate(title: string, headline: string, bodyText: string, imageUrl: string, buttonText: string, buttonUrl: string) {
+    return `
+    <div style="${BASE_STYLES} padding: 40px 20px;">
+        <div style="${CONTAINER_STYLES} border-top: 6px solid #18898F;">
+            <div style="padding: 32px 32px 16px 32px; text-align: left;">
+                <h1 style="color: #000F21; margin: 0; font-size: 20px; font-weight: 800; letter-spacing: 1px;">J. DENIS <span style="color: #18898F; font-weight: 400;">/ BOLETÍN ESPACIAL</span></h1>
+            </div>
+            
+            <div style="padding: 0 32px 24px 32px; text-align: left;">
+                <h2 style="color: #111827; font-size: 32px; margin-top: 16px; margin-bottom: 8px; line-height: 1.2;">${headline}</h2>
+                <p style="color: #6b7280; font-size: 14px; text-transform: uppercase; font-weight: 600; letter-spacing: 1px;">${title}</p>
+            </div>
+
+            ${imageUrl ? `
+            <div style="padding: 0 32px;">
+                <img src="${imageUrl}" alt="${title}" style="width: 100%; height: auto; border-radius: 12px; display: block;" />
+            </div>
+            ` : ''}
+            
+            <div style="padding: 32px; text-align: left;">
+                <div style="color: #4b5563; font-size: 16px; margin-bottom: 32px; white-space: pre-wrap; line-height: 1.8;">${bodyText}</div>
+                
+                ${buttonText && buttonUrl ? `
+                <div style="text-align: center;">
+                    <a href="${buttonUrl}" style="${BUTTON_STYLES} background-color: white; color: #18898F; border: 2px solid #18898F; padding: 14px 40px;">${buttonText}</a>
+                </div>
+                ` : ''}
+            </div>
+            
+            <div style="background-color: #f3f4f6; padding: 32px; text-align: center; border-top: 1px solid #e5e7eb;">
+                <p style="color: #9ca3af; font-size: 13px; margin: 0;">
+                    Enviado con ♥ por el equipo de J. Denis.<br/>
+                    Si ya no deseas recibir estos correos, puedes gestionar tus preferencias en tu cuenta.
                 </p>
             </div>
         </div>

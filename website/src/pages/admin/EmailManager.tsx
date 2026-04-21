@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { dispatchEmailCampaign, getProductLaunchTemplate, getCustomerSupportTemplate, fetchCampaignHistory, type EmailCampaign } from '../../lib/email';
+import { dispatchEmailCampaign, getProductLaunchTemplate, getPromoTemplate, getNewsletterTemplate, getCustomerSupportTemplate, fetchCampaignHistory, type EmailCampaign } from '../../lib/email';
 import { getUsers, type ERPUser } from '../../lib/erp';
 
 export default function EmailManager() {
@@ -10,6 +10,7 @@ export default function EmailManager() {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     // Newsletter State
+    const [nlTemplate, setNlTemplate] = useState<'product_launch' | 'promo_sale' | 'newsletter'>('product_launch');
     const [nlSubject, setNlSubject] = useState('¡Nuevo Lanzamiento en J. Denis!');
     const [nlTitle, setNlTitle] = useState('Kit Lifting Plus');
     const [nlHeadline, setNlHeadline] = useState('Eleva tus cejas y pestañas de manera profesional.');
@@ -42,7 +43,11 @@ export default function EmailManager() {
         setErrorMessage(null);
         setSuccessMessage(null);
         try {
-            const html = getProductLaunchTemplate(nlTitle, nlHeadline, nlBody, nlImageUrl, nlButtonText, nlButtonUrl);
+            let html = '';
+            if (nlTemplate === 'product_launch') html = getProductLaunchTemplate(nlTitle, nlHeadline, nlBody, nlImageUrl, nlButtonText, nlButtonUrl);
+            else if (nlTemplate === 'promo_sale') html = getPromoTemplate(nlTitle, nlHeadline, nlBody, nlImageUrl, nlButtonText, nlButtonUrl);
+            else html = getNewsletterTemplate(nlTitle, nlHeadline, nlBody, nlImageUrl, nlButtonText, nlButtonUrl);
+            
             const res = await dispatchEmailCampaign(nlSubject, html, 'all_subscribers');
             setSuccessMessage(res.message || 'Campaña despachada masivamente de forma exitosa.');
         } catch (err: any) {
@@ -121,9 +126,19 @@ export default function EmailManager() {
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                             <h2 className="text-lg font-semibold text-gray-800 mb-4">Configurar Newsletter</h2>
                             <div className="space-y-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Asunto del Correo</label>
-                                    <input type="text" value={nlSubject} onChange={e => setNlSubject(e.target.value)} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 outline-none transition-all text-sm" />
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Plantilla de Diseño (Stitch)</label>
+                                        <select value={nlTemplate} onChange={e => setNlTemplate(e.target.value as any)} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 outline-none transition-all text-sm bg-gray-50">
+                                            <option value="product_launch">Template 1: Lanzamiento Producto</option>
+                                            <option value="promo_sale">Template 2: Oferta (Dark Mode)</option>
+                                            <option value="newsletter">Template 3: Boletín Informativo</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Asunto del Correo</label>
+                                        <input type="text" value={nlSubject} onChange={e => setNlSubject(e.target.value)} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 outline-none transition-all text-sm" />
+                                    </div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
@@ -272,7 +287,9 @@ export default function EmailManager() {
                                     <div
                                         dangerouslySetInnerHTML={{
                                             __html: activeTab === 'newsletter'
-                                                ? getProductLaunchTemplate(nlTitle, nlHeadline, nlBody, nlImageUrl, nlButtonText, nlButtonUrl)
+                                                ? (nlTemplate === 'product_launch' ? getProductLaunchTemplate(nlTitle, nlHeadline, nlBody, nlImageUrl, nlButtonText, nlButtonUrl) :
+                                                   nlTemplate === 'promo_sale' ? getPromoTemplate(nlTitle, nlHeadline, nlBody, nlImageUrl, nlButtonText, nlButtonUrl) :
+                                                   getNewsletterTemplate(nlTitle, nlHeadline, nlBody, nlImageUrl, nlButtonText, nlButtonUrl))
                                                 : getCustomerSupportTemplate(contactName, contactBody)
                                         }}
                                         className="w-full transform origin-top"
