@@ -76,9 +76,7 @@ export default function SalesOrders() {
                 <div className="mt-4">
                     <Quoter />
                 </div>
-            ) : (
-
-            {loading ? (
+            ) : loading ? (
                 <div className="flex justify-center py-12"><div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-indigo-600"></div></div>
             ) : (
                 <div className="space-y-4">
@@ -158,7 +156,6 @@ export default function SalesOrders() {
                         </div>
                     </motion.div>
                 </div>
-            )}
             )}
         </div>
     );
