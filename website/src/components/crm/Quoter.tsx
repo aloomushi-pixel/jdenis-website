@@ -2,7 +2,6 @@ import { useState, useMemo } from 'react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { MOCK_PRODUCTS, type Product } from '../../lib/mockData';
-import { cn } from '../../lib/utils';
 import { Search, Plus, ShoppingCart, MessageCircle, AlertCircle, FileText } from 'lucide-react';
 
 interface CartItem extends Product {
