@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { useEffect, useState, useCallback } from 'react';
 import { createSalesOrder, getSalesOrders, getUsers, updateSalesOrderStatus, type ERPUser, type SalesOrder } from '../../lib/erp';
 import { useAuthStore } from '../../store/authStore';
+import Quoter from '../../components/crm/Quoter';
 
 const STATUS_MAP: Record<string, { label: string; color: string }> = {
     PENDIENTE: { label: 'Pendiente', color: 'bg-yellow-100 text-yellow-700' },
@@ -20,6 +21,7 @@ const FLOW: Record<string, string> = {
 
 export default function SalesOrders() {
     const user = useAuthStore(s => s.user);
+    const [activeTab, setActiveTab] = useState<'quoter' | 'orders'>('quoter');
     const [orders, setOrders] = useState<SalesOrder[]>([]);
     const [clients, setClients] = useState<ERPUser[]>([]);
     const [loading, setLoading] = useState(true);
@@ -51,15 +53,30 @@ export default function SalesOrders() {
     return (
         <div>
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-                <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2"><svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> Pedidos de Venta</h1>
-                <div className="flex gap-3">
-                    <select value={filter} onChange={e => setFilter(e.target.value)} className="px-4 py-2 border border-gray-200 rounded-lg text-sm bg-white">
-                        <option value="">Todos</option>
-                        {Object.entries(STATUS_MAP).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
-                    </select>
-                    <button onClick={() => setShowCreate(true)} className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700">+ Nuevo Pedido</button>
+                <div className="flex gap-6 border-b border-gray-200">
+                    <button onClick={() => setActiveTab('quoter')} className={`pb-2 px-1 text-lg font-serif font-medium flex items-center gap-2 ${activeTab === 'quoter' ? 'border-b-2 border-indigo-600 text-indigo-600' : 'text-gray-500 hover:text-gray-700'}`}>
+                        <span className="text-xl">🧮</span> Cotizador B2B
+                    </button>
+                    <button onClick={() => setActiveTab('orders')} className={`pb-2 px-1 text-lg font-serif font-medium flex items-center gap-2 ${activeTab === 'orders' ? 'border-b-2 border-indigo-600 text-indigo-600' : 'text-gray-500 hover:text-gray-700'}`}>
+                        <span className="text-xl">📋</span> Pedidos B2B
+                    </button>
                 </div>
+                {activeTab === 'orders' && (
+                    <div className="flex gap-3">
+                        <select value={filter} onChange={e => setFilter(e.target.value)} className="px-4 py-2 border border-gray-200 rounded-lg text-sm bg-white">
+                            <option value="">Todos</option>
+                            {Object.entries(STATUS_MAP).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+                        </select>
+                        <button onClick={() => setShowCreate(true)} className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700">+ Nuevo Pedido</button>
+                    </div>
+                )}
             </div>
+
+            {activeTab === 'quoter' ? (
+                <div className="mt-4">
+                    <Quoter />
+                </div>
+            ) : (
 
             {loading ? (
                 <div className="flex justify-center py-12"><div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-indigo-600"></div></div>
@@ -141,6 +158,7 @@ export default function SalesOrders() {
                         </div>
                     </motion.div>
                 </div>
+            )}
             )}
         </div>
     );

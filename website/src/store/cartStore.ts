@@ -2,6 +2,15 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Coupon } from '../lib/supabase';
 import { useAuthStore } from './authStore';
+import { upsertAbandonedCart } from '../lib/supabase';
+
+const syncCartToSupabase = (items: CartItem[]) => {
+    const user = useAuthStore.getState().user;
+    if (user?.email) {
+        // Debounce or fire and forget
+        upsertAbandonedCart(user.email, user.name, items).catch(console.error);
+    }
+};
 
 export interface Product {
     id: string;
@@ -57,22 +66,26 @@ export const useCartStore = create<CartState>()(
                 set((state) => {
                     const existingItem = state.items.find(item => item.id === product.id);
                     if (existingItem) {
-                        return {
-                            items: state.items.map(item =>
-                                item.id === product.id
-                                    ? { ...item, quantity: item.quantity + 1 }
-                                    : item
-                            ),
-                        };
+                        const newItems = state.items.map(item =>
+                            item.id === product.id
+                                ? { ...item, quantity: item.quantity + 1 }
+                                : item
+                        );
+                        syncCartToSupabase(newItems);
+                        return { items: newItems };
                     }
-                    return { items: [...state.items, { ...product, quantity: 1 }] };
+                    const newItems = [...state.items, { ...product, quantity: 1 }];
+                    syncCartToSupabase(newItems);
+                    return { items: newItems };
                 });
             },
 
             removeItem: (productId: string) => {
-                set((state) => ({
-                    items: state.items.filter(item => item.id !== productId),
-                }));
+                set((state) => {
+                    const newItems = state.items.filter(item => item.id !== productId);
+                    syncCartToSupabase(newItems);
+                    return { items: newItems };
+                });
             },
 
             updateQuantity: (productId: string, quantity: number) => {
@@ -80,14 +93,19 @@ export const useCartStore = create<CartState>()(
                     get().removeItem(productId);
                     return;
                 }
-                set((state) => ({
-                    items: state.items.map(item =>
+                set((state) => {
+                    const newItems = state.items.map(item =>
                         item.id === productId ? { ...item, quantity } : item
-                    ),
-                }));
+                    );
+                    syncCartToSupabase(newItems);
+                    return { items: newItems };
+                });
             },
 
-            clearCart: () => set({ items: [], appliedCoupon: null }),
+            clearCart: () => {
+                syncCartToSupabase([]);
+                set({ items: [], appliedCoupon: null });
+            },
             toggleCart: () => set((state) => ({ isOpen: !state.isOpen })),
             openCart: () => set({ isOpen: true }),
             closeCart: () => set({ isOpen: false }),

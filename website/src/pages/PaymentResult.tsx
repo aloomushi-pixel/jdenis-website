@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useCartStore } from '../store/cartStore';
-import { incrementCouponUsage } from '../lib/supabase';
+import { incrementCouponUsage, markCartConverted } from '../lib/supabase';
 
 export default function PaymentResult() {
     const [searchParams] = useSearchParams();
@@ -19,6 +19,15 @@ export default function PaymentResult() {
                 hasIncremented.current = true;
                 incrementCouponUsage(appliedCoupon.id).catch(console.error);
             }
+            
+            // Mark cart as converted before clearing it, so we don't accidentally send abandoned cart emails
+            import('../store/authStore').then(({ useAuthStore }) => {
+                const user = useAuthStore.getState().user;
+                if (user?.email) {
+                    markCartConverted(user.email).catch(console.error);
+                }
+            });
+            
             clearCart();
         }
     }, [status, clearCart, appliedCoupon]);

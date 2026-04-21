@@ -238,3 +238,38 @@ export function getCustomerSupportTemplate(customerName: string, replyText: stri
     </div>
     `;
 }
+
+/**
+ * Modern J.Denis template inspired by Stitch layout - ABANDONED CART
+ */
+export function getAbandonedCartTemplate(customerName: string, checkoutUrl: string, productsHtml: string) {
+    return `
+    <div style="${BASE_STYLES} padding: 40px 20px; background-color: #fce7f3;">
+        <div style="${CONTAINER_STYLES} box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-top: 6px solid #be185d;">
+            <div style="background-color: white; padding: 32px; text-align: center;">
+                <h1 style="color: #be185d; margin: 0; font-size: 28px; font-weight: 900; letter-spacing: -0.5px;">¿Dejaste algo atrás?</h1>
+            </div>
+            
+            <div style="padding: 10px 32px; text-align: center; background-color: white;">
+                <h2 style="color: #000F21; font-size: 20px; margin-top: 0; margin-bottom: 24px; font-weight: 500;">Hola ${customerName || 'visitante'}, notamos que no terminaste tu pedido en J. Denis.</h2>
+                <p style="color: #4b5563; font-size: 16px; margin-bottom: 32px; line-height: 1.6;">
+                    Tus artículos favoritos siguen esperándote en tu carrito. Regresa antes de que se agoten las existencias.
+                </p>
+                
+                <div style="background-color: #f9fafb; padding: 16px; border-radius: 8px; margin-bottom: 32px; border: 1px dashed #d1d5db; text-align: left;">
+                    ${productsHtml || '<p style="color: #6b7280; font-style: italic; margin: 0; text-align: center;">Tus productos están guardados con seguridad.</p>'}
+                </div>
+                
+                <a href="${checkoutUrl}" style="${BUTTON_STYLES} background-color: #be185d; padding: 16px 40px; font-size: 18px; width: 100%; box-sizing: border-box; display: block;">Continuar mi compra</a>
+            </div>
+            
+            <div style="background-color: #ffffff; padding: 24px; text-align: center; border-top: 1px solid #f3f4f6;">
+                <p style="color: #9ca3af; font-size: 13px; margin: 0;">
+                    Este es un correo automático de tu cuenta en J. Denis.<br/>
+                    © ${new Date().getFullYear()} J. Denis. Todos los derechos reservados.
+                </p>
+            </div>
+        </div>
+    </div>
+    `;
+}

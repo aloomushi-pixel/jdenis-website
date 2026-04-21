@@ -1865,3 +1865,47 @@ export async function getVehicleStats() {
         maintenance: vehicles.filter((v: any) => v.status === 'MAINTENANCE').length,
     };
 }
+
+// =============================================
+// ABANDONED CARTS
+// =============================================
+
+export async function upsertAbandonedCart(
+    email: string,
+    name: string | undefined,
+    cartState: any
+): Promise<void> {
+    try {
+        const { error } = await supabase
+            .from('abandoned_carts')
+            .upsert(
+                {
+                    email,
+                    name: name || '',
+                    cart_state: cartState,
+                    status: 'active',
+                    last_updated: new Date().toISOString()
+                },
+                { onConflict: 'email' } // requires unique constraint on email
+            );
+        if (error) {
+            console.error('Error upserting abandoned cart:', error);
+        }
+    } catch (err) {
+        console.error('Failed to sync abandoned cart:', err);
+    }
+}
+
+export async function markCartConverted(email: string): Promise<void> {
+    try {
+        const { error } = await supabase
+            .from('abandoned_carts')
+            .update({ status: 'converted', last_updated: new Date().toISOString() })
+            .eq('email', email);
+        if (error) {
+            console.error('Error marking cart as converted:', error);
+        }
+    } catch (err) {
+        console.error('Failed to mark cart converted:', err);
+    }
+}
