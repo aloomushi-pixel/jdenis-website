@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { dispatchEmailCampaign, getProductLaunchTemplate, getCustomerSupportTemplate, fetchCampaignHistory, type EmailCampaign } from '../../lib/email';
 import { getUsers, type ERPUser } from '../../lib/erp';
