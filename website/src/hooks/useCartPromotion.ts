@@ -148,8 +148,8 @@ export function useCartPromotion(): CartPromotion {
 
     return useMemo(() => {
         const subtotal = items.reduce((sum, item) => {
-            const isWholesale = userRole === 'DISTRIBUIDOR' && item.quantity >= 12;
-            const activePrice = isWholesale && item.distributorPrice ? item.distributorPrice : item.price;
+            const isDistributor = userRole === 'DISTRIBUIDOR';
+            const activePrice = isDistributor && item.distributorPrice ? item.distributorPrice : item.price;
             return sum + activePrice * item.quantity;
         }, 0);
         const count = items.reduce((sum, item) => sum + item.quantity, 0);
@@ -164,7 +164,9 @@ export function useCartPromotion(): CartPromotion {
         if (config.minAmount > 0) enabledConditions.push(meetsAmount);
         if (config.minItems > 0) enabledConditions.push(meetsItems);
 
-        if (enabledConditions.length === 0) {
+        if (userRole === 'DISTRIBUIDOR') {
+            isActive = false; // Distribuidores no aplican para promociones
+        } else if (enabledConditions.length === 0) {
             isActive = false;
         } else if (config.mode === 'AND') {
             isActive = enabledConditions.every(Boolean);

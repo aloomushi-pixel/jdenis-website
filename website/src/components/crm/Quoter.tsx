@@ -24,7 +24,7 @@ export default function Quoter() {
   };
 
   const getPrice = (item: CartItem) => {
-    return item.cartQuantity >= 12 ? item.price_wholesale : item.price_public;
+    return item.price_wholesale; // Siempre retorna el precio preferencial para el cotizador
   };
 
   const addItemToCart = (product: Product, quantity = 1) => {
@@ -248,9 +248,8 @@ export default function Quoter() {
               </div>
             ) : (
               cart.map(item => {
-                const isWholesale = item.cartQuantity >= 12;
                 return (
-                  <div key={item.id} className={cn("p-3 rounded-xl border transition-all", isWholesale ? "border-amber-200 bg-amber-50" : "border-slate-100")}>
+                  <div key={item.id} className="p-3 rounded-xl border transition-all border-amber-200 bg-amber-50">
                     <div className="flex justify-between items-start mb-2">
                       <div className="pr-4">
                         <h4 className="font-semibold text-slate-800 text-sm leading-tight">{item.name}</h4>
@@ -258,7 +257,7 @@ export default function Quoter() {
                       </div>
                       <div className="text-right">
                         <p className="font-bold text-slate-800">${getPrice(item) * item.cartQuantity}</p>
-                        {isWholesale && <span className="text-[10px] bg-amber-200 text-amber-800 px-1 py-0.5 rounded font-bold uppercase tracking-wider">Precio Mayoreo</span>}
+                        <span className="text-[10px] bg-amber-200 text-amber-800 px-1 py-0.5 rounded font-bold uppercase tracking-wider">Precio Distribuidor</span>
                       </div>
                     </div>
                     <div className="flex justify-between items-center mt-2">

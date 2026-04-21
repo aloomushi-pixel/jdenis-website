@@ -114,14 +114,14 @@ export default function CartDrawer() {
                                             <div className="flex-1 flex flex-col justify-between">
                                                 <h3 className="font-medium text-mauve">{item.name}</h3>
                                                 {(() => {
-                                                    const isWholesale = userRole === 'DISTRIBUIDOR' && item.quantity >= 12;
-                                                    const activePrice = isWholesale && item.distributorPrice ? item.distributorPrice : item.price;
+                                                    const isDistributor = userRole === 'DISTRIBUIDOR';
+                                                    const activePrice = isDistributor && item.distributorPrice ? item.distributorPrice : item.price;
                                                     return (
                                                         <div className="flex items-center gap-2">
                                                             <p className="text-rose-deep font-semibold">${activePrice}</p>
-                                                            {isWholesale && (
+                                                            {isDistributor && (
                                                                 <span className="text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-medium uppercase tracking-wide">
-                                                                    Mayoreo
+                                                                    Precio Distribuidor
                                                                 </span>
                                                             )}
                                                         </div>
@@ -160,7 +160,7 @@ export default function CartDrawer() {
                         </div>
 
                         {/* Promotion Banner */}
-                        {items.length > 0 && (
+                        {items.length > 0 && userRole !== 'DISTRIBUIDOR' && (
                             <div className="px-6">
                                 <CartPromoBanner promotion={promotion} />
                             </div>
@@ -171,56 +171,58 @@ export default function CartDrawer() {
                             <div className="p-6 border-t border-rose/20 bg-blush/50 rounded-bl-4xl">
 
                                 {/* ── Cupón section ───────────────────────────────── */}
-                                <div className="mb-4">
-                                    {isCouponValid && appliedCoupon ? (
-                                        /* Applied coupon card */
-                                        <CouponCard
-                                            code={appliedCoupon.code}
-                                            discountType={appliedCoupon.discount_type}
-                                            discountValue={appliedCoupon.discount_value}
-                                            visualDesign={appliedCoupon.visual_design}
-                                            onRemove={handleRemoveCoupon}
-                                        />
-                                    ) : (
-                                        /* Coupon input */
-                                        <div className="coupon-input-wrap">
-                                            {appliedCoupon && !isCouponValid && (
-                                                <p className="coupon-error text-sm mb-2" role="alert">
-                                                    ⚠ El cupón {appliedCoupon.code} requiere un mínimo de compra de ${appliedCoupon.min_purchase.toLocaleString('es-MX')} MXN.
-                                                </p>
-                                            )}
-                                            <p className="coupon-input-label">¿Tienes un código de descuento?</p>
-                                            <div className="coupon-input-row">
-                                                <input
-                                                    type="text"
-                                                    className="coupon-input"
-                                                    placeholder="Ej. INVIERNO20"
-                                                    value={couponInput}
-                                                    onChange={(e) => {
-                                                        setCouponInput(e.target.value.toUpperCase());
-                                                        if (couponError) setCouponError(null);
-                                                    }}
-                                                    onKeyDown={handleKeyDown}
-                                                    maxLength={30}
-                                                    disabled={couponLoading}
-                                                    aria-label="Código de descuento"
-                                                />
-                                                <button
-                                                    className="coupon-apply-btn"
-                                                    onClick={handleApplyCoupon}
-                                                    disabled={!couponInput.trim() || couponLoading}
-                                                >
-                                                    {couponLoading ? '…' : 'Aplicar'}
-                                                </button>
+                                {userRole !== 'DISTRIBUIDOR' && (
+                                    <div className="mb-4">
+                                        {isCouponValid && appliedCoupon ? (
+                                            /* Applied coupon card */
+                                            <CouponCard
+                                                code={appliedCoupon.code}
+                                                discountType={appliedCoupon.discount_type}
+                                                discountValue={appliedCoupon.discount_value}
+                                                visualDesign={appliedCoupon.visual_design}
+                                                onRemove={handleRemoveCoupon}
+                                            />
+                                        ) : (
+                                            /* Coupon input */
+                                            <div className="coupon-input-wrap">
+                                                {appliedCoupon && !isCouponValid && (
+                                                    <p className="coupon-error text-sm mb-2" role="alert">
+                                                        ⚠ El cupón {appliedCoupon.code} requiere un mínimo de compra de ${appliedCoupon.min_purchase.toLocaleString('es-MX')} MXN.
+                                                    </p>
+                                                )}
+                                                <p className="coupon-input-label">¿Tienes un código de descuento?</p>
+                                                <div className="coupon-input-row">
+                                                    <input
+                                                        type="text"
+                                                        className="coupon-input"
+                                                        placeholder="Ej. INVIERNO20"
+                                                        value={couponInput}
+                                                        onChange={(e) => {
+                                                            setCouponInput(e.target.value.toUpperCase());
+                                                            if (couponError) setCouponError(null);
+                                                        }}
+                                                        onKeyDown={handleKeyDown}
+                                                        maxLength={30}
+                                                        disabled={couponLoading}
+                                                        aria-label="Código de descuento"
+                                                    />
+                                                    <button
+                                                        className="coupon-apply-btn"
+                                                        onClick={handleApplyCoupon}
+                                                        disabled={!couponInput.trim() || couponLoading}
+                                                    >
+                                                        {couponLoading ? '…' : 'Aplicar'}
+                                                    </button>
+                                                </div>
+                                                {couponError && (
+                                                    <p className="coupon-error" role="alert">
+                                                        ⚠ {couponError}
+                                                    </p>
+                                                )}
                                             </div>
-                                            {couponError && (
-                                                <p className="coupon-error" role="alert">
-                                                    ⚠ {couponError}
-                                                </p>
-                                            )}
-                                        </div>
-                                    )}
-                                </div>
+                                        )}
+                                    </div>
+                                )}
                                 {/* ── End cupón section ─────────────────────────── */}
 
                                 <div className="space-y-2 mb-4">
@@ -231,7 +233,7 @@ export default function CartDrawer() {
                                     </div>
 
                                     {/* Descuento promo (si aplica) */}
-                                    {promotion.discountAmount > 0 && (
+                                    {userRole !== 'DISTRIBUIDOR' && promotion.discountAmount > 0 && (
                                         <div className="flex justify-between text-sm">
                                             <span className="text-emerald-600 font-medium">Descuento ({promotion.discountPercent}%)</span>
                                             <span className="text-emerald-600 font-medium">-${promotion.discountAmount.toLocaleString()} MXN</span>
