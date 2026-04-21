@@ -29,6 +29,7 @@ import WarehouseQueue from './pages/admin/WarehouseQueue';
 import DistributorRequests from './pages/admin/DistributorRequests';
 import FacturacionAdmin from './pages/admin/Facturacion';
 import CouponManager from './pages/admin/CouponManager';
+import EmailManager from './pages/admin/EmailManager';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
 import NewsPost from './pages/NewsPost';
@@ -110,6 +111,7 @@ function App() {
 
               <Route path="orders" element={<AdminOrders />} />
               <Route path="users" element={<UserManager />} />
+              <Route path="emails" element={<EmailManager />} />
               <Route path="resources" element={<ResourceManager />} />
               <Route path="production" element={<ProductionOrders />} />
               <Route path="purchases" element={<PurchaseOrders />} />
