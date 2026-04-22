@@ -162,6 +162,32 @@ export default function ProductEditor() {
         if (e.key === 'Escape') cancelEdit();
     };
 
+    // Save all pending bulk edits to Supabase
+    const handleSaveAllEdits = async () => {
+        const ids = Object.keys(edits);
+        if (ids.length === 0) return;
+
+        let successCount = 0;
+        let failCount = 0;
+
+        showNotification('info', `⏳ Guardando ${ids.length} productos en Supabase...`);
+
+        for (const id of ids) {
+            const patch = edits[id];
+            const ok = await updateProduct(id, patch);
+            if (ok) successCount++;
+            else failCount++;
+        }
+
+        if (failCount === 0) {
+            showNotification('success', `✅ Todos los cambios (${successCount}) han sido guardados en Supabase.`);
+            setEdits({});
+            setHasChanges(false);
+        } else {
+            showNotification('error', `⚠️ ${successCount} guardados, pero hubo error en ${failCount}.`);
+        }
+    };
+
     // ═══════════════════════════════════════════
     // FULL CRUD HANDLERS
     // ═══════════════════════════════════════════
@@ -600,12 +626,22 @@ export default function ProductEditor() {
 
                         {/* Reset edits */}
                         {hasChanges && (
-                            <button
-                                onClick={() => { setEdits({}); setHasChanges(false); showNotification('info', '🔄 Ediciones descartadas'); }}
-                                className="flex items-center gap-2 px-4 py-2.5 bg-red-100 text-red-700 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors"
-                            >
-                                ↺ Descartar
-                            </button>
+                            <>
+                                <button
+                                    onClick={() => { setEdits({}); setHasChanges(false); showNotification('info', '🔄 Ediciones descartadas'); }}
+                                    className="flex items-center gap-2 px-4 py-2.5 bg-red-100 text-red-700 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors"
+                                >
+                                    ↺ Descartar
+                                </button>
+                                <button
+                                    onClick={handleSaveAllEdits}
+                                    disabled={supabaseLoading}
+                                    className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
+                                    Guardar Cambios en Supabase
+                                </button>
+                            </>
                         )}
                     </div>
                 )}
