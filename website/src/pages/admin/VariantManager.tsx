@@ -28,6 +28,7 @@ export default function VariantManager({
 
     // Form state for adding variant
     const [selectedProduct, setSelectedProduct] = useState('');
+    const [productSearch, setProductSearch] = useState('');
     const [variantAttributes, setVariantAttributes] = useState<Record<string, string>>({});
 
     // Feedback state
@@ -71,6 +72,7 @@ export default function VariantManager({
             await addVariant(groupId, selectedProduct, variantAttributes);
             setAddingVariantTo(null);
             setSelectedProduct('');
+            setProductSearch('');
             setVariantAttributes({});
             showToast('success', '✅ Variante agregada exitosamente');
         } catch (err: unknown) {
@@ -245,7 +247,15 @@ export default function VariantManager({
                                     <div className="bg-indigo-50 p-4 rounded-lg">
                                         <h5 className="font-bold text-sm text-indigo-800 mb-3">Agregar Nueva Variante</h5>
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
-                                            <div className="col-span-1 md:col-span-3">
+                                            <div className="col-span-1 md:col-span-3 space-y-2">
+                                                <input
+                                                    type="text"
+                                                    placeholder="🔍 Buscar producto por nombre o ID..."
+                                                    value={productSearch}
+                                                    onChange={(e) => setProductSearch(e.target.value)}
+                                                    className="w-full px-3 py-2 border border-indigo-200 rounded-lg text-sm"
+                                                    disabled={saving}
+                                                />
                                                 <select
                                                     value={selectedProduct}
                                                     onChange={(e) => setSelectedProduct(e.target.value)}
@@ -253,7 +263,9 @@ export default function VariantManager({
                                                     disabled={saving}
                                                 >
                                                     <option value="">Seleccionar Producto...</option>
-                                                    {products.map(p => (
+                                                    {products
+                                                        .filter(p => p.name.toLowerCase().includes(productSearch.toLowerCase()) || p.id.toLowerCase().includes(productSearch.toLowerCase()))
+                                                        .map(p => (
                                                         <option key={p.id} value={p.id}>{p.name} ({p.id})</option>
                                                     ))}
                                                 </select>
