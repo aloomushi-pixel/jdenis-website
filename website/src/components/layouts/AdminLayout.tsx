@@ -71,7 +71,16 @@ export default function AdminLayout() {
 
     const isSuperAdminEmail = user?.email === 'denis.elizalde@gmail.com';
     const visibleMenu = menuItems.filter(item => {
-        if (isSuperAdminEmail) return true; // Denis sees EVERYTHING explicitly
+        if (isSuperAdminEmail) {
+            const hiddenForDenis = [
+                '/admin/production',
+                '/admin/purchases',
+                '/admin/packaging',
+                '/admin/warehouse-queue',
+                '/admin/transport'
+            ];
+            return !hiddenForDenis.includes(item.path);
+        }
         return item.roles.includes(userRole);
     });
 
