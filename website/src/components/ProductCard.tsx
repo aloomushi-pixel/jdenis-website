@@ -55,8 +55,7 @@ export default function ProductCard({ product, index = 0, variantCount = 0 }: Pr
                         className="w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
                     />
 
-                    {/* Overlay on hover (Desktop only) */}
-                    <div className="hidden lg:block absolute inset-0 bg-forest/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    {/* Image Hover Zoom (Overlay removed per user request) */}
 
                     {/* Quick Add Button - Always visible Mobile, Hover Desktop */}
                     <button
@@ -127,7 +126,7 @@ export default function ProductCard({ product, index = 0, variantCount = 0 }: Pr
                         <span className="text-[10px] sm:text-xs text-gold uppercase tracking-[0.2em] mb-2 block font-bold">
                             {product.category}
                         </span>
-                        <h3 className="font-serif text-base sm:text-lg text-forest font-bold leading-tight line-clamp-2 transition-colors group-hover:text-gold mb-3">
+                        <h3 className="font-serif text-base sm:text-lg text-forest font-bold leading-tight line-clamp-2 transition-colors mb-3">
                             {product.name}
                         </h3>
                     </div>
