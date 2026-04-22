@@ -1,16 +1,16 @@
 import { useState, useMemo, useEffect } from 'react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { MOCK_PRODUCTS, type Product } from '../../lib/mockData';
+import { useProducts, type DisplayProduct } from '../../hooks/useProducts';
 import { Search, Plus, ShoppingCart, AlertCircle, FileText, Send, Save, User } from 'lucide-react';
 import { getUsers, createQuotation, type ERPUser } from '../../lib/erp';
 
-
-interface CartItem extends Product {
+interface CartItem extends DisplayProduct {
   cartQuantity: number;
 }
 
 export default function Quoter() {
+  const { products: dbProducts, loading: loadingProducts } = useProducts();
   const [searchTerm, setSearchTerm] = useState('');
   const [cart, setCart] = useState<CartItem[]>([]);
   const [toast, setToast] = useState<string | null>(null);
@@ -33,8 +33,9 @@ export default function Quoter() {
   }, []);
 
   const filteredProducts = useMemo(() => {
-    return MOCK_PRODUCTS.filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase()) || p.sku.toLowerCase().includes(searchTerm.toLowerCase()));
-  }, [searchTerm]);
+    const distribProducts = dbProducts.filter(p => p.distributorPrice != null && p.distributorPrice > 0);
+    return distribProducts.filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase()) || p.id.toLowerCase().includes(searchTerm.toLowerCase()));
+  }, [searchTerm, dbProducts]);
 
   const showToast = (msg: string) => {
     setToast(msg);
@@ -42,10 +43,10 @@ export default function Quoter() {
   };
 
   const getPrice = (item: CartItem) => {
-    return item.price_wholesale; // Siempre retorna el precio preferencial para el cotizador
+    return item.distributorPrice || item.price; // Siempre retorna el precio preferencial para el cotizador
   };
 
-  const addItemToCart = (product: Product, quantity = 1) => {
+  const addItemToCart = (product: DisplayProduct, quantity = 1) => {
     setCart(prev => {
       const existing = prev.find(p => p.id === product.id);
       if (existing) {
@@ -73,14 +74,19 @@ export default function Quoter() {
   }, [cart]);
 
   const addKit = () => {
-    const p1 = MOCK_PRODUCTS.find(p => p.sku === 'JD-LASH-C1');
-    const p2 = MOCK_PRODUCTS.find(p => p.sku === 'JD-ADH-01');
-    const p3 = MOCK_PRODUCTS.find(p => p.sku === 'JD-ACC-01');
-    if (p1 && p2 && p3) {
-      addItemToCart(p1, 5);
-      addItemToCart(p2, 2);
-      addItemToCart(p3, 2);
+    const p1 = dbProducts.find(p => p.category.toLowerCase().includes('lash lifting') || p.name.toLowerCase().includes('kit'));
+    const p2 = dbProducts.find(p => p.category.toLowerCase().includes('adhesivos') || p.name.toLowerCase().includes('adhesivo'));
+    const p3 = dbProducts.find(p => p.category.toLowerCase().includes('accesorios') || p.name.toLowerCase().includes('microbrush'));
+    
+    let added = false;
+    if (p1) { addItemToCart(p1, 5); added = true; }
+    if (p2) { addItemToCart(p2, 2); added = true; }
+    if (p3) { addItemToCart(p3, 2); added = true; }
+    
+    if (added) {
       showToast('Kit Lash Premium Agregado Exitosamente');
+    } else {
+      showToast('No se encontraron productos para el kit');
     }
   };
 
@@ -135,7 +141,7 @@ export default function Quoter() {
         head: [['Img', 'SKU', 'Producto', 'Cant', 'Precio U.', 'Total']],
         body: cartWithImages.map(item => [
           '', // image placeholder
-          item.sku,
+          item.id,
           item.name,
           item.cartQuantity,
           `$${getPrice(item).toFixed(2)}`,
@@ -271,7 +277,7 @@ export default function Quoter() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
             <input 
               type="text" 
-              placeholder="Buscar SKU o nombre de producto..." 
+              placeholder="Buscar ID o nombre de producto..." 
               className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition-all"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -279,18 +285,20 @@ export default function Quoter() {
           </div>
           
           <div className="flex-1 overflow-y-auto pr-2 space-y-3">
-            {filteredProducts.map(p => (
+            {loadingProducts ? (
+              <div className="text-center py-10 text-slate-400">Cargando productos de Supabase...</div>
+            ) : filteredProducts.map(p => (
               <div key={p.id} className="flex justify-between items-center p-3 hover:bg-slate-50 rounded-xl border border-transparent hover:border-slate-100 transition-all cursor-pointer" onClick={() => addItemToCart(p, 1)}>
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400 font-medium text-xs border border-slate-200">IMG</div>
                   <div>
                     <h4 className="font-semibold text-slate-800 text-sm leading-tight">{p.name}</h4>
-                    <p className="text-xs text-slate-400 font-mono mt-0.5">{p.sku}</p>
+                    <p className="text-xs text-slate-400 font-mono mt-0.5">{p.id}</p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold text-amber-600 text-sm">${p.price_public}</p>
-                  <p className="text-[10px] text-slate-400">Mayoreo: ${p.price_wholesale}</p>
+                  <p className="font-bold text-amber-600 text-sm">${p.price}</p>
+                  <p className="text-[10px] text-slate-400">Mayoreo: ${p.distributorPrice}</p>
                 </div>
               </div>
             ))}
@@ -333,7 +341,7 @@ export default function Quoter() {
                     <div className="flex justify-between items-start mb-2">
                       <div className="pr-4">
                         <h4 className="font-semibold text-slate-800 text-sm leading-tight">{item.name}</h4>
-                        <p className="text-xs text-slate-500 font-mono mt-0.5">{item.sku}</p>
+                        <p className="text-xs text-slate-500 font-mono mt-0.5">{item.id}</p>
                       </div>
                       <div className="text-right">
                         <p className="font-bold text-slate-800">${getPrice(item) * item.cartQuantity}</p>
