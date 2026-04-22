@@ -23,6 +23,12 @@ import {
     type ActivePromotion,
     supabase
 } from '../lib/supabase';
+import {
+    getQuotations,
+    updateQuotationStatus,
+    getQuotationItems,
+    type Quotation
+} from '../lib/erp';
 
 // ─── Saved Address (localStorage) ───
 interface SavedAddress {
@@ -47,6 +53,7 @@ function saveAddresses(addresses: SavedAddress[]) {
 // ─── Tab definitions ───
 const clientTabs = [
     { id: 'orders', label: 'Mis Pedidos', icon: '📦' },
+    { id: 'quotations', label: 'Cotizaciones', icon: '📝' },
     { id: 'payments', label: 'Mis Pagos', icon: '💳' },
     { id: 'promos', label: 'Mis Promociones', icon: '🎁' },
     { id: 'addresses', label: 'Direcciones', icon: '📍' },
@@ -186,8 +193,11 @@ export default function MyAccount() {
     const [orders, setOrders] = useState<ClientOrder[]>([]);
     const [coupons, setCoupons] = useState<Coupon[]>([]);
     const [promotions, setPromotions] = useState<ActivePromotion[]>([]);
+    const [quotations, setQuotations] = useState<Quotation[]>([]);
     const [loading, setLoading] = useState(true);
     const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
+    const [expandedQuotation, setExpandedQuotation] = useState<string | null>(null);
+    const [quotationItemsCache, setQuotationItemsCache] = useState<Record<string, any[]>>({});
 
     // Profile
     const [profileName, setProfileName] = useState('');
@@ -221,14 +231,17 @@ export default function MyAccount() {
         try {
             const role = user.role || 'CLIENTE';
             if (role === 'CLIENTE' || role === 'DISTRIBUIDOR') {
-                const [ordersData, couponsData, promosData] = await Promise.all([
+                const [ordersData, couponsData, promosData, quotesData] = await Promise.all([
                     getClientOrders(user.id, user.email),
                     getAvailableCoupons(),
                     getActivePromotions(),
+                    getQuotations({ customerId: user.id }),
                 ]);
                 setOrders(ordersData);
                 setCoupons(couponsData);
                 setPromotions(promosData);
+                // Clientes solo ven cotizaciones que no son borradores
+                setQuotations(quotesData.filter(q => q.status !== 'DRAFT'));
             } else if (role === 'TRANSPORTISTA') {
                 const [del, veh] = await Promise.all([
                     getTransportistaDeliveries(user.id),
@@ -300,6 +313,31 @@ export default function MyAccount() {
         navigator.clipboard.writeText(code);
         setCopiedCode(code);
         setTimeout(() => setCopiedCode(''), 2000);
+    };
+
+    const handleLoadQuotationItems = async (qId: string) => {
+        if (expandedQuotation === qId) {
+            setExpandedQuotation(null);
+            return;
+        }
+        setExpandedQuotation(qId);
+        if (!quotationItemsCache[qId]) {
+            try {
+                const items = await getQuotationItems(qId);
+                setQuotationItemsCache(prev => ({ ...prev, [qId]: items }));
+            } catch (error) {
+                console.error("Error loading quotation items", error);
+            }
+        }
+    };
+
+    const handleUpdateQuotationStatus = async (qId: string, newStatus: string) => {
+        try {
+            await updateQuotationStatus(qId, newStatus as any);
+            setQuotations(prev => prev.map(q => q.id === qId ? { ...q, status: newStatus as any } : q));
+        } catch (e) {
+            console.error("Error updating quote", e);
+        }
     };
 
     const handleSaveProfile = async () => {
@@ -594,6 +632,137 @@ export default function MyAccount() {
                                                                                 🧾 Solicitar Factura
                                                                             </Link>
                                                                         </div>
+                                                                    </div>
+                                                                </motion.div>
+                                                            )}
+                                                        </AnimatePresence>
+                                                    </motion.div>
+                                                );
+                                            })
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* ══════ TAB: COTIZACIONES ══════ */}
+                                {activeTab === 'quotations' && (
+                                    <div className="space-y-4">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <h2 className="font-serif text-xl text-navy">Mis Cotizaciones</h2>
+                                            {quotations.length > 0 && (
+                                                <span className="text-sm text-charcoal-light">{quotations.length} cotizacione(s)</span>
+                                            )}
+                                        </div>
+
+                                        {loading ? (
+                                            <div className="bg-white rounded-2xl p-12 shadow-luxury text-center">
+                                                <div className="animate-spin w-8 h-8 border-2 border-gold border-t-transparent rounded-full mx-auto"></div>
+                                                <p className="text-charcoal-light mt-3 text-sm">Cargando cotizaciones...</p>
+                                            </div>
+                                        ) : quotations.length === 0 ? (
+                                            <div className="bg-white rounded-2xl p-12 shadow-luxury text-center">
+                                                <div className="text-5xl mb-4">📝</div>
+                                                <h3 className="font-serif text-lg text-navy mb-2">Sin cotizaciones pendientes</h3>
+                                                <p className="text-charcoal-light mb-6 text-sm">Comunícate con un asesor para solicitar un presupuesto especial</p>
+                                            </div>
+                                        ) : (
+                                            quotations.map((quote) => {
+                                                const isExpanded = expandedQuotation === quote.id;
+                                                const shortId = quote.id.slice(0, 8).toUpperCase();
+                                                const items = quotationItemsCache[quote.id] || [];
+
+                                                const statusMap: Record<string, { label: string, color: string }> = {
+                                                    'SENT': { label: 'Pendiente', color: 'bg-blue-100 text-blue-700' },
+                                                    'ACCEPTED': { label: 'Aceptada', color: 'bg-emerald-100 text-emerald-700' },
+                                                    'REJECTED': { label: 'Rechazada', color: 'bg-red-100 text-red-700' },
+                                                    'CONVERTED': { label: 'Convertida a Orden', color: 'bg-purple-100 text-purple-700' },
+                                                };
+                                                const currentStatusInfo = statusMap[quote.status] || { label: quote.status, color: 'bg-gray-100 text-gray-700' };
+
+                                                return (
+                                                    <motion.div key={quote.id} layout
+                                                        className="bg-white rounded-2xl shadow-luxury overflow-hidden border border-charcoal/5 hover:border-gold/20 transition-colors">
+                                                        <div className="p-5 cursor-pointer" onClick={() => handleLoadQuotationItems(quote.id)}>
+                                                            <div className="flex items-center gap-4">
+                                                                <div className="w-12 h-12 rounded-xl bg-gold/10 flex items-center justify-center flex-shrink-0 text-2xl">
+                                                                    📄
+                                                                </div>
+                                                                <div className="flex-1 min-w-0">
+                                                                    <div className="flex items-center gap-2 flex-wrap">
+                                                                        <span className="font-mono font-bold text-navy text-sm">#{shortId}</span>
+                                                                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${currentStatusInfo.color}`}>
+                                                                            {currentStatusInfo.label}
+                                                                        </span>
+                                                                    </div>
+                                                                    <p className="text-xs text-charcoal-light mt-1">{fmtDate(quote.created_at)}</p>
+                                                                </div>
+                                                                <div className="text-right flex-shrink-0">
+                                                                    <p className="font-bold text-navy text-lg">{fmtMoney(Number(quote.total_amount))}</p>
+                                                                    <p className="text-xs text-charcoal-light">MXN</p>
+                                                                </div>
+                                                                <svg className={`w-5 h-5 text-charcoal-light transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+                                                                    fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                                                </svg>
+                                                            </div>
+                                                        </div>
+
+                                                        <AnimatePresence>
+                                                            {isExpanded && (
+                                                                <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }}
+                                                                    exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25 }}
+                                                                    className="overflow-hidden">
+                                                                    <div className="px-5 pb-5 border-t border-charcoal/5 pt-4">
+                                                                        <p className="text-xs font-semibold text-navy/60 uppercase tracking-wider mb-3">Detalle del Presupuesto</p>
+                                                                        {items.length === 0 ? (
+                                                                            <div className="py-2 flex justify-center"><div className="animate-spin w-5 h-5 border-2 border-gold border-t-transparent rounded-full"></div></div>
+                                                                        ) : (
+                                                                            <div className="space-y-3 mb-5">
+                                                                                {items.map((item: any, idx: number) => {
+                                                                                    // Get name from joined products table if available
+                                                                                    const prodName = item.products?.name || item.resource_id;
+                                                                                    const imgUrl = item.products?.images?.[0] || '';
+                                                                                    
+                                                                                    return (
+                                                                                        <div key={idx} className="flex items-center gap-3">
+                                                                                            {imgUrl ? 
+                                                                                                <img src={imgUrl} alt="" className="w-10 h-10 rounded-lg object-cover bg-blush" /> :
+                                                                                                <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-xs text-slate-400 border border-slate-200">IMG</div>
+                                                                                            }
+                                                                                            <div className="flex-1 min-w-0">
+                                                                                                <p className="text-sm text-navy truncate">{prodName}</p>
+                                                                                                <p className="text-xs text-charcoal-light">Cant: {item.quantity}</p>
+                                                                                            </div>
+                                                                                            <p className="text-sm font-medium text-navy">{fmtMoney(item.unit_price * item.quantity)}</p>
+                                                                                        </div>
+                                                                                    );
+                                                                                })}
+                                                                            </div>
+                                                                        )}
+
+                                                                        {quote.notes && (
+                                                                            <div className="bg-cream/60 rounded-xl p-3 mb-4">
+                                                                                <p className="text-xs font-semibold text-navy/60 uppercase tracking-wider mb-1">Notas del Asesor</p>
+                                                                                <p className="text-sm text-charcoal">{quote.notes}</p>
+                                                                            </div>
+                                                                        )}
+
+                                                                        {quote.status === 'SENT' && (
+                                                                            <div className="flex flex-wrap gap-3 mt-4 pt-4 border-t border-charcoal/5">
+                                                                                <button onClick={() => handleUpdateQuotationStatus(quote.id, 'ACCEPTED')}
+                                                                                    className="btn btn-primary text-sm flex-1 py-2 bg-emerald-600 hover:bg-emerald-700 border-emerald-600">
+                                                                                    ✅ Aceptar Presupuesto
+                                                                                </button>
+                                                                                <button onClick={() => handleUpdateQuotationStatus(quote.id, 'REJECTED')}
+                                                                                    className="btn btn-ghost text-sm flex-1 py-2 text-red-600 hover:bg-red-50 hover:text-red-700">
+                                                                                    ❌ Rechazar
+                                                                                </button>
+                                                                            </div>
+                                                                        )}
+                                                                        {quote.status === 'ACCEPTED' && (
+                                                                            <div className="mt-4 pt-4 border-t border-charcoal/5 text-center">
+                                                                                <p className="text-sm font-medium text-emerald-700 mb-3">¡Presupuesto Aceptado! Un asesor se contactará contigo para procesar la orden.</p>
+                                                                            </div>
+                                                                        )}
                                                                     </div>
                                                                 </motion.div>
                                                             )}

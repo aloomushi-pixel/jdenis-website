@@ -1,8 +1,10 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { MOCK_PRODUCTS, type Product } from '../../lib/mockData';
-import { Search, Plus, ShoppingCart, MessageCircle, AlertCircle, FileText } from 'lucide-react';
+import { Search, Plus, ShoppingCart, AlertCircle, FileText, Send, Save, User } from 'lucide-react';
+import { getUsers, createQuotation, type ERPUser } from '../../lib/erp';
+
 
 interface CartItem extends Product {
   cartQuantity: number;
@@ -12,6 +14,23 @@ export default function Quoter() {
   const [searchTerm, setSearchTerm] = useState('');
   const [cart, setCart] = useState<CartItem[]>([]);
   const [toast, setToast] = useState<string | null>(null);
+  
+  const [customers, setCustomers] = useState<ERPUser[]>([]);
+  const [selectedCustomerId, setSelectedCustomerId] = useState<string>('');
+  const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    async function loadCustomers() {
+      try {
+        const clients = await getUsers('CLIENTE');
+        const distributors = await getUsers('DISTRIBUIDOR');
+        setCustomers([...clients, ...distributors]);
+      } catch (err) {
+        console.error("Error loading customers:", err);
+      }
+    }
+    loadCustomers();
+  }, []);
 
   const filteredProducts = useMemo(() => {
     return MOCK_PRODUCTS.filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase()) || p.sku.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -175,6 +194,52 @@ export default function Quoter() {
     }
   };
 
+  const handleSaveQuotation = async (status: 'DRAFT' | 'SENT') => {
+    if (!selectedCustomerId) {
+      showToast('❌ Por favor selecciona un cliente primero');
+      return;
+    }
+    if (cart.length === 0) {
+      showToast('❌ Agrega productos a la cotización');
+      return;
+    }
+
+    try {
+      setIsSaving(true);
+      
+      const quotationData = {
+        customer_id: selectedCustomerId,
+        status: status,
+        total_amount: total,
+        notes: "Cotización generada desde el panel administrativo",
+      };
+
+      const items = cart.map(item => ({
+        resource_id: item.id, // we map product ID to resource_id
+        quantity: item.cartQuantity,
+        unit_price: getPrice(item)
+      }));
+
+      await createQuotation(quotationData, items);
+      
+      if (status === 'SENT') {
+        showToast('✉️ Cotización guardada y enviada al cliente (simulado)');
+      } else {
+        showToast('💾 Borrador guardado exitosamente');
+      }
+      
+      // Reset cart
+      setCart([]);
+      setSelectedCustomerId('');
+      
+    } catch (error) {
+      console.error("Error saving quotation:", error);
+      showToast('❌ Ocurrió un error al guardar la cotización');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
@@ -239,6 +304,22 @@ export default function Quoter() {
             <span className="bg-amber-100 text-amber-700 text-xs px-2 py-1 rounded-md font-semibold">{cart.length} items</span>
           </div>
 
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-slate-700 mb-1 flex items-center gap-2">
+              <User size={14} /> Seleccionar Cliente
+            </label>
+            <select
+              value={selectedCustomerId}
+              onChange={(e) => setSelectedCustomerId(e.target.value)}
+              className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition-all text-sm"
+            >
+              <option value="">-- Selecciona un cliente --</option>
+              {customers.map(c => (
+                <option key={c.id} value={c.id}>{c.fullName || c.email} ({c.role})</option>
+              ))}
+            </select>
+          </div>
+
           <div className="flex-1 overflow-y-auto pr-2 space-y-4">
             {cart.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-slate-400 space-y-2">
@@ -273,14 +354,29 @@ export default function Quoter() {
             )}
           </div>
 
-          <div className="border-t border-slate-100 pt-4 mt-4 space-y-4">
-            <div className="flex justify-between items-center">
+          <div className="border-t border-slate-100 pt-4 mt-4 space-y-3">
+            <div className="flex justify-between items-center mb-2">
               <span className="text-slate-500">Total Venta</span>
               <span className="text-3xl font-serif font-bold text-navy">${total.toLocaleString('es-MX')}</span>
             </div>
-            <button className="w-full bg-navy hover:bg-slate-800 text-white font-medium py-3 rounded-xl transition-colors shadow-md flex justify-center items-center gap-2">
-              <MessageCircle size={18} /> Compartir por WhatsApp
-            </button>
+            
+            <div className="grid grid-cols-2 gap-3">
+              <button 
+                onClick={() => handleSaveQuotation('DRAFT')}
+                disabled={isSaving || cart.length === 0}
+                className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-2.5 rounded-xl transition-colors flex justify-center items-center gap-2 disabled:opacity-50"
+              >
+                <Save size={16} /> Guardar Borrador
+              </button>
+              
+              <button 
+                onClick={() => handleSaveQuotation('SENT')}
+                disabled={isSaving || cart.length === 0}
+                className="w-full bg-navy hover:bg-slate-800 text-white font-medium py-2.5 rounded-xl transition-colors shadow-md flex justify-center items-center gap-2 disabled:opacity-50"
+              >
+                <Send size={16} /> Publicar y Enviar
+              </button>
+            </div>
           </div>
         </div>
       </div>

@@ -138,6 +138,29 @@ export interface SalesOrder {
     users?: ERPUser;
 }
 
+export type QuotationStatus = 'DRAFT' | 'SENT' | 'ACCEPTED' | 'REJECTED' | 'CONVERTED';
+
+export interface Quotation {
+    id: string;
+    customer_id: string;
+    status: QuotationStatus;
+    total_amount: number;
+    notes: string | null;
+    expiration_date: string | null;
+    created_at: string;
+    updated_at: string;
+    // Joined
+    customer?: ERPUser;
+}
+
+export interface QuotationItem {
+    id: string;
+    quotation_id: string;
+    resource_id: string; // Used as product_id
+    quantity: number;
+    unit_price: number;
+}
+
 export interface TransportAssignment {
     id: string;
     sales_order_id: string | null;
@@ -608,3 +631,78 @@ export async function getProductionSummary() {
     if (error) throw error;
     return (data as unknown[])?.[0] || { total_orders: 0, pending_orders: 0, in_progress: 0, completed: 0, total_loss: 0 };
 }
+
+// =============================================
+// QUOTATIONS
+// =============================================
+
+export async function getQuotations(filters?: { customerId?: string; status?: QuotationStatus }) {
+    let query = supabase
+        .from('quotations')
+        .select('*, customer:customer_id(id, email, fullName)')
+        .order('created_at', { ascending: false });
+
+    if (filters?.customerId) {
+        query = query.eq('customer_id', filters.customerId);
+    }
+    if (filters?.status) {
+        query = query.eq('status', filters.status);
+    }
+
+    const { data, error } = await query;
+    if (error) throw error;
+    return data as Quotation[];
+}
+
+export async function createQuotation(quotation: Partial<Quotation>, items: Omit<QuotationItem, 'id' | 'quotation_id'>[]) {
+    // 1. Create the quotation
+    const { data: newQuotation, error: qError } = await supabase
+        .from('quotations')
+        .insert({
+            ...quotation,
+            updated_at: new Date().toISOString()
+        })
+        .select()
+        .single();
+
+    if (qError) throw qError;
+
+    // 2. Add the items
+    if (items.length > 0) {
+        const itemsToInsert = items.map(item => ({
+            ...item,
+            quotation_id: newQuotation.id
+        }));
+
+        const { error: iError } = await supabase
+            .from('quotation_items')
+            .insert(itemsToInsert);
+
+        if (iError) throw iError;
+    }
+
+    return newQuotation;
+}
+
+export async function updateQuotationStatus(id: string, status: QuotationStatus) {
+    const { data, error } = await supabase
+        .from('quotations')
+        .update({ status, updated_at: new Date().toISOString() })
+        .eq('id', id)
+        .select()
+        .single();
+    
+    if (error) throw error;
+    return data;
+}
+
+export async function getQuotationItems(quotationId: string) {
+    const { data, error } = await supabase
+        .from('quotation_items')
+        .select('*')
+        .eq('quotation_id', quotationId);
+        
+    if (error) throw error;
+    return data as QuotationItem[];
+}
+
