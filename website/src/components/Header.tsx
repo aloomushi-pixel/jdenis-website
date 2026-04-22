@@ -36,8 +36,8 @@ export default function Header() {
     return (
         <>
             <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${hidden ? '-translate-y-full' : 'translate-y-0'} ${scrolled
-                ? 'bg-forest shadow-botanical py-3 border-b border-gold/20'
-                : 'bg-forest py-6'
+                ? 'bg-[#001641] shadow-botanical py-3 border-b border-gold/20'
+                : 'bg-[#001641] py-6'
                 }`}>
                 <div className="container-luxury">
                     <div className="flex items-center justify-between">
@@ -171,7 +171,7 @@ export default function Header() {
                 }}
                 className={`fixed inset-0 z-40 backdrop-blur-xl md:hidden ${mobileMenuOpen ? 'pointer-events-auto' : 'pointer-events-none'
                     }`}
-                style={{ paddingTop: '100px', background: 'rgba(3, 10, 30, 0.98)' }}
+                style={{ paddingTop: '100px', background: 'rgba(0, 22, 65, 0.98)' }}
             >
                 <nav className="container-luxury flex flex-col items-center gap-8 py-12">
                     {navLinks.map((link) => (
