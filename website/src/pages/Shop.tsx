@@ -218,8 +218,8 @@ export default function Shop() {
     }, [searchQuery, activeCategory, showOffersOnly, priceRange, computedMax]);
 
     const filteredProducts = useMemo(() => {
-        // When filtering, search across ALL products (featured + non-featured)
-        let source = isFiltering ? groupedProducts : catalogProducts;
+        // Show all products (featured + non-featured) directly in the catalog
+        let source = groupedProducts;
         let result = source.filter(p => p.stock === undefined || p.stock === null || p.stock >= 1);
 
         if (activeCategory !== 'all') {
