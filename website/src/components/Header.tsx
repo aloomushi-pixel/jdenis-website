@@ -10,13 +10,18 @@ export default function Header() {
     const { isAuthenticated, user, logout } = useAuthStore();
     const count = itemCount();
     const [scrolled, setScrolled] = useState(false);
+    const [hidden, setHidden] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     useEffect(() => {
+        let lastScrollY = window.scrollY;
         const handleScroll = () => {
-            setScrolled(window.scrollY > 50);
+            const currentScrollY = window.scrollY;
+            setScrolled(currentScrollY > 50);
+            setHidden(currentScrollY > lastScrollY && currentScrollY > 150);
+            lastScrollY = currentScrollY;
         };
-        window.addEventListener('scroll', handleScroll);
+        window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
@@ -30,7 +35,7 @@ export default function Header() {
 
     return (
         <>
-            <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled
+            <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${hidden ? '-translate-y-full' : 'translate-y-0'} ${scrolled
                 ? 'bg-forest shadow-botanical py-3 border-b border-gold/20'
                 : 'bg-forest py-6'
                 }`}>
