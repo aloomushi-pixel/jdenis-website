@@ -42,7 +42,7 @@ const sortOptions = [
 export default function Shop() {
     const [searchParams] = useSearchParams();
     const [activeCategory, setActiveCategory] = useState(searchParams.get('cat') || 'all');
-    const [sortBy, setSortBy] = useState('name');
+    const [sortBy, setSortBy] = useState('featured');
     const [searchQuery, setSearchQuery] = useState('');
 
     // Advanced filters
@@ -428,13 +428,13 @@ export default function Shop() {
             <section id="shop-catalog" className="section section-cream py-8 md:py-12 relative">
                 
                 {/* ─── Sticky Search & Filter Bar ─── */}
-                <div className={`fixed top-0 left-0 w-full z-50 transition-transform duration-300 bg-forest shadow-lg border-b border-gold/20 ${isSticky ? 'translate-y-0' : '-translate-y-full'}`}>
+                <div className={`fixed top-0 left-0 w-full z-50 transition-transform duration-300 bg-white shadow-md border-b border-gray-200 ${isSticky ? 'translate-y-0' : '-translate-y-full'}`}>
                     <div className="container-luxury py-3">
                         <div className="flex flex-row items-center justify-between gap-4">
                             {/* Mobile Logo / Search Toggle */}
                             <div className="md:hidden flex items-center gap-4">
                                 <motion.img src="/logo-new.jpeg" alt="J. Denis" className="h-8 object-contain" />
-                                <button onClick={() => setShowMobileSearch(!showMobileSearch)} className="text-white p-2">
+                                <button onClick={() => setShowMobileSearch(!showMobileSearch)} className="text-forest p-2">
                                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
                                     </svg>
@@ -442,40 +442,41 @@ export default function Shop() {
                             </div>
 
                             {/* Desktop Search Bar */}
-                            <div className="hidden md:block flex-1 max-w-md relative">
+                            <div className="hidden md:block flex-1 max-w-sm relative">
                                 <input
                                     type="text"
                                     placeholder="Buscar productos..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-2 bg-white/10 border border-gold/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-gold transition-all duration-300"
+                                    className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-charcoal placeholder-charcoal/50 focus:outline-none focus:border-gold transition-all duration-300"
                                 />
-                                <svg className="absolute left-3 top-2.5 w-5 h-5 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
+                                <svg className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
                             </div>
 
                             {/* Desktop Quick Category Filters & Mobile Filters Button */}
-                            <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
+                            <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide max-w-[50vw]">
                                 <div className="hidden md:flex gap-2">
-                                    {shopCategories.slice(0, 3).map((cat) => (
+                                    {shopCategories.map((cat) => (
                                         <button
                                             key={cat.id}
                                             onClick={() => setActiveCategory(cat.id)}
-                                            className={`whitespace-nowrap px-4 py-1.5 text-xs rounded-full border transition-all ${activeCategory === cat.id ? 'bg-gold text-forest border-gold font-bold' : 'bg-transparent text-white border-white/20 hover:border-gold hover:text-gold'}`}
+                                            className={`whitespace-nowrap px-4 py-1.5 text-xs rounded-full border transition-all ${activeCategory === cat.id ? 'bg-gold text-forest border-gold font-bold shadow-sm' : 'bg-transparent text-charcoal border-gray-200 hover:border-gold hover:text-gold'}`}
                                         >
                                             {cat.name}
                                         </button>
                                     ))}
                                 </div>
-                                <button
-                                    onClick={() => setShowMobileFilters(true)}
-                                    className="flex items-center gap-1.5 px-3 py-2 bg-gold text-forest text-sm font-semibold rounded-lg shadow-sm"
-                                >
-                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
-                                    </svg>
-                                    Filtros
-                                </button>
                             </div>
+                            
+                            <button
+                                onClick={() => setShowMobileFilters(true)}
+                                className="flex items-center gap-1.5 px-3 py-2 bg-forest text-gold text-sm font-semibold rounded-lg shadow-sm hover:bg-forest/90 transition-colors"
+                            >
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
+                                </svg>
+                                Filtros
+                            </button>
                         </div>
                         
                         {/* Mobile Expanded Search */}
@@ -493,10 +494,10 @@ export default function Shop() {
                                             placeholder="Buscar productos..."
                                             value={searchQuery}
                                             onChange={(e) => setSearchQuery(e.target.value)}
-                                            className="w-full pl-10 pr-4 py-2 bg-white/10 border border-gold/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-gold transition-all duration-300"
+                                            className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-charcoal placeholder-charcoal/50 focus:outline-none focus:border-gold transition-all duration-300"
                                             autoFocus
                                         />
-                                        <svg className="absolute left-3 top-2.5 w-5 h-5 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
+                                        <svg className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
                                     </div>
                                 </motion.div>
                             )}
