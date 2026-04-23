@@ -12,11 +12,6 @@ export function usePWAInstall() {
     const deferredPrompt = useRef<BeforeInstallPromptEvent | null>(null);
 
     useEffect(() => {
-        // Register service worker
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js').catch(console.error);
-        }
-
         // Detect iOS Safari (no beforeinstallprompt)
         const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
         const isInStandaloneMode =
