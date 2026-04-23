@@ -499,6 +499,7 @@ export default function Shop() {
                                     Filtros
                                 </button>
                             </div>
+                        </div>
                         
                         {/* Mobile Expanded Search */}
                         <AnimatePresence>
