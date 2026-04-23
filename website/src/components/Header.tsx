@@ -1,29 +1,19 @@
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { useCartStore } from '../store/cartStore';
+import { useSearchStore } from '../store/searchStore';
 
 export default function Header() {
     const location = useLocation();
-    const navigate = useNavigate();
     const { openCart, itemCount } = useCartStore();
     const { isAuthenticated, user, logout } = useAuthStore();
     const count = itemCount();
     const [scrolled, setScrolled] = useState(false);
     const [hidden, setHidden] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const [isSearchOpen, setIsSearchOpen] = useState(false);
-    const [searchQuery, setSearchQuery] = useState('');
-
-    const handleSearch = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (searchQuery.trim()) {
-            navigate(`/tienda?q=${encodeURIComponent(searchQuery)}`);
-            setIsSearchOpen(false);
-            setSearchQuery('');
-        }
-    };
+    const { openSearch } = useSearchStore();
 
     useEffect(() => {
         let lastScrollY = window.scrollY;
@@ -133,7 +123,7 @@ export default function Header() {
 
                             {/* Search Button */}
                             <button
-                                onClick={() => setIsSearchOpen(!isSearchOpen)}
+                                onClick={openSearch}
                                 aria-label="Buscar productos"
                                 className="p-2 text-cream hover:text-gold transition-colors"
                             >
@@ -183,29 +173,6 @@ export default function Header() {
                         </div>
                     </div>
                 </div>
-
-                {/* Search Bar Dropdown */}
-                <motion.div
-                    initial={false}
-                    animate={{ height: isSearchOpen ? 'auto' : 0, opacity: isSearchOpen ? 1 : 0 }}
-                    className="overflow-hidden bg-[#001641] border-t border-gold/10"
-                >
-                    <div className="container-luxury py-4">
-                        <form onSubmit={handleSearch} className="relative max-w-2xl mx-auto">
-                            <input
-                                type="text"
-                                placeholder="Busca productos, extensiones, adhesivos..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-12 pr-4 py-3 bg-white/5 border border-gold/20 rounded-lg text-white placeholder-cream/50 focus:outline-none focus:border-gold focus:bg-white/10 transition-colors"
-                            />
-                            <svg className="absolute left-4 top-3.5 w-5 h-5 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-                            </svg>
-                            <button type="submit" className="hidden" />
-                        </form>
-                    </div>
-                </motion.div>
             </header>
 
             {/* Mobile Menu */}

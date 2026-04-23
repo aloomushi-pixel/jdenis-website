@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes, useLocation, useParams } from 'react-rout
 import CartDrawer from './components/CartDrawer';
 import Footer from './components/Footer';
 import Header from './components/Header';
+import GlobalSearchModal from './components/GlobalSearchModal';
 import PWAInstallBanner from './components/PWAInstallBanner';
 import AdminLayout from './components/layouts/AdminLayout';
 import About from './pages/About';
@@ -135,6 +136,7 @@ function App() {
         </main>
         <Footer />
         <CartDrawer />
+        <GlobalSearchModal />
         <PWAInstallBanner show={showPWA} />
       </div>
     </BrowserRouter>

@@ -6,6 +6,7 @@ import ProductSkeleton from '../components/ProductSkeleton';
 import { useProducts } from '../hooks/useProducts';
 import { useVariants } from '../hooks/useVariants';
 import { usePageMeta } from '../hooks/usePageMeta';
+import { useSearchStore } from '../store/searchStore';
 
 // Category filter definitions (UI constants with SVG icon paths)
 const shopCategories = [
@@ -44,6 +45,7 @@ export default function Shop() {
     const [activeCategory, setActiveCategory] = useState(searchParams.get('cat') || 'all');
     const [sortBy, setSortBy] = useState('featured');
     const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
+    const { openSearch } = useSearchStore();
 
     useEffect(() => {
         const q = searchParams.get('q');
@@ -422,15 +424,23 @@ export default function Shop() {
                     <div className="container-luxury w-full flex items-center gap-3 md:gap-6">
                         
                         {/* 1. Búsqueda */}
-                        <div className="w-[160px] md:w-[280px] lg:w-[320px] shrink-0 relative">
-                            <input
-                                type="text"
-                                placeholder="Buscar..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2 md:py-2.5 bg-gray-50 border border-gray-200 rounded-full text-sm text-charcoal placeholder-charcoal/50 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-all duration-300"
-                            />
-                            <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
+                        <div className="shrink-0 relative">
+                            {/* Desktop Fake Input */}
+                            <button
+                                onClick={openSearch}
+                                className="hidden md:flex items-center w-[280px] lg:w-[320px] pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-full text-sm text-charcoal/50 hover:bg-white hover:border-gold transition-all duration-300 text-left"
+                            >
+                                <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
+                                Buscar...
+                            </button>
+                            {/* Mobile Icon Button */}
+                            <button
+                                onClick={openSearch}
+                                className="md:hidden p-2 text-charcoal hover:text-gold transition-colors"
+                                aria-label="Buscar productos"
+                            >
+                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
+                            </button>
                         </div>
 
                         {/* 2. Categorías */}
@@ -476,7 +486,7 @@ export default function Shop() {
                                 {/* Fade gradient left */}
                                 <div className="absolute left-0 top-0 bottom-0 w-6 bg-gradient-to-r from-white to-transparent z-[5] pointer-events-none hidden md:block"></div>
 
-                                <div id="sticky-category-scroll" className="overflow-x-auto scrollbar-hide scroll-smooth flex-1 px-1 md:px-4">
+                                <div id="sticky-category-scroll" className="overflow-x-auto scrollbar-hide md:scrollbar-default scroll-smooth flex-1 px-1 md:px-4 pb-2 -mb-2 md:pb-0 md:mb-0">
                                     <div className="flex gap-2 w-max items-center py-1">
                                         {shopCategories.filter(c => c.id !== 'all').map((cat) => (
                                             <button
@@ -568,7 +578,7 @@ export default function Shop() {
                                 {/* Fade gradient left */}
                                 <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white to-transparent z-[5] pointer-events-none hidden md:block"></div>
 
-                                <div id="category-scroll-container" className="overflow-x-auto scrollbar-hide scroll-smooth md:px-4">
+                                <div id="category-scroll-container" className="overflow-x-auto scrollbar-hide md:scrollbar-default scroll-smooth md:px-4 pb-2 -mb-2 md:pb-0 md:mb-0">
                                     <div className="flex gap-2 pb-1 w-max">
                                         {shopCategories.filter(c => c.id !== 'all').map((cat) => (
                                             <button
