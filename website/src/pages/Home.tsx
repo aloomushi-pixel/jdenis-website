@@ -573,8 +573,7 @@ export default function Home() {
                                             loading="lazy"
                                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                                         />
-                                        {/* Hover overlay (desktop) */}
-                                        <div className="hidden lg:block absolute inset-0 bg-forest/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                        {/* Hover overlay (desktop) removed to match store grid */}
 
                                         {/* Featured badge */}
                                         <div className="absolute top-2 left-2 z-10">
@@ -749,8 +748,14 @@ export default function Home() {
                     {/* Deep lighter blue ambient glow at bottom left */}
                     <div className="absolute -bottom-40 -left-40 w-[600px] h-[600px] bg-[#1a4b9c]/15 rounded-full blur-[150px] mix-blend-screen" />
                     
-                    {/* Premium dotted texture overlay */}
-                    <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyIvPjwvc3ZnPg==')] opacity-60 mix-blend-overlay" />
+                    {/* Premium grain texture overlay */}
+                    <div
+                        className="absolute inset-0 opacity-[0.15] pointer-events-none mix-blend-overlay"
+                        style={{
+                            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E")`,
+                            backgroundSize: '200px 200px',
+                        }}
+                    />
                     
                     {/* Inner vignette for focus */}
                     <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,#001641_100%)] opacity-80" />
@@ -775,10 +780,23 @@ export default function Home() {
                             y distribuye la marca líder en tu zona.
                         </p>
                         <div className="flex flex-wrap justify-center gap-4">
-                            <Link to="/tienda" className="btn btn-secondary">
+                            <Link 
+                                to="/tienda" 
+                                className="group inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full font-semibold text-brand-blue text-[16px] transition-all duration-300 hover:-translate-y-1 w-full sm:w-auto"
+                                style={{
+                                    backgroundColor: '#48CAFF',
+                                    boxShadow: '0 8px 20px rgba(72,202,255,0.25)'
+                                }}
+                            >
                                 Ver Productos
+                                <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                </svg>
                             </Link>
-                            <Link to="/registro-distribuidor" className="btn btn-outline-light">
+                            <Link 
+                                to="/registro-distribuidor" 
+                                className="border border-white/80 text-white px-8 py-3.5 rounded-full font-medium hover:bg-white/10 hover:border-white transition-all duration-300 backdrop-blur-md hover:-translate-y-1 w-full sm:w-auto flex items-center justify-center"
+                            >
                                 Registro Distribuidor
                             </Link>
                         </div>
