@@ -548,77 +548,90 @@ export default function Shop() {
                     {/* ─── Top Filter Bar ─── */}
                     <div className="flex flex-col gap-4 mb-6">
 
-                        {/* Category pills (horizontal scroll with arrows) */}
-                        <div className="relative group">
-                            {/* Left Arrow */}
-                            <button 
-                                onClick={() => {
-                                    const container = document.getElementById('category-scroll-container');
-                                    if (container) container.scrollBy({ left: -200, behavior: 'smooth' });
-                                }}
-                                className="absolute left-0 top-1/2 -translate-y-1/2 -ml-2 z-10 bg-white/80 backdrop-blur-sm p-1.5 rounded-full shadow-md text-forest opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-0 hidden md:flex items-center justify-center border border-gray-100"
-                                aria-label="Desplazar a la izquierda"
-                            >
-                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-                                </svg>
-                            </button>
-
-                            <div id="category-scroll-container" className="-mx-4 px-4 overflow-x-auto scrollbar-hide scroll-smooth">
-                                <div className="flex gap-2 pb-1">
-                                    <button
-                                        onClick={() => setActiveCategory('all')}
-                                        className={`flex-shrink-0 px-5 py-2.5 text-sm rounded-full border transition-all ${activeCategory === 'all'
-                                            ? 'bg-forest text-white border-forest font-medium shadow-sm'
-                                            : 'bg-white border-kraft/30 text-charcoal/70 hover:border-forest/40 hover:text-forest'
-                                            }`}
-                                    >
-                                        Ver Todo
-                                    </button>
-                                    {/* Offers quick-filter pill */}
-                                    <button
-                                        onClick={() => setShowOffersOnly(!showOffersOnly)}
-                                        className={`flex-shrink-0 px-5 py-2.5 text-sm rounded-full border transition-all flex items-center gap-1.5 ${showOffersOnly
-                                            ? 'bg-red-500 text-white border-red-500 font-medium shadow-sm'
-                                            : 'bg-white border-kraft/30 text-charcoal/70 hover:border-red-300'
-                                            }`}
-                                    >
-                                        🔥 Ofertas
-                                        {promoProducts.length > 0 && (
-                                            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${showOffersOnly ? 'bg-white/20 text-white' : 'bg-red-100 text-red-600'}`}>
-                                                {promoProducts.length}
-                                            </span>
-                                        )}
-                                    </button>
-                                    {shopCategories.filter(c => c.id !== 'all').map((cat) => (
-                                        <button
-                                            key={cat.id}
-                                            onClick={() => setActiveCategory(cat.id)}
-                                            className={`flex-shrink-0 group px-5 py-2.5 text-sm rounded-full border transition-all flex items-center gap-2 ${activeCategory === cat.id
-                                                ? 'bg-forest text-white border-forest font-medium shadow-sm'
-                                                : 'bg-white border-kraft/30 text-charcoal/70 hover:border-forest/40 hover:text-forest'
-                                                }`}
-                                        >
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3.5 h-3.5 shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:-translate-y-0.5"><path strokeLinecap="round" strokeLinejoin="round" d={cat.icon} /></svg>
-                                            {cat.name}
-                                        </button>
-                                    ))}
-                                </div>
+                        {/* Categories Row */}
+                        <div className="flex flex-col md:flex-row items-start md:items-center gap-3">
+                            {/* Static Buttons */}
+                            <div className="flex gap-2 flex-shrink-0 overflow-x-auto w-full md:w-auto pb-1 md:pb-0 scrollbar-hide">
+                                <button
+                                    onClick={() => setActiveCategory('all')}
+                                    className={`flex-shrink-0 px-5 py-2.5 text-sm rounded-full border transition-all ${activeCategory === 'all'
+                                        ? 'bg-forest text-white border-forest font-medium shadow-sm'
+                                        : 'bg-white border-kraft/30 text-charcoal/70 hover:border-forest/40 hover:text-forest'
+                                        }`}
+                                >
+                                    Ver Todo
+                                </button>
+                                {/* Offers quick-filter pill */}
+                                <button
+                                    onClick={() => setShowOffersOnly(!showOffersOnly)}
+                                    className={`flex-shrink-0 px-5 py-2.5 text-sm rounded-full border transition-all flex items-center gap-1.5 ${showOffersOnly
+                                        ? 'bg-red-500 text-white border-red-500 font-medium shadow-sm'
+                                        : 'bg-white border-kraft/30 text-charcoal/70 hover:border-red-300'
+                                        }`}
+                                >
+                                    🔥 Ofertas
+                                    {promoProducts.length > 0 && (
+                                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${showOffersOnly ? 'bg-white/20 text-white' : 'bg-red-100 text-red-600'}`}>
+                                            {promoProducts.length}
+                                        </span>
+                                    )}
+                                </button>
                             </div>
 
-                            {/* Right Arrow */}
-                            <button 
-                                onClick={() => {
-                                    const container = document.getElementById('category-scroll-container');
-                                    if (container) container.scrollBy({ left: 200, behavior: 'smooth' });
-                                }}
-                                className="absolute right-0 top-1/2 -translate-y-1/2 -mr-2 z-10 bg-white/80 backdrop-blur-sm p-1.5 rounded-full shadow-md text-forest opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-0 hidden md:flex items-center justify-center border border-gray-100"
-                                aria-label="Desplazar a la derecha"
-                            >
-                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                                </svg>
-                            </button>
+                            {/* Category pills (horizontal scroll with arrows) */}
+                            <div className="relative group flex-1 min-w-0 w-full">
+                                {/* Left Arrow */}
+                                <button 
+                                    onClick={() => {
+                                        const container = document.getElementById('category-scroll-container');
+                                        if (container) container.scrollBy({ left: -250, behavior: 'smooth' });
+                                    }}
+                                    className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/95 backdrop-blur-sm w-9 h-9 rounded-full shadow-[0_2px_10px_rgba(0,0,0,0.15)] text-forest opacity-0 group-hover:opacity-100 transition-all hidden md:flex items-center justify-center border border-gray-100 hover:scale-105 hover:text-gold"
+                                    aria-label="Desplazar a la izquierda"
+                                >
+                                    <svg className="w-5 h-5 mr-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                                    </svg>
+                                </button>
+
+                                {/* Fade gradient left */}
+                                <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white to-transparent z-[5] pointer-events-none hidden md:block"></div>
+
+                                <div id="category-scroll-container" className="overflow-x-auto scrollbar-hide scroll-smooth md:px-4">
+                                    <div className="flex gap-2 pb-1 w-max">
+                                        {shopCategories.filter(c => c.id !== 'all').map((cat) => (
+                                            <button
+                                                key={cat.id}
+                                                onClick={() => setActiveCategory(cat.id)}
+                                                className={`flex-shrink-0 group px-5 py-2.5 text-sm rounded-full border transition-all flex items-center gap-2 ${activeCategory === cat.id
+                                                    ? 'bg-forest text-white border-forest font-medium shadow-sm'
+                                                    : 'bg-white border-kraft/30 text-charcoal/70 hover:border-forest/40 hover:text-forest'
+                                                    }`}
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3.5 h-3.5 shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:-translate-y-0.5"><path strokeLinecap="round" strokeLinejoin="round" d={cat.icon} /></svg>
+                                                {cat.name}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Fade gradient right */}
+                                <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-[#fafafa] to-transparent z-[5] pointer-events-none hidden md:block group-hover:from-white"></div>
+
+                                {/* Right Arrow */}
+                                <button 
+                                    onClick={() => {
+                                        const container = document.getElementById('category-scroll-container');
+                                        if (container) container.scrollBy({ left: 250, behavior: 'smooth' });
+                                    }}
+                                    className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/95 backdrop-blur-sm w-9 h-9 rounded-full shadow-[0_2px_10px_rgba(0,0,0,0.15)] text-forest opacity-0 group-hover:opacity-100 transition-all hidden md:flex items-center justify-center border border-gray-100 hover:scale-105 hover:text-gold"
+                                    aria-label="Desplazar a la derecha"
+                                >
+                                    <svg className="w-5 h-5 ml-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
 
                         {/* Toolbar row: count left, sort + filter right */}
