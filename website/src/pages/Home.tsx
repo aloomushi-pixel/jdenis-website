@@ -352,7 +352,7 @@ export default function Home() {
                         >
                             Certifícate con la
                             <br />
-                            <i className="text-gold font-bold">Pionera de México</i>
+                            <i className="text-gold font-black tracking-wide drop-shadow-xl" style={{ fontWeight: 800 }}>Pionera de México</i>
                         </h1>
 
                         {/* Subtitle */}
