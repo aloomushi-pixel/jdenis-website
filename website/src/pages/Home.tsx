@@ -387,7 +387,7 @@ export default function Home() {
                 <div className="container-luxury">
                     {/* Header */}
                     <div className="mb-4">
-                        <h2 className="font-serif text-xl leading-tight" style={{ color: '#0a1847' }}>Explora por Categoría</h2>
+                        <h2 className="text-3xl md:text-4xl font-bold leading-tight" style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif", color: '#0a1847' }}>Explora por Categoría</h2>
                     </div>
 
                     {/* max-h: mobile 38px×3+10px×2=134, 4ª fila en 144 → usamos 140. desktop 42px×3+10×2=146, 4ª en 156 → usamos 152 */}
@@ -473,7 +473,7 @@ export default function Home() {
 
                         {/* Headline */}
                         <h2
-                            className="text-[clamp(2.2rem,5vw,4.5rem)] leading-[1.08] font-bold mb-6 text-white tracking-[-0.02em]"
+                            className="text-4xl md:text-5xl leading-[1.08] font-bold mb-6 text-white tracking-[-0.02em]"
                             style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif" }}
                         >
                             Registro para ser distribuidor{' '}
@@ -486,10 +486,9 @@ export default function Home() {
                         </h2>
 
                         {/* Subtitle */}
-                        <p className="text-white/65 text-base md:text-lg leading-relaxed mb-10 max-w-xl mx-auto font-sans">
+                        <p className="text-white/80 text-lg md:text-xl font-bold leading-relaxed mb-10 max-w-xl mx-auto" style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif" }}>
                             Lleva J. Denis a tu ciudad. Obtén precios de mayoreo, material
-                            de apoyo y el respaldo de una marca con{' '}
-                            <strong className="text-white/90 font-semibold">+25 años en el mercado</strong>.
+                            de apoyo y el respaldo de una marca con +25 años en el mercado.
                         </p>
 
                         {/* Benefits inline chips */}
@@ -545,8 +544,8 @@ export default function Home() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                         >
-                            <h2 className="section-title">Favoritos de la Marca</h2>
-                            <p className="text-charcoal/50 text-sm uppercase tracking-[0.2em] font-sans mt-2">
+                            <h2 className="text-4xl md:text-5xl font-bold" style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif", color: '#0a1847' }}>Favoritos de la Marca</h2>
+                            <p className="text-[#0a1847]/70 text-lg md:text-xl font-bold mt-2" style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif" }}>
                                 Los productos más elegidos por profesionales
                             </p>
                         </motion.div>
@@ -598,10 +597,10 @@ export default function Home() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                             >
-                                <h2 className="font-serif text-3xl md:text-4xl text-cream mb-3">
+                                <h2 className="text-4xl md:text-5xl font-bold text-cream mb-3" style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif" }}>
                                     Tendencias <span className="text-[#d4a832]">#JDenis</span>
                                 </h2>
-                                <p className="text-cream/50 text-sm uppercase tracking-[0.2em] font-sans">
+                                <p className="text-cream/80 text-lg md:text-xl font-bold" style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif" }}>
                                     Tutoriales, tips y tendencias en cejas y pestañas
                                 </p>
                             </motion.div>
@@ -721,10 +720,10 @@ export default function Home() {
                         viewport={{ once: true }}
                         className="max-w-3xl mx-auto text-center"
                     >
-                        <h2 className="font-serif text-4xl lg:text-5xl text-white mb-6 leading-tight drop-shadow-lg">
+                        <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight drop-shadow-lg" style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif" }}>
                             ¿List@ para elevar tu carrera profesional?
                         </h2>
-                        <p className="text-white/80 text-lg max-w-xl mx-auto mb-10 drop-shadow-md">
+                        <p className="text-white/90 text-xl font-bold max-w-xl mx-auto mb-10 drop-shadow-md" style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif" }}>
                             Accede a productos premium con precios especiales para profesionales
                             y distribuye la marca líder en tu zona.
                         </p>
