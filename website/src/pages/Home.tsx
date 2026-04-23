@@ -3,6 +3,7 @@ import { Pause, Play, Volume2, VolumeX } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import GoogleReviews from '../components/GoogleReviews';
+import { ProductCard } from '../components/ProductCard';
 import { getFeaturedProducts, getReels, type Product, type SocialReel } from '../lib/supabase';
 import { usePageMeta } from '../hooks/usePageMeta';
 
@@ -561,55 +562,8 @@ export default function Home() {
                                 viewport={{ once: true }}
                                 transition={{ delay: i * 0.06, duration: 0.5 }}
                             >
-                                <Link
-                                    to={`/producto/${product.id}`}
-                                    className="group block bg-white rounded-xl border border-gray-100/60 shadow-sm hover:shadow-md transition-shadow overflow-hidden h-full flex flex-col"
-                                >
-                                    {/* Image */}
-                                    <div className="relative overflow-hidden bg-cream-dark aspect-[4/5]">
-                                        <img
-                                            src={product.image_url || '/placeholder.webp'}
-                                            alt={product.name}
-                                            loading="lazy"
-                                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                        />
-                                        {/* Hover overlay (desktop) removed to match store grid */}
-
-                                        {/* Featured badge */}
-                                        <div className="absolute top-0 left-0 z-10 bg-gradient-to-r from-yellow-400 to-amber-500 text-amber-950 px-2 py-1.5 shadow-md rounded-br-xl flex items-center justify-center">
-                                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
-                                        </div>
-                                    </div>
-
-                                    {/* Info */}
-                                    <div className="p-3 sm:p-4 flex flex-col flex-1 justify-between">
-                                        <div>
-                                            <span className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-[0.2em] mb-2 block font-bold">
-                                                {product.category}
-                                            </span>
-                                            <h3 className="font-sans text-sm sm:text-base font-bold leading-tight line-clamp-2 transition-colors mb-2 text-gray-900" style={{ color: '#001641' }}>
-                                                {product.name}
-                                            </h3>
-                                            {product.description && (
-                                                <p className="text-xs text-gray-500 line-clamp-3 mb-3 leading-relaxed">
-                                                    {product.description}
-                                                </p>
-                                            )}
-                                        </div>
-                                        <div className="flex items-center justify-between pt-3 border-t border-gray-100 mt-auto">
-                                            <p className="text-lg sm:text-xl font-extrabold tracking-tight text-gray-900" style={{ color: '#001641' }}>
-                                                ${product.price?.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} <span className="text-[10px] sm:text-xs font-semibold text-gray-400 ml-0.5">MXN</span>
-                                            </p>
-                                            <span className="text-gold text-xs font-medium hidden sm:inline-flex items-center gap-1 group-hover:gap-2 transition-all">
-                                                Ver
-                                                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                                                </svg>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </Link>
-                            </motion.div>
+                                    <ProductCard product={product} />
+                                </motion.div>
                         ))}
                     </div>
 
