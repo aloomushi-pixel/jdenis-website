@@ -20,12 +20,20 @@ export default function Header() {
         const handleScroll = () => {
             const currentScrollY = window.scrollY;
             setScrolled(currentScrollY > 50);
-            setHidden(currentScrollY > lastScrollY && currentScrollY > 150);
+            
+            if (location.pathname === '/tienda') {
+                // In the shop page, the header stays hidden as long as we are scrolled down
+                // to avoid overlapping with the shop's own sticky bar when scrolling up
+                setHidden(currentScrollY > 100);
+            } else {
+                // Default behavior: hide on scroll down, show on scroll up
+                setHidden(currentScrollY > lastScrollY && currentScrollY > 150);
+            }
             lastScrollY = currentScrollY;
         };
         window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
+    }, [location.pathname]);
 
     const navLinks = [
         { path: '/', label: 'Inicio' },
