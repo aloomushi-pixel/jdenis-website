@@ -6,7 +6,7 @@ import ProductSkeleton from '../components/ProductSkeleton';
 import { useProducts } from '../hooks/useProducts';
 import { useVariants } from '../hooks/useVariants';
 import { usePageMeta } from '../hooks/usePageMeta';
-
+import { useSearchStore } from '../store/searchStore';
 
 // Category filter definitions (UI constants with SVG icon paths)
 const shopCategories = [
@@ -45,6 +45,7 @@ export default function Shop() {
     const [activeCategory, setActiveCategory] = useState(searchParams.get('cat') || 'all');
     const [sortBy, setSortBy] = useState('featured');
     const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
+    const { openSearch } = useSearchStore();
 
     useEffect(() => {
         const q = searchParams.get('q');
@@ -56,7 +57,6 @@ export default function Shop() {
     const [showOffersOnly, setShowOffersOnly] = useState(false);
     const [showPricePopover, setShowPricePopover] = useState(false);
     const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
-    const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
     const handleOpenPrice = (e: React.MouseEvent) => {
         const rect = e.currentTarget.getBoundingClientRect();
@@ -391,7 +391,7 @@ export default function Shop() {
             <section id="shop-catalog" className="section section-cream py-0 md:py-0 relative">
                 
                 {/* ─── Natively Sticky Shop Bar ─── */}
-                <div className="sticky top-[72px] md:top-[80px] z-40 w-full bg-cream/95 backdrop-blur-md pt-4 pb-4 border-b border-gray-200/50 shadow-sm transition-all duration-300">
+                <div className="sticky top-0 z-40 w-full bg-cream/95 backdrop-blur-md pt-4 pb-4 border-b border-gray-200/50 shadow-sm transition-all duration-300">
                     <div className="container-luxury flex flex-col gap-3">
                         
                         {/* TOP ROW: Categories Carousel */}
@@ -448,41 +448,17 @@ export default function Shop() {
                         </div>
 
                         {/* BOTTOM ROW: Filters & Sort */}
-                        <div className="flex flex-wrap md:flex-nowrap items-center justify-between gap-3">
+                        <div className="flex flex-nowrap items-center gap-3 overflow-x-auto scrollbar-hide pb-1 w-full md:w-auto md:justify-between">
                             {/* Left Side: Buttons */}
-                            <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide pb-1 w-full md:w-auto flex-nowrap shrink-0">
-                                {/* Search Icon (small) / Expanding Bar */}
-                                <motion.div
-                                    animate={{ width: isSearchExpanded ? (window.innerWidth < 768 ? 160 : 220) : (window.innerWidth < 768 ? 34 : 42) }}
-                                    className={`relative flex items-center bg-white border transition-colors rounded-full shrink-0 ${isSearchExpanded ? 'border-forest/40 shadow-sm' : 'border-kraft/30 shadow-sm hover:border-forest/40 hover:text-forest text-charcoal/70'}`}
+                            <div className="flex items-center gap-2 flex-nowrap shrink-0">
+                                {/* Search Icon (small) */}
+                                <button
+                                    onClick={openSearch}
+                                    className="p-2 md:p-2.5 bg-white border border-kraft/30 text-charcoal/70 hover:text-forest hover:border-forest/40 rounded-full transition-all shrink-0 shadow-sm"
+                                    aria-label="Buscar productos"
                                 >
-                                    <button
-                                        onClick={() => {
-                                            if (!isSearchExpanded) {
-                                                setIsSearchExpanded(true);
-                                            } else if (searchQuery === '') {
-                                                setIsSearchExpanded(false);
-                                            }
-                                        }}
-                                        className="p-2 md:p-2.5 shrink-0 z-10"
-                                        aria-label="Buscar productos"
-                                    >
-                                        <svg className="w-4 h-4 md:w-5 md:h-5 text-current" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-                                        </svg>
-                                    </button>
-                                    <input
-                                        type="text"
-                                        placeholder="Buscar..."
-                                        value={searchQuery}
-                                        onChange={(e) => setSearchQuery(e.target.value)}
-                                        onBlur={() => {
-                                            if (searchQuery === '') setIsSearchExpanded(false);
-                                        }}
-                                        className={`absolute left-8 md:left-10 right-3 bg-transparent border-none outline-none text-xs md:text-sm text-forest placeholder:text-charcoal/40 transition-opacity ${isSearchExpanded ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
-                                        autoFocus={isSearchExpanded}
-                                    />
-                                </motion.div>
+                                    <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
+                                </button>
 
                                 {/* Todo */}
                                 <button
@@ -523,21 +499,19 @@ export default function Shop() {
                             </div>
 
                             {/* Right Side: Sort */}
-                            <div className="flex items-center gap-2 md:ml-auto w-full md:w-auto mt-2 md:mt-0">
-                                <div className="relative w-full md:w-auto">
-                                    <select
-                                        value={sortBy}
-                                        onChange={(e) => setSortBy(e.target.value)}
-                                        className="w-full md:w-auto appearance-none pl-3 pr-8 py-2 bg-white border border-kraft/30 text-xs md:text-sm text-forest rounded-lg focus:outline-none focus:border-gold cursor-pointer hover:border-gold/40 transition-colors shadow-sm"
-                                    >
-                                        {sortOptions.map(opt => (
-                                            <option key={opt.value} value={opt.value}>{opt.label}</option>
-                                        ))}
-                                    </select>
-                                    <svg className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-charcoal/40 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                    </svg>
-                                </div>
+                            <div className="relative shrink-0 md:ml-auto">
+                                <select
+                                    value={sortBy}
+                                    onChange={(e) => setSortBy(e.target.value)}
+                                    className="appearance-none pl-3 pr-8 py-2 md:py-2.5 bg-white border border-kraft/30 text-xs md:text-sm text-forest rounded-full focus:outline-none focus:border-gold cursor-pointer hover:border-gold/40 transition-colors shadow-sm h-full"
+                                >
+                                    {sortOptions.map(opt => (
+                                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                    ))}
+                                </select>
+                                <svg className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-charcoal/40 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                </svg>
                             </div>
                         </div>
                     </div>
