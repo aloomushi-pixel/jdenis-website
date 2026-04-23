@@ -347,18 +347,8 @@ export default function Shop() {
 
     return (
         <div className="min-h-screen bg-cream">
-            {/* Header */}
-            <section className="pt-24 pb-8 md:pt-32 md:pb-10 relative bg-cream">
-                <div className="container-luxury relative z-10">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="text-center"
-                    >
-                        <h1 className="font-serif text-3xl md:text-5xl text-forest mb-0">Tienda de Cosmeticos JDenis</h1>
-                    </motion.div>
-                </div>
-            </section>
+            {/* Espaciado para compensar el header fijo, sin HERO visible según solicitud del usuario */}
+            <div className="pt-20 md:pt-28 bg-cream"></div>
 
             {/* ═══════════════════════════════════════════════════
                 FEATURED PRODUCTS — Oculto temporalmente
@@ -449,46 +439,21 @@ export default function Shop() {
                                         : 'bg-white border-kraft/30 text-charcoal/70 hover:border-red-300'
                                         }`}
                                 >
-                                    🔥 Ofertas
+                                    🔥 <span className="hidden md:inline">Ofertas</span>
                                 </button>
                                 {/* Price filter pill */}
-                                <div className="relative">
-                                    <button
-                                        onClick={() => setShowPricePopover(!showPricePopover)}
-                                        className={`px-4 md:px-5 py-2 md:py-2.5 text-xs md:text-sm rounded-full border transition-all flex items-center gap-1.5 ${(priceRange[0] > PRICE_MIN || priceRange[1] < computedMax) || showPricePopover
-                                            ? 'bg-gold/10 border-gold/40 text-forest font-medium shadow-sm'
-                                            : 'bg-white border-kraft/30 text-charcoal/70 hover:border-gold/40'
-                                            }`}
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                        </svg>
-                                        Precio
-                                    </button>
-                                    
-                                    <AnimatePresence>
-                                        {showPricePopover && (
-                                            <motion.div
-                                                initial={{ opacity: 0, y: 10 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                exit={{ opacity: 0, y: 10 }}
-                                                className="absolute top-full left-0 mt-2 p-4 bg-white rounded-xl shadow-xl border border-gray-100 z-[60] w-64"
-                                            >
-                                                <div className="flex justify-between items-center mb-3">
-                                                    <span className="text-xs font-medium text-charcoal/50">Hasta: ${priceRange[1].toLocaleString()}</span>
-                                                </div>
-                                                <input 
-                                                    type="range" 
-                                                    min={PRICE_MIN} 
-                                                    max={computedMax} 
-                                                    value={priceRange[1]} 
-                                                    onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
-                                                    className="w-full accent-gold h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                                                />
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                </div>
+                                <button
+                                    onClick={() => setShowPricePopover(true)}
+                                    className={`px-4 md:px-5 py-2 md:py-2.5 text-xs md:text-sm rounded-full border transition-all flex items-center gap-1.5 ${(priceRange[0] > PRICE_MIN || priceRange[1] < computedMax)
+                                        ? 'bg-gold/10 border-gold/40 text-forest font-medium shadow-sm'
+                                        : 'bg-white border-kraft/30 text-charcoal/70 hover:border-gold/40'
+                                        }`}
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 shrink-0">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span className="hidden md:inline">Precio</span>
+                                </button>
                             </div>
 
                             {/* Category pills (horizontal scroll with arrows) */}
@@ -568,57 +533,32 @@ export default function Shop() {
                                 {/* Offers quick-filter pill */}
                                 <button
                                     onClick={() => setShowOffersOnly(!showOffersOnly)}
-                                    className={`flex-shrink-0 px-5 py-2.5 text-sm rounded-full border transition-all flex items-center gap-1.5 ${showOffersOnly
+                                    className={`flex-shrink-0 px-4 md:px-5 py-2.5 text-sm rounded-full border transition-all flex items-center gap-1.5 ${showOffersOnly
                                         ? 'bg-red-500 text-white border-red-500 font-medium shadow-sm'
                                         : 'bg-white border-kraft/30 text-charcoal/70 hover:border-red-300'
                                         }`}
                                 >
-                                    🔥 Ofertas
+                                    🔥 <span className="hidden md:inline">Ofertas</span>
                                     {promoProducts.length > 0 && (
-                                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${showOffersOnly ? 'bg-white/20 text-white' : 'bg-red-100 text-red-600'}`}>
+                                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ml-1 ${showOffersOnly ? 'bg-white/20 text-white' : 'bg-red-100 text-red-600'}`}>
                                             {promoProducts.length}
                                         </span>
                                     )}
                                 </button>
 
                                 {/* Price filter pill */}
-                                <div className="relative">
-                                    <button
-                                        onClick={() => setShowPricePopover(!showPricePopover)}
-                                        className={`flex-shrink-0 px-5 py-2.5 text-sm rounded-full border transition-all flex items-center gap-1.5 ${(priceRange[0] > PRICE_MIN || priceRange[1] < computedMax) || showPricePopover
-                                            ? 'bg-gold/10 border-gold/40 text-forest font-medium shadow-sm'
-                                            : 'bg-white border-kraft/30 text-charcoal/70 hover:border-gold/40'
-                                            }`}
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                        </svg>
-                                        Precio
-                                    </button>
-                                    
-                                    <AnimatePresence>
-                                        {showPricePopover && (
-                                            <motion.div
-                                                initial={{ opacity: 0, y: 10 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                exit={{ opacity: 0, y: 10 }}
-                                                className="absolute top-full left-0 mt-2 p-4 bg-white rounded-xl shadow-xl border border-gray-100 z-[60] w-64"
-                                            >
-                                                <div className="flex justify-between items-center mb-3">
-                                                    <span className="text-xs font-medium text-charcoal/50">Hasta: ${priceRange[1].toLocaleString()}</span>
-                                                </div>
-                                                <input 
-                                                    type="range" 
-                                                    min={PRICE_MIN} 
-                                                    max={computedMax} 
-                                                    value={priceRange[1]} 
-                                                    onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
-                                                    className="w-full accent-gold h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                                                />
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                </div>
+                                <button
+                                    onClick={() => setShowPricePopover(true)}
+                                    className={`flex-shrink-0 px-4 md:px-5 py-2.5 text-sm rounded-full border transition-all flex items-center gap-1.5 ${(priceRange[0] > PRICE_MIN || priceRange[1] < computedMax)
+                                        ? 'bg-gold/10 border-gold/40 text-forest font-medium shadow-sm'
+                                        : 'bg-white border-kraft/30 text-charcoal/70 hover:border-gold/40'
+                                        }`}
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 shrink-0">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span className="hidden md:inline">Precio</span>
+                                </button>
                             </div>
 
                             {/* Category pills (horizontal scroll with arrows) */}
@@ -742,6 +682,65 @@ export default function Shop() {
                 </div>
             </section>
 
+            {/* Price Filter Modal/Bottom Sheet */}
+            <AnimatePresence>
+                {showPricePopover && (
+                    <>
+                        {/* Backdrop */}
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setShowPricePopover(false)}
+                            className="fixed inset-0 bg-charcoal/40 backdrop-blur-sm z-[100]"
+                        />
+                        {/* Modal */}
+                        <motion.div
+                            initial={{ opacity: 0, y: '100%' }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: '100%' }}
+                            className="fixed bottom-0 left-0 w-full bg-white rounded-t-3xl p-6 md:p-8 z-[101] shadow-2xl md:top-1/2 md:bottom-auto md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-[400px] md:rounded-2xl"
+                        >
+                            <div className="flex justify-between items-center mb-6">
+                                <h3 className="font-serif text-xl text-forest">Filtrar por Precio</h3>
+                                <button onClick={() => setShowPricePopover(false)} className="p-2 text-charcoal/50 hover:text-forest bg-gray-50 rounded-full transition-colors">
+                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                            
+                            <div className="mb-4">
+                                <span className="text-sm font-medium text-charcoal/70">Precio Máximo:</span>
+                                <span className="text-3xl font-semibold text-gold block mt-1">${priceRange[1].toLocaleString()} <span className="text-sm text-charcoal/40 font-medium">MXN</span></span>
+                            </div>
+                            
+                            <input 
+                                type="range" 
+                                min={PRICE_MIN} 
+                                max={computedMax} 
+                                value={priceRange[1]} 
+                                onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
+                                className="w-full accent-gold h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer mt-4"
+                            />
+                            
+                            <div className="flex justify-between text-xs text-charcoal/40 mt-3 font-medium">
+                                <span>${PRICE_MIN}</span>
+                                <span>${computedMax.toLocaleString()}</span>
+                            </div>
+
+                            <div className="mt-8">
+                                <button 
+                                    onClick={() => setShowPricePopover(false)}
+                                    className="w-full py-3.5 bg-forest text-white rounded-xl font-medium hover:bg-forest-light transition-colors shadow-lg shadow-forest/20"
+                                >
+                                    Ver {filteredProducts.length} productos
+                                </button>
+                            </div>
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
 
         </div>
     );
