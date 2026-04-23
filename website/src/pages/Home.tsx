@@ -3,7 +3,7 @@ import { Pause, Play, Volume2, VolumeX } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import GoogleReviews from '../components/GoogleReviews';
-import { ProductCard } from '../components/ProductCard';
+import ProductCard from '../components/ProductCard';
 import { getFeaturedProducts, getReels, type Product, type SocialReel } from '../lib/supabase';
 import { usePageMeta } from '../hooks/usePageMeta';
 
