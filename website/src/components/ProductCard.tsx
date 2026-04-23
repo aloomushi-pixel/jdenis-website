@@ -46,7 +46,7 @@ export default function ProductCard({ product, index = 0, variantCount = 0 }: Pr
             transition={{ delay: index * 0.1, duration: 0.5 }}
             className="h-full"
         >
-            <Link to={`/producto/${product.id}`} className="product-card block group h-full flex flex-col bg-white">
+            <Link to={`/producto/${product.id}`} className="product-card block group h-full flex flex-col bg-white rounded-xl border border-gray-100/60 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                 <div className="relative overflow-hidden bg-cream-dark aspect-[4/5]">
                     <img
                         src={product.image}
@@ -88,63 +88,61 @@ export default function ProductCard({ product, index = 0, variantCount = 0 }: Pr
 
                     {/* Discount Badge — takes priority over Featured */}
                     {isOnSale ? (
-                        <div className="absolute top-2 left-2 z-10 bg-gradient-to-r from-red-500 to-red-600 text-white text-[10px] sm:text-[11px] font-bold px-2 py-1 tracking-wider uppercase shadow-lg rounded-sm">
+                        <div className="absolute top-0 left-0 z-10 bg-gradient-to-r from-red-500 to-red-600 text-white text-[10px] sm:text-[11px] font-bold px-3 py-1.5 tracking-wider uppercase shadow-md rounded-br-xl">
                             {product.promotion ? product.promotion : `-${discountPercent}% OFF`}
                         </div>
                     ) : product.isFeatured ? (
-                        <div className="absolute top-2 left-2 z-10 bg-gradient-to-r from-yellow-400 to-amber-500 text-amber-950 text-[10px] sm:text-[11px] font-bold px-2 py-1 tracking-wider uppercase shadow-lg animate-pulse" style={{ animationDuration: '3s' }}>
-                            ⭐ Destacado
+                        <div className="absolute top-0 left-0 z-10 bg-gradient-to-r from-yellow-400 to-amber-500 text-amber-950 px-2 py-1.5 shadow-md rounded-br-xl flex items-center justify-center">
+                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
                         </div>
                     ) : null}
 
-                    {/* Variant Count Badge */}
-                    {hasVariants && (
-                        <div className="absolute top-2 right-2 z-10 px-2.5 py-1 text-[10px] sm:text-[11px] font-semibold tracking-wider rounded-sm bg-gold text-white">
-                            {variantCount} opciones
-                        </div>
-                    )}
-
                     {/* Out of Stock Badge */}
                     {isOutOfStock && (
-                        <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
-                            <span className="bg-red-500/90 backdrop-blur-sm text-white px-4 py-1.5 text-xs sm:text-sm font-bold tracking-[0.2em] rounded-sm transform -rotate-12 outline outline-2 outline-white shadow-lg">
-                                AGOTADO
-                            </span>
-                        </div>
-                    )}
-
-                    {/* Stock Badge */}
-                    {!hasVariants && product.stock && product.stock > 0 && product.stock <= 10 && (
-                        <div className="absolute top-2 right-2 bg-forest/80 backdrop-blur-sm px-2.5 py-1 text-[10px] text-gold tracking-wider rounded-sm z-10">
-                            Poca Existencia
+                        <div className="absolute top-0 right-0 z-10 bg-red-500/90 backdrop-blur-sm text-white px-3 py-1.5 text-[10px] sm:text-[11px] font-bold tracking-wider uppercase rounded-bl-xl shadow-md">
+                            Agotado
                         </div>
                     )}
                 </div>
 
                 <div className="product-card-body p-4 sm:p-5 flex flex-col flex-1 justify-between bg-white">
                     <div>
-                        <span className="text-[10px] sm:text-xs text-gold uppercase tracking-[0.2em] mb-2 block font-bold">
+                        <span className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-[0.2em] mb-2 block font-bold">
                             {product.category}
                         </span>
-                        <h3 className="font-serif text-base sm:text-lg text-forest font-bold leading-tight line-clamp-2 transition-colors mb-3">
+                        <h3 className="font-sans text-sm sm:text-base text-[#001641] font-bold leading-tight line-clamp-2 transition-colors mb-2">
                             {product.name}
                         </h3>
+                        {product.description && (
+                            <p className="text-xs text-gray-500 line-clamp-3 mb-3 leading-relaxed">
+                                {product.description}
+                            </p>
+                        )}
                     </div>
                     
-                    <div className="flex flex-col justify-end mt-auto pt-3 border-t border-kraft/20">
+                    <div className="flex flex-col justify-end mt-auto pt-3 border-t border-gray-100">
                         {isOnSale && (
                             <span className="text-xs sm:text-sm text-red-500/70 line-through mb-0.5 font-semibold">
-                                ${product.originalPrice!.toLocaleString()}
+                                ${product.originalPrice!.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                             </span>
                         )}
-                        <div className="flex items-baseline gap-1.5">
+                        <div className="flex items-baseline gap-1.5 mb-2">
                             {hasVariants && (
-                                <span className="text-xs sm:text-sm font-medium text-charcoal/80 uppercase tracking-widest">Desde</span>
+                                <span className="text-xs sm:text-sm font-medium text-gray-400 uppercase tracking-widest">Desde</span>
                             )}
-                            <p className="text-lg sm:text-xl font-extrabold text-charcoal tracking-tight">
-                                ${product.price.toLocaleString()}
+                            <p className="text-lg sm:text-xl font-extrabold text-[#001641] tracking-tight">
+                                ${product.price.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} <span className="text-[10px] sm:text-xs font-semibold text-gray-400 ml-0.5">MXN</span>
                             </p>
                         </div>
+                        
+                        {hasVariants && (
+                            <div className="flex items-center gap-1.5 text-[10px] sm:text-xs font-medium text-gray-500 bg-gray-50 px-2 py-1.5 rounded-md self-start border border-gray-100">
+                                <span>{variantCount} opciones</span>
+                                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                                </svg>
+                            </div>
+                        )}
                     </div>
                 </div>
             </Link>
