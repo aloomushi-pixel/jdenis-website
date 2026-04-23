@@ -754,14 +754,24 @@ export default function Home() {
             <GoogleReviews />
 
             {/* CTA FINAL - DYNAMIC SECTION */}
-            <section className="section relative overflow-hidden bg-[#0a1f5c] min-h-[500px] flex items-center justify-center">
-                {/* Background image */}
-                <div
-                    className="absolute inset-0 bg-center bg-cover bg-no-repeat opacity-40 mix-blend-screen"
-                    style={{ backgroundImage: 'url(/cta-bg.png)' }}
-                />
-                {/* Gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-b from-[#0a1f5c]/50 via-transparent to-[#0a1f5c]/80" />
+            <section className="section relative overflow-hidden bg-[#001641] min-h-[500px] flex items-center justify-center">
+                {/* Beautiful CSS Gradient Background */}
+                <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+                    {/* Base premium gradient */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#001641] via-[#051136] to-[#0a1f5c]" />
+                    
+                    {/* Subtle golden ambient glow at top right */}
+                    <div className="absolute -top-40 -right-40 w-[600px] h-[600px] bg-[#d4a832]/10 rounded-full blur-[120px] mix-blend-screen" />
+                    
+                    {/* Deep lighter blue ambient glow at bottom left */}
+                    <div className="absolute -bottom-40 -left-40 w-[600px] h-[600px] bg-[#1a4b9c]/15 rounded-full blur-[150px] mix-blend-screen" />
+                    
+                    {/* Premium dotted texture overlay */}
+                    <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyIvPjwvc3ZnPg==')] opacity-60 mix-blend-overlay" />
+                    
+                    {/* Inner vignette for focus */}
+                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,#001641_100%)] opacity-80" />
+                </div>
                 
                 {/* Decorative elements */}
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#d4a832]/50 to-transparent" />
