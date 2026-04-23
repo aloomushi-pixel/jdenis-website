@@ -5,104 +5,6 @@ import { Link } from 'react-router-dom';
 import GoogleReviews from '../components/GoogleReviews';
 import { getFeaturedProducts, getReels, type Product, type SocialReel } from '../lib/supabase';
 import { usePageMeta } from '../hooks/usePageMeta';
-import { createClient } from '@supabase/supabase-js';
-
-// V2 Database Client specifically for centralized newsletter and communications
-const v2SupabaseUrl = 'https://vqcjxzsibywdxpvkyysa.supabase.co';
-const v2SupabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZxY2p4enNpYnl3ZHhwdmt5eXNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAyNDgxMDAsImV4cCI6MjA4NTgyNDEwMH0.SzIov9XDCl0nFsTx_pCpVdlqnMTLQ10l1v-e2YNE5Xg';
-const v2Supabase = createClient(v2SupabaseUrl, v2SupabaseKey);
-
-function NewsletterForm() {
-    const [email, setEmail] = useState('');
-    const [name, setName] = useState('');
-    const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-    const [message, setMessage] = useState('');
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!email) return;
-        setStatus('loading');
-        
-        try {
-            const { error } = await v2Supabase
-                .from('newsletter_subscribers')
-                .insert([{ email: email.toLowerCase().trim(), name: name.trim(), source: 'website' }]);
-                
-            if (error) {
-                if (error.code === '23505') {
-                    setStatus('error');
-                    setMessage('Este correo ya está suscrito.');
-                } else {
-                    setStatus('error');
-                    setMessage('Ocurrió un error. Intenta nuevamente.');
-                }
-            } else {
-                setStatus('success');
-                setMessage('¡Suscripción exitosa! Bienvenido/a.');
-                setEmail('');
-                setName('');
-            }
-        } catch (err) {
-            setStatus('error');
-            setMessage('Error de red. Intenta nuevamente.');
-        }
-    };
-
-    if (status === 'success') {
-        return (
-            <motion.div 
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="bg-green-500/10 border border-green-500/20 rounded-2xl p-6 text-center"
-            >
-                <div className="w-12 h-12 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
-                </div>
-                <h4 className="text-white text-lg font-bold mb-2">¡Gracias por unírtetenos!</h4>
-                <p className="text-white/70 text-sm">Pronto recibirás nuestras novedades y descuentos exclusivos.</p>
-                <button type="button" onClick={() => setStatus('idle')} className="mt-4 text-green-400 text-sm hover:underline">Suscribir otro correo</button>
-            </motion.div>
-        );
-    }
-
-    return (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4 relative z-20">
-            <div>
-                <input 
-                    type="text" 
-                    placeholder="Tu nombre (Opcional)" 
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-[#d4a832]/50 transition-all font-sans"
-                />
-            </div>
-            <div>
-                <input 
-                    type="email" 
-                    required
-                    placeholder="ingresa-tu@correo.com" 
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-[#d4a832]/50 transition-all font-sans"
-                />
-            </div>
-            <button 
-                type="submit" 
-                disabled={status === 'loading'}
-                className="w-full bg-gradient-to-r from-[#d4a832] to-[#eedd99] hover:from-[#e3b844] hover:to-[#fbeeaa] text-[#0a1f5c] font-bold py-3.5 px-6 rounded-xl flex items-center justify-center gap-2 transition-all disabled:opacity-70"
-            >
-                {status === 'loading' ? (
-                    <span className="w-5 h-5 border-2 border-[#0a1f5c]/30 border-t-[#0a1f5c] rounded-full animate-spin block"></span>
-                ) : (
-                    <>Suscribirme <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg></>
-                )}
-            </button>
-            {status === 'error' && (
-                <p className="text-red-400 text-sm text-center font-medium mt-1">{message}</p>
-            )}
-        </form>
-    );
-}
 
 const platformStyles: Record<string, { gradient: string; icon: React.ReactNode; label: string }> = {
     youtube: { gradient: 'from-red-600 to-red-800', icon: <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>, label: 'YouTube' },
@@ -851,61 +753,31 @@ export default function Home() {
             {/* GOOGLE REVIEWS */}
             <GoogleReviews />
 
-            {/* NEWSLETTER SECTION */}
-            <section className="section relative overflow-hidden py-16 md:py-24" style={{ background: '#0a1f5c' }}>
-                {/* Decorative Elements */}
-                <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#d4a832]/30 to-transparent"></div>
-                <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[#d4a832]/60 to-transparent"></div>
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#1e4499]/40 rounded-full blur-[120px] pointer-events-none"></div>
-
-                <div className="container-luxury relative z-10 w-full px-4">
-                    <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-10 md:gap-16 bg-white/5 backdrop-blur-md border border-white/10 p-8 md:p-14 rounded-3xl shadow-2xl">
-                        <div className="flex-1 text-center md:text-left">
-                            <span className="inline-block px-4 py-1.5 mb-5 rounded-full border border-[#d4a832]/30 text-[#d4a832] text-[11px] font-bold tracking-[0.15em] uppercase bg-[#d4a832]/10">
-                                Únete a nuestra comunidad
-                            </span>
-                            <h3 className="text-3xl md:text-4xl text-white font-serif mb-5 leading-[1.15]">
-                                Contenido Exclusivo<br />para Profesionales
-                            </h3>
-                            <p className="text-white/65 text-base leading-relaxed mb-0 font-sans max-w-lg mx-auto md:mx-0">
-                                Suscríbete a nuestro newsletter y recibe artículos, cupones de descuento, 
-                                información sobre cursos y nuevos productos directo en tu correo.
-                            </p>
-                        </div>
-                        
-                        <div className="w-full md:w-[380px] shrink-0 relative bg-black/20 p-6 rounded-2xl border border-white/5 shadow-inner">
-                            <NewsletterForm />
-                        </div>
-                    </div>
-                </div>
-            </section>
-
             {/* CTA FINAL - DYNAMIC SECTION */}
-            <section className="section relative overflow-hidden bg-forest">
-                {/* Dynamic pattern overlay */}
-                <div className="absolute inset-0 opacity-20">
-                    <div className="absolute top-0 right-0 w-80 h-80 bg-gold/40 rounded-full blur-3xl translate-x-1/3 -translate-y-1/3" />
-                    <div className="absolute bottom-0 left-0 w-96 h-96 bg-gold/30 rounded-full blur-3xl -translate-x-1/3 translate-y-1/3" />
-                    <div className="absolute top-1/2 left-1/4 w-48 h-48 bg-gold/20 rounded-full blur-2xl" />
-                </div>
+            <section className="section relative overflow-hidden bg-[#0a1f5c] min-h-[500px] flex items-center justify-center">
+                {/* Background image */}
+                <div
+                    className="absolute inset-0 bg-center bg-cover bg-no-repeat opacity-40 mix-blend-screen"
+                    style={{ backgroundImage: 'url(/cta-bg.png)' }}
+                />
+                {/* Gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-b from-[#0a1f5c]/50 via-transparent to-[#0a1f5c]/80" />
+                
                 {/* Decorative elements */}
-                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#d4a832]/50 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#d4a832]/50 to-transparent" />
 
-                <div className="container-luxury relative z-10">
+                <div className="container-luxury relative z-10 w-full">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         className="max-w-3xl mx-auto text-center"
                     >
-                        <span className="inline-block px-4 py-2 bg-gold/20 border border-gold/40 text-gold text-sm font-medium mb-6">
-                            Únete a +5,000 profesionales
-                        </span>
-                        <h2 className="font-serif text-4xl lg:text-5xl text-cream mb-6 leading-tight">
-                            ¿Lista para elevar tu carrera profesional?
+                        <h2 className="font-serif text-4xl lg:text-5xl text-white mb-6 leading-tight drop-shadow-lg">
+                            ¿List@ para elevar tu carrera profesional?
                         </h2>
-                        <p className="text-cream/60 text-lg max-w-xl mx-auto mb-10">
+                        <p className="text-white/80 text-lg max-w-xl mx-auto mb-10 drop-shadow-md">
                             Accede a productos premium con precios especiales para profesionales
                             y distribuye la marca líder en tu zona.
                         </p>
