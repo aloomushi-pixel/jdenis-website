@@ -55,7 +55,7 @@ export default function Shop() {
     // Advanced filters
     const [priceRange, setPriceRange] = useState<[number, number]>([PRICE_MIN, DEFAULT_PRICE_MAX]);
     const [showOffersOnly, setShowOffersOnly] = useState(false);
-    const [showMobileFilters, setShowMobileFilters] = useState(false);
+    const [showPricePopover, setShowPricePopover] = useState(false);
     const [isSticky, setIsSticky] = useState(false);
 
     useEffect(() => {
@@ -348,21 +348,14 @@ export default function Shop() {
     return (
         <div className="min-h-screen bg-cream">
             {/* Header */}
-            <section className="pt-24 pb-12 md:pt-32 md:pb-16 relative overflow-hidden shadow-[0_10px_30px_rgba(0,0,0,0.15)] bg-forest" style={{ backgroundImage: "url('/images/bg_hero_jdenis.png')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
-                <div className="absolute inset-0 bg-forest/40 mix-blend-multiply" />
-                <div className="absolute inset-0 bg-gradient-to-t from-forest/80 to-transparent" />
-                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
-
+            <section className="pt-24 pb-8 md:pt-32 md:pb-10 relative bg-cream">
                 <div className="container-luxury relative z-10">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         className="text-center"
                     >
-                        <h1 className="font-serif text-3xl md:text-5xl text-cream mb-4 drop-shadow-md">Insumos Profesionales para Cejas y Pestañas</h1>
-                        <p className="hidden md:block text-cream/90 max-w-xl mx-auto drop-shadow-md">
-                            Productos de laboratorio con calidad científica · Lash Lifting · Extensiones · Pigmentos · Envíos a todo México
-                        </p>
+                        <h1 className="font-serif text-3xl md:text-5xl text-forest mb-0">Tienda de Cosmeticos JDenis</h1>
                     </motion.div>
                 </div>
             </section>
@@ -458,6 +451,44 @@ export default function Shop() {
                                 >
                                     🔥 Ofertas
                                 </button>
+                                {/* Price filter pill */}
+                                <div className="relative">
+                                    <button
+                                        onClick={() => setShowPricePopover(!showPricePopover)}
+                                        className={`px-4 md:px-5 py-2 md:py-2.5 text-xs md:text-sm rounded-full border transition-all flex items-center gap-1.5 ${(priceRange[0] > PRICE_MIN || priceRange[1] < computedMax) || showPricePopover
+                                            ? 'bg-gold/10 border-gold/40 text-forest font-medium shadow-sm'
+                                            : 'bg-white border-kraft/30 text-charcoal/70 hover:border-gold/40'
+                                            }`}
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        Precio
+                                    </button>
+                                    
+                                    <AnimatePresence>
+                                        {showPricePopover && (
+                                            <motion.div
+                                                initial={{ opacity: 0, y: 10 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0, y: 10 }}
+                                                className="absolute top-full left-0 mt-2 p-4 bg-white rounded-xl shadow-xl border border-gray-100 z-[60] w-64"
+                                            >
+                                                <div className="flex justify-between items-center mb-3">
+                                                    <span className="text-xs font-medium text-charcoal/50">Hasta: ${priceRange[1].toLocaleString()}</span>
+                                                </div>
+                                                <input 
+                                                    type="range" 
+                                                    min={PRICE_MIN} 
+                                                    max={computedMax} 
+                                                    value={priceRange[1]} 
+                                                    onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
+                                                    className="w-full accent-gold h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                                                />
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
                             </div>
 
                             {/* Category pills (horizontal scroll with arrows) */}
@@ -549,6 +580,45 @@ export default function Shop() {
                                         </span>
                                     )}
                                 </button>
+
+                                {/* Price filter pill */}
+                                <div className="relative">
+                                    <button
+                                        onClick={() => setShowPricePopover(!showPricePopover)}
+                                        className={`flex-shrink-0 px-5 py-2.5 text-sm rounded-full border transition-all flex items-center gap-1.5 ${(priceRange[0] > PRICE_MIN || priceRange[1] < computedMax) || showPricePopover
+                                            ? 'bg-gold/10 border-gold/40 text-forest font-medium shadow-sm'
+                                            : 'bg-white border-kraft/30 text-charcoal/70 hover:border-gold/40'
+                                            }`}
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        Precio
+                                    </button>
+                                    
+                                    <AnimatePresence>
+                                        {showPricePopover && (
+                                            <motion.div
+                                                initial={{ opacity: 0, y: 10 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0, y: 10 }}
+                                                className="absolute top-full left-0 mt-2 p-4 bg-white rounded-xl shadow-xl border border-gray-100 z-[60] w-64"
+                                            >
+                                                <div className="flex justify-between items-center mb-3">
+                                                    <span className="text-xs font-medium text-charcoal/50">Hasta: ${priceRange[1].toLocaleString()}</span>
+                                                </div>
+                                                <input 
+                                                    type="range" 
+                                                    min={PRICE_MIN} 
+                                                    max={computedMax} 
+                                                    value={priceRange[1]} 
+                                                    onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
+                                                    className="w-full accent-gold h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                                                />
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
                             </div>
 
                             {/* Category pills (horizontal scroll with arrows) */}
@@ -631,22 +701,7 @@ export default function Shop() {
                                     </svg>
                                 </div>
 
-                                {/* Filter button (opens panel) */}
-                                <button
-                                    onClick={() => setShowMobileFilters(true)}
-                                    className={`flex items-center gap-1.5 px-3 py-2 text-sm rounded-lg border transition-all ${(priceRange[0] > PRICE_MIN || priceRange[1] < computedMax)
-                                        ? 'bg-gold/10 border-gold/40 text-forest'
-                                        : 'bg-white border-kraft/30 text-charcoal/70 hover:border-gold/40'
-                                        }`}
-                                >
-                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
-                                    </svg>
-                                    <span className="hidden sm:inline">Filtros</span>
-                                    {(priceRange[0] > PRICE_MIN || priceRange[1] < computedMax) && (
-                                        <span className="w-2 h-2 bg-gold rounded-full" />
-                                    )}
-                                </button>
+                                {/* Mobile filter panel button removed as it was duplicating sort functionality */}
                             </div>
                         </div>
                     </div>
@@ -687,155 +742,7 @@ export default function Shop() {
                 </div>
             </section>
 
-            {/* ═══════════════════════════════════════════════════
-                FILTER PANEL (Slide-up overlay)
-               ═══════════════════════════════════════════════════ */}
-            <AnimatePresence>
-                {showMobileFilters && (
-                    <>
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            onClick={() => setShowMobileFilters(false)}
-                            className="fixed inset-0 bg-black/50 z-50"
-                        />
-                        <motion.div
-                            initial={{ y: '100%' }}
-                            animate={{ y: 0 }}
-                            exit={{ y: '100%' }}
-                            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                            className="fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl z-50 max-h-[80vh] overflow-y-auto"
-                        >
-                            {/* Handle */}
-                            <div className="flex justify-center pt-4 pb-2 mb-2">
-                                <div className="w-10 h-1.5 bg-kraft/40 rounded-full" />
-                            </div>
 
-                            <div className="px-6 pb-6">
-                                {/* Header */}
-                                <div className="flex items-center justify-between mb-6">
-                                    <h3 className="font-serif text-xl text-forest">Filtros</h3>
-                                    <button
-                                        onClick={() => setShowMobileFilters(false)}
-                                        className="p-2 text-charcoal/50 hover:text-forest transition-colors"
-                                    >
-                                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                        </svg>
-                                    </button>
-                                </div>
-
-                                {/* Price Range */}
-                                <div className="mb-6">
-                                    <h4 className="text-sm font-medium text-forest mb-3">Rango de Precio</h4>
-                                    <div className="flex items-center gap-2">
-                                        <div className="relative flex-1">
-                                            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-charcoal/50">$</span>
-                                            <input
-                                                type="number"
-                                                min={PRICE_MIN}
-                                                max={priceRange[1]}
-                                                value={priceRange[0]}
-                                                onChange={(e) => setPriceRange([Math.max(PRICE_MIN, Number(e.target.value)), priceRange[1]])}
-                                                className="w-full pl-5 pr-2 py-2.5 border border-kraft/30 text-sm text-forest bg-cream focus:outline-none focus:border-gold rounded-lg"
-                                                placeholder="Min"
-                                            />
-                                        </div>
-                                        <span className="text-charcoal/40 text-xs">—</span>
-                                        <div className="relative flex-1">
-                                            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-charcoal/50">$</span>
-                                            <input
-                                                type="number"
-                                                min={priceRange[0]}
-                                                max={computedMax}
-                                                value={priceRange[1]}
-                                                onChange={(e) => setPriceRange([priceRange[0], Math.min(computedMax, Number(e.target.value))])}
-                                                className="w-full pl-5 pr-2 py-2.5 border border-kraft/30 text-sm text-forest bg-cream focus:outline-none focus:border-gold rounded-lg"
-                                                placeholder="Max"
-                                            />
-                                        </div>
-                                    </div>
-                                    {/* Visual price bar */}
-                                    <div className="mt-3 h-1.5 bg-kraft/20 rounded-full relative overflow-hidden">
-                                        <div
-                                            className="absolute h-full bg-gradient-to-r from-gold to-gold-light rounded-full transition-all duration-300"
-                                            style={{
-                                                left: `${(priceRange[0] / computedMax) * 100}%`,
-                                                right: `${100 - (priceRange[1] / computedMax) * 100}%`,
-                                            }}
-                                        />
-                                    </div>
-                                    <div className="flex justify-between mt-1">
-                                        <span className="text-[10px] text-charcoal/40">${PRICE_MIN}</span>
-                                        <span className="text-[10px] text-charcoal/40">${computedMax.toLocaleString()}</span>
-                                    </div>
-                                </div>
-
-                                {/* Offers Toggle */}
-                                <div className="mb-6 p-4 bg-cream rounded-lg">
-                                    <label className="flex items-center gap-3 cursor-pointer group">
-                                        <div className="relative">
-                                            <input
-                                                type="checkbox"
-                                                checked={showOffersOnly}
-                                                onChange={(e) => setShowOffersOnly(e.target.checked)}
-                                                className="sr-only"
-                                            />
-                                            <div className={`w-10 h-5 rounded-full transition-all duration-300 ${showOffersOnly ? 'bg-red-500' : 'bg-kraft/30'}`}>
-                                                <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-all duration-300 ${showOffersOnly ? 'left-5' : 'left-0.5'}`} />
-                                            </div>
-                                        </div>
-                                        <span className="text-sm text-forest group-hover:text-red-500 transition-colors">
-                                            🔥 Solo Ofertas
-                                        </span>
-                                    </label>
-                                </div>
-
-                                {/* Sort options */}
-                                <div className="mb-6">
-                                    <h4 className="text-sm font-medium text-forest mb-3">Ordenar por</h4>
-                                    <div className="grid grid-cols-2 gap-2">
-                                        {sortOptions.map(opt => (
-                                            <button
-                                                key={opt.value}
-                                                onClick={() => setSortBy(opt.value)}
-                                                className={`text-left px-3 py-2.5 text-sm rounded-lg border transition-all ${sortBy === opt.value
-                                                    ? 'bg-gold/10 border-gold/40 text-forest font-medium'
-                                                    : 'bg-white border-kraft/20 text-charcoal/70 hover:border-kraft/40'
-                                                    }`}
-                                            >
-                                                {opt.label}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                {/* Actions */}
-                                <div className="flex gap-3">
-                                    {hasActiveFilters && (
-                                        <button
-                                            onClick={() => {
-                                                clearAllFilters();
-                                                setShowMobileFilters(false);
-                                            }}
-                                            className="flex-1 py-3 border border-kraft/30 text-charcoal/60 text-sm rounded-lg hover:text-forest transition-colors"
-                                        >
-                                            Limpiar
-                                        </button>
-                                    )}
-                                    <button
-                                        onClick={() => setShowMobileFilters(false)}
-                                        className="flex-1 py-3 bg-gold text-white text-sm font-semibold rounded-lg hover:bg-gold-light transition-colors"
-                                    >
-                                        Ver {filteredProducts.length} productos
-                                    </button>
-                                </div>
-                            </div>
-                        </motion.div>
-                    </>
-                )}
-            </AnimatePresence>
         </div>
     );
 }
