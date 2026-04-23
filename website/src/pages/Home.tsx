@@ -352,7 +352,7 @@ export default function Home() {
                         >
                             Certifícate con la
                             <br />
-                            <i className="text-gold font-black tracking-wide drop-shadow-xl" style={{ fontWeight: 800 }}>Pionera de México</i>
+                            <i className="text-gold tracking-wide drop-shadow-2xl" style={{ fontWeight: 900, WebkitTextStroke: '1.5px #d4a832' }}>Pionera de México</i>
                         </h1>
 
                         {/* Subtitle */}
@@ -514,16 +514,14 @@ export default function Home() {
                         <div className="flex flex-wrap justify-center gap-4">
                             <Link
                                 to="/registro-distribuidor"
-                                className="group inline-flex items-center gap-3 px-10 py-[14px] rounded-full font-semibold text-white text-[15px] tracking-wide transition-all duration-300 hover:scale-[1.03]"
+                                className="group inline-flex items-center gap-3 px-8 py-3.5 rounded-full font-semibold text-brand-blue text-[16px] transition-all duration-300 hover:-translate-y-1"
                                 style={{
-                                    background: 'linear-gradient(135deg, #1e4499 0%, #3aa3d8 100%)',
-                                    boxShadow: '0 4px 24px rgba(58,163,216,0.40)'
+                                    backgroundColor: '#48CAFF',
+                                    boxShadow: '0 8px 20px rgba(72,202,255,0.25)'
                                 }}
                             >
                                 Quiero ser Distribuidor
-                                <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                                </svg>
+                                <span className="text-xl leading-none transition-transform duration-300 group-hover:translate-x-1">→</span>
                             </Link>
                         </div>
                     </motion.div>
