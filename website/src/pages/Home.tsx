@@ -562,7 +562,7 @@ export default function Home() {
                                 viewport={{ once: true }}
                                 transition={{ delay: i * 0.06, duration: 0.5 }}
                             >
-                                    <ProductCard product={product} />
+                                    <ProductCard product={{ ...product, image: product.image_url || '/placeholder.webp' } as any} />
                                 </motion.div>
                         ))}
                     </div>
