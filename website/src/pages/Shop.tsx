@@ -425,21 +425,13 @@ export default function Shop() {
                         
                         {/* 1. Búsqueda */}
                         <div className="shrink-0 relative">
-                            {/* Desktop Fake Input */}
+                            {/* Icon Button (Desktop & Mobile) */}
                             <button
                                 onClick={openSearch}
-                                className="hidden md:flex items-center w-[280px] lg:w-[320px] pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-full text-sm text-charcoal/50 hover:bg-white hover:border-gold transition-all duration-300 text-left"
-                            >
-                                <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
-                                Buscar...
-                            </button>
-                            {/* Mobile Icon Button */}
-                            <button
-                                onClick={openSearch}
-                                className="md:hidden p-2 text-charcoal hover:text-gold transition-colors"
+                                className="p-2 text-charcoal hover:text-gold transition-colors flex items-center justify-center rounded-full hover:bg-gray-100"
                                 aria-label="Buscar productos"
                             >
-                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
+                                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
                             </button>
                         </div>
 

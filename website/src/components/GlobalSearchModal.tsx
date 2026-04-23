@@ -68,7 +68,7 @@ export default function GlobalSearchModal() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={closeSearch}
-            className="absolute inset-0 bg-[#001641]/80 backdrop-blur-sm"
+            className="absolute inset-0 bg-transparent"
           />
 
           <div className="relative w-[90vw] md:w-[60vw] max-w-4xl flex flex-col z-10">
