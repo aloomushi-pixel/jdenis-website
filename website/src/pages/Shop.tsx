@@ -43,7 +43,12 @@ export default function Shop() {
     const [searchParams] = useSearchParams();
     const [activeCategory, setActiveCategory] = useState(searchParams.get('cat') || 'all');
     const [sortBy, setSortBy] = useState('featured');
-    const [searchQuery, setSearchQuery] = useState('');
+    const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
+
+    useEffect(() => {
+        const q = searchParams.get('q');
+        if (q !== null) setSearchQuery(q);
+    }, [searchParams]);
 
     // Advanced filters
     const [priceRange, setPriceRange] = useState<[number, number]>([PRICE_MIN, DEFAULT_PRICE_MAX]);
@@ -358,20 +363,6 @@ export default function Shop() {
                             Productos de laboratorio con calidad científica · Lash Lifting · Extensiones · Pigmentos · Envíos a todo México
                         </p>
                     </motion.div>
-
-                    {/* Search Bar (in header) */}
-                    <div className="mt-8 mx-auto px-4 md:px-0 transition-all duration-300 w-full max-w-sm focus-within:max-w-md">
-                        <div className="relative group">
-                            <input
-                                type="text"
-                                placeholder="Busca productos..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-10 pr-4 py-3 bg-white border border-gold/30 rounded-lg text-charcoal placeholder-charcoal/50 focus:outline-none focus:border-gold shadow-lg transition-all duration-300 focus:shadow-xl focus:-translate-y-0.5"
-                            />
-                            <svg className="absolute left-3 top-3.5 w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
-                        </div>
-                    </div>
                 </div>
             </section>
 
@@ -429,14 +420,39 @@ export default function Shop() {
                 
                 {/* ─── Sticky Search & Filter Bar ─── */}
                 <div className={`fixed top-0 left-0 w-full z-50 transition-transform duration-300 bg-white shadow-md border-b border-gray-200 ${isSticky ? 'translate-y-0' : '-translate-y-full'}`}>
-                    <div className="container-luxury py-3">
+                    <div className="container-luxury py-4 md:py-6">
                         <div className="flex flex-row items-center justify-between gap-4">
-                            {/* Mobile Logo / Search Toggle */}
-                            <div className="md:hidden flex items-center gap-4">
-                                <motion.img src="/logo-new.jpeg" alt="J. Denis" className="h-8 object-contain" />
+                            {/* Mobile Layout */}
+                            <div className="md:hidden flex items-center justify-between w-full gap-2">
                                 <button onClick={() => setShowMobileSearch(!showMobileSearch)} className="text-forest p-2">
                                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                                    </svg>
+                                </button>
+                                
+                                <div className="flex-1 relative">
+                                    <select
+                                        value={activeCategory}
+                                        onChange={(e) => setActiveCategory(e.target.value)}
+                                        className="w-full appearance-none pl-3 pr-8 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-charcoal font-medium focus:outline-none focus:border-gold cursor-pointer"
+                                    >
+                                        <option value="all">Todas las Categorías</option>
+                                        {shopCategories.filter(c => c.id !== 'all').map((cat) => (
+                                            <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                        ))}
+                                    </select>
+                                    <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-charcoal/50">
+                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                                    </div>
+                                </div>
+
+                                <button
+                                    onClick={() => setShowMobileFilters(true)}
+                                    className="flex items-center justify-center p-2 bg-forest text-gold rounded-lg shadow-sm hover:bg-forest/90 transition-colors"
+                                    aria-label="Filtros"
+                                >
+                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
                                     </svg>
                                 </button>
                             </div>
@@ -454,7 +470,7 @@ export default function Shop() {
                             </div>
 
                             {/* Desktop Quick Category Filters & Mobile Filters Button */}
-                            <div className="flex items-center gap-3">
+                            <div className="hidden md:flex items-center gap-3">
                                 {/* Desktop Category Select */}
                                 <div className="hidden md:block relative shrink-0">
                                     <select
