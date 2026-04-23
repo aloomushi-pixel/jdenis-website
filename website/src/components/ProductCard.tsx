@@ -110,7 +110,7 @@ export default function ProductCard({ product, index = 0, variantCount = 0 }: Pr
                         <span className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-[0.2em] mb-2 block font-bold">
                             {product.category}
                         </span>
-                        <h3 className="font-sans text-sm sm:text-base text-[#001641] font-bold leading-tight line-clamp-2 transition-colors mb-2">
+                        <h3 className="font-sans text-sm sm:text-base font-bold leading-tight line-clamp-2 transition-colors mb-2 text-gray-900" style={{ color: '#001641' }}>
                             {product.name}
                         </h3>
                         {product.description && (
@@ -130,7 +130,7 @@ export default function ProductCard({ product, index = 0, variantCount = 0 }: Pr
                             {hasVariants && (
                                 <span className="text-xs sm:text-sm font-medium text-gray-400 uppercase tracking-widest">Desde</span>
                             )}
-                            <p className="text-lg sm:text-xl font-extrabold text-[#001641] tracking-tight">
+                            <p className="text-lg sm:text-xl font-extrabold tracking-tight text-gray-900" style={{ color: '#001641' }}>
                                 ${product.price.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} <span className="text-[10px] sm:text-xs font-semibold text-gray-400 ml-0.5">MXN</span>
                             </p>
                         </div>
