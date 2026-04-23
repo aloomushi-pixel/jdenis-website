@@ -315,7 +315,7 @@ export default function Home() {
     return (
         <div className="min-h-screen bg-cream">
             {/* HERO SECTION - ACADEMIA FOCUS */}
-            <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden">
+            <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden bg-black">
                 {/* Background Video */}
                 <video
                     autoPlay
@@ -323,68 +323,53 @@ export default function Home() {
                     loop
                     playsInline
                     poster="/hero-products.jpg"
-                    className="absolute inset-0 w-full h-full object-cover"
+                    className="absolute inset-0 w-full h-full object-cover opacity-60"
                     aria-hidden="true"
                 >
                     <source src="/videos/Video_con_logo_J_DENIS.mp4" type="video/mp4" />
                     <track kind="captions" label="Sin subtítulos" />
                 </video>
-                <div className="absolute inset-0 bg-black/55" />
-                <div className="absolute inset-0 bg-gradient-to-t from-forest/90 via-forest/40 to-transparent" />
-                <div className="absolute inset-0 botanical-pattern opacity-20" />
+                {/* Proposal 1 Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-brand-blue/90 via-brand-blue/40 to-transparent" />
+                <div className="absolute inset-0 botanical-pattern opacity-10" />
 
-                <div className="hero-content relative z-10 pt-28 md:pt-40">
+                <div className="hero-content relative z-10 w-full px-4 pt-28 md:pt-40">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8 }}
-                        className="text-center max-w-3xl mx-auto"
+                        className="text-center max-w-4xl mx-auto"
                     >
                         {/* Badge pill */}
-                        <span className="hero-badge">
-                            <span className="w-1.5 h-1.5 rounded-full bg-gold inline-block flex-shrink-0" />
+                        <span className="inline-block border border-gold/50 text-gold text-xs tracking-[0.2em] uppercase py-1.5 px-5 rounded-full mb-6 font-semibold shadow-sm backdrop-blur-sm">
                             Academia J. Denis — Desde 1998
                         </span>
 
-                        {/* Headline — Perandory / Cormorant Garamond */}
+                        {/* Headline */}
                         <h1
-                            className="hero-title"
+                            className="text-5xl md:text-7xl text-white mb-6 leading-tight drop-shadow-md"
                             style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif" }}
                         >
                             Certifícate con la
                             <br />
-                            <span className="text-gold">Pionera de México</span>
+                            <i className="text-gold font-bold">Pionera de México</i>
                         </h1>
 
-                        {/* Subtitle — simple, no jargon */}
-                        <p className="hero-subtitle">
+                        {/* Subtitle */}
+                        <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto mb-10 font-light drop-shadow">
                             Cursos de cejas y pestañas con técnica profesional,
                             constancia oficial y grupos reducidos en CDMX.
                         </p>
 
-                        {/* Credential chips */}
-                        <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-10 text-cream/75 text-sm font-sans">
-                            {['+5,000 certificadas', 'CDMX · grupos pequeños', 'Cert. oficial STPS'].map((s) => (
-                                <span key={s} className="flex items-center gap-1.5">
-                                    <span className="w-3.5 h-3.5 flex-shrink-0 flex items-center justify-center bg-gold rounded-full">
-                                        <svg className="w-2 h-2" fill="none" viewBox="0 0 24 24" stroke="#000" strokeWidth={3}>
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                                        </svg>
-                                    </span>
-                                    {s}
-                                </span>
-                            ))}
-                        </div>
-
                         {/* Buttons */}
                         <div className="flex flex-wrap justify-center gap-4">
-                            <Link to="/academia" className="btn btn-secondary group">
+                            <Link to="/academia" className="bg-gold text-brand-blue px-8 py-3.5 rounded-full font-semibold hover:bg-yellow-400 transition-all duration-300 shadow-lg shadow-gold/20 flex items-center gap-2 group hover:-translate-y-1">
                                 Ver Próximos Cursos
                                 <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                                 </svg>
                             </Link>
-                            <Link to="/tienda" className="btn btn-outline-light">
+                            <Link to="/tienda" className="border border-white/80 text-white px-8 py-3.5 rounded-full font-medium hover:bg-white/10 hover:border-white transition-all duration-300 backdrop-blur-md hover:-translate-y-1">
                                 Ver Tienda
                             </Link>
                         </div>
