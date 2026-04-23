@@ -105,7 +105,7 @@ export const useAuthStore = create<AuthState>()(
                 const { error } = await supabase.auth.signInWithOAuth({
                     provider,
                     options: {
-                        redirectTo: `${window.location.origin}/mi-cuenta`
+                        redirectTo: `https://jdenis.store/mi-cuenta`
                     }
                 });
                 if (error) console.error('OAuth Error:', error);
@@ -173,7 +173,7 @@ export const useAuthStore = create<AuthState>()(
 
             resetPassword: async (email: string) => {
                 const { error } = await supabase.auth.resetPasswordForEmail(email, {
-                    redirectTo: `${window.location.origin}/restablecer-contrasena`,
+                    redirectTo: `https://jdenis.store/restablecer-contrasena`,
                 });
                 if (error) throw error;
             },
