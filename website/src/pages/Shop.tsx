@@ -454,30 +454,51 @@ export default function Shop() {
                             </div>
 
                             {/* Desktop Quick Category Filters & Mobile Filters Button */}
-                            <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide max-w-[50vw]">
-                                <div className="hidden md:flex gap-2">
-                                    {shopCategories.map((cat) => (
-                                        <button
-                                            key={cat.id}
-                                            onClick={() => setActiveCategory(cat.id)}
-                                            className={`whitespace-nowrap px-4 py-1.5 text-xs rounded-full border transition-all ${activeCategory === cat.id ? 'bg-gold text-forest border-gold font-bold shadow-sm' : 'bg-transparent text-charcoal border-gray-200 hover:border-gold hover:text-gold'}`}
-                                        >
-                                            {cat.name}
-                                        </button>
-                                    ))}
+                            <div className="flex items-center gap-3">
+                                {/* Desktop Category Select */}
+                                <div className="hidden md:block relative shrink-0">
+                                    <select
+                                        value={activeCategory}
+                                        onChange={(e) => setActiveCategory(e.target.value)}
+                                        className="appearance-none pl-4 pr-10 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-charcoal font-medium focus:outline-none focus:border-gold cursor-pointer hover:border-gold transition-colors"
+                                    >
+                                        <option value="all">Todas las Categorías</option>
+                                        {shopCategories.filter(c => c.id !== 'all').map((cat) => (
+                                            <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                        ))}
+                                    </select>
+                                    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-charcoal/50">
+                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                                    </div>
                                 </div>
+
+                                {/* Desktop Sort Select */}
+                                <div className="hidden md:block relative shrink-0">
+                                    <select
+                                        value={sortBy}
+                                        onChange={(e) => setSortBy(e.target.value as any)}
+                                        className="appearance-none pl-4 pr-10 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-charcoal font-medium focus:outline-none focus:border-gold cursor-pointer hover:border-gold transition-colors"
+                                    >
+                                        <option value="featured">⭐ Destacados</option>
+                                        <option value="name">A-Z</option>
+                                        <option value="price-asc">Menor Precio</option>
+                                        <option value="price-desc">Mayor Precio</option>
+                                    </select>
+                                    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-charcoal/50">
+                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                                    </div>
+                                </div>
+
+                                <button
+                                    onClick={() => setShowMobileFilters(true)}
+                                    className="flex items-center gap-1.5 px-3 py-2 bg-forest text-gold text-sm font-semibold rounded-lg shadow-sm hover:bg-forest/90 transition-colors"
+                                >
+                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
+                                    </svg>
+                                    Filtros
+                                </button>
                             </div>
-                            
-                            <button
-                                onClick={() => setShowMobileFilters(true)}
-                                className="flex items-center gap-1.5 px-3 py-2 bg-forest text-gold text-sm font-semibold rounded-lg shadow-sm hover:bg-forest/90 transition-colors"
-                            >
-                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
-                                </svg>
-                                Filtros
-                            </button>
-                        </div>
                         
                         {/* Mobile Expanded Search */}
                         <AnimatePresence>
