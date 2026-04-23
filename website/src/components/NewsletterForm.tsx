@@ -45,55 +45,56 @@ export default function NewsletterForm() {
     if (status === 'success') {
         return (
             <motion.div 
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="bg-green-500/10 border border-green-500/20 rounded-2xl p-6 text-center h-full flex flex-col justify-center items-center"
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="bg-green-500/10 border border-green-500/20 rounded-lg px-6 py-3 flex items-center justify-between w-full"
             >
-                <div className="w-12 h-12 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                <div className="flex items-center gap-3">
+                    <svg className="w-5 h-5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                    <span className="text-white text-sm font-medium">¡Suscripción exitosa! Bienvenido/a.</span>
                 </div>
-                <h4 className="text-white text-lg font-bold mb-2">¡Gracias por unirte!</h4>
-                <p className="text-white/70 text-sm">Pronto recibirás nuestras novedades y descuentos exclusivos.</p>
-                <button type="button" onClick={() => setStatus('idle')} className="mt-4 text-green-400 text-sm hover:underline font-medium">Suscribir otro correo</button>
+                <button type="button" onClick={() => setStatus('idle')} className="text-green-400 text-xs hover:underline">Nueva suscripción</button>
             </motion.div>
         );
     }
 
     return (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4 relative z-20">
+        <form onSubmit={handleSubmit} className="flex flex-col lg:grid lg:grid-cols-3 gap-3 relative z-20 w-full">
             <div>
                 <input 
                     type="text" 
                     placeholder="Tu nombre (Opcional)" 
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-[#d4a832]/50 transition-all font-sans"
+                    className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm placeholder:text-white/40 focus:outline-none focus:ring-1 focus:ring-[#d4a832]/50 transition-all font-sans"
                 />
             </div>
             <div>
                 <input 
                     type="email" 
                     required
-                    placeholder="ingresa-tu@correo.com" 
+                    placeholder="Tu correo electrónico" 
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-[#d4a832]/50 transition-all font-sans"
+                    className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm placeholder:text-white/40 focus:outline-none focus:ring-1 focus:ring-[#d4a832]/50 transition-all font-sans"
                 />
             </div>
-            <button 
-                type="submit" 
-                disabled={status === 'loading'}
-                className="w-full bg-gradient-to-r from-[#d4a832] to-[#eedd99] hover:from-[#e3b844] hover:to-[#fbeeaa] text-[#0a1f5c] font-bold py-3.5 px-6 rounded-xl flex items-center justify-center gap-2 transition-all disabled:opacity-70"
-            >
-                {status === 'loading' ? (
-                    <span className="w-5 h-5 border-2 border-[#0a1f5c]/30 border-t-[#0a1f5c] rounded-full animate-spin block"></span>
-                ) : (
-                    <>Suscribirme <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg></>
+            <div className="relative">
+                <button 
+                    type="submit" 
+                    disabled={status === 'loading'}
+                    className="w-full bg-gradient-to-r from-[#d4a832] to-[#eedd99] hover:from-[#e3b844] hover:to-[#fbeeaa] text-[#0a1f5c] font-bold py-2.5 px-6 rounded-lg text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-70 h-full"
+                >
+                    {status === 'loading' ? (
+                        <span className="w-4 h-4 border-2 border-[#0a1f5c]/30 border-t-[#0a1f5c] rounded-full animate-spin block"></span>
+                    ) : (
+                        <>Suscribirme</>
+                    )}
+                </button>
+                {status === 'error' && (
+                    <p className="text-red-400 text-xs font-medium absolute -bottom-5 left-0">{message}</p>
                 )}
-            </button>
-            {status === 'error' && (
-                <p className="text-red-400 text-sm text-center font-medium mt-1">{message}</p>
-            )}
+            </div>
         </form>
     );
 }

@@ -5,28 +5,21 @@ export default function Footer() {
     return (
         <footer className="footer-premium relative z-10">
             {/* Newsletter Integration */}
-            <div className="border-b border-white/5 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#d4a832]/5 pointer-events-none" />
-                <div className="container-luxury py-16 lg:py-20 relative z-10">
-                    <div className="bg-black/20 border border-white/10 rounded-3xl p-8 md:p-12 lg:p-16 flex flex-col lg:flex-row items-center justify-between gap-10 shadow-2xl backdrop-blur-sm relative overflow-hidden">
-                        {/* Decorative background glow */}
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-[#d4a832]/10 rounded-full blur-[80px]" />
-                        <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#0a1f5c]/40 rounded-full blur-[80px]" />
-
-                        <div className="flex-1 text-center lg:text-left z-10">
-                            <span className="inline-block px-4 py-1.5 mb-4 rounded-full border border-[#d4a832]/30 text-[#d4a832] text-[11px] font-bold tracking-[0.15em] uppercase bg-[#d4a832]/10">
-                                Únete a nuestra comunidad
-                            </span>
-                            <h3 className="text-3xl md:text-4xl text-white font-serif mb-4 leading-tight">
-                                Contenido Exclusivo<br />para Profesionales
+            <div className="border-b border-white/5 relative overflow-hidden bg-[#051136]/60">
+                <div className="container-luxury py-6 relative z-10">
+                    <div className="flex flex-col lg:grid lg:grid-cols-4 items-center gap-6 relative z-10">
+                        {/* Col 1: Text */}
+                        <div className="lg:col-span-1 text-center lg:text-left w-full">
+                            <h3 className="text-lg md:text-xl text-white font-serif mb-1 leading-tight">
+                                Contenido Exclusivo
                             </h3>
-                            <p className="text-white/60 text-base leading-relaxed max-w-lg mx-auto lg:mx-0">
-                                Suscríbete a nuestro newsletter y recibe artículos, cupones de descuento, 
-                                información sobre cursos y nuevos lanzamientos directo en tu correo.
+                            <p className="text-white/60 text-xs leading-relaxed">
+                                Únete a nuestra comunidad y recibe promociones directo en tu correo.
                             </p>
                         </div>
                         
-                        <div className="w-full lg:w-[400px] shrink-0 z-10">
+                        {/* Col 2, 3, 4: Form */}
+                        <div className="lg:col-span-3 w-full">
                             <NewsletterForm />
                         </div>
                     </div>
