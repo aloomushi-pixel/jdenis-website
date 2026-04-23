@@ -352,7 +352,7 @@ export default function Home() {
                         >
                             Certifícate con la
                             <br />
-                            <i className="text-gold tracking-wide drop-shadow-2xl" style={{ fontWeight: 900, WebkitTextStroke: '1.5px #d4a832' }}>Pionera de México</i>
+                            <i className="text-gold tracking-wide drop-shadow-2xl" style={{ fontWeight: 900, WebkitTextStroke: '1.5px currentColor' }}>Pionera de México</i>
                         </h1>
 
                         {/* Subtitle */}
