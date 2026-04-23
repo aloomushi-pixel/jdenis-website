@@ -1,17 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { Search, Eye, Sparkles, Package, Droplet, Scissors, ShoppingBag, X } from 'lucide-react';
 import { useSearchStore } from '../store/searchStore';
 import { useProducts, type DisplayProduct } from '../hooks/useProducts';
 
 const CATEGORIES = [
-  { id: 'todo', name: 'Todos los productos', icon: '🛍️' },
-  { id: 'Pestañas', name: 'Pestañas', icon: '👁️' },
-  { id: 'Cejas', name: 'Cejas', icon: '✨' },
-  { id: 'Kits', name: 'Kits Profesionales', icon: '🎁' },
-  { id: 'Adhesivos', name: 'Adhesivos', icon: '💧' },
-  { id: 'Herramientas', name: 'Herramientas', icon: '✂️' },
-  { id: 'Skincare', name: 'Skincare', icon: '🧴' },
+  { id: 'todo', name: 'Todos los productos', icon: <ShoppingBag className="w-4 h-4" /> },
+  { id: 'Pestañas', name: 'Pestañas', icon: <Eye className="w-4 h-4" /> },
+  { id: 'Cejas', name: 'Cejas', icon: <Sparkles className="w-4 h-4" /> },
+  { id: 'Kits', name: 'Kits Profesionales', icon: <Package className="w-4 h-4" /> },
+  { id: 'Adhesivos', name: 'Adhesivos', icon: <Droplet className="w-4 h-4" /> },
+  { id: 'Herramientas', name: 'Herramientas', icon: <Scissors className="w-4 h-4" /> },
+  { id: 'Skincare', name: 'Skincare', icon: <Sparkles className="w-4 h-4" /> },
 ];
 
 export default function GlobalSearchModal() {
@@ -77,12 +78,10 @@ export default function GlobalSearchModal() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -20, scale: 0.95 }}
               transition={{ type: "spring", bounce: 0.2, duration: 0.5 }}
-              className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-full shadow-2xl overflow-hidden flex items-center"
+              className="bg-[#001641]/90 backdrop-blur-xl border border-white/20 rounded-full shadow-2xl overflow-hidden flex items-center"
             >
               <form onSubmit={handleSearchSubmit} className="flex-1 relative">
-                <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-                </svg>
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/50" />
                 <input
                   ref={inputRef}
                   type="text"
@@ -97,9 +96,7 @@ export default function GlobalSearchModal() {
                     onClick={() => setQuery('')}
                     className="absolute right-4 top-1/2 -translate-y-1/2 p-1 text-white/50 hover:text-white transition-colors"
                   >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
+                    <X className="w-4 h-4" />
                   </button>
                 )}
               </form>
@@ -111,7 +108,7 @@ export default function GlobalSearchModal() {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="mt-3 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[60vh] sm:max-h-[70vh]"
+                  className="mt-3 bg-[#001641]/90 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[60vh] sm:max-h-[70vh]"
                 >
                   <div className="flex flex-1 overflow-hidden flex-col sm:flex-row">
                     {/* Categories Sidebar (Hidden on mobile) */}
@@ -142,10 +139,10 @@ export default function GlobalSearchModal() {
                           <button
                             key={cat.id}
                             onClick={() => setActiveCategory(cat.id)}
-                            className={`flex items-center gap-1.5 px-3 py-1 rounded-full whitespace-nowrap transition-colors ${
+                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full whitespace-nowrap transition-colors ${
                               activeCategory === cat.id
                                 ? 'bg-gold text-[#001641] font-medium'
-                                : 'bg-white/5 text-white/80 border border-white/10'
+                                : 'bg-white/5 text-white/80 border border-white/10 hover:bg-white/10'
                             }`}
                           >
                             <span className="text-sm">{cat.icon}</span>
@@ -190,8 +187,8 @@ export default function GlobalSearchModal() {
                         </div>
                       ) : (
                         <div className="flex flex-col items-center justify-center h-full py-8 text-center">
-                          <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-3 text-2xl">
-                            🔍
+                          <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-3 text-white/50">
+                            <Search className="w-6 h-6" />
                           </div>
                           <h3 className="text-white/90 font-medium text-sm mb-1">No encontramos resultados</h3>
                           <p className="text-white/40 text-xs max-w-[250px]">
@@ -211,7 +208,7 @@ export default function GlobalSearchModal() {
             <div className="mt-4 flex justify-center">
               <button
                 onClick={closeSearch}
-                className="px-4 py-1.5 bg-white/10 hover:bg-white/20 text-white/70 hover:text-white rounded-full text-xs transition-colors backdrop-blur-md"
+                className="px-6 py-2 bg-[#001641]/90 hover:bg-[#001641] border border-white/20 text-white/90 hover:text-white rounded-full text-sm font-medium transition-colors backdrop-blur-md shadow-lg"
               >
                 Cerrar
               </button>
