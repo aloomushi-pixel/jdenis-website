@@ -54,7 +54,6 @@ export default function Shop() {
     const [priceRange, setPriceRange] = useState<[number, number]>([PRICE_MIN, DEFAULT_PRICE_MAX]);
     const [showOffersOnly, setShowOffersOnly] = useState(false);
     const [showMobileFilters, setShowMobileFilters] = useState(false);
-    const [showMobileSearch, setShowMobileSearch] = useState(false);
     const [isSticky, setIsSticky] = useState(false);
 
     useEffect(() => {
