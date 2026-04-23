@@ -56,7 +56,14 @@ export default function Shop() {
     const [priceRange, setPriceRange] = useState<[number, number]>([PRICE_MIN, DEFAULT_PRICE_MAX]);
     const [showOffersOnly, setShowOffersOnly] = useState(false);
     const [showPricePopover, setShowPricePopover] = useState(false);
+    const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
     const [isSticky, setIsSticky] = useState(false);
+
+    const handleOpenPrice = (e: React.MouseEvent) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        setPopoverPosition({ top: rect.bottom + 8, left: rect.left });
+        setShowPricePopover(true);
+    };
 
     useEffect(() => {
         let lastScrollY = window.scrollY;
@@ -429,7 +436,8 @@ export default function Shop() {
                                         : 'bg-white border-kraft/30 text-charcoal/70 hover:border-forest/40 hover:text-forest'
                                         }`}
                                 >
-                                    Ver Todo
+                                    <span className="hidden md:inline">Ver Todo</span>
+                                    <span className="md:hidden">Todo</span>
                                 </button>
                                 {/* Offers quick-filter pill */}
                                 <button
@@ -443,7 +451,7 @@ export default function Shop() {
                                 </button>
                                 {/* Price filter pill */}
                                 <button
-                                    onClick={() => setShowPricePopover(true)}
+                                    onClick={handleOpenPrice}
                                     className={`px-4 md:px-5 py-2 md:py-2.5 text-xs md:text-sm rounded-full border transition-all flex items-center gap-1.5 ${(priceRange[0] > PRICE_MIN || priceRange[1] < computedMax)
                                         ? 'bg-gold/10 border-gold/40 text-forest font-medium shadow-sm'
                                         : 'bg-white border-kraft/30 text-charcoal/70 hover:border-gold/40'
@@ -528,7 +536,8 @@ export default function Shop() {
                                         : 'bg-white border-kraft/30 text-charcoal/70 hover:border-forest/40 hover:text-forest'
                                         }`}
                                 >
-                                    Ver Todo
+                                    <span className="hidden md:inline">Ver Todo</span>
+                                    <span className="md:hidden">Todo</span>
                                 </button>
                                 {/* Offers quick-filter pill */}
                                 <button
@@ -548,7 +557,7 @@ export default function Shop() {
 
                                 {/* Price filter pill */}
                                 <button
-                                    onClick={() => setShowPricePopover(true)}
+                                    onClick={handleOpenPrice}
                                     className={`flex-shrink-0 px-4 md:px-5 py-2.5 text-sm rounded-full border transition-all flex items-center gap-1.5 ${(priceRange[0] > PRICE_MIN || priceRange[1] < computedMax)
                                         ? 'bg-gold/10 border-gold/40 text-forest font-medium shadow-sm'
                                         : 'bg-white border-kraft/30 text-charcoal/70 hover:border-gold/40'
@@ -696,10 +705,11 @@ export default function Shop() {
                         />
                         {/* Modal */}
                         <motion.div
-                            initial={{ opacity: 0, y: '100%' }}
+                            initial={window.innerWidth >= 768 ? { opacity: 0, y: -10 } : { opacity: 0, y: '100%' }}
                             animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: '100%' }}
-                            className="fixed bottom-0 left-0 w-full bg-white rounded-t-3xl p-6 md:p-8 z-[101] shadow-2xl md:top-1/2 md:bottom-auto md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-[400px] md:rounded-2xl"
+                            exit={window.innerWidth >= 768 ? { opacity: 0, y: -10 } : { opacity: 0, y: '100%' }}
+                            style={{ ...(window.innerWidth >= 768 ? { top: popoverPosition.top, left: popoverPosition.left } : {}) }}
+                            className="fixed bottom-0 left-0 w-full bg-white rounded-t-3xl p-6 md:p-6 z-[101] shadow-2xl md:bottom-auto md:w-[320px] md:rounded-2xl border-gray-100 md:border"
                         >
                             <div className="flex justify-between items-center mb-6">
                                 <h3 className="font-serif text-xl text-forest">Filtrar por Precio</h3>

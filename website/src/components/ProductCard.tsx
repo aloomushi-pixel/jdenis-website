@@ -47,7 +47,7 @@ export default function ProductCard({ product, index = 0, variantCount = 0 }: Pr
             className="h-full"
         >
             <Link to={`/producto/${product.id}`} className="product-card block group h-full flex flex-col bg-white rounded-xl border border-gray-100/60 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                <div className="relative overflow-hidden bg-cream-dark aspect-[4/5]">
+                <div className="relative overflow-hidden bg-cream-dark aspect-square">
                     <img
                         src={product.image}
                         alt={product.name}
