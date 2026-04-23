@@ -6,7 +6,7 @@ import ProductSkeleton from '../components/ProductSkeleton';
 import { useProducts } from '../hooks/useProducts';
 import { useVariants } from '../hooks/useVariants';
 import { usePageMeta } from '../hooks/usePageMeta';
-import { useSearchStore } from '../store/searchStore';
+
 
 // Category filter definitions (UI constants with SVG icon paths)
 const shopCategories = [
@@ -45,7 +45,6 @@ export default function Shop() {
     const [activeCategory, setActiveCategory] = useState(searchParams.get('cat') || 'all');
     const [sortBy, setSortBy] = useState('featured');
     const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
-    const { openSearch } = useSearchStore();
 
     useEffect(() => {
         const q = searchParams.get('q');
@@ -57,24 +56,13 @@ export default function Shop() {
     const [showOffersOnly, setShowOffersOnly] = useState(false);
     const [showPricePopover, setShowPricePopover] = useState(false);
     const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
-    const [isSticky, setIsSticky] = useState(false);
+    const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
     const handleOpenPrice = (e: React.MouseEvent) => {
         const rect = e.currentTarget.getBoundingClientRect();
         setPopoverPosition({ top: rect.bottom + 8, left: rect.left });
         setShowPricePopover(true);
     };
-
-    useEffect(() => {
-        let lastScrollY = window.scrollY;
-        const handleScroll = () => {
-            const currentScrollY = window.scrollY;
-            setIsSticky(currentScrollY > lastScrollY && currentScrollY > 150);
-            lastScrollY = currentScrollY;
-        };
-        window.addEventListener('scroll', handleScroll, { passive: true });
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
 
     // Supabase-backed product data
     const { products, loading } = useProducts();
@@ -177,13 +165,6 @@ export default function Shop() {
         if (cat) setTimeout(() => setActiveCategory(cat), 0);
     }, [searchParams]);
 
-    // Products with promotions
-    const promoProducts = useMemo(() => {
-        return groupedProducts.filter(p =>
-            p.originalPrice && p.originalPrice > p.price &&
-            (p.stock === null || p.stock === undefined || p.stock > 0)
-        );
-    }, [groupedProducts]);
 
     // Featured products
     const featuredProducts = useMemo(() => {
@@ -407,31 +388,106 @@ export default function Shop() {
             {/* ═══════════════════════════════════════════════════
                 CATALOG SECTION — Full catalog with categories & filters
                ═══════════════════════════════════════════════════ */}
-            <section id="shop-catalog" className="section section-cream py-8 md:py-12 relative">
+            <section id="shop-catalog" className="section section-cream py-0 md:py-0 relative">
                 
-                {/* ─── Sticky Search & Filter Bar ─── */}
-                <div className={`fixed top-0 left-0 w-full z-50 h-[72px] lg:h-[80px] transition-transform duration-300 bg-white/95 backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.05)] border-b border-gray-100 flex items-center ${isSticky ? 'translate-y-0' : '-translate-y-full'}`}>
-                    <div className="container-luxury w-full flex items-center gap-3 md:gap-6">
+                {/* ─── Natively Sticky Shop Bar ─── */}
+                <div className="sticky top-[72px] md:top-[80px] z-40 w-full bg-cream/95 backdrop-blur-md pt-4 pb-4 border-b border-gray-200/50 shadow-sm transition-all duration-300">
+                    <div className="container-luxury flex flex-col gap-3">
                         
-                        {/* 1. Búsqueda */}
-                        <div className="shrink-0 relative">
-                            {/* Icon Button (Desktop & Mobile) */}
-                            <button
-                                onClick={openSearch}
-                                className="p-2 text-charcoal hover:text-gold transition-colors flex items-center justify-center rounded-full hover:bg-gray-100"
-                                aria-label="Buscar productos"
+                        {/* TOP ROW: Categories Carousel */}
+                        <div className="relative group w-full flex items-center">
+                            {/* Left Arrow */}
+                            <button 
+                                onClick={() => {
+                                    const container = document.getElementById('category-scroll-container');
+                                    if (container) container.scrollBy({ left: -250, behavior: 'smooth' });
+                                }}
+                                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/95 w-8 h-8 rounded-full shadow-md text-forest opacity-0 group-hover:opacity-100 transition-all hidden md:flex items-center justify-center border border-gray-100 hover:scale-105 hover:text-gold"
                             >
-                                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
+                                <svg className="w-4 h-4 mr-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                                </svg>
+                            </button>
+
+                            {/* Fade gradient left */}
+                            <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-cream to-transparent z-[5] pointer-events-none hidden md:block"></div>
+
+                            <div id="category-scroll-container" className="overflow-x-auto scrollbar-hide md:scrollbar-default scroll-smooth w-full px-1 md:px-0">
+                                <div className="flex gap-2 pb-1 w-max">
+                                    {shopCategories.filter(c => c.id !== 'all').map((cat) => (
+                                        <button
+                                            key={cat.id}
+                                            onClick={() => setActiveCategory(cat.id)}
+                                            className={`flex-shrink-0 group/btn px-4 md:px-5 py-2 text-xs md:text-sm rounded-full border transition-all flex items-center gap-1.5 ${activeCategory === cat.id
+                                                ? 'bg-forest text-white border-forest font-medium shadow-sm'
+                                                : 'bg-white border-kraft/30 text-charcoal/70 hover:border-forest/40 hover:text-forest'
+                                                }`}
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3.5 h-3.5 shrink-0 transition-transform duration-300 group-hover/btn:scale-110 group-hover/btn:-translate-y-0.5"><path strokeLinecap="round" strokeLinejoin="round" d={cat.icon} /></svg>
+                                            {cat.name}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Fade gradient right */}
+                            <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-cream to-transparent z-[5] pointer-events-none hidden md:block group-hover:from-cream"></div>
+
+                            {/* Right Arrow */}
+                            <button 
+                                onClick={() => {
+                                    const container = document.getElementById('category-scroll-container');
+                                    if (container) container.scrollBy({ left: 250, behavior: 'smooth' });
+                                }}
+                                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/95 w-8 h-8 rounded-full shadow-md text-forest opacity-0 group-hover:opacity-100 transition-all hidden md:flex items-center justify-center border border-gray-100 hover:scale-105 hover:text-gold"
+                            >
+                                <svg className="w-4 h-4 ml-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                                </svg>
                             </button>
                         </div>
 
-                        {/* 2. Categorías */}
-                        <div className="flex-1 flex items-center gap-2 min-w-0 overflow-hidden">
-                            {/* Static Buttons */}
-                            <div className="flex gap-2 flex-shrink-0">
+                        {/* BOTTOM ROW: Filters & Sort */}
+                        <div className="flex flex-wrap md:flex-nowrap items-center justify-between gap-3">
+                            {/* Left Side: Buttons */}
+                            <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide pb-1 w-full md:w-auto flex-nowrap shrink-0">
+                                {/* Search Icon (small) / Expanding Bar */}
+                                <motion.div
+                                    animate={{ width: isSearchExpanded ? (window.innerWidth < 768 ? 160 : 220) : (window.innerWidth < 768 ? 34 : 42) }}
+                                    className={`relative flex items-center bg-white border transition-colors rounded-full shrink-0 ${isSearchExpanded ? 'border-forest/40 shadow-sm' : 'border-kraft/30 shadow-sm hover:border-forest/40 hover:text-forest text-charcoal/70'}`}
+                                >
+                                    <button
+                                        onClick={() => {
+                                            if (!isSearchExpanded) {
+                                                setIsSearchExpanded(true);
+                                            } else if (searchQuery === '') {
+                                                setIsSearchExpanded(false);
+                                            }
+                                        }}
+                                        className="p-2 md:p-2.5 shrink-0 z-10"
+                                        aria-label="Buscar productos"
+                                    >
+                                        <svg className="w-4 h-4 md:w-5 md:h-5 text-current" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                                        </svg>
+                                    </button>
+                                    <input
+                                        type="text"
+                                        placeholder="Buscar..."
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        onBlur={() => {
+                                            if (searchQuery === '') setIsSearchExpanded(false);
+                                        }}
+                                        className={`absolute left-8 md:left-10 right-3 bg-transparent border-none outline-none text-xs md:text-sm text-forest placeholder:text-charcoal/40 transition-opacity ${isSearchExpanded ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                                        autoFocus={isSearchExpanded}
+                                    />
+                                </motion.div>
+
+                                {/* Todo */}
                                 <button
                                     onClick={() => setActiveCategory('all')}
-                                    className={`px-4 md:px-5 py-2 md:py-2.5 text-xs md:text-sm rounded-full border transition-all ${activeCategory === 'all'
+                                    className={`px-4 md:px-5 py-2 md:py-2.5 text-xs md:text-sm rounded-full border transition-all shrink-0 ${activeCategory === 'all'
                                         ? 'bg-forest text-white border-forest font-medium shadow-sm'
                                         : 'bg-white border-kraft/30 text-charcoal/70 hover:border-forest/40 hover:text-forest'
                                         }`}
@@ -439,20 +495,22 @@ export default function Shop() {
                                     <span className="hidden md:inline">Ver Todo</span>
                                     <span className="md:hidden">Todo</span>
                                 </button>
-                                {/* Offers quick-filter pill */}
+                                
+                                {/* Ofertas */}
                                 <button
                                     onClick={() => setShowOffersOnly(!showOffersOnly)}
-                                    className={`px-4 md:px-5 py-2 md:py-2.5 text-xs md:text-sm rounded-full border transition-all flex items-center gap-1.5 ${showOffersOnly
+                                    className={`px-4 md:px-5 py-2 md:py-2.5 text-xs md:text-sm rounded-full border transition-all flex items-center gap-1.5 shrink-0 ${showOffersOnly
                                         ? 'bg-red-500 text-white border-red-500 font-medium shadow-sm'
                                         : 'bg-white border-kraft/30 text-charcoal/70 hover:border-red-300'
                                         }`}
                                 >
                                     🔥 <span className="hidden md:inline">Ofertas</span>
                                 </button>
-                                {/* Price filter pill */}
+
+                                {/* Precio */}
                                 <button
                                     onClick={handleOpenPrice}
-                                    className={`px-4 md:px-5 py-2 md:py-2.5 text-xs md:text-sm rounded-full border transition-all flex items-center gap-1.5 ${(priceRange[0] > PRICE_MIN || priceRange[1] < computedMax)
+                                    className={`px-4 md:px-5 py-2 md:py-2.5 text-xs md:text-sm rounded-full border transition-all flex items-center gap-1.5 shrink-0 ${(priceRange[0] > PRICE_MIN || priceRange[1] < computedMax)
                                         ? 'bg-gold/10 border-gold/40 text-forest font-medium shadow-sm'
                                         : 'bg-white border-kraft/30 text-charcoal/70 hover:border-gold/40'
                                         }`}
@@ -464,182 +522,13 @@ export default function Shop() {
                                 </button>
                             </div>
 
-                            {/* Category pills (horizontal scroll with arrows) */}
-                            <div className="relative group flex-1 min-w-0 w-full flex items-center">
-                                {/* Left Arrow */}
-                                <button 
-                                    onClick={() => {
-                                        const container = document.getElementById('sticky-category-scroll');
-                                        if (container) container.scrollBy({ left: -250, behavior: 'smooth' });
-                                    }}
-                                    className="absolute left-0 z-10 bg-white/95 backdrop-blur-sm w-8 h-8 rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.15)] text-forest opacity-0 group-hover:opacity-100 transition-all hidden md:flex items-center justify-center border border-gray-100 hover:scale-105 hover:text-gold"
-                                >
-                                    <svg className="w-4 h-4 mr-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-                                    </svg>
-                                </button>
-
-                                {/* Fade gradient left */}
-                                <div className="absolute left-0 top-0 bottom-0 w-6 bg-gradient-to-r from-white to-transparent z-[5] pointer-events-none hidden md:block"></div>
-
-                                <div id="sticky-category-scroll" className="overflow-x-auto scrollbar-hide md:scrollbar-default scroll-smooth flex-1 px-1 md:px-4 pb-2 -mb-2 md:pb-0 md:mb-0">
-                                    <div className="flex gap-2 w-max items-center py-1">
-                                        {shopCategories.filter(c => c.id !== 'all').map((cat) => (
-                                            <button
-                                                key={cat.id}
-                                                onClick={() => setActiveCategory(cat.id)}
-                                                className={`flex-shrink-0 group/btn px-4 md:px-5 py-2 md:py-2.5 text-xs md:text-sm rounded-full border transition-all flex items-center gap-1.5 md:gap-2 ${activeCategory === cat.id
-                                                    ? 'bg-forest text-white border-forest font-medium shadow-sm'
-                                                    : 'bg-white border-kraft/30 text-charcoal/70 hover:border-forest/40 hover:text-forest'
-                                                    }`}
-                                            >
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3.5 h-3.5 shrink-0 transition-transform duration-300 group-hover/btn:scale-110 group-hover/btn:-translate-y-0.5"><path strokeLinecap="round" strokeLinejoin="round" d={cat.icon} /></svg>
-                                                {cat.name}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                {/* Fade gradient right */}
-                                <div className="absolute right-0 top-0 bottom-0 w-10 bg-gradient-to-l from-white to-transparent z-[5] pointer-events-none hidden md:block group-hover:from-white"></div>
-
-                                {/* Right Arrow */}
-                                <button 
-                                    onClick={() => {
-                                        const container = document.getElementById('sticky-category-scroll');
-                                        if (container) container.scrollBy({ left: 250, behavior: 'smooth' });
-                                    }}
-                                    className="absolute right-0 z-10 bg-white/95 backdrop-blur-sm w-8 h-8 rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.15)] text-forest opacity-0 group-hover:opacity-100 transition-all hidden md:flex items-center justify-center border border-gray-100 hover:scale-105 hover:text-gold"
-                                >
-                                    <svg className="w-4 h-4 ml-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="container-luxury">
-
-                    {/* ─── Top Filter Bar ─── */}
-                    <div className="flex flex-col gap-4 mb-6">
-
-                        {/* Categories Row */}
-                        <div className="flex flex-col md:flex-row items-start md:items-center gap-3">
-                            {/* Static Buttons */}
-                            <div className="flex gap-2 flex-shrink-0 overflow-x-auto w-full md:w-auto pb-1 md:pb-0 scrollbar-hide">
-                                <button
-                                    onClick={() => setActiveCategory('all')}
-                                    className={`flex-shrink-0 px-5 py-2.5 text-sm rounded-full border transition-all ${activeCategory === 'all'
-                                        ? 'bg-forest text-white border-forest font-medium shadow-sm'
-                                        : 'bg-white border-kraft/30 text-charcoal/70 hover:border-forest/40 hover:text-forest'
-                                        }`}
-                                >
-                                    <span className="hidden md:inline">Ver Todo</span>
-                                    <span className="md:hidden">Todo</span>
-                                </button>
-                                {/* Offers quick-filter pill */}
-                                <button
-                                    onClick={() => setShowOffersOnly(!showOffersOnly)}
-                                    className={`flex-shrink-0 px-4 md:px-5 py-2.5 text-sm rounded-full border transition-all flex items-center gap-1.5 ${showOffersOnly
-                                        ? 'bg-red-500 text-white border-red-500 font-medium shadow-sm'
-                                        : 'bg-white border-kraft/30 text-charcoal/70 hover:border-red-300'
-                                        }`}
-                                >
-                                    🔥 <span className="hidden md:inline">Ofertas</span>
-                                    {promoProducts.length > 0 && (
-                                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ml-1 ${showOffersOnly ? 'bg-white/20 text-white' : 'bg-red-100 text-red-600'}`}>
-                                            {promoProducts.length}
-                                        </span>
-                                    )}
-                                </button>
-
-                                {/* Price filter pill */}
-                                <button
-                                    onClick={handleOpenPrice}
-                                    className={`flex-shrink-0 px-4 md:px-5 py-2.5 text-sm rounded-full border transition-all flex items-center gap-1.5 ${(priceRange[0] > PRICE_MIN || priceRange[1] < computedMax)
-                                        ? 'bg-gold/10 border-gold/40 text-forest font-medium shadow-sm'
-                                        : 'bg-white border-kraft/30 text-charcoal/70 hover:border-gold/40'
-                                        }`}
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 shrink-0">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                    <span className="hidden md:inline">Precio</span>
-                                </button>
-                            </div>
-
-                            {/* Category pills (horizontal scroll with arrows) */}
-                            <div className="relative group flex-1 min-w-0 w-full">
-                                {/* Left Arrow */}
-                                <button 
-                                    onClick={() => {
-                                        const container = document.getElementById('category-scroll-container');
-                                        if (container) container.scrollBy({ left: -250, behavior: 'smooth' });
-                                    }}
-                                    className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/95 backdrop-blur-sm w-9 h-9 rounded-full shadow-[0_2px_10px_rgba(0,0,0,0.15)] text-forest opacity-0 group-hover:opacity-100 transition-all hidden md:flex items-center justify-center border border-gray-100 hover:scale-105 hover:text-gold"
-                                    aria-label="Desplazar a la izquierda"
-                                >
-                                    <svg className="w-5 h-5 mr-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-                                    </svg>
-                                </button>
-
-                                {/* Fade gradient left */}
-                                <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white to-transparent z-[5] pointer-events-none hidden md:block"></div>
-
-                                <div id="category-scroll-container" className="overflow-x-auto scrollbar-hide md:scrollbar-default scroll-smooth md:px-4 pb-2 -mb-2 md:pb-0 md:mb-0">
-                                    <div className="flex gap-2 pb-1 w-max">
-                                        {shopCategories.filter(c => c.id !== 'all').map((cat) => (
-                                            <button
-                                                key={cat.id}
-                                                onClick={() => setActiveCategory(cat.id)}
-                                                className={`flex-shrink-0 group px-5 py-2.5 text-sm rounded-full border transition-all flex items-center gap-2 ${activeCategory === cat.id
-                                                    ? 'bg-forest text-white border-forest font-medium shadow-sm'
-                                                    : 'bg-white border-kraft/30 text-charcoal/70 hover:border-forest/40 hover:text-forest'
-                                                    }`}
-                                            >
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3.5 h-3.5 shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:-translate-y-0.5"><path strokeLinecap="round" strokeLinejoin="round" d={cat.icon} /></svg>
-                                                {cat.name}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                {/* Fade gradient right */}
-                                <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-[#fafafa] to-transparent z-[5] pointer-events-none hidden md:block group-hover:from-white"></div>
-
-                                {/* Right Arrow */}
-                                <button 
-                                    onClick={() => {
-                                        const container = document.getElementById('category-scroll-container');
-                                        if (container) container.scrollBy({ left: 250, behavior: 'smooth' });
-                                    }}
-                                    className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/95 backdrop-blur-sm w-9 h-9 rounded-full shadow-[0_2px_10px_rgba(0,0,0,0.15)] text-forest opacity-0 group-hover:opacity-100 transition-all hidden md:flex items-center justify-center border border-gray-100 hover:scale-105 hover:text-gold"
-                                    aria-label="Desplazar a la derecha"
-                                >
-                                    <svg className="w-5 h-5 ml-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Toolbar row: count left, sort + filter right */}
-                        <div className="flex items-center justify-between">
-                            <p className="text-charcoal/60 text-sm">
-                                <span className="text-gold font-semibold">{filteredProducts.length}</span> productos
-                                {isFiltering && <span className="text-charcoal/40 ml-1">(resultados de búsqueda)</span>}
-                            </p>
-
-                            <div className="flex items-center gap-2">
-                                {/* Sort dropdown */}
-                                <div className="relative">
+                            {/* Right Side: Sort */}
+                            <div className="flex items-center gap-2 md:ml-auto w-full md:w-auto mt-2 md:mt-0">
+                                <div className="relative w-full md:w-auto">
                                     <select
                                         value={sortBy}
                                         onChange={(e) => setSortBy(e.target.value)}
-                                        className="appearance-none pl-3 pr-8 py-2 bg-white border border-kraft/30 text-sm text-forest rounded-lg focus:outline-none focus:border-gold cursor-pointer hover:border-gold/40 transition-colors"
+                                        className="w-full md:w-auto appearance-none pl-3 pr-8 py-2 bg-white border border-kraft/30 text-xs md:text-sm text-forest rounded-lg focus:outline-none focus:border-gold cursor-pointer hover:border-gold/40 transition-colors shadow-sm"
                                     >
                                         {sortOptions.map(opt => (
                                             <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -649,11 +538,12 @@ export default function Shop() {
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
                                     </svg>
                                 </div>
-
-                                {/* Mobile filter panel button removed as it was duplicating sort functionality */}
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <div className="container-luxury mt-8">
 
                     {/* Active filter chips */}
                     {renderActiveFilterChips()}
