@@ -18,10 +18,11 @@ Workflow zero-touch que usa **MCPs exclusivamente** para GitOps y base de datos.
 - **Branch default**: `master`
 
 ### Supabase
-- **Project ID**: `irdeiiichmanewpnuaml`
+- **Project ID**: `zdciwzeokkrwcxvsgusc`
 - **Organization**: `otlflptzfgrhfahpunkl`
 - **Region**: `us-west-2`
 - **Status**: `ACTIVE_HEALTHY`
+- **Note**: ESTE ES EL ENTORNO PRO DE PRODUCCIÓN. El entorno FREE antiguo (`kxoitidsrfeqxwvxjwsd`) ha sido deprecado. Nunca usar el free.
 
 ---
 
@@ -59,7 +60,7 @@ node -e "..." | npx tsx
 ### 1.2 Verificar Supabase (via MCP)
 
 **Usar:**
-- `mcp_supabase-mcp-server_get_project` con id: `irdeiiichmanewpnuaml`
+- `mcp_supabase-mcp-server_get_project` con id: `zdciwzeokkrwcxvsgusc`
 - `mcp_supabase-mcp-server_list_tables` con schemas: `["public"]`
 - `mcp_supabase-mcp-server_get_advisors` - Alertas de seguridad
 
@@ -97,7 +98,7 @@ cd frontend && npm run build
 **Generar types automáticamente:**
 ```
 mcp_supabase-mcp-server_generate_typescript_types
-  project_id: "irdeiiichmanewpnuaml"
+  project_id: "zdciwzeokkrwcxvsgusc"
 ```
 
 Copiar output a `src/types/supabase.ts`
@@ -110,7 +111,7 @@ Copiar output a `src/types/supabase.ts`
 
 ```
 mcp_supabase-mcp-server_apply_migration
-  project_id: "irdeiiichmanewpnuaml"
+  project_id: "zdciwzeokkrwcxvsgusc"
   name: "nombre_en_snake_case"
   query: "CREATE TABLE... / ALTER TABLE..."
 ```
@@ -119,14 +120,14 @@ mcp_supabase-mcp-server_apply_migration
 
 ```
 mcp_supabase-mcp-server_list_migrations
-  project_id: "irdeiiichmanewpnuaml"
+  project_id: "zdciwzeokkrwcxvsgusc"
 ```
 
 ### 3.3 Revisar Seguridad RLS
 
 ```
 mcp_supabase-mcp-server_get_advisors
-  project_id: "irdeiiichmanewpnuaml"
+  project_id: "zdciwzeokkrwcxvsgusc"
   type: "security"
 ```
 
@@ -199,7 +200,7 @@ mcp_github-mcp-server_merge_pull_request
 
 ```
 mcp_supabase-mcp-server_deploy_edge_function
-  project_id: "irdeiiichmanewpnuaml"
+  project_id: "zdciwzeokkrwcxvsgusc"
   name: "mi-funcion"
   entrypoint_path: "index.ts"
   verify_jwt: true
@@ -215,7 +216,7 @@ mcp_supabase-mcp-server_deploy_edge_function
 
 ```
 mcp_supabase-mcp-server_get_logs
-  project_id: "irdeiiichmanewpnuaml"
+  project_id: "zdciwzeokkrwcxvsgusc"
   service: "edge-function"
 ```
 
@@ -262,7 +263,7 @@ mcp_github-mcp-server_add_issue_comment
 
 ```
 mcp_supabase-mcp-server_get_project
-  id: "irdeiiichmanewpnuaml"
+  id: "zdciwzeokkrwcxvsgusc"
 ```
 
 Verificar: `status: "ACTIVE_HEALTHY"`
