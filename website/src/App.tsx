@@ -23,6 +23,7 @@ import ReviewModeration from './pages/admin/ReviewModeration';
 import AcademyManager from './pages/admin/AcademyManager';
 import BlogManager from './pages/admin/BlogManager';
 import ReelsManager from './pages/admin/ReelsManager';
+import MediaManagerPage from './pages/admin/MediaManagerPage';
 
 import ProductEditor from './pages/admin/ProductEditor';
 import CartPromoSettings from './pages/admin/CartPromoSettings';
@@ -124,6 +125,7 @@ function App() {
               <Route path="academy" element={<AcademyManager />} />
               <Route path="blog" element={<BlogManager />} />
               <Route path="reels" element={<ReelsManager />} />
+              <Route path="media" element={<MediaManagerPage />} />
 
               <Route path="catalog" element={<ProductEditor />} />
               <Route path="cart-promos" element={<CartPromoSettings />} />
