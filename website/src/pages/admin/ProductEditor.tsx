@@ -5,6 +5,7 @@ import { useProducts } from '../../hooks/useProducts';
 import { useVariants } from '../../hooks/useVariants';
 import type { Product } from '../../store/cartStore';
 import VariantManager from './VariantManager';
+import { MediaManagerModal } from '../../components/admin/MediaManagerModal';
 
 // ═══════════════════════════════════════════
 // Excel row <-> Product mapping
@@ -81,6 +82,37 @@ export default function ProductEditor() {
     const [expandedVariantGroup, setExpandedVariantGroup] = useState<string | null>(null);
     const [imageEditorId, setImageEditorId] = useState<string | null>(null);
     const [newGalleryUrl, setNewGalleryUrl] = useState('');
+
+    const [mediaModalOpen, setMediaModalOpen] = useState(false);
+    const [mediaModalTarget, setMediaModalTarget] = useState<{
+        type: 'formImage' | 'inlineImage' | 'gallery' | 'video',
+        productId?: string
+    } | null>(null);
+
+    const handleMediaSelect = (url: string) => {
+        if (!mediaModalTarget) return;
+
+        if (mediaModalTarget.type === 'formImage') {
+            setFormData({ ...formData, image: url });
+        } else if (mediaModalTarget.type === 'inlineImage' && mediaModalTarget.productId) {
+            setEdits(prev => ({
+                ...prev,
+                [mediaModalTarget.productId!]: { ...prev[mediaModalTarget.productId!], image: url }
+            }));
+            setHasChanges(true);
+            setEditingCell(null);
+        } else if (mediaModalTarget.type === 'gallery') {
+            setNewGalleryUrl(url);
+        } else if (mediaModalTarget.type === 'video' && mediaModalTarget.productId) {
+            setEdits(prev => ({
+                ...prev,
+                [mediaModalTarget.productId!]: { ...prev[mediaModalTarget.productId!], video: url }
+            }));
+            setHasChanges(true);
+            setEditingCell(null);
+        }
+        setMediaModalOpen(false);
+    };
 
     // Full CRUD Editor State
     const [fullEditingId, setFullEditingId] = useState<string | null>(null);
@@ -487,7 +519,13 @@ export default function ProductEditor() {
                 <div><label className="block text-xs font-bold text-gray-700 mb-1">Precio Distribuidor</label><input type="number" step="0.01" value={formData.distributorPrice || ''} onChange={e => setFormData({ ...formData, distributorPrice: e.target.value ? Number(e.target.value) : undefined })} className="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-shadow" /></div>
                 <div><label className="block text-xs font-bold text-gray-700 mb-1">Stock</label><input type="number" value={formData.stock || 0} onChange={e => setFormData({ ...formData, stock: Number(e.target.value) })} className="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-shadow" /></div>
                 <div><label className="block text-xs font-bold text-gray-700 mb-1">Promoción (Texto)</label><input type="text" value={formData.promotion || ''} onChange={e => setFormData({ ...formData, promotion: e.target.value })} className="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-shadow" /></div>
-                <div><label className="block text-xs font-bold text-gray-700 mb-1">URL Imagen</label><input type="text" value={formData.image || ''} onChange={e => setFormData({ ...formData, image: e.target.value })} className="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-shadow font-mono text-xs" /></div>
+                <div>
+                    <label className="block text-xs font-bold text-gray-700 mb-1">URL Imagen</label>
+                    <div className="flex gap-2">
+                        <input type="text" value={formData.image || ''} onChange={e => setFormData({ ...formData, image: e.target.value })} className="flex-1 p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-shadow font-mono text-xs" />
+                        <button type="button" onClick={() => { setMediaModalTarget({ type: 'formImage' }); setMediaModalOpen(true); }} className="px-3 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 rounded text-sm font-medium transition-colors whitespace-nowrap" title="Seleccionar de Media Manager">📁</button>
+                    </div>
+                </div>
 
                 <div className="md:col-span-2"><label className="block text-xs font-bold text-gray-700 mb-1">Descripción</label><textarea value={formData.description || ''} onChange={e => setFormData({ ...formData, description: e.target.value })} className="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-shadow" rows={2} /></div>
                 <div className="md:col-span-2"><label className="block text-xs font-bold text-gray-700 mb-1">Performance (Beneficios, etc)</label><textarea value={formData.performance || ''} onChange={e => setFormData({ ...formData, performance: e.target.value })} className="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-shadow" rows={2} /></div>
@@ -999,6 +1037,7 @@ export default function ProductEditor() {
                                                                                         placeholder="URL de la imagen principal..."
                                                                                         className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono text-xs bg-white"
                                                                                     />
+                                                                                    <button type="button" onClick={() => { setMediaModalTarget({ type: 'inlineImage', productId: product.id }); setMediaModalOpen(true); }} className="px-3 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 rounded-lg text-sm font-medium transition-colors flex-shrink-0" title="Seleccionar de Media Manager">📁</button>
                                                                                 </div>
                                                                                 <div className="w-40 h-40 rounded-xl border border-gray-200 overflow-hidden bg-white shadow-sm">
                                                                                     <img
@@ -1024,10 +1063,11 @@ export default function ProductEditor() {
                                                                                         placeholder="Pegar URL de imagen para agregar..."
                                                                                         className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono text-xs bg-white"
                                                                                     />
+                                                                                    <button type="button" onClick={() => { setMediaModalTarget({ type: 'gallery' }); setMediaModalOpen(true); }} className="px-3 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 rounded-lg text-sm font-medium transition-colors flex-shrink-0" title="Seleccionar de Media Manager">📁</button>
                                                                                     <button
                                                                                         onClick={addGalleryImage}
                                                                                         disabled={!newGalleryUrl.trim()}
-                                                                                        className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                                                                                        className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors whitespace-nowrap"
                                                                                     >+ Agregar</button>
                                                                                 </div>
 
@@ -1100,10 +1140,11 @@ export default function ProductEditor() {
                                                                                                 placeholder="URL del video (YouTube, Vimeo, MP4, etc.)..."
                                                                                                 className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono text-xs bg-white"
                                                                                             />
+                                                                                            <button type="button" onClick={() => { setMediaModalTarget({ type: 'video', productId: product.id }); setMediaModalOpen(true); }} className="px-3 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 rounded-lg text-sm font-medium transition-colors flex-shrink-0" title="Seleccionar de Media Manager">📁</button>
                                                                                             {currentVideo && (
                                                                                                 <button
                                                                                                     onClick={() => updateVideo('')}
-                                                                                                    className="px-3 py-2 bg-red-50 text-red-600 rounded-lg text-sm font-medium hover:bg-red-100 transition-colors"
+                                                                                                    className="px-3 py-2 bg-red-50 text-red-600 rounded-lg text-sm font-medium hover:bg-red-100 transition-colors flex-shrink-0"
                                                                                                     title="Eliminar video"
                                                                                                 >🗑️</button>
                                                                                             )}
@@ -1288,6 +1329,12 @@ export default function ProductEditor() {
                     />
                 </div>
             )}
+
+            <MediaManagerModal
+                isOpen={mediaModalOpen}
+                onClose={() => setMediaModalOpen(false)}
+                onSelect={handleMediaSelect}
+            />
         </div >
     );
 }
