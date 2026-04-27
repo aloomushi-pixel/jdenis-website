@@ -294,7 +294,7 @@ export default function MyAccount() {
                     <div className="w-20 h-20 bg-gold/10 rounded-full flex items-center justify-center mx-auto mb-6">
                         <svg className="w-10 h-10 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
                     </div>
-                    <h2 className="font-serif text-2xl text-navy mb-2">Acceso Requerido</h2>
+                    <h2 className="font-sans text-2xl text-navy mb-2">Acceso Requerido</h2>
                     <p className="text-charcoal-light mb-6">Inicia sesión para acceder a tu cuenta</p>
                     <Link to="/login" className="btn btn-primary w-full">Iniciar Sesión</Link>
                 </motion.div>
@@ -445,12 +445,12 @@ export default function MyAccount() {
                                     {user?.avatar_url ? (
                                         <img src={user.avatar_url} alt="" className="w-full h-full rounded-full object-cover" />
                                     ) : (
-                                        <span className="text-2xl text-gold font-serif font-bold">
+                                        <span className="text-2xl text-gold font-sans font-bold">
                                             {user?.fullName?.[0]?.toUpperCase() || 'U'}
                                         </span>
                                     )}
                                 </div>
-                                <h3 className="font-serif text-lg text-cream truncate">{user?.fullName}</h3>
+                                <h3 className="font-sans text-lg text-cream truncate">{user?.fullName}</h3>
                                 <p className="text-sm text-cream/60 truncate">{user?.email}</p>
                                 <span className="inline-block mt-2 px-3 py-0.5 rounded-full text-xs font-medium bg-gold/20 text-gold border border-gold/30">
                                     {ROLE_LABELS[user?.role || ''] || user?.role}
@@ -524,7 +524,7 @@ export default function MyAccount() {
                                 {activeTab === 'orders' && (
                                     <div className="space-y-4">
                                         <div className="flex items-center justify-between mb-2">
-                                            <h2 className="font-serif text-xl text-navy">Mis Pedidos</h2>
+                                            <h2 className="font-sans text-xl text-navy">Mis Pedidos</h2>
                                             {orders.length > 0 && (
                                                 <span className="text-sm text-charcoal-light">{orders.length} pedido{orders.length !== 1 ? 's' : ''}</span>
                                             )}
@@ -538,7 +538,7 @@ export default function MyAccount() {
                                         ) : orders.length === 0 ? (
                                             <div className="bg-white rounded-2xl p-12 shadow-luxury text-center">
                                                 <div className="text-5xl mb-4">📦</div>
-                                                <h3 className="font-serif text-lg text-navy mb-2">Aún no tienes pedidos</h3>
+                                                <h3 className="font-sans text-lg text-navy mb-2">Aún no tienes pedidos</h3>
                                                 <p className="text-charcoal-light mb-6 text-sm">Explora nuestra tienda y encuentra los mejores productos para ti</p>
                                                 <Link to="/tienda" className="btn btn-primary">Ir a la Tienda</Link>
                                             </div>
@@ -655,7 +655,7 @@ export default function MyAccount() {
                                 {activeTab === 'quotations' && (
                                     <div className="space-y-4">
                                         <div className="flex items-center justify-between mb-2">
-                                            <h2 className="font-serif text-xl text-navy">Mis Cotizaciones</h2>
+                                            <h2 className="font-sans text-xl text-navy">Mis Cotizaciones</h2>
                                             {quotations.length > 0 && (
                                                 <span className="text-sm text-charcoal-light">{quotations.length} cotizacione(s)</span>
                                             )}
@@ -669,7 +669,7 @@ export default function MyAccount() {
                                         ) : quotations.length === 0 ? (
                                             <div className="bg-white rounded-2xl p-12 shadow-luxury text-center">
                                                 <div className="text-5xl mb-4">📝</div>
-                                                <h3 className="font-serif text-lg text-navy mb-2">Sin cotizaciones pendientes</h3>
+                                                <h3 className="font-sans text-lg text-navy mb-2">Sin cotizaciones pendientes</h3>
                                                 <p className="text-charcoal-light mb-6 text-sm">Comunícate con un asesor para solicitar un presupuesto especial</p>
                                             </div>
                                         ) : (
@@ -785,7 +785,7 @@ export default function MyAccount() {
                                 {/* ══════ TAB: MIS PAGOS ══════ */}
                                 {activeTab === 'payments' && (
                                     <div className="space-y-4">
-                                        <h2 className="font-serif text-xl text-navy mb-2">Mis Pagos</h2>
+                                        <h2 className="font-sans text-xl text-navy mb-2">Mis Pagos</h2>
 
                                         {/* Summary cards */}
                                         <div className="grid sm:grid-cols-2 gap-4 mb-4">
@@ -808,7 +808,7 @@ export default function MyAccount() {
                                         ) : orders.length === 0 ? (
                                             <div className="bg-white rounded-2xl p-12 shadow-luxury text-center">
                                                 <div className="text-5xl mb-4">💳</div>
-                                                <h3 className="font-serif text-lg text-navy mb-2">Sin historial de pagos</h3>
+                                                <h3 className="font-sans text-lg text-navy mb-2">Sin historial de pagos</h3>
                                                 <p className="text-charcoal-light text-sm">Tus pagos aparecerán aquí cuando realices tu primera compra</p>
                                             </div>
                                         ) : (
@@ -850,7 +850,7 @@ export default function MyAccount() {
                                 {/* ══════ TAB: MIS PROMOCIONES ══════ */}
                                 {activeTab === 'promos' && (
                                     <div className="space-y-6">
-                                        <h2 className="font-serif text-xl text-navy">Mis Promociones</h2>
+                                        <h2 className="font-sans text-xl text-navy">Mis Promociones</h2>
 
                                         {/* Coupons */}
                                         <div>
@@ -872,7 +872,7 @@ export default function MyAccount() {
                                                             <div className="absolute -right-6 -top-6 w-24 h-24 rounded-full opacity-20"
                                                                 style={{ background: coupon.visual_design?.textColor || '#D4AF37' }}></div>
                                                             <div className="p-5 relative z-10">
-                                                                <div className="text-3xl font-bold font-serif mb-1">
+                                                                <div className="text-3xl font-bold font-sans mb-1">
                                                                     {coupon.discount_type === 'percentage'
                                                                         ? `${coupon.discount_value}% OFF`
                                                                         : `${fmtMoney(coupon.discount_value)} OFF`}
@@ -913,7 +913,7 @@ export default function MyAccount() {
                                                         <div key={promo.id} className="bg-gradient-to-r from-gold/10 to-gold/5 rounded-2xl p-5 border border-gold/20">
                                                             <div className="flex items-start justify-between">
                                                                 <div>
-                                                                    <h4 className="font-serif text-lg text-navy">{promo.name}</h4>
+                                                                    <h4 className="font-sans text-lg text-navy">{promo.name}</h4>
                                                                     {promo.description && <p className="text-sm text-charcoal-light mt-1">{promo.description}</p>}
                                                                 </div>
                                                                 <span className="bg-gold text-white text-sm font-bold px-3 py-1 rounded-full flex-shrink-0">
@@ -939,7 +939,7 @@ export default function MyAccount() {
                                 {activeTab === 'addresses' && (
                                     <div className="space-y-4">
                                         <div className="flex items-center justify-between mb-2">
-                                            <h2 className="font-serif text-xl text-navy">Mis Direcciones</h2>
+                                            <h2 className="font-sans text-xl text-navy">Mis Direcciones</h2>
                                             <button onClick={() => { setEditingAddress(null); setShowAddressForm(true); }}
                                                 className="btn btn-primary text-sm py-2 px-4">+ Nueva Dirección</button>
                                         </div>
@@ -947,7 +947,7 @@ export default function MyAccount() {
                                         {addresses.length === 0 && !showAddressForm ? (
                                             <div className="bg-white rounded-2xl p-12 shadow-luxury text-center">
                                                 <div className="text-5xl mb-4">📍</div>
-                                                <h3 className="font-serif text-lg text-navy mb-2">Sin direcciones guardadas</h3>
+                                                <h3 className="font-sans text-lg text-navy mb-2">Sin direcciones guardadas</h3>
                                                 <p className="text-charcoal-light text-sm mb-6">Guarda tus direcciones para un checkout más rápido</p>
                                                 <button onClick={() => setShowAddressForm(true)} className="btn btn-primary">Agregar Dirección</button>
                                             </div>
@@ -1001,7 +1001,7 @@ export default function MyAccount() {
                                 {/* ══════ TAB: MI PERFIL ══════ */}
                                 {activeTab === 'profile' && (
                                     <div className="bg-white rounded-2xl p-6 shadow-luxury">
-                                        <h2 className="font-serif text-xl text-navy mb-6">Mi Perfil</h2>
+                                        <h2 className="font-sans text-xl text-navy mb-6">Mi Perfil</h2>
                                         <div className="space-y-5 max-w-lg">
                                             <div>
                                                 <label className="block text-sm font-medium text-navy/80 mb-2">Nombre Completo</label>
@@ -1053,7 +1053,7 @@ export default function MyAccount() {
                                 {/* ══════ TAB: STATUS PROVEEDOR ══════ */}
                                 {activeTab === 'solicitud' && user?.role === 'DISTRIBUIDOR' && (
                                     <div className="bg-white rounded-2xl p-6 shadow-luxury">
-                                        <h2 className="font-serif text-xl text-navy mb-6">Estado de tu Solicitud de Proveedor</h2>
+                                        <h2 className="font-sans text-xl text-navy mb-6">Estado de tu Solicitud de Proveedor</h2>
                                         <div className="border border-green-200 bg-green-50 p-6 rounded-xl relative overflow-hidden">
                                             <div className="absolute -right-4 -top-4 w-24 h-24 bg-green-200/50 rounded-full blur-xl"></div>
                                             <div className="flex items-start gap-4 relative z-10">
@@ -1061,7 +1061,7 @@ export default function MyAccount() {
                                                     <span className="text-2xl">✅</span>
                                                 </div>
                                                 <div>
-                                                    <h3 className="font-serif text-lg text-green-800 font-semibold">¡Aprobado! (Activo)</h3>
+                                                    <h3 className="font-sans text-lg text-green-800 font-semibold">¡Aprobado! (Activo)</h3>
                                                     <p className="text-green-700 mt-1">Actualmente disfrutas de los beneficios de cuenta <b>DISTRIBUIDOR</b> activo. Eres elegible para comprar de mayoreo con descuentos exclusivos.</p>
                                                     <div className="mt-4 pt-4 border-t border-green-200/50">
                                                         <p className="text-sm font-medium text-green-800">Próxima renovación: <span className="font-normal text-green-700">Automática</span></p>
@@ -1075,7 +1075,7 @@ export default function MyAccount() {
                                 {/* ══════ TAB: CALCULADORA ══════ */}
                                 {activeTab === 'calculadora' && user?.role === 'DISTRIBUIDOR' && (
                                     <div className="bg-white rounded-2xl p-6 shadow-luxury">
-                                        <h2 className="font-serif text-xl text-navy mb-2">Calculadora de Ganancias</h2>
+                                        <h2 className="font-sans text-xl text-navy mb-2">Calculadora de Ganancias</h2>
                                         <p className="text-charcoal-light mb-6 text-sm">Calcula cuánto puedes ganar al invertir como distribuidor.</p>
                                         <div className="grid md:grid-cols-2 gap-8">
                                             <div className="bg-cream/50 p-6 rounded-xl border border-gold/20">
@@ -1096,7 +1096,7 @@ export default function MyAccount() {
                                                 <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-gold/20 rounded-full blur-3xl"></div>
                                                 <div className="relative z-10 text-center">
                                                     <p className="text-cream/70 text-sm font-medium uppercase tracking-wider mb-1">Tus Ganancias Estimadas</p>
-                                                    <div className="text-4xl font-serif text-gold mb-4">
+                                                    <div className="text-4xl font-sans text-gold mb-4">
                                                         +{fmtMoney(investmentAmount * 0.45)}
                                                     </div>
                                                     <div className="grid grid-cols-2 gap-4 text-left border-t border-cream/10 pt-4 mt-2">
@@ -1123,7 +1123,7 @@ export default function MyAccount() {
                                 {activeTab === 'home' && isERP && (
                                     <div className="space-y-6">
                                         <div className="flex items-center justify-between">
-                                            <h2 className="font-serif text-xl text-navy">
+                                            <h2 className="font-sans text-xl text-navy">
                                                 Panel de {ROLE_LABELS[user?.role || ''] || user?.role}
                                             </h2>
                                             <Link to="/admin" className="btn btn-primary text-sm py-2 px-4 flex items-center gap-2">
@@ -1180,7 +1180,7 @@ export default function MyAccount() {
 
                                                 {/* Quick access for all ERP */}
                                                 <div className="bg-white rounded-2xl p-6 shadow-luxury">
-                                                    <h3 className="font-serif text-lg text-navy mb-4">Acceso Rápido</h3>
+                                                    <h3 className="font-sans text-lg text-navy mb-4">Acceso Rápido</h3>
                                                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                                                         {(getLinksForRole() || []).slice(0, 4).map((link) => (
                                                             <Link key={link.path} to={link.path}
@@ -1214,7 +1214,7 @@ export default function MyAccount() {
                                 {/* ══════ ERP: MÓDULOS (QUICKLINKS) ══════ */}
                                 {activeTab === 'quicklinks' && isERP && (
                                     <div className="space-y-4">
-                                        <h2 className="font-serif text-xl text-navy mb-2">Módulos del Sistema</h2>
+                                        <h2 className="font-sans text-xl text-navy mb-2">Módulos del Sistema</h2>
                                         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                                             {getLinksForRole().map((link) => (
                                                 <Link key={link.path} to={link.path}
@@ -1231,11 +1231,11 @@ export default function MyAccount() {
                                 {/* ══════ TRANSPORTISTA: MIS ENTREGAS ══════ */}
                                 {activeTab === 'deliveries' && user?.role === 'TRANSPORTISTA' && (
                                     <div className="space-y-4">
-                                        <h2 className="font-serif text-xl text-navy mb-2">Mis Entregas</h2>
+                                        <h2 className="font-sans text-xl text-navy mb-2">Mis Entregas</h2>
                                         {deliveries.length === 0 ? (
                                             <div className="bg-white rounded-2xl p-12 shadow-luxury text-center">
                                                 <div className="text-5xl mb-4">🚛</div>
-                                                <h3 className="font-serif text-lg text-navy mb-2">Sin entregas asignadas</h3>
+                                                <h3 className="font-sans text-lg text-navy mb-2">Sin entregas asignadas</h3>
                                                 <p className="text-charcoal-light text-sm">Las entregas asignadas aparecerán aquí</p>
                                             </div>
                                         ) : (
@@ -1305,7 +1305,7 @@ function AddressForm({ address, onSave, onCancel }: {
 
     return (
         <div className="bg-white rounded-2xl p-6 shadow-luxury border border-gold/20">
-            <h3 className="font-serif text-lg text-navy mb-4">{address ? 'Editar Dirección' : 'Nueva Dirección'}</h3>
+            <h3 className="font-sans text-lg text-navy mb-4">{address ? 'Editar Dirección' : 'Nueva Dirección'}</h3>
             <div className="grid sm:grid-cols-2 gap-4">
                 <div className="sm:col-span-2">
                     <label className="block text-sm font-medium text-navy/80 mb-1">Etiqueta</label>

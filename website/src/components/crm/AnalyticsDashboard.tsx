@@ -30,7 +30,7 @@ export default function AnalyticsDashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-          <h3 className="font-serif text-lg text-slate-800 mb-6">Top 5: Productos Más Vendidos</h3>
+          <h3 className="font-sans text-lg text-slate-800 mb-6">Top 5: Productos Más Vendidos</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart layout="vertical" data={dataHot} margin={{ top: 0, right: 20, left: 20, bottom: 0 }}>
@@ -49,7 +49,7 @@ export default function AnalyticsDashboard() {
         </div>
 
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col">
-          <h3 className="font-serif text-lg text-slate-800 mb-6">Alerta Lenta Rotación (Slow Movers)</h3>
+          <h3 className="font-sans text-lg text-slate-800 mb-6">Alerta Lenta Rotación (Slow Movers)</h3>
           <div className="flex-1 space-y-4">
             {dataSlow.map((item, idx) => (
               <div key={idx} className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100">

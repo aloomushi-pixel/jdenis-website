@@ -17,7 +17,7 @@ export default function CRMDirectory() {
       <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <div>
-            <h2 className="text-2xl font-serif text-slate-800">Directorio de Clientes CRM</h2>
+            <h2 className="text-2xl font-sans text-slate-800">Directorio de Clientes CRM</h2>
             <p className="text-slate-500 text-sm mt-1">Gestiona leads y monitorea el estado de compra.</p>
           </div>
           <div className="relative w-full sm:w-64">
@@ -88,11 +88,11 @@ export default function CRMDirectory() {
             <h3 className="text-xs uppercase tracking-widest text-gold font-bold mb-6">Perfil 360°</h3>
             
             <div className="flex items-center gap-4 mb-8">
-              <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center text-gold text-2xl font-serif">
+              <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center text-gold text-2xl font-sans">
                 {selectedClient.businessName.charAt(0)}{selectedClient.name.charAt(0)}
               </div>
               <div>
-                <h2 className="text-2xl font-serif">{selectedClient.businessName}</h2>
+                <h2 className="text-2xl font-sans">{selectedClient.businessName}</h2>
                 <p className="text-white/60">{selectedClient.name}</p>
               </div>
             </div>

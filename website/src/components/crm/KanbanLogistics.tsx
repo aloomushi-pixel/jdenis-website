@@ -32,7 +32,7 @@ export default function KanbanLogistics() {
   return (
     <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col h-[85vh]">
       <div className="mb-6">
-        <h2 className="text-2xl font-serif text-slate-800">Logística de Pedidos</h2>
+        <h2 className="text-2xl font-sans text-slate-800">Logística de Pedidos</h2>
         <p className="text-slate-500 text-sm mt-1">Arrastra las tarjetas para cambiar el estado del pedido.</p>
       </div>
 

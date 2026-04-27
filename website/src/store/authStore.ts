@@ -160,6 +160,7 @@ export const useAuthStore = create<AuthState>()(
                     }
                 } catch (error) {
                     console.error('Registration error:', error);
+                    throw error;
                 } finally {
                     set({ loading: false });
                 }

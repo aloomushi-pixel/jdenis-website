@@ -250,7 +250,7 @@ export default function Quoter() {
     <div className="space-y-6">
       <div className="flex justify-between items-center bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
         <div>
-          <h2 className="text-2xl font-serif text-slate-800">Cotizador Mayorista B2B</h2>
+          <h2 className="text-2xl font-sans text-slate-800">Cotizador Mayorista B2B</h2>
           <p className="text-slate-500 text-sm">Crea cotizaciones y envíalas al instante.</p>
         </div>
         <div className="flex gap-3">
@@ -308,7 +308,7 @@ export default function Quoter() {
         {/* CARTA DE COTIZACIÓN */}
         <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col h-[70vh]">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="font-serif text-lg font-medium flex items-center gap-2"><ShoppingCart size={18}/> Cotización Actual</h3>
+            <h3 className="font-sans text-lg font-medium flex items-center gap-2"><ShoppingCart size={18}/> Cotización Actual</h3>
             <span className="bg-amber-100 text-amber-700 text-xs px-2 py-1 rounded-md font-semibold">{cart.length} items</span>
           </div>
 
@@ -365,7 +365,7 @@ export default function Quoter() {
           <div className="border-t border-slate-100 pt-4 mt-4 space-y-3">
             <div className="flex justify-between items-center mb-2">
               <span className="text-slate-500">Total Venta</span>
-              <span className="text-3xl font-serif font-bold text-navy">${total.toLocaleString('es-MX')}</span>
+              <span className="text-3xl font-sans font-bold text-navy">${total.toLocaleString('es-MX')}</span>
             </div>
             
             <div className="grid grid-cols-2 gap-3">

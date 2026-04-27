@@ -49,10 +49,12 @@ export default function Login() {
                 await login(formData.email, formData.password);
                 navigate('/mi-cuenta');
             }
-        } catch (err) {
+        } catch (err: any) {
             console.error(err);
             if (mode === 'forgot') {
                 setError('No se pudo enviar el correo. Verifica tu email e intenta de nuevo.');
+            } else if (mode === 'register') {
+                setError(err.message || 'Error al crear la cuenta. Es posible que el correo ya esté en uso.');
             } else {
                 setError('Error de autenticación. Verifica tus credenciales.');
             }
