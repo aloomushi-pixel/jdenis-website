@@ -2,9 +2,9 @@
 // Enhanced with E-commerce Manager Skill
 import { createClient } from '@supabase/supabase-js';
 
-// Proyecto J DENIS (kxoitidsrfeqxwvxjwsd) — proyecto activo de producción
-export const supabaseUrl = 'https://kxoitidsrfeqxwvxjwsd.supabase.co';
-export const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4b2l0aWRzcmZlcXh3dnhqd3NkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMDk1NzMsImV4cCI6MjA4OTY4NTU3M30._Wvl1H6c2lMIMANP4D3QARvPOnBRtTaDBgoaG856S2Y';
+// Proyecto J DENIS (zdciwzeokkrwcxvsgusc) — proyecto activo de producción (PRO)
+export const supabaseUrl = import.meta.env?.VITE_SUPABASE_URL || 'https://zdciwzeokkrwcxvsgusc.supabase.co';
+export const supabaseAnonKey = import.meta.env?.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkY2l3emVva2tyd2N4dnNndXNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NTM3NTksImV4cCI6MjA4ODIyOTc1OX0.qbXG0M2Zsjz-rOXY0CgAV2RfLledS67nqBw_dnvzkbg';
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
