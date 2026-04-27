@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState, useCallback } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { 
-    Package, FileText, CreditCard, Gift, MapPin, User, CheckCircle, TrendingUp, Home, Users, Calculator, Truck, BarChart2, Star, Handshake, Receipt, Film, ShoppingCart, Tag, ShieldCheck, ClipboardList, PenTool, LayoutDashboard
+    Package, FileText, CreditCard, Gift, MapPin, User, CheckCircle, TrendingUp, Home, Users, Calculator, Truck, BarChart2, Star, Handshake, Receipt, Film, ShoppingCart, Tag, ShieldCheck, ClipboardList, PenTool, LayoutDashboard, AlertTriangle, Factory, UploadCloud, Wrench, ArrowLeft
 } from 'lucide-react';
 import Quoter from '../components/crm/Quoter';
 import KanbanLogistics from '../components/crm/KanbanLogistics';
@@ -435,6 +435,13 @@ function MyAccount() {
     return (
         <div className="min-h-screen bg-cream pt-28 pb-12">
             <div className="container-luxury">
+                <div className="mb-6">
+                    <Link to="/" className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors font-medium">
+                        <ArrowLeft className="w-5 h-5" />
+                        Volver al Inicio
+                    </Link>
+                </div>
+
                 {/* Success Banner */}
                 <AnimatePresence>
                     {showSuccess && (
@@ -1154,41 +1161,41 @@ function MyAccount() {
                                                 {/* ADMIN stats */}
                                                 {user?.role === 'ADMIN' && (
                                                     <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                                                        <StatCard icon="📦" label="Pedidos (30 días)" value={erpStats.recentOrders || 0} color="bg-blue-50 text-blue-600" />
-                                                        <StatCard icon="⚠️" label="Productos Stock Bajo" value={erpStats.lowStock || 0} color="bg-amber-50 text-amber-600" />
-                                                        <StatCard icon="🤝" label="Solicitudes Dist." value={erpStats.pendingDist || 0} color="bg-purple-50 text-purple-600" />
-                                                        <StatCard icon="🏭" label="Producción Activa" value={erpStats.production?.inProgress || 0} color="bg-emerald-50 text-emerald-600" />
+                                                        <StatCard icon={<Package className="w-5 h-5"/>} label="Pedidos (30 días)" value={erpStats.recentOrders || 0} color="bg-slate-50 text-slate-600" />
+                                                        <StatCard icon={<AlertTriangle className="w-5 h-5"/>} label="Productos Stock Bajo" value={erpStats.lowStock || 0} color="bg-slate-50 text-slate-600" />
+                                                        <StatCard icon={<Handshake className="w-5 h-5"/>} label="Solicitudes Dist." value={erpStats.pendingDist || 0} color="bg-slate-50 text-slate-600" />
+                                                        <StatCard icon={<Factory className="w-5 h-5"/>} label="Producción Activa" value={erpStats.production?.inProgress || 0} color="bg-slate-50 text-slate-600" />
                                                     </div>
                                                 )}
                                                 {/* EJECUTIVO stats */}
                                                 {user?.role === 'EJECUTIVO' && (
                                                     <div className="grid sm:grid-cols-3 gap-4">
-                                                        <StatCard icon="📦" label="Pedidos (30 días)" value={erpStats.recentOrders || 0} color="bg-blue-50 text-blue-600" />
-                                                        <StatCard icon="⚠️" label="Stock Bajo" value={erpStats.lowStock || 0} color="bg-amber-50 text-amber-600" />
-                                                        <StatCard icon="🤝" label="Solicitudes Dist." value={erpStats.pendingDist || 0} color="bg-purple-50 text-purple-600" />
+                                                        <StatCard icon={<Package className="w-5 h-5"/>} label="Pedidos (30 días)" value={erpStats.recentOrders || 0} color="bg-slate-50 text-slate-600" />
+                                                        <StatCard icon={<AlertTriangle className="w-5 h-5"/>} label="Stock Bajo" value={erpStats.lowStock || 0} color="bg-slate-50 text-slate-600" />
+                                                        <StatCard icon={<Handshake className="w-5 h-5"/>} label="Solicitudes Dist." value={erpStats.pendingDist || 0} color="bg-slate-50 text-slate-600" />
                                                     </div>
                                                 )}
                                                 {/* FABRICA stats */}
                                                 {user?.role === 'FABRICA' && (
                                                     <div className="grid sm:grid-cols-3 gap-4">
-                                                        <StatCard icon="🏭" label="Producción Activa" value={erpStats.production?.inProgress || 0} color="bg-blue-50 text-blue-600" />
-                                                        <StatCard icon="✅" label="Completadas" value={erpStats.production?.completed || 0} color="bg-emerald-50 text-emerald-600" />
-                                                        <StatCard icon="📤" label="Pendientes Envío" value={erpStats.warehouse?.pendingOrders || 0} color="bg-amber-50 text-amber-600" />
+                                                        <StatCard icon={<Factory className="w-5 h-5"/>} label="Producción Activa" value={erpStats.production?.inProgress || 0} color="bg-slate-50 text-slate-600" />
+                                                        <StatCard icon={<CheckCircle className="w-5 h-5"/>} label="Completadas" value={erpStats.production?.completed || 0} color="bg-slate-50 text-slate-600" />
+                                                        <StatCard icon={<UploadCloud className="w-5 h-5"/>} label="Pendientes Envío" value={erpStats.warehouse?.pendingOrders || 0} color="bg-slate-50 text-slate-600" />
                                                     </div>
                                                 )}
                                                 {/* ALMACEN stats */}
                                                 {(user?.role === 'ALMACEN_MATERIA_PRIMA' || user?.role === 'ALMACEN_PRODUCTO_FINAL') && (
                                                     <div className="grid sm:grid-cols-2 gap-4">
-                                                        <StatCard icon="📤" label="Pendientes Despacho" value={erpStats.warehouse?.pendingOrders || 0} color="bg-amber-50 text-amber-600" />
-                                                        <StatCard icon="🚛" label="Despachados" value={erpStats.warehouse?.dispatchedOrders || 0} color="bg-emerald-50 text-emerald-600" />
+                                                        <StatCard icon={<UploadCloud className="w-5 h-5"/>} label="Pendientes Despacho" value={erpStats.warehouse?.pendingOrders || 0} color="bg-slate-50 text-slate-600" />
+                                                        <StatCard icon={<Truck className="w-5 h-5"/>} label="Despachados" value={erpStats.warehouse?.dispatchedOrders || 0} color="bg-slate-50 text-slate-600" />
                                                     </div>
                                                 )}
                                                 {/* TRANSPORTISTA stats */}
                                                 {user?.role === 'TRANSPORTISTA' && (
                                                     <div className="grid sm:grid-cols-3 gap-4">
-                                                        <StatCard icon="🚛" label="Entregas Asignadas" value={deliveries?.length || 0} color="bg-blue-50 text-blue-600" />
-                                                        <StatCard icon="✅" label="Vehículos Disponibles" value={erpStats.vehicles?.available || 0} color="bg-emerald-50 text-emerald-600" />
-                                                        <StatCard icon="🔧" label="En Mantenimiento" value={erpStats.vehicles?.maintenance || 0} color="bg-amber-50 text-amber-600" />
+                                                        <StatCard icon={<Truck className="w-5 h-5"/>} label="Entregas Asignadas" value={deliveries?.length || 0} color="bg-slate-50 text-slate-600" />
+                                                        <StatCard icon={<CheckCircle className="w-5 h-5"/>} label="Vehículos Disponibles" value={erpStats.vehicles?.available || 0} color="bg-slate-50 text-slate-600" />
+                                                        <StatCard icon={<Wrench className="w-5 h-5"/>} label="En Mantenimiento" value={erpStats.vehicles?.maintenance || 0} color="bg-slate-50 text-slate-600" />
                                                     </div>
                                                 )}
 
@@ -1373,17 +1380,21 @@ function AddressForm({ address, onSave, onCancel }: {
 // ═══════════════════════════════════════════════════════
 // Stat Card Sub-component (ERP dashboards)
 // ═══════════════════════════════════════════════════════
-function StatCard({ icon, label, value, color }: { icon: string; label: string; value: number | string; color: string }) {
+function StatCard({ icon, label, value, color }: { icon: React.ReactNode; label: string; value: any; color: string }) {
+    const displayValue = typeof value === 'object' && value !== null 
+        ? (value.count ?? value.data?.length ?? 0) 
+        : (value || 0);
+
     return (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-2xl p-5 shadow-luxury border border-charcoal/5">
+            className="bg-white rounded-2xl p-5 shadow-luxury border border-slate-100">
             <div className="flex items-center gap-3">
                 <div className={`w-11 h-11 rounded-xl ${color} flex items-center justify-center`}>
-                    <span className="text-xl">{icon}</span>
+                    <span className="text-xl text-slate-500">{icon}</span>
                 </div>
                 <div>
-                    <p className="text-2xl font-bold text-navy">{value}</p>
-                    <p className="text-xs text-charcoal-light">{label}</p>
+                    <p className="text-2xl font-bold text-slate-800">{displayValue}</p>
+                    <p className="text-xs text-slate-500">{label}</p>
                 </div>
             </div>
         </motion.div>
