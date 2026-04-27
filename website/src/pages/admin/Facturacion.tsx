@@ -60,22 +60,20 @@ function UploadForm({ req, onProcessed }: { req: RequestRecord, onProcessed: () 
         xmlSource = filePath;
       }
 
-      // Call Edge Function
-      const { data, error: fnError } = await supabase.functions.invoke('process-invoice', {
-        body: {
-          requestId: req.id,
-          pdfMode,
-          pdfSource,
-          xmlMode,
-          xmlSource
-        }
-      });
+      const { error: updateError } = await supabase
+        .from('invoice_requests')
+        .update({
+          ruta_pdf: pdfSource,
+          ruta_xml: xmlSource,
+          status: 'Completada'
+        })
+        .eq('id', req.id);
 
-      if (fnError || data?.error) {
-        throw new Error(`Error en Edge Function: ${fnError?.message || data?.error}`);
+      if (updateError) {
+        throw new Error(`Error al actualizar estado: ${updateError.message}`);
       }
 
-      window.alert('Factura procesada y enviada correctamente');
+      window.alert('Factura procesada y guardada correctamente');
       onProcessed();
 
     } catch (err: any) {

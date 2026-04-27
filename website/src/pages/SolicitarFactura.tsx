@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Building2, FileText, MapPin, Mail, Hash, CheckCircle2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { useSearchParams } from 'react-router-dom';
+import { useAuthStore } from '../store/authStore';
 
 export default function SolicitarFactura() {
   const [formData, setFormData] = useState({
@@ -16,6 +18,34 @@ export default function SolicitarFactura() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
+  
+  const [searchParams] = useSearchParams();
+  const { user } = useAuthStore();
+
+  useEffect(() => {
+    const orderId = searchParams.get('order');
+    if (orderId) {
+      setFormData(prev => ({ ...prev, ticketNumber: orderId.slice(0, 8).toUpperCase() })); // Assuming ticket number is short ID or user will put full ID
+    }
+
+    if (user?.id) {
+      const loadUserData = async () => {
+        const { data } = await supabase.from('users').select('rfc, business_name, postal_code, tax_regime, cfdi_use, email_facturacion').eq('id', user.id).single();
+        if (data) {
+          setFormData(prev => ({
+            ...prev,
+            businessName: data.business_name || prev.businessName,
+            rfc: data.rfc || prev.rfc,
+            postalCode: data.postal_code || prev.postalCode,
+            taxRegime: data.tax_regime || prev.taxRegime,
+            cfdiUse: data.cfdi_use || prev.cfdiUse,
+            email: data.email_facturacion || prev.email
+          }));
+        }
+      };
+      loadUserData();
+    }
+  }, [searchParams, user]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -31,6 +61,8 @@ export default function SolicitarFactura() {
         .from('invoice_requests')
         .insert([
           {
+            id_cliente: user?.id || null,
+            id_pedido: searchParams.get('order') || null,
             business_name: formData.businessName,
             rfc: formData.rfc,
             postal_code: formData.postalCode,
@@ -38,7 +70,15 @@ export default function SolicitarFactura() {
             cfdi_use: formData.cfdiUse,
             email: formData.email,
             ticket_number: formData.ticketNumber,
-            status: 'Pendiente'
+            status: 'Pendiente',
+            datos_fiscales_snapshot: {
+              business_name: formData.businessName,
+              rfc: formData.rfc,
+              postal_code: formData.postalCode,
+              tax_regime: formData.taxRegime,
+              cfdi_use: formData.cfdiUse,
+              email: formData.email
+            }
           }
         ]);
 

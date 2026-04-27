@@ -8,6 +8,7 @@ import Quoter from '../components/crm/Quoter';
 import KanbanLogistics from '../components/crm/KanbanLogistics';
 import CRMDirectory from '../components/crm/CRMDirectory';
 import AnalyticsDashboard from '../components/crm/AnalyticsDashboard';
+import BillingTab from '../components/account/BillingTab';
 import ErrorBoundary from '../components/ErrorBoundary';
 import { useAuthStore } from '../store/authStore';
 import { useCartStore } from '../store/cartStore';
@@ -61,6 +62,7 @@ const clientTabs = [
     { id: 'payments', label: 'Mis Pagos', icon: <CreditCard className="w-5 h-5 text-gray-400" /> },
     { id: 'promos', label: 'Mis Promociones', icon: <Gift className="w-5 h-5 text-gray-400" /> },
     { id: 'addresses', label: 'Direcciones', icon: <MapPin className="w-5 h-5 text-gray-400" /> },
+    { id: 'billing', label: 'Datos Fiscales', icon: <Receipt className="w-5 h-5 text-gray-400" /> },
     { id: 'profile', label: 'Mi Perfil', icon: <User className="w-5 h-5 text-gray-400" /> },
 ];
 
@@ -203,6 +205,7 @@ function MyAccount() {
 
     // Data states
     const [orders, setOrders] = useState<ClientOrder[]>([]);
+    const [invoiceRequests, setInvoiceRequests] = useState<any[]>([]);
     const [coupons, setCoupons] = useState<Coupon[]>([]);
     const [promotions, setPromotions] = useState<ActivePromotion[]>([]);
     const [quotations, setQuotations] = useState<Quotation[]>([]);
@@ -243,17 +246,19 @@ function MyAccount() {
         try {
             const role = user.role || 'CLIENTE';
             if (role === 'CLIENTE' || role === 'DISTRIBUIDOR') {
-                const [ordersData, couponsData, promosData, quotesData] = await Promise.all([
+                const [ordersData, couponsData, promosData, quotesData, invoicesData] = await Promise.all([
                     getClientOrders(user.id, user.email),
                     getAvailableCoupons(),
                     getActivePromotions(),
                     getQuotations({ customerId: user.id }),
+                    supabase.from('invoice_requests').select('*').eq('id_cliente', user.id)
                 ]);
                 setOrders(Array.isArray(ordersData) ? ordersData : []);
                 setCoupons(Array.isArray(couponsData) ? couponsData : []);
                 setPromotions(Array.isArray(promosData) ? promosData : []);
                 // Clientes solo ven cotizaciones que no son borradores
                 setQuotations(Array.isArray(quotesData) ? quotesData.filter(q => q.status !== 'DRAFT') : []);
+                setInvoiceRequests(invoicesData?.data || []);
             } else if (role === 'TRANSPORTISTA') {
                 const [del, veh] = await Promise.all([
                     getTransportistaDeliveries(user.id),
@@ -312,6 +317,28 @@ function MyAccount() {
     }
 
     // ─── Handlers ───
+    const handleDownloadInvoice = async (ruta: string, fileName: string) => {
+        try {
+            if (ruta.startsWith('http')) {
+                window.open(ruta, '_blank');
+                return;
+            }
+            const { data, error } = await supabase.storage.from('invoices').download(ruta);
+            if (error) throw error;
+            const url = URL.createObjectURL(data);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            URL.revokeObjectURL(url);
+            a.remove();
+        } catch (err) {
+            console.error(err);
+            alert('Error al descargar el archivo.');
+        }
+    };
+
     const handleRepeatOrder = (order: ClientOrder) => {
         const items = orderItems(order);
         if (Array.isArray(items)) {
@@ -657,9 +684,42 @@ function MyAccount() {
                                                                                 className="btn btn-ghost text-sm flex items-center gap-1.5 py-2">
                                                                                 🔄 Repetir Pedido
                                                                             </button>
-                                                                            <Link to="/solicitar-factura" className="btn btn-ghost text-sm flex items-center gap-1.5 py-2">
-                                                                                🧾 Solicitar Factura
-                                                                            </Link>
+                                                                            {(() => {
+                                                                                const invoiceForOrder = invoiceRequests.find(inv => inv.id_pedido === order.id);
+                                                                                if (!invoiceForOrder) {
+                                                                                    return (
+                                                                                        <Link to={`/solicitar-factura?order=${order.id}`} className="btn btn-ghost text-sm flex items-center gap-1.5 py-2">
+                                                                                            🧾 Solicitar Factura
+                                                                                        </Link>
+                                                                                    );
+                                                                                }
+                                                                                if (invoiceForOrder.status === 'Pendiente') {
+                                                                                    return (
+                                                                                        <span className="btn btn-ghost text-sm flex items-center gap-1.5 py-2 opacity-60 cursor-not-allowed text-orange-600">
+                                                                                            ⏳ Factura en proceso
+                                                                                        </span>
+                                                                                    );
+                                                                                }
+                                                                                if (invoiceForOrder.status === 'Completada') {
+                                                                                    return (
+                                                                                        <div className="flex gap-2">
+                                                                                            {invoiceForOrder.ruta_pdf && (
+                                                                                                <button onClick={() => handleDownloadInvoice(invoiceForOrder.ruta_pdf, `Factura_${order.id.substring(0,8)}.pdf`)}
+                                                                                                    className="btn btn-ghost text-sm flex items-center gap-1.5 py-2 text-blue-600 hover:bg-blue-50">
+                                                                                                    📥 Descargar PDF
+                                                                                                </button>
+                                                                                            )}
+                                                                                            {invoiceForOrder.ruta_xml && (
+                                                                                                <button onClick={() => handleDownloadInvoice(invoiceForOrder.ruta_xml, `Factura_${order.id.substring(0,8)}.xml`)}
+                                                                                                    className="btn btn-ghost text-sm flex items-center gap-1.5 py-2 text-green-600 hover:bg-green-50">
+                                                                                                    📥 Descargar XML
+                                                                                                </button>
+                                                                                            )}
+                                                                                        </div>
+                                                                                    );
+                                                                                }
+                                                                                return null;
+                                                                            })()}
                                                                         </div>
                                                                     </div>
                                                                 </motion.div>
@@ -1069,6 +1129,11 @@ function MyAccount() {
                                             <button onClick={handleSaveProfile} className="btn btn-primary">Guardar Cambios</button>
                                         </div>
                                     </div>
+                                )}
+
+                                {/* ══════ TAB: DATOS FISCALES ══════ */}
+                                {activeTab === 'billing' && (
+                                    <BillingTab userId={user?.id} />
                                 )}
 
                                 {/* ══════ TAB: STATUS PROVEEDOR ══════ */}
