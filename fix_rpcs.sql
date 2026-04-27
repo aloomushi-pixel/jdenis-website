@@ -8,10 +8,10 @@ RETURNS TABLE (
 BEGIN
   RETURN QUERY
   SELECT
-    c.name AS category_name,
-    COALESCE(SUM(r.quantity)::integer, 0) AS total_items,
-    COALESCE(SUM(r.quantity * r.unit_cost), 0) AS total_value,
-    COALESCE(SUM(CASE WHEN r.quantity < r.min_quantity THEN 1 ELSE 0 END)::integer, 0) AS low_stock_count
+    c.name::text AS category_name,
+    COALESCE(SUM(r.quantity), 0)::integer AS total_items,
+    COALESCE(SUM(r.quantity * r.unit_cost), 0)::numeric AS total_value,
+    COALESCE(SUM(CASE WHEN r.quantity < r.min_quantity THEN 1 ELSE 0 END), 0)::integer AS low_stock_count
   FROM resource_categories c
   LEFT JOIN resources r ON r.category_id = c.id AND r.is_active = true
   GROUP BY c.id, c.name;
@@ -25,11 +25,11 @@ DECLARE
   v_year integer := COALESCE(target_year, extract(year from current_date));
   v_total numeric;
 BEGIN
-  SELECT COALESCE(SUM(total), 0) INTO v_total
+  SELECT COALESCE(SUM(total_amount), 0) INTO v_total
   FROM sales_orders
   WHERE extract(month from created_at) = v_month
     AND extract(year from created_at) = v_year
-    AND status != 'CANCELADO';
+    AND status != 'CANCELLED';
   RETURN v_total;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -41,11 +41,11 @@ DECLARE
   v_year integer := COALESCE(target_year, extract(year from current_date));
   v_total numeric;
 BEGIN
-  SELECT COALESCE(SUM(total), 0) INTO v_total
+  SELECT COALESCE(SUM(total_amount), 0) INTO v_total
   FROM purchase_orders
   WHERE extract(month from created_at) = v_month
     AND extract(year from created_at) = v_year
-    AND status != 'CANCELADO';
+    AND status != 'CANCELLED';
   RETURN v_total;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;

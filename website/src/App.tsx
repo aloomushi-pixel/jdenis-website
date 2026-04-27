@@ -61,6 +61,68 @@ function ProductDetailWrapper() {
   return <ProductDetail key={id} />;
 }
 
+function Layout() {
+  const location = useLocation();
+  const isAdminOrAccount = location.pathname.startsWith('/admin') || location.pathname.startsWith('/mi-cuenta');
+
+  return (
+    <div className="flex flex-col min-h-screen">
+      {!isAdminOrAccount && <Header />}
+      <main className="flex-1">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/tienda" element={<Shop />} />
+          <Route path="/producto/:id" element={<ProductDetailWrapper />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/mi-cuenta" element={<MyAccount />} />
+          <Route path="/nosotros" element={<About />} />
+          <Route path="/academia" element={<Academy />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:slug" element={<BlogPost />} />
+          <Route path="/noticias/:slug" element={<NewsPost />} />
+          <Route path="/registro-distribuidor" element={<RegistroDistribuidor />} />
+          <Route path="/aviso-de-privacidad" element={<AvisoPrivacidad />} />
+          <Route path="/solicitar-factura" element={<SolicitarFactura />} />
+          <Route path="/pago-resultado" element={<PaymentResult />} />
+          <Route path="/restablecer-contrasena" element={<ResetPassword />} />
+
+          {/* Admin / ERP Routes */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} />
+
+            <Route path="orders" element={<AdminOrders />} />
+            <Route path="users" element={<UserManager />} />
+            <Route path="emails" element={<EmailManager />} />
+            <Route path="resources" element={<ResourceManager />} />
+            <Route path="production" element={<ProductionOrders />} />
+            <Route path="purchases" element={<PurchaseOrders />} />
+            <Route path="sales" element={<SalesOrders />} />
+            <Route path="transport" element={<TransportAssignments />} />
+            <Route path="packaging" element={<PackagingRecords />} />
+            <Route path="event-log" element={<EventLog />} />
+            <Route path="reviews" element={<ReviewModeration />} />
+            <Route path="academy" element={<AcademyManager />} />
+            <Route path="blog" element={<BlogManager />} />
+            <Route path="reels" element={<ReelsManager />} />
+            <Route path="media" element={<MediaManagerPage />} />
+
+            <Route path="catalog" element={<ProductEditor />} />
+            <Route path="cart-promos" element={<CartPromoSettings />} />
+            <Route path="warehouse-queue" element={<WarehouseQueue />} />
+            <Route path="distributors" element={<DistributorRequests />} />
+            <Route path="facturacion" element={<FacturacionAdmin />} />
+            <Route path="coupons" element={<CouponManager />} />
+          </Route>
+        </Routes>
+      </main>
+      {!isAdminOrAccount && <Footer />}
+      <CartDrawer />
+      <GlobalSearchModal />
+    </div>
+  );
+}
+
 function App() {
   const checkSession = useAuthStore((s) => s.checkSession);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
@@ -86,61 +148,8 @@ function App() {
   return (
     <BrowserRouter>
       <ScrollToTop />
-      <div className="flex flex-col min-h-screen">
-        <Header />
-        <main className="flex-1">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/tienda" element={<Shop />} />
-            <Route path="/producto/:id" element={<ProductDetailWrapper />} />
-            <Route path="/checkout" element={<Checkout />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/mi-cuenta" element={<MyAccount />} />
-            <Route path="/nosotros" element={<About />} />
-            <Route path="/academia" element={<Academy />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/blog/:slug" element={<BlogPost />} />
-            <Route path="/noticias/:slug" element={<NewsPost />} />
-            <Route path="/registro-distribuidor" element={<RegistroDistribuidor />} />
-            <Route path="/aviso-de-privacidad" element={<AvisoPrivacidad />} />
-            <Route path="/solicitar-factura" element={<SolicitarFactura />} />
-            <Route path="/pago-resultado" element={<PaymentResult />} />
-            <Route path="/restablecer-contrasena" element={<ResetPassword />} />
-
-            {/* Admin / ERP Routes */}
-            <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<AdminDashboard />} />
-
-              <Route path="orders" element={<AdminOrders />} />
-              <Route path="users" element={<UserManager />} />
-              <Route path="emails" element={<EmailManager />} />
-              <Route path="resources" element={<ResourceManager />} />
-              <Route path="production" element={<ProductionOrders />} />
-              <Route path="purchases" element={<PurchaseOrders />} />
-              <Route path="sales" element={<SalesOrders />} />
-              <Route path="transport" element={<TransportAssignments />} />
-              <Route path="packaging" element={<PackagingRecords />} />
-              <Route path="event-log" element={<EventLog />} />
-              <Route path="reviews" element={<ReviewModeration />} />
-              <Route path="academy" element={<AcademyManager />} />
-              <Route path="blog" element={<BlogManager />} />
-              <Route path="reels" element={<ReelsManager />} />
-              <Route path="media" element={<MediaManagerPage />} />
-
-              <Route path="catalog" element={<ProductEditor />} />
-              <Route path="cart-promos" element={<CartPromoSettings />} />
-              <Route path="warehouse-queue" element={<WarehouseQueue />} />
-              <Route path="distributors" element={<DistributorRequests />} />
-              <Route path="facturacion" element={<FacturacionAdmin />} />
-              <Route path="coupons" element={<CouponManager />} />
-            </Route>
-          </Routes>
-        </main>
-        <Footer />
-        <CartDrawer />
-        <GlobalSearchModal />
-        <PWAInstallBanner show={showPWA} />
-      </div>
+      <Layout />
+      <PWAInstallBanner show={showPWA} />
     </BrowserRouter>
   );
 }

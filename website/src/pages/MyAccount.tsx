@@ -481,6 +481,11 @@ export default function MyAccount() {
 
                             <div className="px-3 pb-3">
                                 <hr className="my-2 border-charcoal/10" />
+                                <Link to="/"
+                                    className="w-full text-left px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors flex items-center gap-3 text-sm mb-1">
+                                    <span className="text-base">🏠</span>
+                                    Volver al Sitio Web
+                                </Link>
                                 <button onClick={logout}
                                     className="w-full text-left px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 transition-colors flex items-center gap-3 text-sm">
                                     <span className="text-base">🚪</span>
