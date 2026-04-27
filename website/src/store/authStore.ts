@@ -160,7 +160,7 @@ export const useAuthStore = create<AuthState>()(
                         });
                         if (resetError) {
                             console.error('Error sending reset password for existing user:', resetError);
-                            // We can swallow this error or throw, but typically we want to pretend success to avoid enumeration.
+                            throw new Error('No se pudo enviar el correo de recuperación. Posible límite de envíos alcanzado. Intenta más tarde.');
                         }
                         return true; // Still requires email interaction
                     }

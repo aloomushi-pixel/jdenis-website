@@ -18,7 +18,18 @@ git commit -m "Descripción de los cambios a desplegar"
 git push origin master
 ```
 
-## 3. Despliegue Automatizado en Dokploy
+## Step 3: Validation (Verificación Post-Despliegue)
+1. **Verificar Sitio de Producción:**
+   - **Regla Estricta:** Solo trabajaremos y verificaremos en el sitio de producción (https://jdenis.store). No verificar en localhost.
+2. **QA Credentials (Accesos de Prueba):**
+   - Siempre utiliza esta cuenta para realizar comprobaciones de flujo o QA en producción:
+     - **Email:** `caballeroangela49@gmail.com`
+     - **Password:** `E4ae5d6c0c.`
+3. **Confirmación Visual:**
+   - Visitar el sitio en vivo o solicitar al usuario que lo verifique.
+   - Si la UI o los cambios de base de datos lo requieren, usa esta cuenta para iniciar sesión y comprobar que el flujo (ej. facturación, registro) funciona correctamente.
+
+## 4. Despliegue Automatizado en Dokploy
 Utiliza tu herramienta `browser_subagent` para ingresar automáticamente al panel administrativo del VPS y desencadenar el despliegue.
 
 **Prompt Estándar para el Subagente:**

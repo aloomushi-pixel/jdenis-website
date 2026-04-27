@@ -1738,7 +1738,7 @@ export async function getAvailableCoupons(): Promise<Coupon[]> {
     if (error) { console.error('Error fetching coupons:', error); return []; }
 
     const now = new Date();
-    return (data || []).filter((c: Coupon) => {
+    return (Array.isArray(data) ? data : []).filter((c: Coupon) => {
         if (c.expiration_date && new Date(c.expiration_date) < now) return false;
         if (c.max_uses && c.usage_count >= c.max_uses) return false;
         return true;

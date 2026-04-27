@@ -253,7 +253,7 @@ function MyAccount() {
                 setCoupons(couponsData);
                 setPromotions(promosData);
                 // Clientes solo ven cotizaciones que no son borradores
-                setQuotations(quotesData.filter(q => q.status !== 'DRAFT'));
+                setQuotations(Array.isArray(quotesData) ? quotesData.filter(q => q.status !== 'DRAFT') : []);
             } else if (role === 'TRANSPORTISTA') {
                 const [del, veh] = await Promise.all([
                     getTransportistaDeliveries(user.id),
@@ -429,7 +429,7 @@ function MyAccount() {
     };
 
     // ─── Stats ───
-    const completedOrders = orders.filter(o => o.payment_status === 'approved' || o.status === 'completed' || o.status === 'delivered');
+    const completedOrders = Array.isArray(orders) ? orders.filter(o => o.payment_status === 'approved' || o.status === 'completed' || o.status === 'delivered') : [];
     const totalSpent = completedOrders.reduce((sum, o) => sum + Number(o.total), 0);
 
     return (
