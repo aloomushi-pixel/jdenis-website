@@ -79,7 +79,10 @@ export default function AdminLayout() {
     });
 
     return (
-        <div className="flex h-screen bg-gray-100 font-sans">
+        <div 
+            className="flex h-screen bg-gray-100" 
+            style={{ fontFamily: 'Roboto, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif' }}
+        >
             {/* Sidebar */}
             <motion.aside
                 initial={false}
