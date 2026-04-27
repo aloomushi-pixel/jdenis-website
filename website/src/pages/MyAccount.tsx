@@ -1,6 +1,9 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState, useCallback } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { 
+    Package, FileText, CreditCard, Gift, MapPin, User, CheckCircle, TrendingUp, Home, Users, Calculator, Truck, BarChart2, Star, Handshake, Receipt, Film, ShoppingCart, Tag, ShieldCheck, ClipboardList, PenTool, LayoutDashboard
+} from 'lucide-react';
 import Quoter from '../components/crm/Quoter';
 import KanbanLogistics from '../components/crm/KanbanLogistics';
 import CRMDirectory from '../components/crm/CRMDirectory';
@@ -52,47 +55,47 @@ function saveAddresses(addresses: SavedAddress[]) {
 
 // ─── Tab definitions ───
 const clientTabs = [
-    { id: 'orders', label: 'Mis Pedidos', icon: '📦' },
-    { id: 'quotations', label: 'Cotizaciones', icon: '📝' },
-    { id: 'payments', label: 'Mis Pagos', icon: '💳' },
-    { id: 'promos', label: 'Mis Promociones', icon: '🎁' },
-    { id: 'addresses', label: 'Direcciones', icon: '📍' },
-    { id: 'profile', label: 'Mi Perfil', icon: '👤' },
+    { id: 'orders', label: 'Mis Pedidos', icon: <Package className="w-5 h-5 text-gray-400" /> },
+    { id: 'quotations', label: 'Cotizaciones', icon: <FileText className="w-5 h-5 text-gray-400" /> },
+    { id: 'payments', label: 'Mis Pagos', icon: <CreditCard className="w-5 h-5 text-gray-400" /> },
+    { id: 'promos', label: 'Mis Promociones', icon: <Gift className="w-5 h-5 text-gray-400" /> },
+    { id: 'addresses', label: 'Direcciones', icon: <MapPin className="w-5 h-5 text-gray-400" /> },
+    { id: 'profile', label: 'Mi Perfil', icon: <User className="w-5 h-5 text-gray-400" /> },
 ];
 
 const distributorTabs = [
-    { id: 'solicitud', label: 'Status Proveedor', icon: '✅' },
-    { id: 'calculadora', label: 'Calculadora', icon: '📈' },
+    { id: 'solicitud', label: 'Status Proveedor', icon: <CheckCircle className="w-5 h-5 text-gray-400" /> },
+    { id: 'calculadora', label: 'Calculadora', icon: <Calculator className="w-5 h-5 text-gray-400" /> },
 ];
 
 const adminTabs = [
-    { id: 'home', label: 'Inicio', icon: '🏠' },
-    { id: 'quicklinks', label: 'Módulos', icon: '⚡' },
-    { id: 'profile', label: 'Mi Perfil', icon: '👤' },
+    { id: 'home', label: 'Inicio', icon: <Home className="w-5 h-5 text-gray-400" /> },
+    { id: 'quicklinks', label: 'Módulos', icon: <LayoutDashboard className="w-5 h-5 text-gray-400" /> },
+    { id: 'profile', label: 'Mi Perfil', icon: <User className="w-5 h-5 text-gray-400" /> },
 ];
 const ejecutivoTabs = [
-    { id: 'home', label: 'Inicio', icon: '🏠' },
-    { id: 'crm', label: 'CRM & Clientes', icon: '👥' },
-    { id: 'quoter', label: 'Cotizador B2B', icon: '🧮' },
-    { id: 'kanban', label: 'Logística', icon: '🚛' },
-    { id: 'analytics', label: 'Analítica', icon: '📊' },
-    { id: 'quicklinks', label: 'Módulos', icon: '⚡' },
-    { id: 'profile', label: 'Mi Perfil', icon: '👤' },
+    { id: 'home', label: 'Inicio', icon: <Home className="w-5 h-5 text-gray-400" /> },
+    { id: 'crm', label: 'CRM & Clientes', icon: <Users className="w-5 h-5 text-gray-400" /> },
+    { id: 'quoter', label: 'Cotizador B2B', icon: <Calculator className="w-5 h-5 text-gray-400" /> },
+    { id: 'kanban', label: 'Logística', icon: <Truck className="w-5 h-5 text-gray-400" /> },
+    { id: 'analytics', label: 'Analítica', icon: <BarChart2 className="w-5 h-5 text-gray-400" /> },
+    { id: 'quicklinks', label: 'Módulos', icon: <LayoutDashboard className="w-5 h-5 text-gray-400" /> },
+    { id: 'profile', label: 'Mi Perfil', icon: <User className="w-5 h-5 text-gray-400" /> },
 ];
 const fabricaTabs = [
-    { id: 'home', label: 'Inicio', icon: '🏠' },
-    { id: 'quicklinks', label: 'Módulos', icon: '⚡' },
-    { id: 'profile', label: 'Mi Perfil', icon: '👤' },
+    { id: 'home', label: 'Inicio', icon: <Home className="w-5 h-5 text-gray-400" /> },
+    { id: 'quicklinks', label: 'Módulos', icon: <LayoutDashboard className="w-5 h-5 text-gray-400" /> },
+    { id: 'profile', label: 'Mi Perfil', icon: <User className="w-5 h-5 text-gray-400" /> },
 ];
 const almacenTabs = [
-    { id: 'home', label: 'Inicio', icon: '🏠' },
-    { id: 'quicklinks', label: 'Módulos', icon: '⚡' },
-    { id: 'profile', label: 'Mi Perfil', icon: '👤' },
+    { id: 'home', label: 'Inicio', icon: <Home className="w-5 h-5 text-gray-400" /> },
+    { id: 'quicklinks', label: 'Módulos', icon: <LayoutDashboard className="w-5 h-5 text-gray-400" /> },
+    { id: 'profile', label: 'Mi Perfil', icon: <User className="w-5 h-5 text-gray-400" /> },
 ];
 const transportistaTabs = [
-    { id: 'home', label: 'Inicio', icon: '🏠' },
-    { id: 'deliveries', label: 'Mis Entregas', icon: '🚛' },
-    { id: 'profile', label: 'Mi Perfil', icon: '👤' },
+    { id: 'home', label: 'Inicio', icon: <Home className="w-5 h-5 text-gray-400" /> },
+    { id: 'deliveries', label: 'Mis Entregas', icon: <Truck className="w-5 h-5 text-gray-400" /> },
+    { id: 'profile', label: 'Mi Perfil', icon: <User className="w-5 h-5 text-gray-400" /> },
 ];
 
 const ROLE_LABELS: Record<string, string> = {
@@ -101,39 +104,39 @@ const ROLE_LABELS: Record<string, string> = {
     TRANSPORTISTA: 'Transportista', DISTRIBUIDOR: 'Distribuidor', CLIENTE: 'Cliente',
 };
 
-type QuickLink = { label: string; path: string; icon: string; desc: string };
+type QuickLink = { label: string; path: string; icon: React.ReactNode; desc: string };
 const adminLinks: QuickLink[] = [
-    { label: 'Usuarios', path: '/admin/users', icon: '👥', desc: 'Gestionar cuentas' },
-    { label: 'Catálogo', path: '/admin/catalog', icon: '📦', desc: 'Editar productos' },
-    { label: 'Pedidos B2B', path: '/admin/orders', icon: '📋', desc: 'Órdenes B2B' },
-    { label: 'Ventas', path: '/admin/sales', icon: '💰', desc: 'Ventas y cotizaciones' },
-    { label: 'Academia', path: '/admin/academy', icon: '🎓', desc: 'Cursos y eventos' },
-    { label: 'Blog', path: '/admin/blog', icon: '✏️', desc: 'Artículos y noticias' },
-    { label: 'Cupones', path: '/admin/coupons', icon: '🏷️', desc: 'Descuentos' },
-    { label: 'Reseñas', path: '/admin/reviews', icon: '⭐', desc: 'Moderar reseñas' },
-    { label: 'Distribuidores', path: '/admin/distributors', icon: '🤝', desc: 'Solicitudes' },
-    { label: 'Facturación', path: '/admin/facturacion', icon: '🧾', desc: 'CFDI y facturas' },
-    { label: 'Reels', path: '/admin/reels', icon: '🎬', desc: 'Videos sociales' },
-    { label: 'Promos Carrito', path: '/admin/cart-promos', icon: '🛒', desc: 'Banners' },
+    { label: 'Usuarios', path: '/admin/users', icon: <Users className="w-8 h-8 text-gray-400 group-hover:text-gray-600 transition-colors" />, desc: 'Gestionar cuentas' },
+    { label: 'Catálogo', path: '/admin/catalog', icon: <Package className="w-8 h-8 text-gray-400 group-hover:text-gray-600 transition-colors" />, desc: 'Editar productos' },
+    { label: 'Pedidos B2B', path: '/admin/orders', icon: <ClipboardList className="w-8 h-8 text-gray-400 group-hover:text-gray-600 transition-colors" />, desc: 'Órdenes B2B' },
+    { label: 'Ventas', path: '/admin/sales', icon: <TrendingUp className="w-8 h-8 text-gray-400 group-hover:text-gray-600 transition-colors" />, desc: 'Ventas y cotizaciones' },
+    { label: 'Academia', path: '/admin/academy', icon: <ShieldCheck className="w-8 h-8 text-gray-400 group-hover:text-gray-600 transition-colors" />, desc: 'Cursos y eventos' },
+    { label: 'Blog', path: '/admin/blog', icon: <PenTool className="w-8 h-8 text-gray-400 group-hover:text-gray-600 transition-colors" />, desc: 'Artículos y noticias' },
+    { label: 'Cupones', path: '/admin/coupons', icon: <Tag className="w-8 h-8 text-gray-400 group-hover:text-gray-600 transition-colors" />, desc: 'Descuentos' },
+    { label: 'Reseñas', path: '/admin/reviews', icon: <Star className="w-8 h-8 text-gray-400 group-hover:text-gray-600 transition-colors" />, desc: 'Moderar reseñas' },
+    { label: 'Distribuidores', path: '/admin/distributors', icon: <Handshake className="w-8 h-8 text-gray-400 group-hover:text-gray-600 transition-colors" />, desc: 'Solicitudes' },
+    { label: 'Facturación', path: '/admin/facturacion', icon: <Receipt className="w-8 h-8 text-gray-400 group-hover:text-gray-600 transition-colors" />, desc: 'CFDI y facturas' },
+    { label: 'Reels', path: '/admin/reels', icon: <Film className="w-8 h-8 text-gray-400 group-hover:text-gray-600 transition-colors" />, desc: 'Videos sociales' },
+    { label: 'Promos Carrito', path: '/admin/cart-promos', icon: <ShoppingCart className="w-8 h-8 text-gray-400 group-hover:text-gray-600 transition-colors" />, desc: 'Banners' },
 ];
 const ejecutivoLinks: QuickLink[] = [
-    { label: 'Ventas', path: '/admin/sales', icon: '💰', desc: 'Ventas y cotizaciones' },
-    { label: 'Pedidos B2B', path: '/admin/orders', icon: '📋', desc: 'Órdenes B2B' },
-    { label: 'Catálogo', path: '/admin/catalog', icon: '📦', desc: 'Editar productos' },
-    { label: 'Distribuidores', path: '/admin/distributors', icon: '🤝', desc: 'Solicitudes' },
-    { label: 'Academia', path: '/admin/academy', icon: '🎓', desc: 'Cursos' },
-    { label: 'Blog', path: '/admin/blog', icon: '✏️', desc: 'Artículos' },
-    { label: 'Cupones', path: '/admin/coupons', icon: '🏷️', desc: 'Descuentos' },
-    { label: 'Facturación', path: '/admin/facturacion', icon: '🧾', desc: 'CFDI' },
+    { label: 'Ventas', path: '/admin/sales', icon: <TrendingUp className="w-8 h-8 text-gray-400 group-hover:text-gray-600 transition-colors" />, desc: 'Ventas y cotizaciones' },
+    { label: 'Pedidos B2B', path: '/admin/orders', icon: <ClipboardList className="w-8 h-8 text-gray-400 group-hover:text-gray-600 transition-colors" />, desc: 'Órdenes B2B' },
+    { label: 'Catálogo', path: '/admin/catalog', icon: <Package className="w-8 h-8 text-gray-400 group-hover:text-gray-600 transition-colors" />, desc: 'Editar productos' },
+    { label: 'Distribuidores', path: '/admin/distributors', icon: <Handshake className="w-8 h-8 text-gray-400 group-hover:text-gray-600 transition-colors" />, desc: 'Solicitudes' },
+    { label: 'Academia', path: '/admin/academy', icon: <ShieldCheck className="w-8 h-8 text-gray-400 group-hover:text-gray-600 transition-colors" />, desc: 'Cursos' },
+    { label: 'Blog', path: '/admin/blog', icon: <PenTool className="w-8 h-8 text-gray-400 group-hover:text-gray-600 transition-colors" />, desc: 'Artículos' },
+    { label: 'Cupones', path: '/admin/coupons', icon: <Tag className="w-8 h-8 text-gray-400 group-hover:text-gray-600 transition-colors" />, desc: 'Descuentos' },
+    { label: 'Facturación', path: '/admin/facturacion', icon: <Receipt className="w-8 h-8 text-gray-400 group-hover:text-gray-600 transition-colors" />, desc: 'CFDI' },
 ];
 const fabricaLinks: QuickLink[] = [
-    { label: 'Embalaje', path: '/admin/packaging', icon: '📦', desc: 'Registros de embalaje' },
-    { label: 'Cola de Envíos', path: '/admin/warehouse-queue', icon: '🚛', desc: 'Despachos' },
-    { label: 'Pedidos B2B', path: '/admin/orders', icon: '📋', desc: 'Órdenes' },
+    { label: 'Embalaje', path: '/admin/packaging', icon: <Package className="w-8 h-8 text-gray-400 group-hover:text-gray-600 transition-colors" />, desc: 'Registros de embalaje' },
+    { label: 'Cola de Envíos', path: '/admin/warehouse-queue', icon: <Truck className="w-8 h-8 text-gray-400 group-hover:text-gray-600 transition-colors" />, desc: 'Despachos' },
+    { label: 'Pedidos B2B', path: '/admin/orders', icon: <ClipboardList className="w-8 h-8 text-gray-400 group-hover:text-gray-600 transition-colors" />, desc: 'Órdenes' },
 ];
 const almacenLinks: QuickLink[] = [
-    { label: 'Embalaje', path: '/admin/packaging', icon: '📦', desc: 'Registros' },
-    { label: 'Cola de Envíos', path: '/admin/warehouse-queue', icon: '🚛', desc: 'Despachos' },
+    { label: 'Embalaje', path: '/admin/packaging', icon: <Package className="w-8 h-8 text-gray-400 group-hover:text-gray-600 transition-colors" />, desc: 'Registros' },
+    { label: 'Cola de Envíos', path: '/admin/warehouse-queue', icon: <Truck className="w-8 h-8 text-gray-400 group-hover:text-gray-600 transition-colors" />, desc: 'Despachos' },
 ];
 
 // ─── Helpers ───
