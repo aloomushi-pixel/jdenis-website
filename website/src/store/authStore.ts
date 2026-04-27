@@ -18,7 +18,17 @@ interface AuthState {
     loading: boolean;
     login: (email: string, password: string) => Promise<void>;
     loginWithOAuth: (provider: 'google' | 'facebook') => Promise<void>;
-    register: (email: string, password: string, fullName: string) => Promise<boolean>;
+    register: (userData: {
+        email: string;
+        fullName: string;
+        phone?: string;
+        wantsInvoice?: boolean;
+        razonSocial?: string;
+        rfc?: string;
+        emailFacturacion?: string;
+        regimenFiscal?: string;
+        usoCFDI?: string;
+    }) => Promise<boolean>;
     logout: () => Promise<void>;
     checkSession: () => Promise<void>;
     resetPassword: (email: string) => Promise<void>;
@@ -111,17 +121,31 @@ export const useAuthStore = create<AuthState>()(
                 if (error) console.error('OAuth Error:', error);
             },
 
-            register: async (email, password, fullName) => {
+            register: async (userData) => {
                 set({ loading: true });
                 try {
+                    // Generate a strong random password to satisfy Supabase requirements.
+                    // The user will set their actual password via the email link which redirects to /restablecer-contrasena
+                    const randomPassword = crypto.randomUUID() + "A1!";
+
                     const { data: result, error } = await supabase.auth.signUp({
-                        email,
-                        password,
+                        email: userData.email,
+                        password: randomPassword,
                         options: {
                             data: {
-                                full_name: fullName,
+                                full_name: userData.fullName,
                                 role: 'CLIENTE',
+                                phone: userData.phone || null,
+                                wants_invoice: userData.wantsInvoice || false,
+                                billing_info: userData.wantsInvoice ? {
+                                    razon_social: userData.razonSocial,
+                                    rfc: userData.rfc,
+                                    email_facturacion: userData.emailFacturacion,
+                                    regimen_fiscal: userData.regimenFiscal,
+                                    uso_cfdi: userData.usoCFDI
+                                } : null
                             },
+                            emailRedirectTo: `${window.location.origin}/restablecer-contrasena`
                         },
                     });
 
@@ -136,8 +160,8 @@ export const useAuthStore = create<AuthState>()(
                             user: {
                                 id: result.user.id,
                                 email: result.user.email!,
-                                fullName: fullName,
-                                name: fullName,
+                                fullName: userData.fullName,
+                                name: userData.fullName,
                                 role: 'CLIENTE',
                             },
                             isAuthenticated: true,
