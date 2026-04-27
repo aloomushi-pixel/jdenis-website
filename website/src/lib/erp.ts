@@ -637,10 +637,7 @@ export async function getProductionSummary() {
 // =============================================
 
 export async function getQuotations(filters?: { customerId?: string; status?: QuotationStatus }) {
-    let query = supabase
-        .from('quotations')
-        .select('*')
-        .order('created_at', { ascending: false });
+    let query = supabase.from('quotations').select('*').order('created_at', { ascending: false });
 
     if (filters?.customerId) {
         query = query.eq('customer_id', filters.customerId);
@@ -650,7 +647,10 @@ export async function getQuotations(filters?: { customerId?: string; status?: Qu
     }
 
     const { data, error } = await query;
-    if (error) throw error;
+    if (error) {
+        console.error('Error fetching quotations:', error);
+        return [];
+    }
     return data as Quotation[];
 }
 

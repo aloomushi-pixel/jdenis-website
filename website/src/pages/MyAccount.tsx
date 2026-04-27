@@ -8,6 +8,7 @@ import Quoter from '../components/crm/Quoter';
 import KanbanLogistics from '../components/crm/KanbanLogistics';
 import CRMDirectory from '../components/crm/CRMDirectory';
 import AnalyticsDashboard from '../components/crm/AnalyticsDashboard';
+import ErrorBoundary from '../components/ErrorBoundary';
 import { useAuthStore } from '../store/authStore';
 import { useCartStore } from '../store/cartStore';
 import {
@@ -185,7 +186,15 @@ function fmtMoney(n: number) {
 // ═══════════════════════════════════════════════════════
 // Main Component
 // ═══════════════════════════════════════════════════════
-export default function MyAccount() {
+export default function MyAccountWrapper() {
+    return (
+        <ErrorBoundary>
+            <MyAccount />
+        </ErrorBoundary>
+    );
+}
+
+function MyAccount() {
     const { user, logout, isAuthenticated } = useAuthStore();
     const { addItem } = useCartStore();
     const [searchParams] = useSearchParams();
@@ -304,7 +313,7 @@ export default function MyAccount() {
 
     // ─── Handlers ───
     const handleRepeatOrder = (order: ClientOrder) => {
-        const items = typeof order.items === 'string' ? JSON.parse(order.items) : order.items;
+        const items = orderItems(order);
         if (Array.isArray(items)) {
             items.forEach((item: any) => {
                 addItem({ id: item.id, name: item.name, price: item.price, image: item.image || '', category: '' });
@@ -406,8 +415,13 @@ export default function MyAccount() {
     };
 
     const orderItems = (order: ClientOrder) => {
-        const items = typeof order.items === 'string' ? JSON.parse(order.items) : order.items;
-        return Array.isArray(items) ? items : [];
+        try {
+            const items = typeof order.items === 'string' ? JSON.parse(order.items) : order.items;
+            return Array.isArray(items) ? items : [];
+        } catch (e) {
+            console.error('Error parsing order items:', e, order.items);
+            return [];
+        }
     };
 
     const totalItems = (order: ClientOrder) => {

@@ -43,3 +43,10 @@ Si alguna vez necesitas actualizar variables de entorno en producción:
 1. Pídele al subagente que vaya a la pestaña **Environment** en Dokploy.
 2. Actualiza los valores (como `VITE_SUPABASE_URL` o `VITE_SUPABASE_ANON_KEY`).
 3. Guarda y realiza un nuevo Deploy.
+
+## Cuentas de Prueba para QA en Producción
+Siempre que se requiera validar funcionalidades o reproducir errores en el sitio en vivo, utiliza la siguiente cuenta administrativa:
+- **Usuario:** `caballeroangela49@gmail.com`
+- **Contraseña:** `E4ae5d6c0c.` (Nota el punto al final).
+
+**Regla estricta:** Todas las comprobaciones visuales y de renderizado (QA) deben realizarse utilizando estas credenciales directamente en el entorno de producción (`https://jdenis.store`).
