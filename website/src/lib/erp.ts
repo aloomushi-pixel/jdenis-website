@@ -639,7 +639,7 @@ export async function getProductionSummary() {
 export async function getQuotations(filters?: { customerId?: string; status?: QuotationStatus }) {
     let query = supabase
         .from('quotations')
-        .select('*, customer:customer_id(id, email, fullName)')
+        .select('*')
         .order('created_at', { ascending: false });
 
     if (filters?.customerId) {

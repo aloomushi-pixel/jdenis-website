@@ -1169,7 +1169,7 @@ export default function MyAccount() {
                                                 {/* TRANSPORTISTA stats */}
                                                 {user?.role === 'TRANSPORTISTA' && (
                                                     <div className="grid sm:grid-cols-3 gap-4">
-                                                        <StatCard icon="🚛" label="Entregas Asignadas" value={deliveries.length} color="bg-blue-50 text-blue-600" />
+                                                        <StatCard icon="🚛" label="Entregas Asignadas" value={deliveries?.length || 0} color="bg-blue-50 text-blue-600" />
                                                         <StatCard icon="✅" label="Vehículos Disponibles" value={erpStats.vehicles?.available || 0} color="bg-emerald-50 text-emerald-600" />
                                                         <StatCard icon="🔧" label="En Mantenimiento" value={erpStats.vehicles?.maintenance || 0} color="bg-amber-50 text-amber-600" />
                                                     </div>
@@ -1179,7 +1179,7 @@ export default function MyAccount() {
                                                 <div className="bg-white rounded-2xl p-6 shadow-luxury">
                                                     <h3 className="font-serif text-lg text-navy mb-4">Acceso Rápido</h3>
                                                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                                                        {getLinksForRole().slice(0, 4).map((link) => (
+                                                        {(getLinksForRole() || []).slice(0, 4).map((link) => (
                                                             <Link key={link.path} to={link.path}
                                                                 className="flex flex-col items-center p-4 bg-cream/50 hover:bg-gold/10 rounded-xl transition-colors group border border-charcoal/5 hover:border-gold/20">
                                                                 <span className="text-2xl mb-2">{link.icon}</span>
