@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Upload, X, Trash2, Copy, Image as ImageIcon, CheckCircle, RefreshCw } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
+import { Upload, Trash2, Copy, Image as ImageIcon, CheckCircle, RefreshCw } from 'lucide-react';
 
 // URL del servidor de medios en el VPS
 const MEDIA_URL = import.meta.env.VITE_MEDIA_URL || 'https://media.jdenis.store';
