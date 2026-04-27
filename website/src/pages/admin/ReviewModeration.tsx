@@ -47,7 +47,7 @@ export default function ReviewModeration() {
         }
     };
 
-    const pendingCount = reviews.filter(r => r.status === 'pending').length;
+    const pendingCount = Array.isArray(reviews) ? reviews.filter(r => r.status === 'pending').length : 0;
 
     return (
         <div className="space-y-6">
@@ -105,7 +105,7 @@ export default function ReviewModeration() {
                 </div>
             ) : (
                 <div className="space-y-4">
-                    {reviews.map((review) => {
+                    {Array.isArray(reviews) && reviews.map((review) => {
                         const statusInfo = STATUS_COLORS[review.status] || STATUS_COLORS.pending;
                         const isLoading = actionLoading === review.id;
 
@@ -121,10 +121,10 @@ export default function ReviewModeration() {
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center gap-3 mb-3">
                                             <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm">
-                                                {review.user_name[0]?.toUpperCase() || '?'}
+                                                {review.user_name?.[0]?.toUpperCase() || '?'}
                                             </div>
                                             <div>
-                                                <p className="font-medium text-gray-900">{review.user_name}</p>
+                                                <p className="font-medium text-gray-900">{review.user_name || 'Anónimo'}</p>
                                                 <p className="text-xs text-gray-400">
                                                     {new Date(review.created_at).toLocaleDateString('es-MX', {
                                                         year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'

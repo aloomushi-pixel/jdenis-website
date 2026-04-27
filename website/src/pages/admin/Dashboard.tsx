@@ -47,16 +47,16 @@ export default function AdminDashboard() {
                 ]);
 
                 const s = sales.status === 'fulfilled' ? sales.value : { totalOrders: 0, totalRevenue: 0 };
-                const p = products.status === 'fulfilled' ? products.value : [];
-                const lowStockCount = p?.filter((x: any) => (x.stock || 0) < 10).length || 0;
+                const p = (products.status === 'fulfilled' ? products.value : []) || [];
+                const lowStockCount = p?.filter((x: any) => (x.stock || 0) < 10)?.length || 0;
                 const monthlySalesVal = erpSales.status === 'fulfilled' ? erpSales.value : 0;
                 const monthlyPurchasesVal = erpPurchases.status === 'fulfilled' ? erpPurchases.value : 0;
                 // getResourceSummary returns an array of category summaries
-                const resSummary = erpResources.status === 'fulfilled' ? erpResources.value : [];
+                const resSummary = (erpResources.status === 'fulfilled' ? erpResources.value : []) || [];
                 const totalResources = resSummary.reduce((a: number, r: any) => a + (r.total_items || 0), 0);
                 const lowStockRes = resSummary.reduce((a: number, r: any) => a + (r.low_stock_count || 0), 0);
                 const totalValue = resSummary.reduce((a: number, r: any) => a + (r.total_value || 0), 0);
-                const prod = erpProduction.status === 'fulfilled' ? erpProduction.value : { pending_orders: 0, in_progress: 0, completed: 0 } as any;
+                const prod = (erpProduction.status === 'fulfilled' ? erpProduction.value : null) || { pending_orders: 0, in_progress: 0, completed: 0 } as any;
 
                 setMetrics({
                     totalOrders: s.totalOrders,

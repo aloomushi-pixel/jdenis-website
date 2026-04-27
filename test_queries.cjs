@@ -1,23 +1,19 @@
 const { createClient } = require('@supabase/supabase-js');
+require('dotenv').config();
 
-// Using the PRO environment credentials
-const supabaseUrl = 'https://zdciwzeokkrwcxvsgusc.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkY2l3emVva2tyd2N4dnNndXNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NTM3NTksImV4cCI6MjA4ODIyOTc1OX0.qbXG0M2Zsjz-rOXY0CgAV2RfLledS67nqBw_dnvzkbg';
+const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY;
 
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 async function test() {
-    console.log("Testing get_monthly_sales...");
-    const { data: sales, error: errSales } = await supabase.rpc('get_monthly_sales');
-    console.log("get_monthly_sales error:", errSales ? errSales.message : "Success");
-
-    console.log("Testing get_production_summary...");
-    const { data: prod, error: errProd } = await supabase.rpc('get_production_summary');
-    console.log("get_production_summary error:", errProd ? errProd.message : "Success");
-
-    console.log("Testing get_resource_summary...");
-    const { data: res, error: errRes } = await supabase.rpc('get_resource_summary');
-    console.log("get_resource_summary error:", errRes ? errRes.message : "Success");
+    console.log("Checking product_reviews columns...");
+    const { data, error } = await supabase.from('product_reviews').select('*, user_name').limit(1);
+    if (error) {
+        console.error("Error with product_reviews:", error.message);
+    } else {
+        console.log("product_reviews query succeeded!");
+    }
 }
 
 test();

@@ -854,7 +854,7 @@ export default function ProductEditor() {
                                         </tr>
                                     )}
                                     {filteredProducts.map((product, index) => {
-                                        const vc = dbVariantGroups.find(g => g.variants.some(v => v.productId === product.id))?.variants.length || 0;
+                                        const vc = dbVariantGroups.find(g => g.variants.some(v => v.productId === product.id))?.variants?.length || 0;
                                         const isEdited = !!edits[product.id];
                                         const rowSaveStatus = saveStatus[product.id];
                                         return (
