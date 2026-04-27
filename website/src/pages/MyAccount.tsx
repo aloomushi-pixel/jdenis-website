@@ -249,9 +249,9 @@ function MyAccount() {
                     getActivePromotions(),
                     getQuotations({ customerId: user.id }),
                 ]);
-                setOrders(ordersData);
-                setCoupons(couponsData);
-                setPromotions(promosData);
+                setOrders(Array.isArray(ordersData) ? ordersData : []);
+                setCoupons(Array.isArray(couponsData) ? couponsData : []);
+                setPromotions(Array.isArray(promosData) ? promosData : []);
                 // Clientes solo ven cotizaciones que no son borradores
                 setQuotations(Array.isArray(quotesData) ? quotesData.filter(q => q.status !== 'DRAFT') : []);
             } else if (role === 'TRANSPORTISTA') {
@@ -259,7 +259,7 @@ function MyAccount() {
                     getTransportistaDeliveries(user.id),
                     getVehicleStats(),
                 ]);
-                setDeliveries(del);
+                setDeliveries(Array.isArray(del) ? del : []);
                 setErpStats((p: any) => ({ ...p, vehicles: veh }));
             } else if (role === 'ADMIN') {
                 const [rc, ls, dc, wh, pr] = await Promise.all([
