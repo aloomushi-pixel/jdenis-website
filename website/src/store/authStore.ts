@@ -18,7 +18,7 @@ interface AuthState {
     loading: boolean;
     login: (email: string, password: string) => Promise<void>;
     loginWithOAuth: (provider: 'google' | 'facebook') => Promise<void>;
-    register: (email: string, password: string, fullName: string) => Promise<void>;
+    register: (email: string, password: string, fullName: string) => Promise<boolean>;
     logout: () => Promise<void>;
     checkSession: () => Promise<void>;
     resetPassword: (email: string) => Promise<void>;
@@ -128,23 +128,8 @@ export const useAuthStore = create<AuthState>()(
                     if (error) throw error;
                     if (!result.user) throw new Error('No user returned');
 
-                    // --- INYECCIÓN EN BASE DE DATOS (PUBLIC.USERS) ---
-                    // Esto remedia la pérdida de sincronización que impedía a los administradores
-                    // ver y gestionar los perfiles de los nuevos clientes.
-                    const { error: insertError } = await supabase
-                        .from('users')
-                        .insert([
-                            {
-                                id: result.user.id,
-                                email: email,
-                                full_name: fullName,
-                                role: 'CLIENTE',
-                            }
-                        ]);
-
-                    if (insertError) {
-                        console.error('Warning: Error syncing client user to public.users table:', insertError);
-                    }
+                    // Note: Insertion into public.users is handled by a database trigger 
+                    // because client-side insertion is blocked by RLS when email confirmation is required.
 
                     if (result.session) {
                         set({
@@ -157,6 +142,9 @@ export const useAuthStore = create<AuthState>()(
                             },
                             isAuthenticated: true,
                         });
+                        return false; // Does not require email confirmation
+                    } else {
+                        return true; // Requires email confirmation
                     }
                 } catch (error) {
                     console.error('Registration error:', error);

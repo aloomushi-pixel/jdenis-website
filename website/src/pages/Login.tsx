@@ -43,8 +43,13 @@ export default function Login() {
                     setLoading(false);
                     return;
                 }
-                await register(formData.email, formData.password, formData.fullName);
-                navigate('/mi-cuenta');
+                const requiresConfirmation = await register(formData.email, formData.password, formData.fullName);
+                
+                if (requiresConfirmation) {
+                    setSuccessMsg('¡Cuenta creada exitosamente! Por favor revisa tu bandeja de entrada y confirma tu correo para poder iniciar sesión.');
+                } else {
+                    navigate('/mi-cuenta');
+                }
             } else {
                 await login(formData.email, formData.password);
                 navigate('/mi-cuenta');
