@@ -152,6 +152,19 @@ export const useAuthStore = create<AuthState>()(
                     if (error) throw error;
                     if (!result.user) throw new Error('No user returned');
 
+                    // If the email is already registered, Supabase prevents identity enumeration by returning a user with no identities.
+                    // In this case, we send a password reset email so the user can still access their account and set a password.
+                    if (result.user.identities && result.user.identities.length === 0) {
+                        const { error: resetError } = await supabase.auth.resetPasswordForEmail(userData.email, {
+                            redirectTo: `${window.location.origin}/restablecer-contrasena`
+                        });
+                        if (resetError) {
+                            console.error('Error sending reset password for existing user:', resetError);
+                            // We can swallow this error or throw, but typically we want to pretend success to avoid enumeration.
+                        }
+                        return true; // Still requires email interaction
+                    }
+
                     // Note: Insertion into public.users is handled by a database trigger 
                     // because client-side insertion is blocked by RLS when email confirmation is required.
 
