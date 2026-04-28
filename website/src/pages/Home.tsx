@@ -274,7 +274,8 @@ export default function Home() {
         getReels(true).then(setReels).catch(console.error);
         getFeaturedProducts(12)
             .then(products => {
-                const inStock = products.filter((p: Product) => p.stock === null || p.stock === undefined || p.stock >= 1);
+                const safeProducts = Array.isArray(products) ? products : (products?.data || []);
+                const inStock = safeProducts.filter((p: Product) => p.stock === null || p.stock === undefined || p.stock >= 1);
                 setBestsellers(inStock);
             })
             .catch(console.error);
