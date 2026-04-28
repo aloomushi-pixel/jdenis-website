@@ -273,3 +273,48 @@ export function getAbandonedCartTemplate(customerName: string, checkoutUrl: stri
     </div>
     `;
 }
+
+/**
+ * Modern J.Denis template for New Distributor Welcome
+ */
+export function getDistributorWelcomeTemplate(customerName: string, email: string, tempPassword: string) {
+    return `
+    <div style="${BASE_STYLES} padding: 40px 20px;">
+        <div style="${CONTAINER_STYLES} border-top: 6px solid #18898F;">
+            <div style="padding: 32px 32px 16px 32px; text-align: center;">
+                <h1 style="color: #000F21; margin: 0; font-size: 24px; font-weight: 800; letter-spacing: 1px;">J. DENIS <span style="color: #18898F; font-weight: 400;">| BIENVENIDO DISTRIBUIDOR</span></h1>
+            </div>
+            
+            <div style="padding: 0 32px 24px 32px; text-align: center;">
+                <h2 style="color: #111827; font-size: 24px; margin-top: 16px; margin-bottom: 8px; line-height: 1.2;">¡Tu solicitud ha sido aprobada!</h2>
+                <p style="color: #4b5563; font-size: 16px; line-height: 1.6;">
+                    Hola <strong>${customerName}</strong>,<br/><br/>
+                    Nos complace informarte que tu solicitud para ser distribuidor oficial de J. Denis ha sido revisada y <strong>aprobada exitosamente</strong>.
+                </p>
+            </div>
+            
+            <div style="padding: 0 32px 32px 32px;">
+                <div style="background-color: #f9fafb; padding: 24px; border-radius: 8px; border: 1px dashed #d1d5db; text-align: center;">
+                    <p style="color: #374151; font-size: 14px; margin-bottom: 16px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">Tus Credenciales de Acceso</p>
+                    <p style="margin: 8px 0; font-size: 16px; color: #111827;"><strong>Email:</strong> ${email}</p>
+                    <p style="margin: 8px 0; font-size: 16px; color: #111827;"><strong>Contraseña:</strong> <span style="background: #e5e7eb; padding: 4px 8px; font-family: monospace; border-radius: 4px;">${tempPassword}</span></p>
+                </div>
+            </div>
+            
+            <div style="padding: 0 32px 32px 32px; text-align: center;">
+                <p style="color: #4b5563; font-size: 15px; margin-bottom: 24px;">
+                    Puedes ingresar a tu nuevo portal de distribuidor dando clic en el botón de abajo. Te recomendamos cambiar tu contraseña una vez que inicies sesión.
+                </p>
+                <a href="https://jdenis.store/login" style="${BUTTON_STYLES} padding: 14px 40px;">Iniciar Sesión</a>
+            </div>
+            
+            <div style="background-color: #f3f4f6; padding: 32px; text-align: center; border-top: 1px solid #e5e7eb;">
+                <p style="color: #9ca3af; font-size: 13px; margin: 0;">
+                    Este es un correo automático de J. Denis.<br/>
+                    Si tienes alguna duda, responde a este correo y nos pondremos en contacto contigo.
+                </p>
+            </div>
+        </div>
+    </div>
+    `;
+}

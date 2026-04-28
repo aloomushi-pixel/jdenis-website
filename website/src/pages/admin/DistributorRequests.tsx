@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { supabase, supabaseUrl, supabaseAnonKey } from '../../lib/supabase';
 import { createClient } from '@supabase/supabase-js';
 import { ChevronDown, ChevronUp, FileText, Image as ImageIcon, MapPin, Building2, User, Briefcase } from 'lucide-react';
+import { getDistributorWelcomeTemplate } from '../../lib/email';
 
 type DistributorApplication = {
     id: string;
@@ -131,6 +132,32 @@ export default function DistributorRequests() {
                         console.error("Actualizacion manual fallida:", updateError);
                         throw new Error("Se creó la cuenta, pero hubo un error al sincronizar el rol de Distribuidor en la base de datos pública. Intente asignarlo manualmente en el Gestor de Usuarios.");
                     }
+                }
+
+                // Call edge function to send welcome email
+                try {
+                    const htmlContent = getDistributorWelcomeTemplate(app.full_name, app.email, tempPassword);
+                    const { data: { session } } = await supabase.auth.getSession();
+                    
+                    if (session) {
+                        const { error: emailError } = await supabase.functions.invoke('send-email', {
+                            body: {
+                                subject: '¡Bienvenido a la Red de Distribuidores J. Denis!',
+                                htmlContent,
+                                recipientType: 'single_customer',
+                                targetEmail: app.email
+                            },
+                            headers: {
+                                Authorization: `Bearer ${session.access_token}`
+                            }
+                        });
+                        
+                        if (emailError) {
+                            console.error("Error enviando email de bienvenida:", emailError);
+                        }
+                    }
+                } catch (e) {
+                    console.error("Excepción enviando email de bienvenida:", e);
                 }
 
                 setNewCredentials({ email: app.email, password: tempPassword });
