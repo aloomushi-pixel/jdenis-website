@@ -121,15 +121,14 @@ export default function DistributorRequests() {
                 });
 
                 if (rpcError) {
-                    console.error("Error asignando rol con RPC:", rpcError);
-                    const { error: insertError } = await supabase.from('users').insert({
-                        id: authData.user.id,
-                        email: app.email,
-                        full_name: app.full_name,
+                    console.error("Error asignando rol con RPC (posiblemente la función no existe en producción):", rpcError);
+                    // Como el trigger en auth.users ya debió haber creado el perfil, intentamos un UPDATE en lugar de un INSERT
+                    const { error: updateError } = await supabase.from('users').update({
                         role: 'DISTRIBUIDOR'
-                    });
-                    if (insertError) {
-                        console.error("Insercion manual fallida:", insertError);
+                    }).eq('id', authData.user.id);
+                    
+                    if (updateError) {
+                        console.error("Actualizacion manual fallida:", updateError);
                         throw new Error("Se creó la cuenta, pero hubo un error al sincronizar el rol de Distribuidor en la base de datos pública. Intente asignarlo manualmente en el Gestor de Usuarios.");
                     }
                 }
