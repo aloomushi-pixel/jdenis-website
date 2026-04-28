@@ -1,16 +1,20 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { useProducts, type DisplayProduct } from '../../hooks/useProducts';
-import { Search, Plus, ShoppingCart, AlertCircle, FileText, Send, Save, User } from 'lucide-react';
+import { Search, Plus, ShoppingCart, AlertCircle, FileText, Send, Save, User, Edit3, Check, X, DollarSign } from 'lucide-react';
 import { getUsers, createQuotation, type ERPUser } from '../../lib/erp';
+import { useAuthStore } from '../../store/authStore';
 
 interface CartItem extends DisplayProduct {
   cartQuantity: number;
 }
 
 export default function Quoter() {
-  const { products: dbProducts, loading: loadingProducts } = useProducts();
+  const { products: dbProducts, loading: loadingProducts, saveProduct, saveStatus } = useProducts();
+  const user = useAuthStore(s => s.user);
+  const isAdmin = user?.role === 'ADMIN';
+
   const [searchTerm, setSearchTerm] = useState('');
   const [cart, setCart] = useState<CartItem[]>([]);
   const [toast, setToast] = useState<string | null>(null);
@@ -18,6 +22,11 @@ export default function Quoter() {
   const [customers, setCustomers] = useState<ERPUser[]>([]);
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>('');
   const [isSaving, setIsSaving] = useState(false);
+
+  // Inline price editing state
+  const [editingPriceId, setEditingPriceId] = useState<string | null>(null);
+  const [editPriceValue, setEditPriceValue] = useState('');
+  const priceInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     async function loadCustomers() {
@@ -32,9 +41,13 @@ export default function Quoter() {
     loadCustomers();
   }, []);
 
+  // Show ALL products, no distributor price filter
   const filteredProducts = useMemo(() => {
-    const distribProducts = dbProducts.filter(p => p.distributorPrice != null && p.distributorPrice > 0);
-    return distribProducts.filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase()) || p.id.toLowerCase().includes(searchTerm.toLowerCase()));
+    return dbProducts.filter(p =>
+      p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (p.category || '').toLowerCase().includes(searchTerm.toLowerCase())
+    );
   }, [searchTerm, dbProducts]);
 
   const showToast = (msg: string) => {
@@ -43,7 +56,7 @@ export default function Quoter() {
   };
 
   const getPrice = (item: CartItem) => {
-    return item.distributorPrice || item.price; // Siempre retorna el precio preferencial para el cotizador
+    return item.distributorPrice || item.price;
   };
 
   const addItemToCart = (product: DisplayProduct, quantity = 1) => {
@@ -90,6 +103,34 @@ export default function Quoter() {
     }
   };
 
+  // ── Inline price editing (ADMIN only) ──
+  const startEditPrice = (productId: string, currentPrice: number | undefined) => {
+    setEditingPriceId(productId);
+    setEditPriceValue(currentPrice != null ? String(currentPrice) : '');
+    setTimeout(() => priceInputRef.current?.focus(), 50);
+  };
+
+  const cancelEditPrice = () => {
+    setEditingPriceId(null);
+    setEditPriceValue('');
+  };
+
+  const confirmEditPrice = async (productId: string) => {
+    const newPrice = parseFloat(editPriceValue);
+    if (isNaN(newPrice) || newPrice < 0) {
+      showToast('❌ Ingresa un precio válido');
+      return;
+    }
+    const success = await saveProduct(productId, 'distributorPrice', newPrice || null);
+    if (success) {
+      showToast('✅ Precio mayoreo actualizado');
+    } else {
+      showToast('❌ Error al guardar precio');
+    }
+    setEditingPriceId(null);
+    setEditPriceValue('');
+  };
+
   const getBase64ImageFromUrl = async (imageUrl: string): Promise<string | null> => {
     try {
       const res = await fetch(imageUrl);
@@ -130,7 +171,7 @@ export default function Quoter() {
 
       // Pre-load all product images to base64
       const cartWithImages = await Promise.all(cart.map(async (item) => {
-        const imgSrc = item.image ? item.image : '/logo-new.jpeg'; // fallback to logo
+        const imgSrc = item.image ? item.image : '/logo-new.jpeg';
         const base64 = await getBase64ImageFromUrl(imgSrc);
         return { ...item, base64 };
       }));
@@ -140,7 +181,7 @@ export default function Quoter() {
         startY: 55,
         head: [['Img', 'SKU', 'Producto', 'Cant', 'Precio U.', 'Total']],
         body: cartWithImages.map(item => [
-          '', // image placeholder
+          '',
           item.id,
           item.name,
           item.cartQuantity,
@@ -148,23 +189,23 @@ export default function Quoter() {
           `$${(getPrice(item) * item.cartQuantity).toFixed(2)}`
         ]),
         headStyles: {
-          fillColor: [10, 25, 47], // Navy
+          fillColor: [10, 25, 47],
           textColor: [255, 255, 255],
           fontStyle: 'bold'
         },
         alternateRowStyles: {
-          fillColor: [253, 251, 247] // Cream
+          fillColor: [253, 251, 247]
         },
         bodyStyles: {
           valign: 'middle'
         },
         columnStyles: {
-          0: { cellWidth: 20, minCellHeight: 20 }, // Img column
-          1: { cellWidth: 30 }, // SKU
-          2: { cellWidth: 'auto' }, // Producto
-          3: { cellWidth: 20, halign: 'center' }, // Cant
-          4: { cellWidth: 25, halign: 'right' }, // Precio
-          5: { cellWidth: 30, halign: 'right', fontStyle: 'bold' } // Total
+          0: { cellWidth: 20, minCellHeight: 20 },
+          1: { cellWidth: 30 },
+          2: { cellWidth: 'auto' },
+          3: { cellWidth: 20, halign: 'center' },
+          4: { cellWidth: 25, halign: 'right' },
+          5: { cellWidth: 30, halign: 'right', fontStyle: 'bold' }
         },
         didDrawCell: (data) => {
           if (data.column.index === 0 && data.cell.section === 'body') {
@@ -182,10 +223,9 @@ export default function Quoter() {
       const finalY = doc.lastAutoTable.finalY || 60;
       doc.setFontSize(16);
       doc.setFont('helvetica', 'bold');
-      doc.setTextColor(212, 175, 55); // Gold
+      doc.setTextColor(212, 175, 55);
       doc.text(`Total Final: $${total.toLocaleString('es-MX', { minimumFractionDigits: 2 })}`, 190, finalY + 15, { align: 'right' });
       
-      // Footer text
       doc.setFontSize(10);
       doc.setFont('helvetica', 'normal');
       doc.setTextColor(150, 150, 150);
@@ -221,7 +261,7 @@ export default function Quoter() {
       };
 
       const items = cart.map(item => ({
-        resource_id: item.id, // we map product ID to resource_id
+        resource_id: item.id,
         quantity: item.cartQuantity,
         unit_price: getPrice(item)
       }));
@@ -229,12 +269,11 @@ export default function Quoter() {
       await createQuotation(quotationData, items);
       
       if (status === 'SENT') {
-        showToast('✉️ Cotización guardada y enviada al cliente (simulado)');
+        showToast('✉️ Cotización guardada y enviada al cliente');
       } else {
         showToast('💾 Borrador guardado exitosamente');
       }
       
-      // Reset cart
       setCart([]);
       setSelectedCustomerId('');
       
@@ -248,10 +287,10 @@ export default function Quoter() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+      <div className="flex flex-wrap justify-between items-center bg-white p-5 rounded-2xl shadow-sm border border-slate-100 gap-3">
         <div>
           <h2 className="text-2xl font-sans text-slate-800">Cotizador Mayorista B2B</h2>
-          <p className="text-slate-500 text-sm">Crea cotizaciones y envíalas al instante.</p>
+          <p className="text-slate-500 text-sm">Crea cotizaciones y envíalas al instante. {isAdmin && <span className="text-indigo-500 font-medium">· Modo Admin: puedes editar precios</span>}</p>
         </div>
         <div className="flex gap-3">
           <button onClick={addKit} className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-sm font-medium transition-colors flex items-center gap-2">
@@ -271,41 +310,104 @@ export default function Quoter() {
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* BUSCADOR Y RESULTADOS */}
+        {/* PRODUCT CATALOG */}
         <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col h-[70vh]">
           <div className="relative mb-4">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
             <input 
               type="text" 
-              placeholder="Buscar ID o nombre de producto..." 
+              placeholder="Buscar por nombre, ID o categoría..." 
               className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition-all"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
+
+          <div className="flex items-center justify-between mb-3 px-1">
+            <span className="text-xs text-slate-400 font-medium">{filteredProducts.length} productos</span>
+            {isAdmin && (
+              <span className="text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded-md font-medium flex items-center gap-1">
+                <Edit3 size={10} /> Click en precio mayoreo para editar
+              </span>
+            )}
+          </div>
           
-          <div className="flex-1 overflow-y-auto pr-2 space-y-3">
+          <div className="flex-1 overflow-y-auto pr-2 space-y-2">
             {loadingProducts ? (
-              <div className="text-center py-10 text-slate-400">Cargando productos de Supabase...</div>
-            ) : filteredProducts.map(p => (
-              <div key={p.id} className="flex justify-between items-center p-3 hover:bg-slate-50 rounded-xl border border-transparent hover:border-slate-100 transition-all cursor-pointer" onClick={() => addItemToCart(p, 1)}>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400 font-medium text-xs border border-slate-200">IMG</div>
-                  <div>
-                    <h4 className="font-semibold text-slate-800 text-sm leading-tight">{p.name}</h4>
-                    <p className="text-xs text-slate-400 font-mono mt-0.5">{p.id}</p>
+              <div className="text-center py-10 text-slate-400">Cargando productos...</div>
+            ) : filteredProducts.length === 0 ? (
+              <div className="text-center py-10 text-slate-400">No se encontraron productos</div>
+            ) : filteredProducts.map(p => {
+              const isEditingThis = editingPriceId === p.id;
+              const status = saveStatus[p.id];
+
+              return (
+                <div key={p.id} className="flex justify-between items-center p-3 hover:bg-slate-50 rounded-xl border border-transparent hover:border-slate-100 transition-all group">
+                  <div className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer" onClick={() => addItemToCart(p, 1)}>
+                    {p.image && p.image !== '/placeholder.webp' ? (
+                      <img src={p.image} alt="" className="w-10 h-10 rounded-lg object-cover border border-slate-200 flex-shrink-0" />
+                    ) : (
+                      <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400 font-medium text-xs border border-slate-200 flex-shrink-0">IMG</div>
+                    )}
+                    <div className="min-w-0">
+                      <h4 className="font-semibold text-slate-800 text-sm leading-tight truncate">{p.name}</h4>
+                      <p className="text-[10px] text-slate-400 mt-0.5">{p.category}</p>
+                    </div>
+                  </div>
+                  <div className="text-right flex-shrink-0 ml-3">
+                    <p className="font-bold text-slate-700 text-sm">${p.price}</p>
+
+                    {/* Distributor price — editable for ADMIN */}
+                    {isEditingThis ? (
+                      <div className="flex items-center gap-1 mt-1" onClick={e => e.stopPropagation()}>
+                        <span className="text-[10px] text-slate-400">$</span>
+                        <input
+                          ref={priceInputRef}
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          value={editPriceValue}
+                          onChange={e => setEditPriceValue(e.target.value)}
+                          onKeyDown={e => {
+                            if (e.key === 'Enter') confirmEditPrice(p.id);
+                            if (e.key === 'Escape') cancelEditPrice();
+                          }}
+                          className="w-20 text-xs px-1.5 py-0.5 border border-indigo-300 rounded focus:ring-1 focus:ring-indigo-500 outline-none bg-white"
+                        />
+                        <button onClick={() => confirmEditPrice(p.id)} className="text-emerald-600 hover:text-emerald-800 p-0.5"><Check size={12} /></button>
+                        <button onClick={cancelEditPrice} className="text-red-400 hover:text-red-600 p-0.5"><X size={12} /></button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-end gap-1 mt-0.5">
+                        {p.distributorPrice != null && p.distributorPrice > 0 ? (
+                          <p className={`text-[10px] text-amber-600 font-medium ${isAdmin ? 'cursor-pointer hover:text-indigo-600 hover:underline' : ''}`}
+                            onClick={(e) => { e.stopPropagation(); if (isAdmin) startEditPrice(p.id, p.distributorPrice); }}>
+                            Mayoreo: ${p.distributorPrice}
+                          </p>
+                        ) : (
+                          <p className={`text-[10px] text-slate-300 italic ${isAdmin ? 'cursor-pointer hover:text-indigo-500' : ''}`}
+                            onClick={(e) => { e.stopPropagation(); if (isAdmin) startEditPrice(p.id, undefined); }}>
+                            {isAdmin ? '+ Asignar precio mayoreo' : 'Sin precio mayoreo'}
+                          </p>
+                        )}
+                        {isAdmin && !isEditingThis && (
+                          <button onClick={(e) => { e.stopPropagation(); startEditPrice(p.id, p.distributorPrice); }}
+                            className="opacity-0 group-hover:opacity-100 transition-opacity text-slate-400 hover:text-indigo-600 p-0.5">
+                            <Edit3 size={10} />
+                          </button>
+                        )}
+                        {status === 'saving' && <div className="animate-spin rounded-full h-3 w-3 border-t border-indigo-500" />}
+                        {status === 'saved' && <Check size={10} className="text-emerald-500" />}
+                      </div>
+                    )}
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="font-bold text-amber-600 text-sm">${p.price}</p>
-                  <p className="text-[10px] text-slate-400">Mayoreo: ${p.distributorPrice}</p>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
-        {/* CARTA DE COTIZACIÓN */}
+        {/* QUOTATION CART */}
         <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col h-[70vh]">
           <div className="flex justify-between items-center mb-4">
             <h3 className="font-sans text-lg font-medium flex items-center gap-2"><ShoppingCart size={18}/> Cotización Actual</h3>
@@ -341,11 +443,15 @@ export default function Quoter() {
                     <div className="flex justify-between items-start mb-2">
                       <div className="pr-4">
                         <h4 className="font-semibold text-slate-800 text-sm leading-tight">{item.name}</h4>
-                        <p className="text-xs text-slate-500 font-mono mt-0.5">{item.id}</p>
+                        <p className="text-xs text-slate-500 font-mono mt-0.5">{item.category}</p>
                       </div>
                       <div className="text-right">
-                        <p className="font-bold text-slate-800">${getPrice(item) * item.cartQuantity}</p>
-                        <span className="text-[10px] bg-amber-200 text-amber-800 px-1 py-0.5 rounded font-bold uppercase tracking-wider">Precio Distribuidor</span>
+                        <p className="font-bold text-slate-800">${(getPrice(item) * item.cartQuantity).toLocaleString('es-MX', { minimumFractionDigits: 2 })}</p>
+                        {item.distributorPrice != null && item.distributorPrice > 0 ? (
+                          <span className="text-[10px] bg-amber-200 text-amber-800 px-1 py-0.5 rounded font-bold uppercase tracking-wider">Precio Distribuidor</span>
+                        ) : (
+                          <span className="text-[10px] bg-slate-200 text-slate-600 px-1 py-0.5 rounded font-bold uppercase tracking-wider">Precio Público</span>
+                        )}
                       </div>
                     </div>
                     <div className="flex justify-between items-center mt-2">
@@ -365,7 +471,7 @@ export default function Quoter() {
           <div className="border-t border-slate-100 pt-4 mt-4 space-y-3">
             <div className="flex justify-between items-center mb-2">
               <span className="text-slate-500">Total Venta</span>
-              <span className="text-3xl font-sans font-bold text-navy">${total.toLocaleString('es-MX')}</span>
+              <span className="text-3xl font-sans font-bold text-navy">${total.toLocaleString('es-MX', { minimumFractionDigits: 2 })}</span>
             </div>
             
             <div className="grid grid-cols-2 gap-3">
