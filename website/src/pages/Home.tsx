@@ -3,6 +3,7 @@ import { Pause, Play, Volume2, VolumeX } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import GoogleReviews from '../components/GoogleReviews';
+import NewsletterForm from '../components/NewsletterForm';
 import ProductCard from '../components/ProductCard';
 import { getFeaturedProducts, getReels, type Product, type SocialReel } from '../lib/supabase';
 import { usePageMeta } from '../hooks/usePageMeta';
@@ -689,6 +690,62 @@ export default function Home() {
 
             {/* GOOGLE REVIEWS */}
             <GoogleReviews />
+
+            {/* NEWSLETTER SECTION */}
+            <section className="section relative overflow-hidden py-20 md:py-28" style={{ background: 'linear-gradient(145deg, #0a1f5c 0%, #112068 50%, #0f2660 100%)' }}>
+                {/* Decorative Elements */}
+                <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#d4a832]/40 to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[#d4a832]/60 to-transparent" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#1e4499]/30 rounded-full blur-[120px] pointer-events-none" />
+                {/* Floating email icons */}
+                <div className="absolute top-10 left-10 text-white/5 pointer-events-none">
+                    <svg className="w-20 h-20" fill="currentColor" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                </div>
+                <div className="absolute bottom-10 right-16 text-white/5 pointer-events-none rotate-12">
+                    <svg className="w-16 h-16" fill="currentColor" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                </div>
+
+                <div className="container-luxury relative z-10 w-full px-4">
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.7 }}
+                    >
+                        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-10 md:gap-16 bg-white/[0.04] backdrop-blur-md border border-white/10 p-8 md:p-14 rounded-3xl shadow-2xl">
+                            {/* Left: Copy */}
+                            <div className="flex-1 text-center md:text-left">
+                                <span className="inline-block px-4 py-1.5 mb-5 rounded-full border border-[#d4a832]/30 text-[#d4a832] text-[11px] font-bold tracking-[0.15em] uppercase bg-[#d4a832]/10">
+                                    Únete a nuestra comunidad
+                                </span>
+                                <h3 className="text-3xl md:text-4xl text-white font-bold mb-5 leading-[1.15]" style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif" }}>
+                                    Contenido Exclusivo<br />para Profesionales
+                                </h3>
+                                <p className="text-white/65 text-base leading-relaxed mb-6 font-sans max-w-lg mx-auto md:mx-0">
+                                    Suscríbete a nuestro newsletter y recibe artículos, cupones de descuento, 
+                                    información sobre cursos y nuevos productos directo en tu correo.
+                                </p>
+                                {/* Benefits */}
+                                <div className="flex flex-wrap justify-center md:justify-start gap-3 text-white/50 text-xs font-sans">
+                                    {['Ofertas exclusivas', 'Nuevos productos', 'Cursos y eventos'].map(b => (
+                                        <span key={b} className="flex items-center gap-1.5">
+                                            <span className="w-3.5 h-3.5 flex items-center justify-center bg-[#d4a832]/20 rounded-full">
+                                                <svg className="w-2 h-2 text-[#d4a832]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                                            </span>
+                                            {b}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                            
+                            {/* Right: Form */}
+                            <div className="w-full md:w-[380px] shrink-0 relative bg-black/20 p-6 rounded-2xl border border-white/5 shadow-inner">
+                                <NewsletterForm />
+                            </div>
+                        </div>
+                    </motion.div>
+                </div>
+            </section>
 
             {/* CTA FINAL - DYNAMIC SECTION */}
             <section className="section relative overflow-hidden bg-[#001641] min-h-[500px] flex items-center justify-center">
