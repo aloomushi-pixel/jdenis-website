@@ -14,6 +14,7 @@ export interface ERPUser {
     fullName: string | null;
     role: UserRole;
     phone: string | null;
+    is_active: boolean;
     created_at: string | null;
 }
 
@@ -221,14 +222,56 @@ export async function getUsers(role?: UserRole) {
     return data as ERPUser[];
 }
 
-export async function updateUserRole(userId: string, role: UserRole) {
-    const { error } = await supabase.rpc('update_user_role_admin', {
+export async function getUsersPaginated(
+    page: number,
+    pageSize: number,
+    filterRole?: UserRole | '',
+    searchQuery?: string
+) {
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
+
+    let query = supabase
+        .from('users')
+        .select('*', { count: 'exact' })
+        .not('email', 'ilike', '%test%') // Exclude test accounts
+        .order('created_at', { ascending: false });
+
+    if (filterRole) {
+        query = query.eq('role', filterRole);
+    }
+    
+    if (searchQuery) {
+        query = query.or(`email.ilike.%${searchQuery}%,fullName.ilike.%${searchQuery}%`);
+    }
+
+    const { data, count, error } = await query.range(from, to);
+    if (error) throw error;
+    
+    return { data: data as ERPUser[], count: count || 0 };
+}
+
+export async function adminUpdateUser(userId: string, updates: { role?: UserRole; is_active?: boolean }) {
+    // We need both role and is_active for the RPC, so fetch current if missing
+    let finalRole = updates.role;
+    let finalStatus = updates.is_active;
+
+    if (finalRole === undefined || finalStatus === undefined) {
+        const { data: curr } = await supabase.from('users').select('role, is_active').eq('id', userId).single();
+        if (curr) {
+            if (finalRole === undefined) finalRole = curr.role as UserRole;
+            if (finalStatus === undefined) finalStatus = curr.is_active;
+        }
+    }
+
+    const { error } = await supabase.rpc('admin_update_user', {
         target_user_id: userId,
-        new_role: role
+        new_role: finalRole,
+        new_status: finalStatus
     });
 
     if (error) throw error;
-    return null; // RPC doesn't return the row normally unless defined to
+    return null;
 }
 
 // =============================================
