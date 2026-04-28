@@ -68,7 +68,7 @@ export default {
         'slide-up': 'slideUp 0.5s ease-out forwards',
         'float': 'float 3s ease-in-out infinite',
         'pulse-soft': 'pulseSoft 4s ease-in-out infinite',
-        'marquee': 'marquee 35s linear infinite',
+        'marquee': 'marquee 60s linear infinite',
       },
       keyframes: {
         fadeIn: {
