@@ -235,6 +235,7 @@ export async function getUsersPaginated(
         .from('users')
         .select('*', { count: 'exact' })
         .not('email', 'ilike', '%test%') // Exclude test accounts
+        .not('role', 'in', '("FABRICA","ALMACEN_MATERIA_PRIMA","TRANSPORTISTA")') // Ocultar roles no habilitados
         .order('created_at', { ascending: false });
 
     if (filterRole) {
