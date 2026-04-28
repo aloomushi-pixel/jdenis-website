@@ -160,9 +160,9 @@ export default function RegistroDistribuidor() {
             // 3. Save to database
             const payload = {
                 // Viejos campos requeridos por la estructura original / nuevos
-                full_name: formData.fullName,
-                email: formData.email,
-                phone: formData.phone, // Cliente Phone
+                full_name: formData.fullName.trim(),
+                email: formData.email.trim(),
+                phone: formData.phone.trim(), // Cliente Phone
                 business_name: formData.businessName,
                 city: formData.city,
                 state: formData.state,

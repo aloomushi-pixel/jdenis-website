@@ -96,7 +96,7 @@ export default function DistributorRequests() {
                 });
 
                 const { data: authData, error: authError } = await isolatedClient.auth.signUp({
-                    email: app.email,
+                    email: app.email.trim(),
                     password: tempPassword,
                     options: {
                         data: {
