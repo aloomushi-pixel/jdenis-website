@@ -72,7 +72,13 @@ export default function Login() {
             } else if (mode === 'register') {
                 setError(err.message || 'Error al crear la cuenta. Es posible que el correo ya esté en uso.');
             } else {
-                setError('Error de autenticación. Verifica tus credenciales.');
+                if (err.message?.includes('Email not confirmed')) {
+                    setError('Tu correo electrónico no ha sido confirmado. Contacta a un administrador para que active tu cuenta.');
+                } else if (err.message?.includes('Invalid login credentials')) {
+                    setError('Contraseña o correo incorrectos.');
+                } else {
+                    setError(err.message || 'Error de autenticación. Verifica tus credenciales.');
+                }
             }
         } finally {
             setLoading(false);

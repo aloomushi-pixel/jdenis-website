@@ -2,9 +2,9 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import { Upload, X, CheckCircle2, ChevronRight, ChevronLeft, Building2, User, FileImage } from 'lucide-react';
+import { Upload, X, CheckCircle2, ChevronRight, ChevronLeft, Building2, User, FileImage, ClipboardList } from 'lucide-react';
 
-type Step = 1 | 2 | 3 | 4;
+type Step = 1 | 2 | 3 | 4 | 5;
 
 export default function RegistroDistribuidor() {
     const [step, setStep] = useState<Step>(1);
@@ -68,6 +68,11 @@ export default function RegistroDistribuidor() {
                 return;
             }
         } else if (step === 3) {
+            if (!formData.hasExperience) {
+                setError('Por favor indícanos si tienes experiencia previa en el ramo.');
+                return;
+            }
+        } else if (step === 4) {
             if (!files.idCard) {
                 setError('Debes subir una identificación oficial vigente.');
                 return;
@@ -76,14 +81,14 @@ export default function RegistroDistribuidor() {
                 setError('Debes subir al menos una fotografía de tu establecimiento.');
                 return;
             }
-            if (!formData.hasExperience) {
-                setError('Por favor indícanos si tienes experiencia previa en el ramo.');
+            if (!formData.shareDataConsent) {
+                setError('Debes aceptar que los datos sean compartidos para continuar y enviar tu solicitud.');
                 return;
             }
         }
         
         setError('');
-        setStep((prev) => (prev < 4 ? (prev + 1) as Step : prev));
+        setStep((prev) => (prev < 5 ? (prev + 1) as Step : prev));
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
@@ -218,7 +223,7 @@ export default function RegistroDistribuidor() {
             }
 
             setSuccess(true);
-            setStep(4);
+            setStep(5);
         } catch (err: unknown) {
             const errorMsg = err instanceof Error ? err.message : 'Intenta nuevamente.';
             setError(`Hubo un error al enviar tu solicitud: ${errorMsg}`);
@@ -240,7 +245,7 @@ export default function RegistroDistribuidor() {
     const establishmentTypes = ['Academia', 'Establecimiento', 'Otro'];
     const hearSources = ['Eventos', 'Cursos', 'Talleres', 'Tiendas', 'Folletos', 'Academia', 'Revistas', 'Internet'];
 
-    if (success && step === 4) {
+    if (success && step === 5) {
         return (
             <div className="min-h-screen bg-forest flex items-center justify-center px-4 py-20">
                 <motion.div
@@ -288,7 +293,7 @@ export default function RegistroDistribuidor() {
                             <motion.div 
                                 className="h-full bg-gold rounded"
                                 initial={{ width: "0%" }}
-                                animate={{ width: `${((step - 1) / 2) * 100}%` }}
+                                animate={{ width: `${((step - 1) / 3) * 100}%` }}
                                 transition={{ duration: 0.3 }}
                             />
                         </div>
@@ -296,6 +301,7 @@ export default function RegistroDistribuidor() {
                         {[
                             { icon: User, label: "Generales" },
                             { icon: Building2, label: "Dirección" },
+                            { icon: ClipboardList, label: "Encuesta" },
                             { icon: FileImage, label: "Documentos" }
                         ].map((s, i) => {
                             const stepNum = i + 1;
@@ -326,7 +332,7 @@ export default function RegistroDistribuidor() {
                             </div>
                         )}
 
-                        <form onSubmit={step === 3 ? handleSubmit : (e) => e.preventDefault()}>
+                        <form onSubmit={step === 4 ? handleSubmit : (e) => e.preventDefault()}>
                             
                             {/* PASO 1: DATOS GENERALES */}
                             {step === 1 && (
@@ -520,9 +526,19 @@ export default function RegistroDistribuidor() {
                                             </div>
                                         </div>
                                     </div>
+                                </motion.div>
+                            )}
 
-                                    <hr className="border-gray-100" />
-
+                            {/* PASO 4: DOCUMENTOS Y PERMISOS */}
+                            {step === 4 && (
+                                <motion.div
+                                    initial={{ opacity: 0, x: 20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: -20 }}
+                                    className="space-y-8"
+                                >
+                                    <h2 className="text-xl font-serif text-forest border-b pb-3 mb-6">4. Documentación y Permisos</h2>
+                                    
                                     {/* Carga de Archivos */}
                                     <div className="bg-blue-50/50 p-6 rounded-xl border border-blue-100">
                                         <h3 className="text-lg font-bold text-blue-900 mb-6 flex items-center gap-2">
@@ -637,7 +653,7 @@ export default function RegistroDistribuidor() {
                                     <div /> // Spacer
                                 )}
 
-                                {step < 3 ? (
+                                {step < 4 ? (
                                     <button
                                         type="button"
                                         onClick={handleNextStep}
