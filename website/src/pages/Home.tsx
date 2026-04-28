@@ -271,9 +271,11 @@ export default function Home() {
 
 
     useEffect(() => {
-        getReels(true).then(setReels).catch(console.error);
+        getReels(true)
+            .then((res: any) => setReels(Array.isArray(res) ? res : (res?.data || [])))
+            .catch(console.error);
         getFeaturedProducts(12)
-            .then(products => {
+            .then((products: any) => {
                 const safeProducts = Array.isArray(products) ? products : (products?.data || []);
                 const inStock = safeProducts.filter((p: Product) => p.stock === null || p.stock === undefined || p.stock >= 1);
                 setBestsellers(inStock);
@@ -552,19 +554,23 @@ export default function Home() {
                         </motion.div>
                     </div>
 
-                    {/* Products Grid — all visible at once */}
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-                        {bestsellers.map((product, i) => (
-                            <motion.div
-                                key={product.id}
-                                initial={{ opacity: 0, y: 24 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: i * 0.06, duration: 0.5 }}
-                            >
+                    {/* Products Carousel — Marquee */}
+                    <div className="relative w-full overflow-hidden mt-8 group">
+                        {/* Gradient masks for smooth edges */}
+                        <div className="absolute top-0 left-0 bottom-0 w-8 md:w-24 bg-gradient-to-r from-cream to-transparent z-10 pointer-events-none" />
+                        <div className="absolute top-0 right-0 bottom-0 w-8 md:w-24 bg-gradient-to-l from-cream to-transparent z-10 pointer-events-none" />
+
+                        <div className="flex w-max animate-marquee group-hover:[animation-play-state:paused] gap-4 md:gap-6 py-4">
+                            {/* Render items 3 times for seamless infinite scroll */}
+                            {[...bestsellers, ...bestsellers, ...bestsellers].map((product, i) => (
+                                <div
+                                    key={`${product.id}-${i}`}
+                                    className="w-[160px] sm:w-[220px] md:w-[260px] lg:w-[280px] shrink-0"
+                                >
                                     <ProductCard product={{ ...product, image: product.image_url || '/placeholder.webp' } as any} />
-                                </motion.div>
-                        ))}
+                                </div>
+                            ))}
+                        </div>
                     </div>
 
                     <div className="text-center mt-14">
