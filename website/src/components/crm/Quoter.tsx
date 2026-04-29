@@ -499,9 +499,9 @@ export default function Quoter() {
               <button 
                 onClick={() => handleSaveQuotation('SENT')}
                 disabled={isSaving || cart.length === 0}
-                className="w-full bg-navy hover:bg-slate-800 text-white font-medium py-2.5 rounded-xl transition-colors shadow-md flex justify-center items-center gap-2 disabled:opacity-50"
+                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 rounded-xl transition-all shadow-md hover:shadow-lg flex justify-center items-center gap-2 disabled:opacity-50"
               >
-                <Send size={16} /> Enviar Cotización
+                <Send size={18} /> Enviar Cotización
               </button>
             </div>
           </div>
