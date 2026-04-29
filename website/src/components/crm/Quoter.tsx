@@ -283,7 +283,7 @@ export default function Quoter() {
       await createQuotation(quotationData, items);
       
       if (status === 'SENT') {
-        showToast('✉️ Cotización guardada y enviada al cliente');
+        showToast('✉️ Cotización enviada al distribuidor exitosamente');
       } else {
         showToast('💾 Borrador guardado exitosamente');
       }
@@ -495,21 +495,13 @@ export default function Quoter() {
               <span className="text-3xl font-sans font-bold text-navy">${totalFinal.toLocaleString('es-MX', { minimumFractionDigits: 2 })}</span>
             </div>
             
-            <div className="grid grid-cols-2 gap-3">
-              <button 
-                onClick={() => handleSaveQuotation('DRAFT')}
-                disabled={isSaving || cart.length === 0}
-                className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-2.5 rounded-xl transition-colors flex justify-center items-center gap-2 disabled:opacity-50"
-              >
-                <Save size={16} /> Guardar Borrador
-              </button>
-              
+            <div className="grid grid-cols-1 gap-3">
               <button 
                 onClick={() => handleSaveQuotation('SENT')}
                 disabled={isSaving || cart.length === 0}
                 className="w-full bg-navy hover:bg-slate-800 text-white font-medium py-2.5 rounded-xl transition-colors shadow-md flex justify-center items-center gap-2 disabled:opacity-50"
               >
-                <Send size={16} /> Publicar y Enviar
+                <Send size={16} /> Enviar Cotización
               </button>
             </div>
           </div>
