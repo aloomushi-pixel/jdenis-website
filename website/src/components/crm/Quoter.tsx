@@ -31,11 +31,10 @@ export default function Quoter() {
   useEffect(() => {
     async function loadCustomers() {
       try {
-        const clients = await getUsers('CLIENTE');
         const distributors = await getUsers('DISTRIBUIDOR');
-        setCustomers([...clients, ...distributors]);
+        setCustomers(distributors);
       } catch (err) {
-        console.error("Error loading customers:", err);
+        console.error("Error loading distributors:", err);
       }
     }
     loadCustomers();
@@ -242,7 +241,7 @@ export default function Quoter() {
 
   const handleSaveQuotation = async (status: 'DRAFT' | 'SENT') => {
     if (!selectedCustomerId) {
-      showToast('❌ Por favor selecciona un cliente primero');
+      showToast('❌ Por favor selecciona un distribuidor primero');
       return;
     }
     if (cart.length === 0) {
@@ -416,16 +415,16 @@ export default function Quoter() {
 
           <div className="mb-4">
             <label className="block text-sm font-medium text-slate-700 mb-1 flex items-center gap-2">
-              <User size={14} /> Seleccionar Cliente
+              <User size={14} /> Seleccionar Distribuidor
             </label>
             <select
               value={selectedCustomerId}
               onChange={(e) => setSelectedCustomerId(e.target.value)}
               className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition-all text-sm"
             >
-              <option value="">-- Selecciona un cliente --</option>
+              <option value="">-- Selecciona un distribuidor --</option>
               {customers.map(c => (
-                <option key={c.id} value={c.id}>{c.fullName || c.email} ({c.role})</option>
+                <option key={c.id} value={c.id}>{c.fullName || c.email}</option>
               ))}
             </select>
           </div>
