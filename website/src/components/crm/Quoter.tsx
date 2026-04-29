@@ -55,7 +55,7 @@ export default function Quoter() {
   };
 
   const getStandardPrice = (item: CartItem) => {
-    return item.distributorPrice || item.price;
+    return item.price;
   };
 
   const getPrice = (item: CartItem) => {
