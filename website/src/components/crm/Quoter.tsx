@@ -8,12 +8,12 @@ import { useAuthStore } from '../../store/authStore';
 
 interface CartItem extends DisplayProduct {
   cartQuantity: number;
+  itemDiscount?: number;
 }
 
 export default function Quoter() {
   const { products: dbProducts, loading: loadingProducts, saveProduct, saveStatus } = useProducts();
   const user = useAuthStore(s => s.user);
-  const isAdmin = user?.role === 'ADMIN';
 
   const [searchTerm, setSearchTerm] = useState('');
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -23,10 +23,10 @@ export default function Quoter() {
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>('');
   const [isSaving, setIsSaving] = useState(false);
 
-  // Inline price editing state
-  const [editingPriceId, setEditingPriceId] = useState<string | null>(null);
-  const [editPriceValue, setEditPriceValue] = useState('');
-  const priceInputRef = useRef<HTMLInputElement>(null);
+  const [discountValue, setDiscountValue] = useState<number>(0);
+  const [discountType, setDiscountType] = useState<'PERCENTAGE' | 'FIXED'>('PERCENTAGE');
+
+
 
   useEffect(() => {
     async function loadCustomers() {
@@ -54,8 +54,26 @@ export default function Quoter() {
     setTimeout(() => setToast(null), 3000);
   };
 
-  const getPrice = (item: CartItem) => {
+  const getStandardPrice = (item: CartItem) => {
     return item.distributorPrice || item.price;
+  };
+
+  const getPrice = (item: CartItem) => {
+    const standard = getStandardPrice(item);
+    if (item.itemDiscount && item.itemDiscount > 0) {
+      return standard * (1 - item.itemDiscount / 100);
+    }
+    return standard;
+  };
+
+  const updateItemDiscount = (id: string, discountStr: string) => {
+    const val = parseFloat(discountStr);
+    setCart(prev => prev.map(p => {
+      if (p.id === id) {
+        return { ...p, itemDiscount: isNaN(val) ? undefined : Math.max(0, Math.min(100, val)) };
+      }
+      return p;
+    }));
   };
 
   const addItemToCart = (product: DisplayProduct, quantity = 1) => {
@@ -81,9 +99,15 @@ export default function Quoter() {
     setCart(prev => prev.map(p => p.id === id ? { ...p, cartQuantity: qty } : p));
   };
 
-  const total = useMemo(() => {
-    return cart.reduce((acc, item) => acc + (getPrice(item) * item.cartQuantity), 0);
-  }, [cart]);
+  const { subtotal, discountAmount, ivaAmount, totalFinal } = useMemo(() => {
+    const sub = cart.reduce((acc, item) => acc + (getPrice(item) * item.cartQuantity), 0);
+    const disc = discountType === 'PERCENTAGE' ? sub * (discountValue / 100) : discountValue;
+    const validDisc = Math.min(Math.max(0, disc), sub) || 0;
+    const baseForIva = sub - validDisc;
+    const iva = baseForIva * 0.16;
+    const final = baseForIva + iva;
+    return { subtotal: sub, discountAmount: validDisc, ivaAmount: iva, totalFinal: final };
+  }, [cart, discountValue, discountType]);
 
   const addKit = () => {
     const p1 = dbProducts.find(p => p.category.toLowerCase().includes('lash lifting') || p.name.toLowerCase().includes('kit'));
@@ -102,33 +126,7 @@ export default function Quoter() {
     }
   };
 
-  // ── Inline price editing (ADMIN only) ──
-  const startEditPrice = (productId: string, currentPrice: number | undefined) => {
-    setEditingPriceId(productId);
-    setEditPriceValue(currentPrice != null ? String(currentPrice) : '');
-    setTimeout(() => priceInputRef.current?.focus(), 50);
-  };
 
-  const cancelEditPrice = () => {
-    setEditingPriceId(null);
-    setEditPriceValue('');
-  };
-
-  const confirmEditPrice = async (productId: string) => {
-    const newPrice = parseFloat(editPriceValue);
-    if (isNaN(newPrice) || newPrice < 0) {
-      showToast('❌ Ingresa un precio válido');
-      return;
-    }
-    const success = await saveProduct(productId, 'distributorPrice', newPrice || null);
-    if (success) {
-      showToast('✅ Precio mayoreo actualizado');
-    } else {
-      showToast('❌ Error al guardar precio');
-    }
-    setEditingPriceId(null);
-    setEditPriceValue('');
-  };
 
   const getBase64ImageFromUrl = async (imageUrl: string): Promise<string | null> => {
     try {
@@ -167,6 +165,7 @@ export default function Quoter() {
       doc.text('Distribuidora J. Denis', 55, 33);
       doc.text(`Fecha: ${new Date().toLocaleDateString()}`, 55, 39);
       doc.text(`ID Cotización: JD-${Math.floor(1000 + Math.random() * 9000)}`, 55, 45);
+      doc.text(`Atendido por: ${user?.fullName || user?.email || 'Administrador'}`, 55, 51);
 
       // Pre-load all product images to base64
       const cartWithImages = await Promise.all(cart.map(async (item) => {
@@ -220,16 +219,32 @@ export default function Quoter() {
       // Total Footer
       // @ts-ignore
       const finalY = doc.lastAutoTable.finalY || 60;
-      doc.setFontSize(16);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(50, 50, 50);
+      
+      let currentY = finalY + 10;
+      doc.text(`Subtotal: $${subtotal.toLocaleString('es-MX', { minimumFractionDigits: 2 })}`, 190, currentY, { align: 'right' });
+      
+      if (discountAmount > 0) {
+        currentY += 6;
+        doc.text(`Descuento: -$${discountAmount.toLocaleString('es-MX', { minimumFractionDigits: 2 })}`, 190, currentY, { align: 'right' });
+      }
+      
+      currentY += 6;
+      doc.text(`I.V.A. (16%): $${ivaAmount.toLocaleString('es-MX', { minimumFractionDigits: 2 })}`, 190, currentY, { align: 'right' });
+
+      currentY += 10;
+      doc.setFontSize(14);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(212, 175, 55);
-      doc.text(`Total Final: $${total.toLocaleString('es-MX', { minimumFractionDigits: 2 })}`, 190, finalY + 15, { align: 'right' });
+      doc.text(`Total Final: $${totalFinal.toLocaleString('es-MX', { minimumFractionDigits: 2 })}`, 190, currentY, { align: 'right' });
       
       doc.setFontSize(10);
       doc.setFont('helvetica', 'normal');
       doc.setTextColor(150, 150, 150);
-      doc.text('Gracias por su preferencia.', 105, finalY + 30, { align: 'center' });
-      doc.text('jdenis.store', 105, finalY + 35, { align: 'center' });
+      doc.text('Gracias por su preferencia.', 105, currentY + 15, { align: 'center' });
+      doc.text('jdenis.store', 105, currentY + 20, { align: 'center' });
       
       doc.save('Cotizacion_JDenis.pdf');
       showToast('✅ PDF Generado Exitosamente');
@@ -255,8 +270,8 @@ export default function Quoter() {
       const quotationData = {
         customer_id: selectedCustomerId,
         status: status,
-        total_amount: total,
-        notes: "Cotización generada desde el panel administrativo",
+        total_amount: totalFinal,
+        notes: `Atendido por: ${user?.fullName || user?.email || 'Administrador'} | Subtotal: $${subtotal.toFixed(2)} | Descuento: $${discountAmount.toFixed(2)} | IVA: $${ivaAmount.toFixed(2)}.`,
       };
 
       const items = cart.map(item => ({
@@ -289,7 +304,7 @@ export default function Quoter() {
       <div className="flex flex-wrap justify-between items-center bg-white p-5 rounded-2xl shadow-sm border border-slate-100 gap-3">
         <div>
           <h2 className="text-2xl font-sans text-slate-800">Cotizador Mayorista B2B</h2>
-          <p className="text-slate-500 text-sm">Crea cotizaciones y envíalas al instante. {isAdmin && <span className="text-indigo-500 font-medium">· Modo Admin: puedes editar precios</span>}</p>
+          <p className="text-slate-500 text-sm">Crea cotizaciones y envíalas al instante. Puedes aplicar descuentos individuales por producto.</p>
         </div>
         <div className="flex gap-3">
           <button onClick={addKit} className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-sm font-medium transition-colors flex items-center gap-2">
@@ -324,11 +339,6 @@ export default function Quoter() {
 
           <div className="flex items-center justify-between mb-3 px-1">
             <span className="text-xs text-slate-400 font-medium">{filteredProducts.length} productos</span>
-            {isAdmin && (
-              <span className="text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded-md font-medium flex items-center gap-1">
-                <Edit3 size={10} /> Click en precio mayoreo para editar
-              </span>
-            )}
           </div>
           
           <div className="flex-1 overflow-y-auto pr-2 space-y-2">
@@ -337,9 +347,6 @@ export default function Quoter() {
             ) : filteredProducts.length === 0 ? (
               <div className="text-center py-10 text-slate-400">No se encontraron productos</div>
             ) : filteredProducts.map(p => {
-              const isEditingThis = editingPriceId === p.id;
-              const status = saveStatus[p.id];
-
               return (
                 <div key={p.id} className="flex justify-between items-center p-3 hover:bg-slate-50 rounded-xl border border-transparent hover:border-slate-100 transition-all group">
                   <div className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer" onClick={() => addItemToCart(p, 1)}>
@@ -355,50 +362,17 @@ export default function Quoter() {
                   </div>
                   <div className="text-right flex-shrink-0 ml-3">
                     <p className="font-bold text-slate-700 text-sm">${p.price}</p>
-
-                    {/* Distributor price — editable for ADMIN */}
-                    {isEditingThis ? (
-                      <div className="flex items-center gap-1 mt-1" onClick={e => e.stopPropagation()}>
-                        <span className="text-[10px] text-slate-400">$</span>
-                        <input
-                          ref={priceInputRef}
-                          type="number"
-                          step="0.01"
-                          min="0"
-                          value={editPriceValue}
-                          onChange={e => setEditPriceValue(e.target.value)}
-                          onKeyDown={e => {
-                            if (e.key === 'Enter') confirmEditPrice(p.id);
-                            if (e.key === 'Escape') cancelEditPrice();
-                          }}
-                          className="w-20 text-xs px-1.5 py-0.5 border border-indigo-300 rounded focus:ring-1 focus:ring-indigo-500 outline-none bg-white"
-                        />
-                        <button onClick={() => confirmEditPrice(p.id)} className="text-emerald-600 hover:text-emerald-800 p-0.5"><Check size={12} /></button>
-                        <button onClick={cancelEditPrice} className="text-red-400 hover:text-red-600 p-0.5"><X size={12} /></button>
-                      </div>
-                    ) : (
-                      <div className="flex items-center justify-end gap-1 mt-0.5">
-                        {p.distributorPrice != null && p.distributorPrice > 0 ? (
-                          <p className={`text-[10px] text-amber-600 font-medium ${isAdmin ? 'cursor-pointer hover:text-indigo-600 hover:underline' : ''}`}
-                            onClick={(e) => { e.stopPropagation(); if (isAdmin) startEditPrice(p.id, p.distributorPrice); }}>
-                            Mayoreo: ${p.distributorPrice}
-                          </p>
-                        ) : (
-                          <p className={`text-[10px] text-slate-300 italic ${isAdmin ? 'cursor-pointer hover:text-indigo-500' : ''}`}
-                            onClick={(e) => { e.stopPropagation(); if (isAdmin) startEditPrice(p.id, undefined); }}>
-                            {isAdmin ? '+ Asignar precio mayoreo' : 'Sin precio mayoreo'}
-                          </p>
-                        )}
-                        {isAdmin && !isEditingThis && (
-                          <button onClick={(e) => { e.stopPropagation(); startEditPrice(p.id, p.distributorPrice); }}
-                            className="opacity-0 group-hover:opacity-100 transition-opacity text-slate-400 hover:text-indigo-600 p-0.5">
-                            <Edit3 size={10} />
-                          </button>
-                        )}
-                        {status === 'saving' && <div className="animate-spin rounded-full h-3 w-3 border-t border-indigo-500" />}
-                        {status === 'saved' && <Check size={10} className="text-emerald-500" />}
-                      </div>
-                    )}
+                    <div className="flex items-center justify-end gap-1 mt-0.5">
+                      {p.distributorPrice != null && p.distributorPrice > 0 ? (
+                        <p className="text-[10px] text-amber-600 font-medium">
+                          Mayoreo: ${p.distributorPrice}
+                        </p>
+                      ) : (
+                        <p className="text-[10px] text-slate-300 italic">
+                          Sin precio mayoreo
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
               );
@@ -459,7 +433,29 @@ export default function Quoter() {
                         <span className="text-sm font-semibold w-6 text-center">{item.cartQuantity}</span>
                         <button onClick={() => updateQuantity(item.id, item.cartQuantity + 1)} className="text-slate-400 hover:text-slate-600 px-1">+</button>
                       </div>
-                      <p className="text-xs text-slate-400">${getPrice(item)} c/u</p>
+                      <div className="flex flex-col items-end gap-1.5">
+                        <div className="flex items-center gap-2">
+                           {item.itemDiscount ? (
+                             <span className="text-[10px] text-slate-400 line-through">${getStandardPrice(item).toFixed(2)} base</span>
+                           ) : (
+                             <span className="text-[10px] text-slate-500">Base: ${getStandardPrice(item).toFixed(2)}</span>
+                           )}
+                           <div className="flex items-center gap-1 bg-white px-1.5 py-0.5 rounded border border-slate-300 shadow-sm focus-within:border-amber-500 focus-within:ring-1 focus-within:ring-amber-500 transition-all">
+                             <input
+                               type="number"
+                               step="1"
+                               min="0"
+                               max="100"
+                               value={item.itemDiscount !== undefined ? item.itemDiscount : ''}
+                               onChange={(e) => updateItemDiscount(item.id, e.target.value)}
+                               placeholder="0"
+                               className="w-8 text-xs text-right bg-transparent outline-none font-medium text-slate-700"
+                             />
+                             <span className="text-[10px] font-bold text-slate-400">% desc</span>
+                           </div>
+                        </div>
+                        <p className="text-sm font-semibold text-amber-700">${getPrice(item).toLocaleString('es-MX', { minimumFractionDigits: 2 })} c/u</p>
+                      </div>
                     </div>
                   </div>
                 );
@@ -468,9 +464,44 @@ export default function Quoter() {
           </div>
 
           <div className="border-t border-slate-100 pt-4 mt-4 space-y-3">
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-slate-500">Total Venta</span>
-              <span className="text-3xl font-sans font-bold text-navy">${total.toLocaleString('es-MX', { minimumFractionDigits: 2 })}</span>
+            <div className="flex justify-between items-center text-sm text-slate-600">
+              <span>Importe (Subtotal)</span>
+              <span className="font-medium">${subtotal.toLocaleString('es-MX', { minimumFractionDigits: 2 })}</span>
+            </div>
+
+            <div className="flex justify-between items-center text-sm text-slate-600">
+              <div className="flex items-center gap-2">
+                <span>Descuento</span>
+                <div className="flex items-center border border-slate-200 rounded overflow-hidden">
+                  <input 
+                    type="number" 
+                    min="0"
+                    value={discountValue || ''} 
+                    onChange={e => setDiscountValue(parseFloat(e.target.value) || 0)}
+                    className="w-16 px-2 py-0.5 text-right outline-none"
+                    placeholder="0"
+                  />
+                  <select 
+                    value={discountType} 
+                    onChange={e => setDiscountType(e.target.value as any)}
+                    className="bg-slate-50 border-l border-slate-200 px-1 py-0.5 outline-none text-xs"
+                  >
+                    <option value="PERCENTAGE">%</option>
+                    <option value="FIXED">$</option>
+                  </select>
+                </div>
+              </div>
+              <span className="font-medium text-red-500">-${discountAmount.toLocaleString('es-MX', { minimumFractionDigits: 2 })}</span>
+            </div>
+
+            <div className="flex justify-between items-center text-sm text-slate-600">
+              <span>I.V.A. (16%)</span>
+              <span className="font-medium">${ivaAmount.toLocaleString('es-MX', { minimumFractionDigits: 2 })}</span>
+            </div>
+
+            <div className="flex justify-between items-center mb-2 pt-2 border-t border-slate-100">
+              <span className="text-slate-800 font-semibold">Total Final</span>
+              <span className="text-3xl font-sans font-bold text-navy">${totalFinal.toLocaleString('es-MX', { minimumFractionDigits: 2 })}</span>
             </div>
             
             <div className="grid grid-cols-2 gap-3">
