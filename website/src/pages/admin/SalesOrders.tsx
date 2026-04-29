@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FileText, Calculator, ChevronDown, Clock, CheckCircle, XCircle, Send, Eye, Trash2, Search, Filter } from 'lucide-react';
+import { FileText, Calculator, ChevronDown, Clock, CheckCircle, XCircle, Send, Search, Filter } from 'lucide-react';
 import Quoter from '../../components/crm/Quoter';
 import { getQuotations, getQuotationItems, updateQuotationStatus, type Quotation, type QuotationItem } from '../../lib/erp';
 import { supabase } from '../../lib/supabase';

@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect, useRef } from 'react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { useProducts, type DisplayProduct } from '../../hooks/useProducts';
-import { Search, Plus, ShoppingCart, AlertCircle, FileText, Send, Save, User, Edit3, Check, X, DollarSign } from 'lucide-react';
+import { Search, Plus, ShoppingCart, AlertCircle, FileText, Send, Save, User, Edit3, Check, X } from 'lucide-react';
 import { getUsers, createQuotation, type ERPUser } from '../../lib/erp';
 import { useAuthStore } from '../../store/authStore';
 
@@ -424,7 +424,7 @@ export default function Quoter() {
             >
               <option value="">-- Selecciona un distribuidor --</option>
               {customers.map(c => (
-                <option key={c.id} value={c.id}>{c.fullName || c.email}</option>
+                <option key={c.id} value={c.id}>{(c as any).full_name || c.fullName || c.email}</option>
               ))}
             </select>
           </div>

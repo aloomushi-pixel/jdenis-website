@@ -219,7 +219,7 @@ export async function getUsers(role?: UserRole) {
     if (role) query = query.eq('role', role);
     const { data, error } = await query;
     if (error) throw error;
-    return data as ERPUser[];
+    return (data || []).map((d: any) => ({ ...d, fullName: d.full_name || d.fullName })) as ERPUser[];
 }
 
 export async function getUsersPaginated(
@@ -243,13 +243,14 @@ export async function getUsersPaginated(
     }
     
     if (searchQuery) {
-        query = query.or(`email.ilike.%${searchQuery}%,fullName.ilike.%${searchQuery}%`);
+        query = query.or(`email.ilike.%${searchQuery}%,full_name.ilike.%${searchQuery}%`);
     }
 
     const { data, count, error } = await query.range(from, to);
     if (error) throw error;
     
-    return { data: data as ERPUser[], count: count || 0 };
+    const mappedData = (data || []).map((d: any) => ({ ...d, fullName: d.full_name || d.fullName }));
+    return { data: mappedData as ERPUser[], count: count || 0 };
 }
 
 export async function adminUpdateUser(userId: string, updates: { role?: UserRole; is_active?: boolean }) {

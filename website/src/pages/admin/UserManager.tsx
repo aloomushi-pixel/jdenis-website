@@ -205,11 +205,11 @@ export default function UserManager() {
                                         <td className="px-6 py-5">
                                             <div className="flex items-center gap-4">
                                                 <div className={`h-11 w-11 rounded-full flex items-center justify-center font-bold text-sm shadow-sm border ${user.is_active !== false ? 'bg-indigo-50 text-indigo-700 border-indigo-100' : 'bg-gray-100 text-gray-500 border-gray-200'}`}>
-                                                    {(user.fullName?.[0] || user.email?.[0] || '?').toUpperCase()}
+                                                    {(((user as any).full_name || user.fullName)?.[0] || user.email?.[0] || '?').toUpperCase()}
                                                 </div>
                                                 <div>
                                                     <p className={`font-semibold ${user.is_active !== false ? 'text-gray-900' : 'text-gray-500'}`}>
-                                                        {user.fullName || 'Usuario Sin Nombre'}
+                                                        {(user as any).full_name || user.fullName || 'Usuario Sin Nombre'}
                                                     </p>
                                                     <p className="text-sm text-gray-500">{user.email}</p>
                                                 </div>
