@@ -258,6 +258,23 @@ export default function SalesOrders() {
                                   </div>
                                 </div>
                               )}
+                              
+                              {q.status === 'DRAFT' && (
+                                <div className="mt-4 flex justify-end">
+                                  <button 
+                                    onClick={() => handleStatusChange(q.id, 'SENT')}
+                                    disabled={updatingId === q.id}
+                                    className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 px-6 rounded-xl transition-colors flex items-center gap-2 shadow-md hover:shadow-lg disabled:opacity-50"
+                                  >
+                                    {updatingId === q.id ? (
+                                      <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-white" />
+                                    ) : (
+                                      <Send className="w-5 h-5" />
+                                    )}
+                                    Enviar al distribuidor
+                                  </button>
+                                </div>
+                              )}
                             </div>
                           </motion.div>
                         )}
