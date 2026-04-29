@@ -363,15 +363,6 @@ export default function Quoter() {
                   <div className="text-right flex-shrink-0 ml-3">
                     <p className="font-bold text-slate-700 text-sm">${p.price}</p>
                     <div className="flex items-center justify-end gap-1 mt-0.5">
-                      {p.distributorPrice != null && p.distributorPrice > 0 ? (
-                        <p className="text-[10px] text-amber-600 font-medium">
-                          Mayoreo: ${p.distributorPrice}
-                        </p>
-                      ) : (
-                        <p className="text-[10px] text-slate-300 italic">
-                          Sin precio mayoreo
-                        </p>
-                      )}
                     </div>
                   </div>
                 </div>
