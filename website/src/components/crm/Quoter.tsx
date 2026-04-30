@@ -271,8 +271,7 @@ export default function Quoter() {
         customer_id: selectedCustomerId,
         status: status,
         total_amount: totalFinal,
-        notes: `Atendido por: ${user?.fullName || user?.email || 'Administrador'} | Subtotal: $${subtotal.toFixed(2)} | Descuento: $${discountAmount.toFixed(2)} | IVA: $${ivaAmount.toFixed(2)}.`,
-        created_by: user?.id,
+        notes: `Atendido por: ${user?.fullName || user?.email || 'Administrador'} | Subtotal: $${subtotal.toFixed(2)} | Descuento: $${discountAmount.toFixed(2)} | IVA: $${ivaAmount.toFixed(2)}.`
       };
 
       const items = cart.map(item => ({
