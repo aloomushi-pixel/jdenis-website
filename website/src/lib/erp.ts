@@ -742,12 +742,39 @@ export async function updateQuotationStatus(id: string, status: QuotationStatus)
 }
 
 export async function getQuotationItems(quotationId: string) {
-    const { data, error } = await supabase
+    const { data: itemsData, error: itemsError } = await supabase
         .from('quotation_items')
         .select('*')
         .eq('quotation_id', quotationId);
         
-    if (error) throw error;
-    return data as QuotationItem[];
+    if (itemsError) throw itemsError;
+    if (!itemsData || itemsData.length === 0) return [];
+
+    // Fetch product details to enrich the quotation items
+    const resourceIds = itemsData.map((item: any) => item.resource_id);
+    const { data: productsData, error: productsError } = await supabase
+        .from('products')
+        .select('id, name, image_url, price')
+        .in('id', resourceIds);
+
+    if (productsError) {
+        console.error("Error fetching products for quotation items:", productsError);
+        return itemsData as QuotationItem[];
+    }
+
+    const productsMap = new Map((productsData || []).map((p: any) => [p.id, p]));
+
+    // Merge product data into quotation items for the UI
+    const mergedItems = itemsData.map((item: any) => {
+        const product = productsMap.get(item.resource_id) as any;
+        return {
+            ...item,
+            name: product?.name || 'Producto Desconocido',
+            image: product?.image_url || null,
+            price: item.unit_price || product?.price || 0,
+        };
+    });
+
+    return mergedItems as any[];
 }
 
