@@ -5,6 +5,7 @@ import { useProducts, type DisplayProduct } from '../../hooks/useProducts';
 import { Search, Plus, ShoppingCart, AlertCircle, FileText, Send, Save, User, Edit3, Check, X } from 'lucide-react';
 import { getUsers, createQuotation, type ERPUser } from '../../lib/erp';
 import { useAuthStore } from '../../store/authStore';
+import { supabase } from '../../lib/supabase';
 
 interface CartItem extends DisplayProduct {
   cartQuantity: number;
@@ -280,10 +281,43 @@ export default function Quoter() {
         unit_price: getPrice(item)
       }));
 
-      await createQuotation(quotationData, items);
+      const savedQuotation = await createQuotation(quotationData, items);
       
       if (status === 'SENT') {
-        showToast('✉️ Cotización enviada al distribuidor exitosamente');
+        const selectedCustomer = customers.find(c => c.id === selectedCustomerId);
+        if (selectedCustomer && selectedCustomer.email) {
+          showToast('Enviando email de cotización...');
+          const { error: fnError } = await supabase.functions.invoke('send-email', {
+            body: {
+              type: 'quotation',
+              name: selectedCustomer.fullName || 'Distribuidor',
+              email: selectedCustomer.email,
+              toEmail: selectedCustomer.email,
+              quotationData: {
+                id: savedQuotation.id,
+                total: totalFinal,
+                subtotal: subtotal,
+                discount: discountAmount,
+                iva: ivaAmount,
+                items: cart.map(item => ({
+                  name: item.name,
+                  quantity: item.cartQuantity,
+                  price: getPrice(item)
+                })),
+                notes: quotationData.notes
+              }
+            }
+          });
+
+          if (fnError) {
+            console.error('Error enviando email:', fnError);
+            showToast('⚠️ Cotización guardada, pero hubo un error al enviar el email');
+          } else {
+            showToast('✉️ Cotización enviada al distribuidor exitosamente');
+          }
+        } else {
+            showToast('✉️ Cotización guardada exitosamente');
+        }
       } else {
         showToast('💾 Borrador guardado exitosamente');
       }
