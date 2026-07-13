@@ -199,7 +199,7 @@ export default function Checkout() {
                                             value={formData.fullName}
                                             onChange={handleInputChange}
                                             required
-                                            className="w-full px-5 py-4 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all text-base bg-white shadow-sm"
+                                            className="w-full px-5 py-4 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all text-base text-navy placeholder:text-navy/40 bg-white shadow-sm"
                                         />
                                     </div>
                                     <div className="md:col-span-1">
@@ -210,7 +210,7 @@ export default function Checkout() {
                                             value={formData.email}
                                             onChange={handleInputChange}
                                             required
-                                            className="w-full px-5 py-4 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all text-base bg-white shadow-sm"
+                                            className="w-full px-5 py-4 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all text-base text-navy placeholder:text-navy/40 bg-white shadow-sm"
                                         />
                                     </div>
                                     <div className="md:col-span-1">
@@ -221,7 +221,7 @@ export default function Checkout() {
                                             value={formData.phone}
                                             onChange={handleInputChange}
                                             required
-                                            className="w-full px-5 py-4 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all text-base bg-white shadow-sm"
+                                            className="w-full px-5 py-4 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all text-base text-navy placeholder:text-navy/40 bg-white shadow-sm"
                                             placeholder="55 1234 5678"
                                         />
                                     </div>
@@ -243,7 +243,7 @@ export default function Checkout() {
                                             value={formData.address}
                                             onChange={handleInputChange}
                                             required
-                                            className="w-full px-5 py-4 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all text-base bg-white shadow-sm"
+                                            className="w-full px-5 py-4 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all text-base text-navy placeholder:text-navy/40 bg-white shadow-sm"
                                             placeholder="Calle, número exterior/interior, colonia"
                                         />
                                     </div>
@@ -258,7 +258,7 @@ export default function Checkout() {
                                             onChange={handleInputChange}
                                             required
                                             rows={2}
-                                            className="w-full px-5 py-4 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all text-base bg-white shadow-sm resize-none"
+                                            className="w-full px-5 py-4 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all text-base text-navy placeholder:text-navy/40 bg-white shadow-sm resize-none"
                                             placeholder="Ej: Entre calle Roble y calle Pino, fachada azul, portón negro, frente a la tienda OXXO"
                                         />
                                         <p className="text-xs text-charcoal-light mt-2 flex items-center gap-1">
@@ -274,7 +274,7 @@ export default function Checkout() {
                                             value={formData.city}
                                             onChange={handleInputChange}
                                             required
-                                            className="w-full px-5 py-4 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all text-base bg-white shadow-sm"
+                                            className="w-full px-5 py-4 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all text-base text-navy placeholder:text-navy/40 bg-white shadow-sm"
                                         />
                                     </div>
                                     <div>
@@ -285,7 +285,7 @@ export default function Checkout() {
                                             value={formData.state}
                                             onChange={handleInputChange}
                                             required
-                                            className="w-full px-5 py-4 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all text-base bg-white shadow-sm"
+                                            className="w-full px-5 py-4 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all text-base text-navy placeholder:text-navy/40 bg-white shadow-sm"
                                         />
                                     </div>
                                     <div>
@@ -296,7 +296,7 @@ export default function Checkout() {
                                             value={formData.zip}
                                             onChange={handleInputChange}
                                             required
-                                            className="w-full px-5 py-4 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all text-base bg-white shadow-sm"
+                                            className="w-full px-5 py-4 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all text-base text-navy placeholder:text-navy/40 bg-white shadow-sm"
                                         />
                                     </div>
                                 </div>

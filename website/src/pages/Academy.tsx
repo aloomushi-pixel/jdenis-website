@@ -49,8 +49,29 @@ export default function Academy() {
                     getAcademyCourses(true), // Solo activos
                     getAcademyEvents(true)
                 ]);
-                setCourses(coursesData);
-                setEvents(eventsData);
+
+                // Sanitizar arrays para evitar crash (ej: si viene como string desde la BD)
+                const safeParse = (val: any) => {
+                    if (Array.isArray(val)) return val;
+                    if (typeof val === 'string') {
+                        try { const parsed = JSON.parse(val); return Array.isArray(parsed) ? parsed : []; } catch { return []; }
+                    }
+                    return [];
+                };
+
+                const sanitizedCourses = (coursesData || []).map(c => ({
+                    ...c,
+                    topics: safeParse(c.topics),
+                    images: safeParse(c.images)
+                }));
+                
+                const sanitizedEvents = (eventsData || []).map(e => ({
+                    ...e,
+                    images: safeParse(e.images)
+                }));
+
+                setCourses(sanitizedCourses);
+                setEvents(sanitizedEvents);
             } catch (error) {
                 console.error('Error loading academy data:', error);
             } finally {
