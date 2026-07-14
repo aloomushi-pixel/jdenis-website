@@ -46,8 +46,29 @@ export default function Blog() {
                     getNewsPosts(true),
                     getBlogPosts(true)
                 ]);
-                setNewsItems(newsData);
-                setBlogArticles(blogData);
+
+                const safeParse = (val: any) => {
+                    if (Array.isArray(val)) return val;
+                    if (typeof val === 'string') {
+                        try { const parsed = JSON.parse(val); return Array.isArray(parsed) ? parsed : []; } catch { return []; }
+                    }
+                    return [];
+                };
+
+                const safeNews = (newsData || []).map(n => ({
+                    ...n,
+                    categories: safeParse(n.categories),
+                    tags: safeParse(n.tags)
+                }));
+
+                const safeBlog = (blogData || []).map(b => ({
+                    ...b,
+                    categories: safeParse(b.categories),
+                    tags: safeParse(b.tags)
+                }));
+
+                setNewsItems(safeNews);
+                setBlogArticles(safeBlog);
             } catch (error) {
                 console.error('Error loading posts:', error);
             } finally {

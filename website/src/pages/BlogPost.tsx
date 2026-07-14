@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Clock, Share2, BookmarkPlus, Eye, Sparkles, BookOpen, AlertTriangle, CheckCircle, XCircle, FlaskConical, Droplets, Star, Zap, Loader } from 'lucide-react';
-import { supabase, type BlogPost as BlogPostType } from '../lib/supabase';
+import { supabase, type BlogPost as BlogPostType, getBlogPost } from '../lib/supabase';
 import { usePageMeta } from '../hooks/usePageMeta';
 
 // Blog content data
@@ -105,13 +105,7 @@ export default function BlogPost() {
             if (!slug) return;
             try {
                 setLoading(true);
-                const { data, error } = await supabase
-                    .from('blog_posts')
-                    .select('*')
-                    .eq('slug', slug)
-                    .single();
-
-                if (error) throw error;
+                const data = await getBlogPost(slug);
                 setPost(data);
             } catch (err) {
                 console.error('Error fetching blog post:', err);

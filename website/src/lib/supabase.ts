@@ -126,6 +126,13 @@ export async function getProductBySlug(slug: string) {
         .single();
 
     if (error) throw error;
+    if (data) {
+        data.benefits = safeParseArray(data.benefits);
+        data.includes = safeParseArray(data.includes);
+        data.specifications = safeParseArray(data.specifications);
+        data.gallery = safeParseArray(data.gallery);
+        data.related_categories = safeParseArray(data.related_categories);
+    }
     return data;
 }
 
@@ -137,6 +144,13 @@ export async function getProductById(id: string) {
         .single();
 
     if (error) throw error;
+    if (data) {
+        data.benefits = safeParseArray(data.benefits);
+        data.includes = safeParseArray(data.includes);
+        data.specifications = safeParseArray(data.specifications);
+        data.gallery = safeParseArray(data.gallery);
+        data.related_categories = safeParseArray(data.related_categories);
+    }
     return data;
 }
 
@@ -1002,18 +1016,34 @@ export interface BlogPost {
     updated_at: string;
 }
 
+export function safeParseArray(val: any) {
+    if (Array.isArray(val)) return val;
+    if (typeof val === 'string') {
+        try { const parsed = JSON.parse(val); return Array.isArray(parsed) ? parsed : []; } catch { return []; }
+    }
+    return [];
+}
+
 export async function getBlogPosts(publishedOnly = true): Promise<BlogPost[]> {
     let query = supabase.from('blog_posts').select('*').order('published_at', { ascending: false, nullsFirst: false });
     if (publishedOnly) query = query.eq('published', true);
     const { data, error } = await query;
     if (error) throw error;
-    return (data || []) as BlogPost[];
+    return (data || []).map(post => ({
+        ...post,
+        categories: safeParseArray(post.categories),
+        tags: safeParseArray(post.tags)
+    })) as BlogPost[];
 }
 
 export async function getBlogPost(slug: string): Promise<BlogPost> {
     const { data, error } = await supabase.from('blog_posts').select('*').eq('slug', slug).single();
     if (error) throw error;
-    return data as BlogPost;
+    return {
+        ...data,
+        categories: safeParseArray(data.categories),
+        tags: safeParseArray(data.tags)
+    } as BlogPost;
 }
 
 export async function createBlogPost(postData: Omit<BlogPost, 'id' | 'created_at' | 'updated_at'>): Promise<BlogPost> {
@@ -1042,13 +1072,21 @@ export async function getNewsPosts(publishedOnly = true): Promise<BlogPost[]> {
     if (publishedOnly) query = query.eq('published', true);
     const { data, error } = await query;
     if (error) throw error;
-    return (data || []) as BlogPost[];
+    return (data || []).map(post => ({
+        ...post,
+        categories: safeParseArray(post.categories),
+        tags: safeParseArray(post.tags)
+    })) as BlogPost[];
 }
 
 export async function getNewsPost(slug: string): Promise<BlogPost> {
     const { data, error } = await supabase.from('blog_posts').select('*').eq('slug', slug).eq('post_type', 'news').single();
     if (error) throw error;
-    return data as BlogPost;
+    return {
+        ...data,
+        categories: safeParseArray(data.categories),
+        tags: safeParseArray(data.tags)
+    } as BlogPost;
 }
 
 export async function createNewsPost(postData: Omit<BlogPost, 'id' | 'created_at' | 'updated_at' | 'post_type'>): Promise<BlogPost> {
