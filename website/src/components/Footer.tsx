@@ -1,31 +1,8 @@
 import { Link } from 'react-router-dom';
-import NewsletterForm from './NewsletterForm';
 
 export default function Footer() {
     return (
         <footer className="footer-premium relative z-10">
-            {/* Newsletter Integration */}
-            <div className="border-b border-white/5 relative overflow-hidden bg-[#051136]/60">
-                <div className="container-luxury py-6 relative z-10">
-                    <div className="flex flex-col lg:grid lg:grid-cols-4 items-center gap-6 relative z-10">
-                        {/* Col 1: Text */}
-                        <div className="lg:col-span-1 text-center lg:text-left w-full">
-                            <h3 className="text-lg md:text-xl text-white font-serif mb-1 leading-tight">
-                                Contenido Exclusivo
-                            </h3>
-                            <p className="text-white/60 text-xs leading-relaxed">
-                                Únete a nuestra comunidad y recibe promociones directo en tu correo.
-                            </p>
-                        </div>
-                        
-                        {/* Col 2, 3, 4: Form */}
-                        <div className="lg:col-span-3 w-full">
-                            <NewsletterForm />
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             {/* Main Footer */}
             <div className="container-luxury py-16">
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
