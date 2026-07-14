@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Clock, Share2, BookmarkPlus, Eye, Sparkles, BookOpen, AlertTriangle, CheckCircle, XCircle, FlaskConical, Droplets, Star, Zap, Loader } from 'lucide-react';
-import { supabase, type BlogPost as BlogPostType, getBlogPost } from '../lib/supabase';
+import { type BlogPost as BlogPostType, getBlogPost } from '../lib/supabase';
 import { usePageMeta } from '../hooks/usePageMeta';
 
 // Blog content data

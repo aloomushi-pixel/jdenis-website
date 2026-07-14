@@ -1,8 +1,8 @@
-import { useState, useMemo, useEffect, useRef } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { useProducts, type DisplayProduct } from '../../hooks/useProducts';
-import { Search, Plus, ShoppingCart, AlertCircle, FileText, Send, Save, User, Edit3, Check, X } from 'lucide-react';
+import { Search, Plus, ShoppingCart, AlertCircle, FileText, Send, User } from 'lucide-react';
 import { getUsers, createQuotation, type ERPUser } from '../../lib/erp';
 import { useAuthStore } from '../../store/authStore';
 import { supabase } from '../../lib/supabase';
@@ -13,7 +13,7 @@ interface CartItem extends DisplayProduct {
 }
 
 export default function Quoter() {
-  const { products: dbProducts, loading: loadingProducts, saveProduct, saveStatus } = useProducts();
+  const { products: dbProducts, loading: loadingProducts } = useProducts();
   const user = useAuthStore(s => s.user);
 
   const [searchTerm, setSearchTerm] = useState('');

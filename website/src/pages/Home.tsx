@@ -237,11 +237,19 @@ export default function Home() {
                     '@id': 'https://jdenis.store/#organization',
                     'name': 'J. Denis México',
                     'url': 'https://jdenis.store',
+                    'logo': 'https://jdenis.store/logo.png',
                     'foundingDate': '1998',
                     'description': 'Líderes en formación e insumos profesionales para cejas y pestañas en México.',
+                    'contactPoint': {
+                        '@type': 'ContactPoint',
+                        'email': 'contacto@jdenis.store',
+                        'contactType': 'customer support',
+                        'availableLanguage': ['Spanish']
+                    },
                     'sameAs': [
                         'https://www.instagram.com/jdenisoficial',
                         'https://www.facebook.com/jdenisoficial',
+                        'https://www.tiktok.com/@jdenisoficial'
                     ],
                 },
             ],

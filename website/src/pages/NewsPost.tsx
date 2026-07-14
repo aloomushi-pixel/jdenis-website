@@ -2,12 +2,52 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Clock, Newspaper, Loader } from 'lucide-react';
 import { getNewsPost, type BlogPost } from '../lib/supabase';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 export default function NewsPost() {
     const { slug } = useParams<{ slug: string }>();
     const [post, setPost] = useState<BlogPost | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
+
+    usePageMeta({
+        title: post ? `${post.title} | Noticias J. Denis` : 'Noticia | J. Denis México',
+        description: post?.excerpt || 'Lee las últimas noticias y actualizaciones de J. Denis.',
+        canonical: post ? `https://jdenis.store/noticias/${post.slug}` : undefined,
+        image: post?.featured_image || undefined,
+        type: 'article',
+        jsonLd: post ? [
+            {
+                '@context': 'https://schema.org',
+                '@type': 'NewsArticle',
+                'headline': post.title,
+                'image': post.featured_image ? [post.featured_image] : [],
+                'datePublished': post.published_at,
+                'author': {
+                    '@type': 'Organization',
+                    'name': 'J. Denis México',
+                    'url': 'https://jdenis.store'
+                },
+                'publisher': {
+                    '@type': 'Organization',
+                    'name': 'J. Denis México',
+                    'logo': {
+                        '@type': 'ImageObject',
+                        'url': 'https://jdenis.store/logo.png'
+                    }
+                }
+            },
+            {
+                '@context': 'https://schema.org',
+                '@type': 'BreadcrumbList',
+                'itemListElement': [
+                    { '@type': 'ListItem', 'position': 1, 'name': 'Inicio', 'item': 'https://jdenis.store' },
+                    { '@type': 'ListItem', 'position': 2, 'name': 'Noticias', 'item': 'https://jdenis.store/blog' },
+                    { '@type': 'ListItem', 'position': 3, 'name': post.title, 'item': `https://jdenis.store/noticias/${post.slug}` }
+                ]
+            }
+        ] : undefined
+    });
 
     useEffect(() => {
         if (!slug) return;

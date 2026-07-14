@@ -1,7 +1,25 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 export default function About() {
+    usePageMeta({
+        title: 'Nuestra Historia | J. Denis México',
+        description: 'Conoce la historia de J. Denis, fundada en 1998 por la Maestra Gabriela Elizalde. Pioneros en el laminado de cejas y productos profesionales en México.',
+        canonical: 'https://jdenis.store/nosotros',
+        jsonLd: {
+            '@context': 'https://schema.org',
+            '@type': 'AboutPage',
+            'name': 'Nuestra Historia | J. Denis México',
+            'description': 'Historia de J. Denis, pioneros en belleza y cuidado de cejas.',
+            'publisher': {
+                '@type': 'Organization',
+                'name': 'J. Denis México',
+                'logo': 'https://jdenis.store/logo.png'
+            }
+        }
+    });
+
     return (
         <div className="min-h-screen bg-cream">
             {/* Hero */}

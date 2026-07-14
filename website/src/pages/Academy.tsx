@@ -39,6 +39,17 @@ export default function Academy() {
                     { '@type': 'ListItem', position: 2, name: 'Academia', item: 'https://jdenis.store/academia' },
                 ],
             },
+            ...(courses.length > 0 ? courses.map(course => ({
+                '@context': 'https://schema.org',
+                '@type': 'Course',
+                'name': course.title,
+                'description': course.description,
+                'provider': {
+                    '@type': 'EducationOrganization',
+                    'name': 'Academia J. Denis',
+                    'sameAs': 'https://jdenis.store/academia'
+                }
+            })) : [])
         ],
     });
 

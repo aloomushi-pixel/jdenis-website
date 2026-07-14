@@ -126,26 +126,37 @@ export default function Shop() {
         description: 'Compra insumos profesionales para cejas y pestañas: lash lifting, extensiones, pigmentos, adhesivos y herramientas. Calidad de laboratorio, envíos a todo México. J. Denis desde 1998.',
         canonical: 'https://jdenis.store/tienda',
         type: 'website',
-        jsonLd: {
-            '@context': 'https://schema.org',
-            '@type': 'CollectionPage',
-            'name': 'Tienda Profesional J. Denis',
-            'description': 'Catálogo de insumos profesionales para cejas y pestañas con calidad de laboratorio.',
-            'url': 'https://jdenis.store/tienda',
-            'provider': {
-                '@type': 'Organization',
-                'name': 'J. Denis México',
-                'foundingDate': '1998',
-                'url': 'https://jdenis.store',
+        jsonLd: [
+            {
+                '@context': 'https://schema.org',
+                '@type': 'CollectionPage',
+                'name': 'Tienda Profesional J. Denis',
+                'description': 'Catálogo de insumos profesionales para cejas y pestañas con calidad de laboratorio.',
+                'url': 'https://jdenis.store/tienda',
+                'provider': {
+                    '@type': 'Organization',
+                    'name': 'J. Denis México',
+                    'foundingDate': '1998',
+                    'url': 'https://jdenis.store',
+                },
+                'breadcrumb': {
+                    '@type': 'BreadcrumbList',
+                    'itemListElement': [
+                        { '@type': 'ListItem', 'position': 1, 'name': 'Inicio', 'item': 'https://jdenis.store' },
+                        { '@type': 'ListItem', 'position': 2, 'name': 'Tienda', 'item': 'https://jdenis.store/tienda' },
+                    ],
+                },
             },
-            'breadcrumb': {
-                '@type': 'BreadcrumbList',
-                'itemListElement': [
-                    { '@type': 'ListItem', 'position': 1, 'name': 'Inicio', 'item': 'https://jdenis.store' },
-                    { '@type': 'ListItem', 'position': 2, 'name': 'Tienda', 'item': 'https://jdenis.store/tienda' },
-                ],
-            },
-        },
+            ...(groupedProducts.length > 0 ? [{
+                '@context': 'https://schema.org',
+                '@type': 'ItemList',
+                'itemListElement': groupedProducts.slice(0, 30).map((p, i) => ({
+                    '@type': 'ListItem',
+                    'position': i + 1,
+                    'url': `https://jdenis.store/producto/${p.slug || p.id}`
+                }))
+            }] : [])
+        ],
     });
 
     // Calculate max price once when products change (via ref to avoid re-render cascade)
