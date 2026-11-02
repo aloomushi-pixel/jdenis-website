@@ -4,20 +4,52 @@ import { usePageMeta } from '../hooks/usePageMeta';
 
 export default function About() {
     usePageMeta({
-        title: 'Nuestra Historia | J. Denis México',
-        description: 'Conoce la historia de J. Denis, fundada en 1998 por la Maestra Gabriela Elizalde. Pioneros en el laminado de cejas y productos profesionales en México.',
+        title: 'J. Denis Lindavista CDMX | Nuestra Historia, Tienda Oficial y Academia',
+        description: 'Conoce la historia y sede de J. Denis en Lindavista CDMX (Av. Montevideo #136). Fundada en 1998 por la Maestra Gabriela Elizalde, pioneros y fabricantes de laminado de cejas, lash lifting, henna y cosméticos profesionales en México.',
         canonical: 'https://jdenis.store/nosotros',
-        jsonLd: {
-            '@context': 'https://schema.org',
-            '@type': 'AboutPage',
-            'name': 'Nuestra Historia | J. Denis México',
-            'description': 'Historia de J. Denis, pioneros en belleza y cuidado de cejas.',
-            'publisher': {
-                '@type': 'Organization',
-                'name': 'J. Denis México',
-                'logo': 'https://jdenis.store/logo.png'
-            }
-        }
+        jsonLd: [
+            {
+                '@context': 'https://schema.org',
+                '@type': 'AboutPage',
+                name: 'Nuestra Historia y Sede Lindavista | J. Denis México',
+                description: 'Historia de J. Denis, fabricantes mexicanos pioneros en laminado de cejas, lash lifting y productos profesionales con sede en Lindavista CDMX.',
+                publisher: {
+                    '@type': 'Organization',
+                    name: 'J. Denis México',
+                    logo: 'https://jdenis.store/logo-new.jpeg',
+                },
+            },
+            {
+                '@context': 'https://schema.org',
+                '@type': 'HealthAndBeautyBusiness',
+                name: 'J. Denis Lindavista — Tienda Oficial, Fábrica y Academia',
+                image: 'https://jdenis.store/gaby-elizalde-instructora.jpg',
+                url: 'https://jdenis.store/nosotros',
+                telephone: '+52-55-6511-6087',
+                address: {
+                    '@type': 'PostalAddress',
+                    streetAddress: 'Av. Montevideo #136, Col. Lindavista',
+                    addressLocality: 'Gustavo A. Madero, Ciudad de México',
+                    addressRegion: 'CDMX',
+                    postalCode: '07300',
+                    addressCountry: 'MX',
+                },
+                openingHoursSpecification: [
+                    {
+                        '@type': 'OpeningHoursSpecification',
+                        dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+                        opens: '09:00',
+                        closes: '18:00',
+                    },
+                    {
+                        '@type': 'OpeningHoursSpecification',
+                        dayOfWeek: ['Saturday'],
+                        opens: '10:00',
+                        closes: '14:00',
+                    },
+                ],
+            },
+        ],
     });
 
     return (
@@ -173,12 +205,12 @@ export default function About() {
                 <div className="container-luxury">
                     <div className="grid lg:grid-cols-2 gap-12 items-center">
                         <div>
-                            <h2 className="font-serif text-3xl text-forest mb-8">Visítanos</h2>
+                            <h2 className="font-serif text-3xl text-forest mb-8">Visítanos en Lindavista, CDMX</h2>
                             <div className="space-y-4">
                                 <div className="flex items-start gap-4">
                                     <span className="text-2xl">📍</span>
                                     <div>
-                                        <p className="font-medium text-forest">Dirección</p>
+                                        <p className="font-medium text-forest">Dirección (Sede Lindavista)</p>
                                         <p className="text-charcoal/70">
                                             Av. Montevideo #136, Col. Lindavista<br />
                                             Gustavo A. Madero, CDMX 07300

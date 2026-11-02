@@ -6,3 +6,5 @@ dist/
 *.sqlite
 .vscode/
 .idea/
+
+.gsc-credentials.json

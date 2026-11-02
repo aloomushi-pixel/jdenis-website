@@ -42,6 +42,19 @@ export const GENERIC_SYNONYM_MAP: Record<string, string[]> = {
     'limpiador': ['shampoo', 'espuma', 'higiene', 'primer', 'microcepillo'],
     'suero': ['tratamientos', 'hidratante', 'botox', 'queratina', 'reestructurante', 'crecimiento'],
     'serum': ['tratamientos', 'hidratante', 'botox', 'queratina', 'reestructurante'],
+    'activador de henna': ['activador', 'brow henna', 'henna', 'organico', 'cejas', 'pigmento'],
+    'activador organico para cejas': ['activador', 'brow henna', 'henna', 'cejas', 'tintura'],
+    'activador de henna para cejas': ['activador', 'brow henna', 'henna', 'cejas'],
+    'gel ondulante para pestanas': ['jade', 'rizado', 'lash lifting', 'ondulante', 'pestañas', 'lifting'],
+    'gel ondulante': ['jade', 'rizado', 'lash lifting', 'ondulante', 'pestañas'],
+    'curva lc pestanas': ['extensiones', 'curva lc', 'lc', 'pestañas', 'blister', 'fibras'],
+    'curva lc': ['extensiones', 'curva lc', 'pestañas', 'blister'],
+    'castano medio': ['castaño medio', 'chocolate', 'tintura', 'pigmento', 'brow henna', 'cejas'],
+    'godete cristal': ['godete', 'cristal', 'herramientas', 'mezclador', 'henna', 'pigmentos'],
+    'godete': ['godete', 'cristal', 'anillo', 'herramientas'],
+    'botox para pestanas y cejas': ['botox', 'hidratante', 'shot', 'tratamientos', 'queratina', 'cejas', 'pestañas'],
+    'botox': ['botox', 'hidratante', 'reestructurante', 'tratamientos', 'lash lifting'],
+    'adhesivo para pestanas de grupo': ['adhesivos', 'adhesivo', 'grupo', 'punto', 'tira', 'pestañas'],
     'mayoreo': ['kit', 'profesional', 'paquete', 'distribuidor', 'salon', 'estudio'],
     'fabricante': ['j. denis', 'profesional', 'kit', 'cisteamina', 'henna', 'pigmentos'],
 };
@@ -348,6 +361,93 @@ export function getCategorySEO(category: string): CategorySEOInfo {
         ]
     };
 }
+
+export interface ProductGscSeoOverride {
+    metaTitle: string;
+    metaDescription: string;
+    extraFaqs: Array<{ question: string; answer: string }>;
+}
+
+/**
+ * Overrides de Alto CTR basados en datos reales de Google Search Console (sc-domain:jdenis.store)
+ * para las páginas de producto con mayor volumen de impresiones en Página 1 de Google México.
+ */
+export const GSC_PRODUCT_SEO_OVERRIDES: Record<string, ProductGscSeoOverride> = {
+    'laminado-cejas': {
+        metaTitle: 'Kit Laminado de Cejas J. Denis con Cisteamina (30 Aplicaciones) | Tienda Oficial',
+        metaDescription: 'Kit profesional de Laminado y Planchado de Cejas J. Denis con Cisteamina. Rinde hasta 30 servicios, alinea el vello rebelde y nutre sin maltratar. Compra individual o mayoreo directo de fábrica en México.',
+        extraFaqs: [
+            {
+                question: '¿Cuántas aplicaciones rinde el Kit de Laminado de Cejas J. Denis?',
+                answer: 'El Kit de Laminado de Cejas J. Denis rinde hasta 30 aplicaciones profesionales e incluye paso direccionador con cisteamina, fijador neutralizante y reestructurante nutritivo.',
+            },
+            {
+                question: '¿Qué diferencia tiene el Laminado de Cejas J. Denis frente al planchado tradicional?',
+                answer: 'Su fórmula avanzada con Cisteamina moldea y lamina la ceja con un acabado orgánico y brillante sin olor agresivo ni daño en la fibra capilar.',
+            },
+        ],
+    },
+    'jade-rizado-pestanas': {
+        metaTitle: 'Gel Ondulante y Kit Jade para Rizado de Pestañas Profesional | J. Denis México',
+        metaDescription: 'Kit Jade y Gel Ondulante para Rizado Permanente de Pestañas J. Denis. Curvatura definida, segura y de larga duración (6 a 8 semanas). Venta al menudeo y mayoreo directo de fábrica.',
+        extraFaqs: [
+            {
+                question: '¿Cómo funciona el gel ondulante para pestañas de la línea Jade J. Denis?',
+                answer: 'El gel ondulante Jade J. Denis suaviza temporalmente la estructura de la pestaña natural para darle una curvatura uniforme sobre el rulo o pad, fijándose luego con el gel neutralizante.',
+            },
+        ],
+    },
+    'chocolate-pigmento-cejas': {
+        metaTitle: 'Pigmento para Cejas Chocolate / Castaño Medio de Larga Duración | J. Denis',
+        metaDescription: 'Pigmento profesional para cejas tono Chocolate (Castaño Medio) J. Denis. Efecto sombra/rubor natural en piel y vello sin virar a rojo. Venta individual y mayoreo en México.',
+        extraFaqs: [
+            {
+                question: '¿Para qué fototipo se recomienda el pigmento Chocolate / Castaño Medio J. Denis?',
+                answer: 'El tono Chocolate (Castaño Medio) es el más versátil para fototipos latinos de cabello castaño claro a castaño oscuro, logrando un sombreado cálido y natural.',
+            },
+        ],
+    },
+    'tintura-topica-castano-medio': {
+        metaTitle: 'Tintura Tópica Castaño Medio para Cejas (Efecto Sombra y Henna) | J. Denis',
+        metaDescription: 'Tintura tópica para cejas tono Castaño Medio J. Denis. Coloración uniforme en piel y vello con acabado maquillaje empolvado de larga duración. Directo de fábrica en México.',
+        extraFaqs: [
+            {
+                question: '¿Cuánto dura la Tintura Tópica Castaño Medio en las cejas?',
+                answer: 'Permanece en la piel con efecto sombra entre 7 y 10 días y tiñe el vello de la ceja hasta por 4 semanas.',
+            },
+        ],
+    },
+    'activador-henna': {
+        metaTitle: 'Activador de Henna Orgánico para Cejas (Potenciador de Color) | J. Denis México',
+        metaDescription: 'Activador de Henna orgánico para cejas J. Denis. Potencia la fijación, intensidad y duración del pigmento y Brow Henna en piel y vello. Compra directo de fabricante en México.',
+        extraFaqs: [
+            {
+                question: '¿Para qué sirve el Activador de Henna Orgánico para cejas J. Denis?',
+                answer: 'El activador orgánico para cejas J. Denis reemplaza el agua común al mezclar la henna en un godete de cristal, logrando una oxidación controlada que duplica la fijación del tono en piel y vello.',
+            },
+        ],
+    },
+    'botox-pestanas': {
+        metaTitle: 'Botox para Pestañas y Cejas con Queratina, Biotina y Pantenol | J. Denis',
+        metaDescription: 'Tratamiento Botox para pestañas y cejas J. Denis. Hidrata, engrosa y repara la fibra capilar después del Lash Lifting o Laminado de Cejas. Venta individual y mayoreo en México.',
+        extraFaqs: [
+            {
+                question: '¿Cómo se aplica el Botox para pestañas y cejas en el servicio de Lash Lifting?',
+                answer: 'Se aplica después de retirar el paso neutralizante o el tinte, dejándolo actuar de 5 a 10 minutos para sellar la cutícula con vitaminas, queratina y pantenol.',
+            },
+        ],
+    },
+    '21403ce0-8bde-4350-973c-8bbd7fbe7b39': {
+        metaTitle: 'Extensiones de Pestañas Curva LC Profesional por Blíster | J. Denis México',
+        metaDescription: 'Blíster de Extensiones de Pestañas Curva LC J. Denis. Efecto delineado lifting ideal para párpado encapotado y mirada felina (Foxy Eye). Insumos profesionales directo de fábrica.',
+        extraFaqs: [
+            {
+                question: '¿Qué ventaja tiene la Curva LC en extensiones de pestañas?',
+                answer: 'La Curva LC tiene una base recta con elevación pronunciada que supera el pliegue del párpado encapotado y ofrece mayor superficie de contacto con el adhesivo para máxima retención.',
+            },
+        ],
+    },
+};
 
 export function getProductGenericDescriptor(product: { name: string; category: string }): string {
     const nameLower = product.name.toLowerCase();

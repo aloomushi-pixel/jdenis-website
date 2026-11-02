@@ -8,7 +8,7 @@ import { usePageMeta } from '../hooks/usePageMeta';
 import { useProducts, type DisplayProduct } from '../hooks/useProducts';
 import { useVariants } from '../hooks/useVariants';
 import { useCartStore } from '../store/cartStore';
-import { buildOrganizationSchema, getCategorySEO, getProductGenericDescriptor } from '../utils/seoData';
+import { buildOrganizationSchema, getCategorySEO, getProductGenericDescriptor, GSC_PRODUCT_SEO_OVERRIDES } from '../utils/seoData';
 import { trackEvent } from '../utils/telemetry';
 
 interface VariantGroup {
@@ -112,10 +112,14 @@ export default function ProductDetail() {
 
     const genericDescriptor = product ? getProductGenericDescriptor(product) : 'Cosmético Profesional';
     const categorySeo = product ? getCategorySEO(product.category) : getCategorySEO('Todos');
+    const gscOverride = product
+        ? GSC_PRODUCT_SEO_OVERRIDES[product.id] || (product.slug ? GSC_PRODUCT_SEO_OVERRIDES[product.slug] : undefined)
+        : undefined;
 
     const productFaqs = useMemo(() => {
         if (!product) return [];
         return [
+            ...(gscOverride?.extraFaqs || []),
             {
                 question: `¿Para qué sirve ${product.name} de J. Denis?`,
                 answer: product.description || `${product.name} es un insumo cosmético de grado profesional de la línea ${product.category} fabricado en México por J. Denis para especialistas y cuidado personal de cejas y pestañas.`,
@@ -126,15 +130,15 @@ export default function ProductDetail() {
             },
             ...categorySeo.faqs.slice(0, 1),
         ];
-    }, [product, categorySeo.faqs]);
+    }, [product, categorySeo.faqs, gscOverride]);
 
     // Dynamic meta tags + rich structured data (Product, Offer/AggregateOffer, Brand, BreadcrumbList, FAQPage)
     usePageMeta({
         title: product
-            ? `${product.name} | ${genericDescriptor} | J. Denis Cosméticos México`
+            ? gscOverride?.metaTitle || `${product.name} ($${product.price} MXN) | ${genericDescriptor} | J. Denis México`
             : 'Producto Cosmético Profesional | J. Denis México',
         description: product
-            ? `${product.name}: ${(product.description || categorySeo.b2cSummary).slice(0, 115)}. Venta individual y mayoreo directo de fábrica en México con envíos a todo el país.`
+            ? gscOverride?.metaDescription || `${product.name} ($${product.price} MXN): ${(product.description || categorySeo.b2cSummary).slice(0, 110)}. Compra individual o mayoreo directo de fábrica J. Denis con envío a todo México.`
             : 'Producto cosmético profesional de alta calidad fabricado en México por J. Denis desde 1998.',
         image: product?.image || '/hero-products.jpg',
         type: 'product',

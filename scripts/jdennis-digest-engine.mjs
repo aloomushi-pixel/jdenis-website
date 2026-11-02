@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 /**
- * J. DENNIS — Motor de Diagnóstico por Consola (3D Telemetry + Dokploy Sensor)
+ * J. DENIS — Motor de Diagnóstico por Consola (3D Telemetry + Dokploy Sensor + Google Search Console API)
  * Uso: node scripts/jdennis-digest-engine.mjs [--days=7]
  */
 import { execSync } from 'child_process';
+import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
 
@@ -28,6 +29,104 @@ async function fetchSupabase(table, queryParams) {
         throw new Error(`Supabase ${table} error (${res.status}): ${txt}`);
     }
     return res.json();
+}
+
+function base64UrlEncode(strOrBuf) {
+    const buf = Buffer.isBuffer(strOrBuf) ? strOrBuf : Buffer.from(strOrBuf, 'utf8');
+    return buf.toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
+}
+
+async function getGoogleSearchConsoleReport() {
+    const credPath = path.resolve(process.cwd(), '.gsc-credentials.json');
+    if (!fs.existsSync(credPath)) {
+        return { connected: false, error: 'Missing .gsc-credentials.json' };
+    }
+
+    try {
+        const creds = JSON.parse(fs.readFileSync(credPath, 'utf8'));
+        const now = Math.floor(Date.now() / 1000);
+        const header = base64UrlEncode(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
+        const claimSet = base64UrlEncode(
+            JSON.stringify({
+                iss: creds.client_email,
+                scope: 'https://www.googleapis.com/auth/webmasters.readonly',
+                aud: creds.token_uri || 'https://oauth2.googleapis.com/token',
+                exp: now + 3600,
+                iat: now,
+            })
+        );
+        const unsignedJwt = `${header}.${claimSet}`;
+        const signer = crypto.createSign('RSA-SHA256');
+        signer.update(unsignedJwt);
+        signer.end();
+        const signature = base64UrlEncode(signer.sign(creds.private_key));
+        const jwt = `${unsignedJwt}.${signature}`;
+
+        const tokenRes = await fetch(creds.token_uri || 'https://oauth2.googleapis.com/token', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+                grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+                assertion: jwt,
+            }),
+        });
+        if (!tokenRes.ok) {
+            return { connected: false, error: `OAuth token error (${tokenRes.status})` };
+        }
+        const { access_token: token } = await tokenRes.json();
+
+        // 1. List sites in GSC and match jdenis.store
+        const sitesRes = await fetch('https://www.googleapis.com/webmasters/v3/sites', {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        const sitesJson = await sitesRes.json();
+        const allSites = (sitesJson.siteEntry || []).map(s => s.siteUrl);
+        const targetSite =
+            allSites.find(u => u === 'sc-domain:jdenis.store') ||
+            allSites.find(u => u.includes('jdenis.store')) ||
+            null;
+
+        if (!targetSite) {
+            return {
+                connected: true,
+                targetSite: null,
+                allSites,
+                error: 'jdenis.store property not found in this Service Account',
+            };
+        }
+
+        const encodedSite = encodeURIComponent(targetSite);
+        const endDate = new Date().toISOString().slice(0, 10);
+        const startDate = new Date(Date.now() - 28 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+
+        const [queriesRes, pagesRes, sitemapsRes] = await Promise.all([
+            fetch(`https://www.googleapis.com/webmasters/v3/sites/${encodedSite}/searchAnalytics/query`, {
+                method: 'POST',
+                headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ startDate, endDate, dimensions: ['query'], rowLimit: 100 }),
+            }).then(r => (r.ok ? r.json() : { rows: [] })),
+            fetch(`https://www.googleapis.com/webmasters/v3/sites/${encodedSite}/searchAnalytics/query`, {
+                method: 'POST',
+                headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ startDate, endDate, dimensions: ['page'], rowLimit: 50 }),
+            }).then(r => (r.ok ? r.json() : { rows: [] })),
+            fetch(`https://www.googleapis.com/webmasters/v3/sites/${encodedSite}/sitemaps`, {
+                headers: { Authorization: `Bearer ${token}` },
+            }).then(r => (r.ok ? r.json() : { sitemap: [] })),
+        ]);
+
+        return {
+            connected: true,
+            targetSite,
+            startDate,
+            endDate,
+            queries: queriesRes.rows || [],
+            pages: pagesRes.rows || [],
+            sitemaps: sitemapsRes.sitemap || [],
+        };
+    } catch (err) {
+        return { connected: false, error: err.message };
+    }
 }
 
 async function checkDokployVersion() {
@@ -99,10 +198,10 @@ async function checkDokployVersion() {
 
 async function runDigest() {
     console.log('===================================================================');
-    console.log(`📊 J. DENNIS — 3D TELEMETRY & DOKPLOY DIAGNOSTIC ENGINE (Last ${days}d)`);
+    console.log(`📊 J. DENNIS — 3D TELEMETRY, GSC & DOKPLOY ENGINE (Last ${days}d)`);
     console.log('===================================================================\n');
 
-    const [deployStatus, events, orders, quotations] = await Promise.all([
+    const [deployStatus, events, orders, quotations, gscReport] = await Promise.all([
         checkDokployVersion(),
         fetchSupabase('analytics_events', `select=*&created_at=gte.${encodeURIComponent(sinceIso)}&order=created_at.desc&limit=2500`).catch(e => {
             console.error('Warn fetching analytics_events:', e.message);
@@ -110,6 +209,7 @@ async function runDigest() {
         }),
         fetchSupabase('website_orders', `select=id,total,status,payment_status,created_at&created_at=gte.${encodeURIComponent(sinceIso)}`).catch(() => []),
         fetchSupabase('quotations', `select=id,total_amount,status,created_at&created_at=gte.${encodeURIComponent(sinceIso)}`).catch(() => []),
+        getGoogleSearchConsoleReport(),
     ]);
 
     console.log('## 1. DOKPLOY AUTODEPLOY VERIFICATION (/__version.json)');
@@ -168,6 +268,42 @@ async function runDigest() {
     console.log(`- Quote Save Errors:  ${quoteErrors.length}`);
     console.log(`- API Latency/Errors: ${apiLatency.length}`);
     console.log(`- UX Friction Events: ${uxFriction.length}\n`);
+
+    console.log('## 6. GOOGLE SEARCH CONSOLE API (jdenis.store — Last 28d)');
+    if (!gscReport.connected) {
+        console.log(`- Status: ❌ Disconnected (${gscReport.error})\n`);
+    } else if (!gscReport.targetSite) {
+        console.log(`- Status: ⚠️ Connected, but jdenis.store not found in available properties: ${(gscReport.allSites || []).join(', ')}\n`);
+    } else {
+        const totalClicks = gscReport.queries.reduce((a, r) => a + (r.clicks || 0), 0);
+        const totalImpressions = gscReport.queries.reduce((a, r) => a + (r.impressions || 0), 0);
+        console.log(`- Property:           ✅ ${gscReport.targetSite} (${gscReport.startDate} -> ${gscReport.endDate})`);
+        console.log(`- Sitemaps Registered: ${gscReport.sitemaps.length} (${gscReport.sitemaps.map(s => `${s.path} [errors:${s.errors || 0}, warnings:${s.warnings || 0}]`).join(', ') || 'none'})`);
+        console.log(`- Top Queries Sample: ${gscReport.queries.length} queries (${totalClicks} clicks, ${totalImpressions} impressions)`);
+        const byImpressions = [...gscReport.queries].sort((a, b) => (b.impressions || 0) - (a.impressions || 0));
+        for (const q of byImpressions.slice(0, 20)) {
+            console.log(
+                `  • "${q.keys[0]}" -> Impr: ${q.impressions}, Clicks: ${q.clicks}, CTR: ${(q.ctr * 100).toFixed(2)}%, Pos: ${q.position.toFixed(1)}`
+            );
+        }
+        const nonBrandedOrSpecific = byImpressions.filter(q => !/^(j\.?\s*denn?is|jd\s*denis)$/i.test(q.keys[0].trim()));
+        if (nonBrandedOrSpecific.length > 0) {
+            console.log(`- High-Opportunity Specific & Generic Queries (${nonBrandedOrSpecific.length}):`);
+            for (const q of nonBrandedOrSpecific.slice(0, 15)) {
+                console.log(
+                    `  ★ "${q.keys[0]}" -> Impr: ${q.impressions}, Clicks: ${q.clicks}, CTR: ${(q.ctr * 100).toFixed(2)}%, Pos: ${q.position.toFixed(1)}`
+                );
+            }
+        }
+        console.log(`- Top Pages Sample:   ${gscReport.pages.length} pages (sorted by impressions)`);
+        const pagesByImpr = [...gscReport.pages].sort((a, b) => (b.impressions || 0) - (a.impressions || 0));
+        for (const p of pagesByImpr.slice(0, 15)) {
+            console.log(
+                `  • ${p.keys[0]} -> Impr: ${p.impressions}, Clicks: ${p.clicks}, CTR: ${(p.ctr * 100).toFixed(2)}%, Pos: ${p.position.toFixed(1)}`
+            );
+        }
+        console.log('');
+    }
 }
 
 runDigest().catch(err => {
