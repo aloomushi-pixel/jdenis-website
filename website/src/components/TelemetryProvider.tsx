@@ -1,0 +1,320 @@
+import { useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
+import { initCoreWebVitalsTelemetry, isPWAStandalone, trackEvent } from '../utils/telemetry';
+
+interface ClickPoint {
+    x: number;
+    y: number;
+    t: number;
+}
+
+export default function TelemetryProvider() {
+    const location = useLocation();
+    const activeTimeRef = useRef<number>(0);
+    const lastActiveStartRef = useRef<number>(Date.now());
+    const maxScrollRef = useRef<number>(0);
+    const scrollMilestonesRef = useRef<Set<number>>(new Set());
+    const currentPathRef = useRef<string>(location.pathname + location.search);
+    const clicksRef = useRef<ClickPoint[]>([]);
+    const lastModifiedFieldRef = useRef<{ formId: string; fieldName: string; path: string } | null>(null);
+    const formSubmittedRef = useRef<boolean>(false);
+
+    // 1. Initialize Core Web Vitals & PWA session tracking on mount
+    useEffect(() => {
+        initCoreWebVitalsTelemetry();
+
+        if (isPWAStandalone()) {
+            const pwaSessionTracked = sessionStorage.getItem('jdennis_pwa_session_tracked');
+            if (!pwaSessionTracked) {
+                sessionStorage.setItem('jdennis_pwa_session_tracked', '1');
+                trackEvent({
+                    event_name: 'pwa_session_start',
+                    event_category: 'pwa',
+                    metadata: {
+                        display_mode: 'standalone',
+                        user_agent: navigator.userAgent,
+                    },
+                });
+            }
+        }
+    }, []);
+
+    // 2. Track page_view and page_leave (active time + max scroll) on route change
+    useEffect(() => {
+        const newFullPath = location.pathname + location.search;
+        const prevPath = currentPathRef.current;
+
+        // If leaving previous page, emit page_leave + check form_abandon
+        if (prevPath && prevPath !== newFullPath) {
+            if (document.visibilityState === 'visible') {
+                activeTimeRef.current += Date.now() - lastActiveStartRef.current;
+            }
+            if (activeTimeRef.current > 200) {
+                trackEvent({
+                    event_name: 'page_leave',
+                    event_category: 'navigation',
+                    path: prevPath,
+                    duration_ms: activeTimeRef.current,
+                    scroll_pct: maxScrollRef.current,
+                    metadata: {
+                        next_path: newFullPath,
+                    },
+                });
+            }
+
+            if (lastModifiedFieldRef.current && !formSubmittedRef.current) {
+                trackEvent({
+                    event_name: 'form_abandon',
+                    event_category: 'ux_friction',
+                    path: lastModifiedFieldRef.current.path,
+                    element_id: lastModifiedFieldRef.current.formId,
+                    metadata: {
+                        last_field: lastModifiedFieldRef.current.fieldName,
+                        abandoned_on_route_change_to: newFullPath,
+                    },
+                });
+            }
+        }
+
+        // Reset counters for new page
+        currentPathRef.current = newFullPath;
+        activeTimeRef.current = 0;
+        lastActiveStartRef.current = Date.now();
+        maxScrollRef.current = 0;
+        scrollMilestonesRef.current.clear();
+        lastModifiedFieldRef.current = null;
+        formSubmittedRef.current = false;
+
+        // Emit page_view
+        trackEvent({
+            event_name: 'page_view',
+            event_category: 'navigation',
+            path: newFullPath,
+            metadata: {
+                title: document.title,
+            },
+        });
+    }, [location.pathname, location.search]);
+
+    // 3. Visibility change & pagehide for accurate active duration
+    useEffect(() => {
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === 'hidden') {
+                activeTimeRef.current += Date.now() - lastActiveStartRef.current;
+            } else {
+                lastActiveStartRef.current = Date.now();
+            }
+        };
+
+        const handlePageHide = () => {
+            if (document.visibilityState === 'visible') {
+                activeTimeRef.current += Date.now() - lastActiveStartRef.current;
+            }
+            if (activeTimeRef.current > 200) {
+                trackEvent({
+                    event_name: 'page_leave',
+                    event_category: 'navigation',
+                    path: currentPathRef.current,
+                    duration_ms: activeTimeRef.current,
+                    scroll_pct: maxScrollRef.current,
+                });
+            }
+            if (lastModifiedFieldRef.current && !formSubmittedRef.current) {
+                trackEvent({
+                    event_name: 'form_abandon',
+                    event_category: 'ux_friction',
+                    path: lastModifiedFieldRef.current.path,
+                    element_id: lastModifiedFieldRef.current.formId,
+                    metadata: {
+                        last_field: lastModifiedFieldRef.current.fieldName,
+                        abandoned_on_unload: true,
+                    },
+                });
+            }
+        };
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        window.addEventListener('pagehide', handlePageHide);
+        return () => {
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+            window.removeEventListener('pagehide', handlePageHide);
+        };
+    }, []);
+
+    // 4. Scroll Depth Tracking (25%, 50%, 75%, 90%, 100%)
+    useEffect(() => {
+        let ticking = false;
+        const milestones = [25, 50, 75, 90, 100];
+
+        const handleScroll = () => {
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(() => {
+                const scrollTop = window.scrollY || document.documentElement.scrollTop;
+                const docHeight = Math.max(
+                    document.body.scrollHeight,
+                    document.documentElement.scrollHeight
+                ) - window.innerHeight;
+
+                if (docHeight > 100) {
+                    const pct = Math.min(100, Math.round((scrollTop / docHeight) * 100));
+                    if (pct > maxScrollRef.current) {
+                        maxScrollRef.current = pct;
+                    }
+                    for (const m of milestones) {
+                        if (pct >= m && !scrollMilestonesRef.current.has(m)) {
+                            scrollMilestonesRef.current.add(m);
+                            trackEvent({
+                                event_name: 'scroll_depth',
+                                event_category: 'navigation',
+                                scroll_pct: m,
+                                metadata: { milestone: m },
+                            });
+                        }
+                    }
+                }
+                ticking = false;
+            });
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    // 5. Global Click Listener: Rage Clicks, Dead Clicks, WhatsApp Clicks
+    useEffect(() => {
+        const handleClick = (e: MouseEvent) => {
+            const target = e.target as HTMLElement | null;
+            if (!target) return;
+
+            const now = Date.now();
+            const x = e.clientX;
+            const y = e.clientY;
+
+            // Extract readable element metadata
+            const interactiveEl = target.closest('button, a, input, select, [role="button"]') as HTMLElement | null;
+            const el = interactiveEl || target;
+            const tag = el.tagName.toLowerCase();
+            const id = el.id || el.getAttribute('name') || undefined;
+            const text = (el.textContent || el.getAttribute('aria-label') || '').trim().replace(/\s+/g, ' ').slice(0, 100);
+
+            // A) Detect WhatsApp or Wholesale links
+            const anchor = target.closest('a') as HTMLAnchorElement | null;
+            if (anchor && anchor.href) {
+                if (anchor.href.includes('wa.me') || anchor.href.includes('whatsapp.com')) {
+                    trackEvent({
+                        event_name: 'whatsapp_click',
+                        event_category: 'ecommerce',
+                        element_tag: 'a',
+                        element_text: text || 'WhatsApp',
+                        metadata: { href: anchor.href },
+                    });
+                } else if (anchor.href.includes('/registro-distribuidor')) {
+                    trackEvent({
+                        event_name: 'wholesale_inquiry',
+                        event_category: 'ecommerce',
+                        element_tag: 'a',
+                        element_text: text || 'Registro Distribuidor',
+                        metadata: { href: anchor.href },
+                    });
+                }
+            }
+
+            // B) Rage Click Detection: 3+ clicks in < 800ms within 40px radius
+            const recentClicks = clicksRef.current.filter((c) => now - c.t < 800);
+            recentClicks.push({ x, y, t: now });
+            clicksRef.current = recentClicks;
+
+            const nearbyClicks = recentClicks.filter(
+                (c) => Math.hypot(c.x - x, c.y - y) <= 40
+            );
+
+            if (nearbyClicks.length >= 3) {
+                clicksRef.current = []; // reset to avoid duplicate firing
+                const isInternal = window.location.pathname.startsWith('/admin');
+                trackEvent({
+                    event_name: 'rage_click',
+                    event_category: isInternal ? 'operations' : 'ux_friction',
+                    element_tag: tag,
+                    element_id: id,
+                    element_text: text,
+                    metadata: {
+                        clicks_count: nearbyClicks.length,
+                        x,
+                        y,
+                        is_internal_ops: isInternal,
+                    },
+                });
+                return;
+            }
+
+            // C) Dead Click Detection: element looks interactive (cursor-pointer or badge/card title) but has no link/button/input ancestor and no click handler effect
+            if (!interactiveEl && !target.closest('label, summary, details, video, audio')) {
+                const computed = window.getComputedStyle(target);
+                const classStr = typeof target.className === 'string' ? target.className : '';
+                if (
+                    computed.cursor === 'pointer' &&
+                    !classStr.includes('backdrop') &&
+                    !classStr.includes('overlay') &&
+                    text.length > 0 &&
+                    text.length < 60
+                ) {
+                    const urlBefore = window.location.href;
+                    setTimeout(() => {
+                        if (window.location.href === urlBefore) {
+                            trackEvent({
+                                event_name: 'dead_click',
+                                event_category: 'ux_friction',
+                                element_tag: tag,
+                                element_id: id,
+                                element_text: text,
+                                metadata: { cursor: computed.cursor },
+                            });
+                        }
+                    }, 350);
+                }
+            }
+        };
+
+        // Form abandon tracking helpers
+        const handleFocusIn = (e: FocusEvent) => {
+            const target = e.target as HTMLElement | null;
+            if (!target) return;
+            const tag = target.tagName.toLowerCase();
+            if (tag === 'input' || tag === 'textarea' || tag === 'select') {
+                const form = target.closest('form');
+                if (form) {
+                    const fieldName =
+                        target.getAttribute('name') ||
+                        target.getAttribute('placeholder') ||
+                        target.id ||
+                        tag;
+                    // Ignore global search bar
+                    if (fieldName.toLowerCase().includes('buscar')) return;
+                    lastModifiedFieldRef.current = {
+                        formId: form.id || form.getAttribute('name') || 'form',
+                        fieldName,
+                        path: window.location.pathname,
+                    };
+                }
+            }
+        };
+
+        const handleSubmit = () => {
+            formSubmittedRef.current = true;
+            lastModifiedFieldRef.current = null;
+        };
+
+        document.addEventListener('click', handleClick, { passive: true });
+        document.addEventListener('focusin', handleFocusIn, { passive: true });
+        document.addEventListener('submit', handleSubmit, { passive: true });
+
+        return () => {
+            document.removeEventListener('click', handleClick);
+            document.removeEventListener('focusin', handleFocusIn);
+            document.removeEventListener('submit', handleSubmit);
+        };
+    }, []);
+
+    return null;
+}

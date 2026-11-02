@@ -1,11 +1,12 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { useProducts, type DisplayProduct } from '../../hooks/useProducts';
-import { Search, Plus, ShoppingCart, AlertCircle, FileText, Send, User } from 'lucide-react';
+import { Search, Plus, ShoppingCart, AlertCircle, FileText, Send, User, Save } from 'lucide-react';
 import { getUsers, createQuotation, type ERPUser } from '../../lib/erp';
 import { useAuthStore } from '../../store/authStore';
 import { supabase } from '../../lib/supabase';
+import { trackEvent, withOperationalTelemetry } from '../../utils/telemetry';
 
 interface CartItem extends DisplayProduct {
   cartQuantity: number;
@@ -19,7 +20,7 @@ export default function Quoter() {
   const [searchTerm, setSearchTerm] = useState('');
   const [cart, setCart] = useState<CartItem[]>([]);
   const [toast, setToast] = useState<string | null>(null);
-  
+
   const [customers, setCustomers] = useState<ERPUser[]>([]);
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>('');
   const [isSaving, setIsSaving] = useState(false);
@@ -27,21 +28,46 @@ export default function Quoter() {
   const [discountValue, setDiscountValue] = useState<number>(0);
   const [discountType, setDiscountType] = useState<'PERCENTAGE' | 'FIXED'>('PERCENTAGE');
 
+  // Dimension 3: Operational Telemetry state for Quote Flow
+  const quoteFlowStartedAtRef = useRef<number | null>(null);
+  const quoteClicksCountRef = useRef<number>(0);
+  const quoteSearchesCountRef = useRef<number>(0);
 
+  const ensureQuoteFlowStarted = (trigger: string) => {
+    if (quoteFlowStartedAtRef.current === null) {
+      quoteFlowStartedAtRef.current = Date.now();
+      quoteClicksCountRef.current = 1;
+      quoteSearchesCountRef.current = 0;
+      trackEvent('quote_flow_start', 'operations', {
+        trigger,
+        employee_email: user?.email || 'unknown',
+      });
+    }
+  };
 
   useEffect(() => {
     async function loadCustomers() {
       try {
-        const distributors = await getUsers('DISTRIBUIDOR');
+        const distributors = await withOperationalTelemetry('get_distributors_for_quoter', () =>
+          getUsers('DISTRIBUIDOR')
+        );
         setCustomers(distributors);
       } catch (err) {
-        console.error("Error loading distributors:", err);
+        console.error('Error loading distributors:', err);
       }
     }
     loadCustomers();
   }, []);
 
-  // Show ALL products, no distributor price filter
+  // Track internal product searches in Quoter
+  useEffect(() => {
+    if (!searchTerm.trim()) return;
+    const t = setTimeout(() => {
+      quoteSearchesCountRef.current += 1;
+    }, 350);
+    return () => clearTimeout(t);
+  }, [searchTerm]);
+
   const filteredProducts = useMemo(() => {
     return dbProducts.filter(p =>
       p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -56,6 +82,9 @@ export default function Quoter() {
   };
 
   const getStandardPrice = (item: CartItem) => {
+    if (item.distributorPrice != null && item.distributorPrice > 0) {
+      return item.distributorPrice;
+    }
     return item.price;
   };
 
@@ -68,6 +97,7 @@ export default function Quoter() {
   };
 
   const updateItemDiscount = (id: string, discountStr: string) => {
+    quoteClicksCountRef.current += 1;
     const val = parseFloat(discountStr);
     setCart(prev => prev.map(p => {
       if (p.id === id) {
@@ -78,6 +108,9 @@ export default function Quoter() {
   };
 
   const addItemToCart = (product: DisplayProduct, quantity = 1) => {
+    ensureQuoteFlowStarted('add_item');
+    quoteClicksCountRef.current += 1;
+
     setCart(prev => {
       const existing = prev.find(p => p.id === product.id);
       if (existing) {
@@ -86,13 +119,13 @@ export default function Quoter() {
       return [...prev, { ...product, cartQuantity: quantity }];
     });
 
-    // Cross-sell logic
     if (product.category === 'Adhesivos' && !cart.some(p => p.category === 'Accesorios')) {
       showToast('💡 ¡Tip de Venta! Agrega anillos y microbrushes a tu cotización de adhesivos.');
     }
   };
 
   const updateQuantity = (id: string, qty: number) => {
+    quoteClicksCountRef.current += 1;
     if (qty <= 0) {
       setCart(prev => prev.filter(p => p.id !== id));
       return;
@@ -111,23 +144,22 @@ export default function Quoter() {
   }, [cart, discountValue, discountType]);
 
   const addKit = () => {
+    ensureQuoteFlowStarted('quick_kit');
     const p1 = dbProducts.find(p => p.category.toLowerCase().includes('lash lifting') || p.name.toLowerCase().includes('kit'));
     const p2 = dbProducts.find(p => p.category.toLowerCase().includes('adhesivos') || p.name.toLowerCase().includes('adhesivo'));
     const p3 = dbProducts.find(p => p.category.toLowerCase().includes('accesorios') || p.name.toLowerCase().includes('microbrush'));
-    
+
     let added = false;
     if (p1) { addItemToCart(p1, 5); added = true; }
     if (p2) { addItemToCart(p2, 2); added = true; }
     if (p3) { addItemToCart(p3, 2); added = true; }
-    
+
     if (added) {
       showToast('Kit Lash Premium Agregado Exitosamente');
     } else {
       showToast('No se encontraron productos para el kit');
     }
   };
-
-
 
   const getBase64ImageFromUrl = async (imageUrl: string): Promise<string | null> => {
     try {
@@ -139,28 +171,27 @@ export default function Quoter() {
         reader.onerror = reject;
         reader.readAsDataURL(blob);
       });
-    } catch (e) {
+    } catch {
       return null;
     }
   };
 
   const exportPDF = async () => {
     try {
+      quoteClicksCountRef.current += 1;
       showToast('Generando PDF...');
       const doc = new jsPDF();
-      
-      // Load J. Denis Logo
+
       const logoBase64 = await getBase64ImageFromUrl('/logo-new.jpeg');
       if (logoBase64) {
         doc.addImage(logoBase64, 'JPEG', 20, 15, 30, 30);
       }
-      
-      // Document Header
+
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(24);
-      doc.setTextColor(10, 25, 47); // Navy
+      doc.setTextColor(10, 25, 47);
       doc.text('Cotización Ejecutiva', 55, 25);
-      
+
       doc.setFontSize(12);
       doc.setTextColor(100, 100, 100);
       doc.text('Distribuidora J. Denis', 55, 33);
@@ -168,14 +199,12 @@ export default function Quoter() {
       doc.text(`ID Cotización: JD-${Math.floor(1000 + Math.random() * 9000)}`, 55, 45);
       doc.text(`Atendido por: ${user?.fullName || user?.email || 'Administrador'}`, 55, 51);
 
-      // Pre-load all product images to base64
       const cartWithImages = await Promise.all(cart.map(async (item) => {
         const imgSrc = item.image ? item.image : '/logo-new.jpeg';
         const base64 = await getBase64ImageFromUrl(imgSrc);
         return { ...item, base64 };
       }));
-      
-      // AutoTable
+
       autoTable(doc, {
         startY: 55,
         head: [['Img', 'SKU', 'Producto', 'Cant', 'Precio U.', 'Total']],
@@ -217,21 +246,20 @@ export default function Quoter() {
         }
       });
 
-      // Total Footer
-      // @ts-ignore
-      const finalY = doc.lastAutoTable.finalY || 60;
+      const lastTable = (doc as unknown as { lastAutoTable?: { finalY?: number } }).lastAutoTable;
+      const finalY = lastTable?.finalY || 60;
       doc.setFontSize(10);
       doc.setFont('helvetica', 'normal');
       doc.setTextColor(50, 50, 50);
-      
+
       let currentY = finalY + 10;
       doc.text(`Subtotal: $${subtotal.toLocaleString('es-MX', { minimumFractionDigits: 2 })}`, 190, currentY, { align: 'right' });
-      
+
       if (discountAmount > 0) {
         currentY += 6;
         doc.text(`Descuento: -$${discountAmount.toLocaleString('es-MX', { minimumFractionDigits: 2 })}`, 190, currentY, { align: 'right' });
       }
-      
+
       currentY += 6;
       doc.text(`I.V.A. (16%): $${ivaAmount.toLocaleString('es-MX', { minimumFractionDigits: 2 })}`, 190, currentY, { align: 'right' });
 
@@ -240,34 +268,47 @@ export default function Quoter() {
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(212, 175, 55);
       doc.text(`Total Final: $${totalFinal.toLocaleString('es-MX', { minimumFractionDigits: 2 })}`, 190, currentY, { align: 'right' });
-      
+
       doc.setFontSize(10);
       doc.setFont('helvetica', 'normal');
       doc.setTextColor(150, 150, 150);
       doc.text('Gracias por su preferencia.', 105, currentY + 15, { align: 'center' });
       doc.text('jdenis.store', 105, currentY + 20, { align: 'center' });
-      
+
       doc.save('Cotizacion_JDenis.pdf');
       showToast('✅ PDF Generado Exitosamente');
     } catch (e) {
       console.error(e);
-      showToast('❌ Error genarando PDF');
+      showToast('❌ Error generando PDF');
     }
   };
 
   const handleSaveQuotation = async (status: 'DRAFT' | 'SENT') => {
+    quoteClicksCountRef.current += 1;
+    const flowStart = quoteFlowStartedAtRef.current || Date.now();
+
     if (!selectedCustomerId) {
+      trackEvent('quote_save_error', 'operations', {
+        reason: 'missing_customer_id',
+        items_count: cart.length,
+        duration_ms: Date.now() - flowStart,
+      });
       showToast('❌ Por favor selecciona un distribuidor primero');
       return;
     }
     if (cart.length === 0) {
+      trackEvent('quote_save_error', 'operations', {
+        reason: 'empty_cart',
+        customer_id: selectedCustomerId,
+        duration_ms: Date.now() - flowStart,
+      });
       showToast('❌ Agrega productos a la cotización');
       return;
     }
 
     try {
       setIsSaving(true);
-      
+
       const quotationData = {
         customer_id: selectedCustomerId,
         status: status,
@@ -281,8 +322,35 @@ export default function Quoter() {
         unit_price: getPrice(item)
       }));
 
-      const savedQuotation = await createQuotation(quotationData, items);
-      
+      const savedQuotation = await withOperationalTelemetry('save_quotation_to_db', () =>
+        createQuotation(quotationData, items)
+      );
+
+      const durationMs = Date.now() - flowStart;
+      trackEvent(
+        'quote_flow_saved',
+        'operations',
+        {
+          quotation_id: savedQuotation.id,
+          customer_id: selectedCustomerId,
+          status,
+          items_count: cart.length,
+          total_units: cart.reduce((acc, i) => acc + i.cartQuantity, 0),
+          subtotal,
+          discount_amount: discountAmount,
+          total_amount: totalFinal,
+          clicks_count: quoteClicksCountRef.current,
+          searches_count: quoteSearchesCountRef.current,
+          duration_ms: durationMs,
+        },
+        durationMs
+      );
+
+      // Reset flow telemetry counters for next quote
+      quoteFlowStartedAtRef.current = null;
+      quoteClicksCountRef.current = 0;
+      quoteSearchesCountRef.current = 0;
+
       if (status === 'SENT') {
         const selectedCustomer = customers.find(c => c.id === selectedCustomerId);
         if (selectedCustomer && selectedCustomer.email) {
@@ -316,17 +384,34 @@ export default function Quoter() {
             showToast('✉️ Cotización enviada al distribuidor exitosamente');
           }
         } else {
-            showToast('✉️ Cotización guardada exitosamente');
+          showToast('✉️ Cotización guardada exitosamente');
         }
       } else {
         showToast('💾 Borrador guardado exitosamente');
       }
-      
+
       setCart([]);
       setSelectedCustomerId('');
-      
+
     } catch (error) {
-      console.error("Error saving quotation:", error);
+      const durationMs = Date.now() - flowStart;
+      const errMsg = error instanceof Error ? error.message : String(error);
+      console.error('Error saving quotation:', error);
+      trackEvent(
+        'quote_save_error',
+        'operations',
+        {
+          reason: 'exception',
+          error_message: errMsg,
+          customer_id: selectedCustomerId,
+          items_count: cart.length,
+          total_amount: totalFinal,
+          clicks_count: quoteClicksCountRef.current,
+          searches_count: quoteSearchesCountRef.current,
+          duration_ms: durationMs,
+        },
+        durationMs
+      );
       showToast('❌ Ocurrió un error al guardar la cotización');
     } finally {
       setIsSaving(false);
@@ -362,9 +447,9 @@ export default function Quoter() {
         <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col h-[70vh]">
           <div className="relative mb-4">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-            <input 
-              type="text" 
-              placeholder="Buscar por nombre, ID o categoría..." 
+            <input
+              type="text"
+              placeholder="Buscar por nombre, ID o categoría..."
               className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition-all"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -374,7 +459,7 @@ export default function Quoter() {
           <div className="flex items-center justify-between mb-3 px-1">
             <span className="text-xs text-slate-400 font-medium">{filteredProducts.length} productos</span>
           </div>
-          
+
           <div className="flex-1 overflow-y-auto pr-2 space-y-2">
             {loadingProducts ? (
               <div className="text-center py-10 text-slate-400">Cargando productos...</div>
@@ -385,7 +470,7 @@ export default function Quoter() {
                 <div key={p.id} className="flex justify-between items-center p-3 hover:bg-slate-50 rounded-xl border border-transparent hover:border-slate-100 transition-all group">
                   <div className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer" onClick={() => addItemToCart(p, 1)}>
                     {p.image && p.image !== '/placeholder.webp' ? (
-                      <img src={p.image} alt="" className="w-10 h-10 rounded-lg object-cover border border-slate-200 flex-shrink-0" />
+                      <img src={p.image} alt="" width={40} height={40} loading="lazy" className="w-10 h-10 rounded-lg object-cover border border-slate-200 flex-shrink-0" />
                     ) : (
                       <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400 font-medium text-xs border border-slate-200 flex-shrink-0">IMG</div>
                     )}
@@ -395,9 +480,9 @@ export default function Quoter() {
                     </div>
                   </div>
                   <div className="text-right flex-shrink-0 ml-3">
-                    <p className="font-bold text-slate-700 text-sm">${p.price}</p>
-                    <div className="flex items-center justify-end gap-1 mt-0.5">
-                    </div>
+                    <p className="font-bold text-slate-700 text-sm">
+                      ${p.distributorPrice && p.distributorPrice > 0 ? p.distributorPrice : p.price}
+                    </p>
                   </div>
                 </div>
               );
@@ -408,7 +493,7 @@ export default function Quoter() {
         {/* QUOTATION CART */}
         <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col h-[70vh]">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="font-sans text-lg font-medium flex items-center gap-2"><ShoppingCart size={18}/> Cotización Actual</h3>
+            <h3 className="font-sans text-lg font-medium flex items-center gap-2"><ShoppingCart size={18} /> Cotización Actual</h3>
             <span className="bg-amber-100 text-amber-700 text-xs px-2 py-1 rounded-md font-semibold">{cart.length} items</span>
           </div>
 
@@ -418,12 +503,16 @@ export default function Quoter() {
             </label>
             <select
               value={selectedCustomerId}
-              onChange={(e) => setSelectedCustomerId(e.target.value)}
+              onChange={(e) => {
+                ensureQuoteFlowStarted('select_customer');
+                quoteClicksCountRef.current += 1;
+                setSelectedCustomerId(e.target.value);
+              }}
               className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition-all text-sm"
             >
               <option value="">-- Selecciona un distribuidor --</option>
               {customers.map(c => (
-                <option key={c.id} value={c.id}>{(c as any).full_name || c.fullName || c.email}</option>
+                <option key={c.id} value={c.id}>{(c as unknown as { full_name?: string }).full_name || c.fullName || c.email}</option>
               ))}
             </select>
           </div>
@@ -460,24 +549,24 @@ export default function Quoter() {
                       </div>
                       <div className="flex flex-col items-end gap-1.5">
                         <div className="flex items-center gap-2">
-                           {item.itemDiscount ? (
-                             <span className="text-[10px] text-slate-400 line-through">${getStandardPrice(item).toFixed(2)} base</span>
-                           ) : (
-                             <span className="text-[10px] text-slate-500">Base: ${getStandardPrice(item).toFixed(2)}</span>
-                           )}
-                           <div className="flex items-center gap-1 bg-white px-1.5 py-0.5 rounded border border-slate-300 shadow-sm focus-within:border-amber-500 focus-within:ring-1 focus-within:ring-amber-500 transition-all">
-                             <input
-                               type="number"
-                               step="1"
-                               min="0"
-                               max="100"
-                               value={item.itemDiscount !== undefined ? item.itemDiscount : ''}
-                               onChange={(e) => updateItemDiscount(item.id, e.target.value)}
-                               placeholder="0"
-                               className="w-8 text-xs text-right bg-transparent outline-none font-medium text-slate-700"
-                             />
-                             <span className="text-[10px] font-bold text-slate-400">% desc</span>
-                           </div>
+                          {item.itemDiscount ? (
+                            <span className="text-[10px] text-slate-400 line-through">${getStandardPrice(item).toFixed(2)} base</span>
+                          ) : (
+                            <span className="text-[10px] text-slate-500">Base: ${getStandardPrice(item).toFixed(2)}</span>
+                          )}
+                          <div className="flex items-center gap-1 bg-white px-1.5 py-0.5 rounded border border-slate-300 shadow-sm focus-within:border-amber-500 focus-within:ring-1 focus-within:ring-amber-500 transition-all">
+                            <input
+                              type="number"
+                              step="1"
+                              min="0"
+                              max="100"
+                              value={item.itemDiscount !== undefined ? item.itemDiscount : ''}
+                              onChange={(e) => updateItemDiscount(item.id, e.target.value)}
+                              placeholder="0"
+                              className="w-8 text-xs text-right bg-transparent outline-none font-medium text-slate-700"
+                            />
+                            <span className="text-[10px] font-bold text-slate-400">% desc</span>
+                          </div>
                         </div>
                         <p className="text-sm font-semibold text-amber-700">${getPrice(item).toLocaleString('es-MX', { minimumFractionDigits: 2 })} c/u</p>
                       </div>
@@ -498,17 +587,17 @@ export default function Quoter() {
               <div className="flex items-center gap-2">
                 <span>Descuento</span>
                 <div className="flex items-center border border-slate-200 rounded overflow-hidden">
-                  <input 
-                    type="number" 
+                  <input
+                    type="number"
                     min="0"
-                    value={discountValue || ''} 
+                    value={discountValue || ''}
                     onChange={e => setDiscountValue(parseFloat(e.target.value) || 0)}
                     className="w-16 px-2 py-0.5 text-right outline-none"
                     placeholder="0"
                   />
-                  <select 
-                    value={discountType} 
-                    onChange={e => setDiscountType(e.target.value as any)}
+                  <select
+                    value={discountType}
+                    onChange={e => setDiscountType(e.target.value as 'PERCENTAGE' | 'FIXED')}
                     className="bg-slate-50 border-l border-slate-200 px-1 py-0.5 outline-none text-xs"
                   >
                     <option value="PERCENTAGE">%</option>
@@ -528,9 +617,16 @@ export default function Quoter() {
               <span className="text-slate-800 font-semibold">Total Final</span>
               <span className="text-3xl font-sans font-bold text-navy">${totalFinal.toLocaleString('es-MX', { minimumFractionDigits: 2 })}</span>
             </div>
-            
-            <div className="grid grid-cols-1 gap-3">
-              <button 
+
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={() => handleSaveQuotation('DRAFT')}
+                disabled={isSaving || cart.length === 0}
+                className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-3 rounded-xl transition-all flex justify-center items-center gap-2 disabled:opacity-50"
+              >
+                <Save size={18} /> Guardar Borrador
+              </button>
+              <button
                 onClick={() => handleSaveQuotation('SENT')}
                 disabled={isSaving || cart.length === 0}
                 className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 rounded-xl transition-all shadow-md hover:shadow-lg flex justify-center items-center gap-2 disabled:opacity-50"

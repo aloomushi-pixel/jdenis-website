@@ -432,7 +432,7 @@ export async function getInventoryValue() {
 
 export async function getOrders(status?: string) {
     let query = supabase
-        .from('orders_b2b')
+        .from('website_orders')
         .select('*')
         .order('created_at', { ascending: false });
 
@@ -451,7 +451,7 @@ export async function getPendingOrders() {
 
 export async function getOrderById(orderId: string) {
     const { data, error } = await supabase
-        .from('orders_b2b')
+        .from('website_orders')
         .select('*')
         .eq('id', orderId)
         .single();
@@ -480,7 +480,7 @@ export async function getOrderItems(orderId: string) {
 
 export async function updateOrderStatus(orderId: string, status: string) {
     const { data, error } = await supabase
-        .from('orders_b2b')
+        .from('website_orders')
         .update({ status, updated_at: new Date().toISOString() })
         .eq('id', orderId)
         .select()
@@ -492,7 +492,7 @@ export async function updateOrderStatus(orderId: string, status: string) {
 
 export async function createOrder(orderData: Omit<OrderB2B, 'id' | 'created_at' | 'updated_at'>) {
     const { data, error } = await supabase
-        .from('orders_b2b')
+        .from('website_orders')
         .insert(orderData)
         .select()
         .single();
@@ -513,7 +513,7 @@ export interface SalesMetrics {
 
 export async function getSalesMetrics(): Promise<SalesMetrics> {
     const { data, error } = await supabase
-        .from('orders_b2b')
+        .from('website_orders')
         .select('total');
 
     if (error) throw error;
@@ -1482,7 +1482,7 @@ export async function updateProductCatalog(
 
 export async function getShippingQueue(date: string) {
     const { data, error } = await supabase
-        .from('orders_b2b')
+        .from('website_orders')
         .select(`
             *,
             order_items:order_items(id, product_id, product_name, quantity, unit_price, total)
@@ -1497,7 +1497,7 @@ export async function getShippingQueue(date: string) {
 
 export async function getCompletedShipments(date: string) {
     const { data, error } = await supabase
-        .from('orders_b2b')
+        .from('website_orders')
         .select(`
             *,
             order_items:order_items(id, product_id, product_name, quantity, unit_price, total)
@@ -1515,7 +1515,7 @@ export async function updatePackedItems(orderId: string, packedItems: Record<str
     const newStatus = allPacked ? 'processing' : 'confirmed';
 
     const { data, error } = await supabase
-        .from('orders_b2b')
+        .from('website_orders')
         .update({
             packed_items: packedItems,
             status: newStatus,
@@ -1531,7 +1531,7 @@ export async function updatePackedItems(orderId: string, packedItems: Record<str
 
 export async function updateOrderTracking(orderId: string, trackingNumber: string) {
     const { data, error } = await supabase
-        .from('orders_b2b')
+        .from('website_orders')
         .update({
             tracking_number: trackingNumber,
             status: 'shipped',
@@ -1548,7 +1548,7 @@ export async function updateOrderTracking(orderId: string, trackingNumber: strin
 
 export async function queueOrderForShipping(orderId: string, date: string) {
     const { data, error } = await supabase
-        .from('orders_b2b')
+        .from('website_orders')
         .update({
             queued_for_date: date,
             updated_at: new Date().toISOString(),

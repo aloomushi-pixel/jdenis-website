@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useCartStore } from '../store/cartStore';
@@ -6,6 +6,7 @@ import { useAuthStore } from '../store/authStore';
 import { useCartPromotion } from '../hooks/useCartPromotion';
 import CartPromoBanner from '../components/CartPromoBanner';
 import { createMercadoPagoCheckout, supabase } from '../lib/supabase';
+import { trackEvent } from '../utils/telemetry';
 
 export default function Checkout() {
     const { items, appliedCoupon } = useCartStore();
@@ -13,11 +14,11 @@ export default function Checkout() {
     const promotion = useCartPromotion();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const trackedStartRef = useRef(false);
+    const trackedStepsRef = useRef<Set<string>>(new Set());
 
-    // ── Check if applied coupon is still valid
     const isCouponValid = appliedCoupon && promotion.subtotal >= appliedCoupon.min_purchase;
 
-    // ── Coupon discount amount
     const rawCouponDiscount = appliedCoupon
         ? (appliedCoupon.discount_type === 'percentage'
             ? Math.round((promotion.subtotal * appliedCoupon.discount_value) / 100 * 100) / 100
@@ -29,11 +30,7 @@ export default function Checkout() {
     const subtotal = promotion.subtotal;
     const shippingCost = promotion.shippingCost;
     const promoDiscountAmount = promotion.discountAmount;
-    
-    // Total discount is promo + coupon
     const totalDiscountAmount = promoDiscountAmount + couponDiscount;
-    
-    // Adjusted grand total ensures it doesn't go below 0 (shipping might apply)
     const finalTotal = Math.max(0, promotion.grandTotal - couponDiscount);
 
     const [formData, setFormData] = useState({
@@ -48,13 +45,48 @@ export default function Checkout() {
         notes: '',
     });
 
+    // Track checkout_start once
+    useEffect(() => {
+        if (items.length > 0 && !trackedStartRef.current) {
+            trackedStartRef.current = true;
+            trackEvent('checkout_start', 'ecommerce', {
+                items_count: promotion.itemCount,
+                subtotal,
+                final_total: finalTotal,
+                free_shipping: promotion.isFreeShipping,
+            });
+        }
+    }, [items.length, promotion.itemCount, subtotal, finalTotal, promotion.isFreeShipping]);
+
+    // Track checkout_step progression
+    useEffect(() => {
+        if (formData.fullName && formData.email.includes('@') && formData.phone.length >= 8) {
+            if (!trackedStepsRef.current.has('contact_info')) {
+                trackedStepsRef.current.add('contact_info');
+                trackEvent('checkout_step', 'ecommerce', {
+                    step: 1,
+                    step_name: 'contact_info_completed',
+                });
+            }
+        }
+        if (formData.address && formData.city && formData.state && formData.zip.length >= 4) {
+            if (!trackedStepsRef.current.has('shipping_address')) {
+                trackedStepsRef.current.add('shipping_address');
+                trackEvent('checkout_step', 'ecommerce', {
+                    step: 2,
+                    step_name: 'shipping_address_completed',
+                    state: formData.state,
+                });
+            }
+        }
+    }, [formData]);
+
     // Guardado y actualización automática del carrito (para recuperar)
     useEffect(() => {
         if (!formData.email || !formData.email.includes('@') || items.length === 0 || loading) return;
 
         const syncCart = async () => {
             try {
-                // Verificar si ya existe carrito "pending" de este email
                 const { data } = await supabase.from('abandoned_carts')
                     .select('id')
                     .eq('email', formData.email)
@@ -80,7 +112,7 @@ export default function Checkout() {
             }
         };
 
-        const timeoutId = setTimeout(syncCart, 2000); // Debounce de 2 segundos
+        const timeoutId = setTimeout(syncCart, 2000);
         return () => clearTimeout(timeoutId);
     }, [formData.email, formData.fullName, items, loading]);
 
@@ -93,16 +125,29 @@ export default function Checkout() {
         setLoading(true);
         setError(null);
 
+        trackEvent('payment_attempt', 'ecommerce', {
+            items_count: promotion.itemCount,
+            subtotal,
+            shipping_cost: shippingCost,
+            discount: totalDiscountAmount,
+            final_total: finalTotal,
+            coupon_code: isCouponValid && appliedCoupon ? appliedCoupon.code : null,
+            provider: 'mercadopago',
+        });
+
         try {
-            // All payments go through Mercado Pago now
+            const isDistributor = user?.role === 'DISTRIBUIDOR';
             const checkoutData = {
-                items: items.map(item => ({
-                    id: item.id,
-                    name: item.name,
-                    price: item.price,
-                    quantity: item.quantity,
-                    image: item.image,
-                })),
+                items: items.map(item => {
+                    const activePrice = isDistributor && item.distributorPrice ? item.distributorPrice : item.price;
+                    return {
+                        id: item.id,
+                        name: item.name,
+                        price: activePrice,
+                        quantity: item.quantity,
+                        image: item.image,
+                    };
+                }),
                 buyer: {
                     userId: user?.id,
                     fullName: formData.fullName,
@@ -124,22 +169,27 @@ export default function Checkout() {
 
             const result = await createMercadoPagoCheckout(checkoutData);
 
-            // Al crear la orden exitosamente en nuestra plataforma y enviarlo a MPago, 
-            // marcamos el carrito pendiente como completado para ya no recordárselo
             try {
                 await supabase.from('abandoned_carts')
                     .update({ status: 'completed' })
                     .eq('email', formData.email)
                     .eq('status', 'pending');
-            } catch(e) { /* silent fail logging sync issue */ }
+            } catch {
+                // Non-blocking
+            }
 
-            // Redirect to Mercado Pago checkout
             window.location.href = result.checkout_url;
             return;
 
         } catch (err) {
+            const errorMsg = err instanceof Error ? err.message : 'Error al procesar el pago. Intenta de nuevo.';
             console.error('Error processing payment:', err);
-            setError(err instanceof Error ? err.message : 'Error al procesar el pago. Intenta de nuevo.');
+            trackEvent('payment_error', 'ecommerce', {
+                error_message: errorMsg,
+                final_total: finalTotal,
+                items_count: promotion.itemCount,
+            });
+            setError(errorMsg);
             setLoading(false);
         }
     };
@@ -383,6 +433,9 @@ export default function Checkout() {
                                         <img
                                             src={item.image}
                                             alt={item.name}
+                                            width={80}
+                                            height={80}
+                                            loading="lazy"
                                             className="w-20 h-20 rounded-xl object-cover bg-blush shadow-sm"
                                         />
                                         <div className="flex-1 flex flex-col justify-center">
@@ -413,7 +466,6 @@ export default function Checkout() {
                                     <span className="font-medium text-navy">${subtotal.toLocaleString()}</span>
                                 </div>
 
-                                {/* Descuento promo (si aplica) */}
                                 {promoDiscountAmount > 0 && (
                                     <div className="flex justify-between items-center">
                                         <span className="text-emerald-600 font-medium">Descuento ({promotion.discountPercent}%)</span>
@@ -421,7 +473,6 @@ export default function Checkout() {
                                     </div>
                                 )}
 
-                                {/* Descuento Cupón (si aplica) */}
                                 {isCouponValid && appliedCoupon && (
                                     <div className="flex justify-between items-center">
                                         <span className="text-emerald-600 font-medium">
@@ -436,7 +487,6 @@ export default function Checkout() {
                                     </div>
                                 )}
 
-                                {/* Envío */}
                                 <div className="flex justify-between items-center">
                                     <span className="text-charcoal-light">Envío FedEx</span>
                                     {promotion.isFreeShipping ? (

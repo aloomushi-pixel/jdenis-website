@@ -1,25 +1,77 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
+import fs from 'fs';
+import path from 'path';
+import { execSync } from 'child_process';
+
+function getAppVersion() {
+  try {
+    const versionFile = path.resolve(__dirname, 'public/__version.json');
+    if (fs.existsSync(versionFile)) {
+      const parsed = JSON.parse(fs.readFileSync(versionFile, 'utf8'));
+      if (parsed.fullSha && parsed.fullSha !== 'unknown') return parsed.fullSha;
+      if (parsed.commitSha) return parsed.commitSha;
+    }
+  } catch {
+    // ignore
+  }
+  try {
+    return execSync('git rev-parse HEAD', { encoding: 'utf8', stdio: ['pipe', 'pipe', 'ignore'] }).trim();
+  } catch {
+    return new Date().toISOString();
+  }
+}
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react(),
+    {
+      name: 'inject-app-version-meta',
+      transformIndexHtml(html) {
+        const version = getAppVersion();
+        if (html.includes('name="app-version"')) {
+          return html.replace(/<meta name="app-version" content="[^"]*"\s*\/?>/, `<meta name="app-version" content="${version}" />`);
+        }
+        return html.replace('</head>', `  <meta name="app-version" content="${version}" />\n</head>`);
+      }
+    },
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['logo-new.jpeg', 'hero-products.jpg'],
+      includeAssets: ['logo-new.jpeg', 'hero-products.jpg', 'robots.txt', 'llms.txt'],
       workbox: {
-        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024 // 5 MiB
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5 MiB
+        navigateFallbackDenylist: [/^\/__version\.json$/, /^\/sitemap\.xml$/, /^\/robots\.txt$/, /^\/llms\.txt$/],
+        runtimeCaching: [
+          {
+            urlPattern: /\/__version\.json/,
+            handler: 'NetworkOnly',
+          },
+          {
+            urlPattern: /^https:\/\/zdciwzeokkrwcxvsgusc\.supabase\.co\/rest\/v1\/products/,
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'supabase-products-cache',
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 60 * 30, // 30 minutes
+              },
+            },
+          },
+        ],
       },
       manifest: {
-        name: 'J. Denis — Insumos Profesionales',
+        name: 'J. Denis — Fabricante de Cosméticos Profesionales',
         short_name: 'J. Denis',
-        description: 'Tienda profesional de cejas, pestañas e insumos de belleza',
+        description: 'Fabricante nacional de cosméticos profesionales para cejas, pestañas, lash lifting, pigmentos y venta al mayoreo en México.',
         theme_color: '#1a1a2e',
         background_color: '#f8f4ef',
         display: 'standalone',
+        start_url: '/',
+        scope: '/',
         orientation: 'portrait-primary',
+        categories: ['shopping', 'beauty', 'business'],
         icons: [
           {
             src: '/logo-new.jpeg',

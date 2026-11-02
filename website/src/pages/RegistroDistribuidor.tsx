@@ -2,12 +2,46 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import { usePageMeta } from '../hooks/usePageMeta';
+import { buildOrganizationSchema } from '../utils/seoData';
 import { Upload, X, CheckCircle2, ChevronRight, ChevronLeft, Building2, User, FileImage, ClipboardList } from 'lucide-react';
 
 type Step = 1 | 2 | 3 | 4 | 5;
 
 export default function RegistroDistribuidor() {
     const [step, setStep] = useState<Step>(1);
+
+    usePageMeta({
+        title: 'Cosméticos por Mayoreo Directo de Fábrica México | Distribuidores J. Denis',
+        description: 'Conviértete en distribuidor autorizado J. Denis. Compra cosméticos para cejas y pestañas al mayoreo directo de fábrica en México con alta rentabilidad y envíos nacionales.',
+        canonical: 'https://jdenis.store/registro-distribuidor',
+        type: 'website',
+        jsonLd: [
+            buildOrganizationSchema(),
+            {
+                '@context': 'https://schema.org',
+                '@type': 'FAQPage',
+                mainEntity: [
+                    {
+                        '@type': 'Question',
+                        name: '¿Cuáles son los beneficios de ser distribuidor mayorista de J. Denis Cosméticos?',
+                        acceptedAnswer: {
+                            '@type': 'Answer',
+                            text: 'Obtienes precios directos de fábrica mexicana en más de 240 productos para cejas y pestañas, márgenes preferenciales, material publicitario, capacitación certificada STPS y envíos a todo México.'
+                        }
+                    },
+                    {
+                        '@type': 'Question',
+                        name: '¿Qué líneas incluye el catálogo de mayoreo de J. Denis?',
+                        acceptedAnswer: {
+                            '@type': 'Answer',
+                            text: 'Incluye Brow Henna (rubor y sombra para cejas), Pigmentos, Gel Fijador y Planchado de Cejas, Lash Lifting con Cisteamina, Adhesivos, Tratamientos con Queratina, Extensiones y Herramientas.'
+                        }
+                    }
+                ]
+            }
+        ]
+    });
 
     const [formData, setFormData] = useState({
         // Paso 1: Datos Generales

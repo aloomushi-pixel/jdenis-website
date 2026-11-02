@@ -1,0 +1,31 @@
+[
+  {
+    "cycleId": "cycle-001",
+    "timestamp": "2026-11-01T18:30:00.000Z",
+    "commitSha": "initial-6-phase-architecture",
+    "deployVerified": true,
+    "dimension": "full_stack",
+    "finding": "Auditoría Inicial Fase 0-5: Tablas ERP (quotations, quotation_items, sales_orders, sales_order_items) carecían de DEFAULT gen_random_uuid() y políticas RLS; abandoned_carts carecía de constraint UNIQUE(email); getSalesMetrics apuntaba a tabla inexistente orders_b2b; SalesOrders realizaba consultas N+1 al expandir cotizaciones; buscador carecía de mapeo de sinónimos genéricos ('rubor para cejas', 'gel fijador', 'pigmento').",
+    "actionTaken": "1) Migración SQL en Supabase restaurando DEFAULT UUIDs, políticas RLS en 11 tablas y tabla analytics_events con 6 índices. 2) Sensor determinista de deploy Dokploy (/public/__version.json + meta app-version). 3) Motor SEO Genérico No-Marca + GEO (/llms.txt, robots.txt para bots IA, sitemap.xml con categorías y 240 productos, JSON-LD Organization/Product/CollectionPage/FAQPage y diccionario de sinónimos en seoData.ts). 4) Telemetría 3D completa + Centro de Mando de 6 pestañas en AdminDashboard.",
+    "filesModified": [
+      "website/scripts/generate-version.js",
+      "website/scripts/generate-sitemap.js",
+      "website/vite.config.ts",
+      "website/nginx.conf",
+      "website/public/robots.txt",
+      "website/public/llms.txt",
+      "website/src/utils/telemetry.ts",
+      "website/src/utils/seoData.ts",
+      "website/src/components/TelemetryProvider.tsx",
+      "website/src/components/GlobalSearchModal.tsx",
+      "website/src/components/crm/Quoter.tsx",
+      "website/src/components/admin/TelemetryCommandCenter.tsx",
+      "website/src/pages/Shop.tsx",
+      "website/src/pages/ProductDetail.tsx",
+      "website/src/pages/Checkout.tsx",
+      "website/src/pages/admin/SalesOrders.tsx",
+      "website/src/pages/admin/Dashboard.tsx"
+    ],
+    "expectedImpact": "0 errores al guardar cotizaciones B2B y carritos abandonados, 100% de cobertura en búsquedas coloquiales ('rubor para cejas', 'sombra para cejas', 'gel fijador'), indexación GEO para LLMs y observabilidad tridimensional en tiempo real."
+  }
+]

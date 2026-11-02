@@ -26,7 +26,6 @@ export default function ProductCard({ product, index = 0, variantCount = 0 }: Pr
         e.preventDefault();
         e.stopPropagation();
         if (hasVariants) {
-            // Redirect to product detail to select variant
             navigate(`/producto/${product.id}`);
         } else {
             if (isOutOfStock) return;
@@ -43,19 +42,20 @@ export default function ProductCard({ product, index = 0, variantCount = 0 }: Pr
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1, duration: 0.5 }}
+            transition={{ delay: Math.min(index * 0.04, 0.3), duration: 0.4 }}
             className="h-full"
         >
             <Link to={`/producto/${product.id}`} className="product-card block group h-full flex flex-col bg-white rounded-xl border border-gray-100/60 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                 <div className="relative overflow-hidden bg-cream-dark aspect-square">
                     <img
                         src={product.image}
-                        alt={product.name}
+                        alt={`${product.name} - ${product.category} Profesional y Mayoreo J. Denis`}
+                        width={400}
+                        height={400}
                         loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
                     />
-
-                    {/* Image Hover Zoom (Overlay removed per user request) */}
 
                     {/* Quick Add Button - Always visible Mobile, Hover Desktop */}
                     <button
@@ -119,7 +119,7 @@ export default function ProductCard({ product, index = 0, variantCount = 0 }: Pr
                             </p>
                         )}
                     </div>
-                    
+
                     <div className="flex flex-col justify-end mt-auto pt-3 border-t border-gray-100">
                         {isOnSale && (
                             <span className="text-xs sm:text-sm text-red-500/70 line-through mb-0.5 font-semibold">
@@ -134,7 +134,7 @@ export default function ProductCard({ product, index = 0, variantCount = 0 }: Pr
                                 ${product.price.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} <span className="text-[10px] sm:text-xs font-semibold text-gray-400 ml-0.5">MXN</span>
                             </p>
                         </div>
-                        
+
                         {hasVariants && (
                             <div className="flex items-center gap-1.5 text-[10px] sm:text-xs font-medium text-gray-500 bg-gray-50 px-2 py-1.5 rounded-md self-start border border-gray-100">
                                 <span>{variantCount} opciones</span>
@@ -149,4 +149,3 @@ export default function ProductCard({ product, index = 0, variantCount = 0 }: Pr
         </motion.div>
     );
 }
-

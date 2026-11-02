@@ -213,8 +213,8 @@ export default function Home() {
 
     // SEO: meta tags + JSON-LD Website + BreadcrumbList
     usePageMeta({
-        title: 'J. Denis México | Academia y Tienda Profesional de Cejas y Pestañas',
-        description: 'Formación profesional, insumos de laboratorio y técnicas avanzadas para lash lifting, extensiones y microblading. Más de 25 años de experiencia - J. Denis desde 1998.',
+        title: 'J. Denis Cosméticos México | Fabricante de Cejas, Pestañas, Henna y Mayoreo',
+        description: 'Fabricante nacional mexicano de cosméticos para cejas y pestañas: rubor y pigmento para cejas, brow henna, gel fijador y laminado, lash lifting con cisteamina y venta al mayoreo en todo México desde 1998.',
         canonical: 'https://jdenis.store',
         type: 'website',
         jsonLd: {
@@ -252,6 +252,28 @@ export default function Home() {
                         'https://www.tiktok.com/@jdenisoficial'
                     ],
                 },
+                {
+                    '@type': 'FAQPage',
+                    '@id': 'https://jdenis.store/#faq',
+                    'mainEntity': [
+                        {
+                            '@type': 'Question',
+                            'name': '¿Dónde comprar cosméticos para cejas y pestañas por mayoreo directo de fábrica en México?',
+                            'acceptedAnswer': {
+                                '@type': 'Answer',
+                                'text': 'En J. Denis somos fabricantes nacionales en México desde 1998. Ofrecemos venta minorista y precios de mayoreo directo de fábrica en rubor y henna para cejas, pigmentos, gel fijador, planchado de cejas y lash lifting con cisteamina con envíos a todo México.'
+                            }
+                        },
+                        {
+                            '@type': 'Question',
+                            'name': '¿Qué producto da efecto rubor o sombra para cejas de larga duración?',
+                            'acceptedAnswer': {
+                                '@type': 'Answer',
+                                'text': 'La línea Brow Henna y Pigmentos para Cejas J. Denis brinda un sombreado empolvado natural tipo rubor para cejas con fijación de hasta 14 días en piel y 4 semanas en vello.'
+                            }
+                        }
+                    ]
+                }
             ],
         },
     });

@@ -3,12 +3,16 @@ import { persist } from 'zustand/middleware';
 import type { Coupon } from '../lib/supabase';
 import { useAuthStore } from './authStore';
 import { upsertAbandonedCart } from '../lib/supabase';
+import { trackEvent } from '../utils/telemetry';
 
+let syncTimeout: ReturnType<typeof setTimeout> | null = null;
 const syncCartToSupabase = (items: CartItem[]) => {
     const user = useAuthStore.getState().user;
     if (user?.email) {
-        // Debounce or fire and forget
-        upsertAbandonedCart(user.email, user.name, items).catch(console.error);
+        if (syncTimeout) clearTimeout(syncTimeout);
+        syncTimeout = setTimeout(() => {
+            upsertAbandonedCart(user.email, user.name, items).catch(console.error);
+        }, 600);
     }
 };
 
@@ -63,6 +67,13 @@ export const useCartStore = create<CartState>()(
             appliedCoupon: null,
 
             addItem: (product: Product) => {
+                trackEvent('add_to_cart', 'ecommerce', {
+                    id: product.id,
+                    name: product.name,
+                    category: product.category,
+                    price: product.price,
+                    qty: 1,
+                });
                 set((state) => {
                     const existingItem = state.items.find(item => item.id === product.id);
                     if (existingItem) {
@@ -81,6 +92,16 @@ export const useCartStore = create<CartState>()(
             },
 
             removeItem: (productId: string) => {
+                const target = get().items.find(item => item.id === productId);
+                if (target) {
+                    trackEvent('remove_from_cart', 'ecommerce', {
+                        id: target.id,
+                        name: target.name,
+                        category: target.category,
+                        price: target.price,
+                        qty: target.quantity,
+                    });
+                }
                 set((state) => {
                     const newItems = state.items.filter(item => item.id !== productId);
                     syncCartToSupabase(newItems);
@@ -106,8 +127,25 @@ export const useCartStore = create<CartState>()(
                 syncCartToSupabase([]);
                 set({ items: [], appliedCoupon: null });
             },
-            toggleCart: () => set((state) => ({ isOpen: !state.isOpen })),
-            openCart: () => set({ isOpen: true }),
+            toggleCart: () => {
+                const nextOpen = !get().isOpen;
+                if (nextOpen) {
+                    trackEvent('cart_view', 'ecommerce', {
+                        items_count: get().itemCount(),
+                        cart_total: get().total(),
+                    });
+                }
+                set({ isOpen: nextOpen });
+            },
+            openCart: () => {
+                if (!get().isOpen) {
+                    trackEvent('cart_view', 'ecommerce', {
+                        items_count: get().itemCount(),
+                        cart_total: get().total(),
+                    });
+                }
+                set({ isOpen: true });
+            },
             closeCart: () => set({ isOpen: false }),
 
             applyCoupon: (coupon: Coupon) => set({ appliedCoupon: coupon }),
@@ -117,8 +155,8 @@ export const useCartStore = create<CartState>()(
                 const state = get();
                 const user = useAuthStore.getState().user;
                 return state.items.reduce((sum, item) => {
-                    const isWholesale = user?.role === 'DISTRIBUIDOR' && item.quantity >= 12;
-                    const activePrice = isWholesale && item.distributorPrice ? item.distributorPrice : item.price;
+                    const isDistributor = user?.role === 'DISTRIBUIDOR';
+                    const activePrice = isDistributor && item.distributorPrice ? item.distributorPrice : item.price;
                     return sum + activePrice * item.quantity;
                 }, 0);
             },

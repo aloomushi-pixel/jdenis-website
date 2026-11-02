@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { trackEvent } from '../utils/telemetry';
 
 type PWAStatus = 'idle' | 'installable' | 'ios' | 'installed' | 'unsupported';
 
@@ -12,7 +13,6 @@ export function usePWAInstall() {
     const deferredPrompt = useRef<BeforeInstallPromptEvent | null>(null);
 
     useEffect(() => {
-        // Detect iOS Safari (no beforeinstallprompt)
         const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
         const isInStandaloneMode =
             ('standalone' in window.navigator && (window.navigator as { standalone?: boolean }).standalone === true) ||
@@ -24,24 +24,30 @@ export function usePWAInstall() {
         }
 
         if (isIOS) {
-            // Only show on iOS Safari (not Chrome for iOS)
             const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
             if (isSafari) setStatus('ios');
             return;
         }
 
-        // Chrome / Edge / Samsung Browser
         const handler = (e: Event) => {
             e.preventDefault();
             deferredPrompt.current = e as BeforeInstallPromptEvent;
             setStatus('installable');
         };
 
+        const installedHandler = () => {
+            setStatus('installed');
+            trackEvent('pwa_installed', 'pwa', {
+                platform: 'web_beforeinstallprompt',
+            });
+        };
+
         window.addEventListener('beforeinstallprompt', handler);
-        window.addEventListener('appinstalled', () => setStatus('installed'));
+        window.addEventListener('appinstalled', installedHandler);
 
         return () => {
             window.removeEventListener('beforeinstallprompt', handler);
+            window.removeEventListener('appinstalled', installedHandler);
         };
     }, []);
 
@@ -52,6 +58,9 @@ export function usePWAInstall() {
         if (outcome === 'accepted') {
             setStatus('installed');
             deferredPrompt.current = null;
+            trackEvent('pwa_installed', 'pwa', {
+                outcome: 'accepted',
+            });
             return true;
         }
         return false;

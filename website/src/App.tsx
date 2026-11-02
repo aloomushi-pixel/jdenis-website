@@ -5,6 +5,7 @@ import Footer from './components/Footer';
 import Header from './components/Header';
 import GlobalSearchModal from './components/GlobalSearchModal';
 import PWAInstallBanner from './components/PWAInstallBanner';
+import TelemetryProvider from './components/TelemetryProvider';
 import AdminLayout from './components/layouts/AdminLayout';
 import About from './pages/About';
 import Academy from './pages/Academy';
@@ -132,21 +133,22 @@ function App() {
     checkSession();
   }, [checkSession]);
 
-  // Show PWA banner 3 seconds after login — max once per week
+  // Show PWA banner after engagement (3s for logged-in users, 12s for visitors) — max once per week
   useEffect(() => {
-    if (!isAuthenticated) return;
     const lastShown = localStorage.getItem('pwa-prompt-shown');
     const oneWeek = 7 * 24 * 60 * 60 * 1000;
     if (lastShown && Date.now() - Number(lastShown) < oneWeek) return;
+    const delayMs = isAuthenticated ? 3000 : 12000;
     const t = setTimeout(() => {
       setShowPWA(true);
       localStorage.setItem('pwa-prompt-shown', String(Date.now()));
-    }, 3000);
+    }, delayMs);
     return () => clearTimeout(t);
   }, [isAuthenticated]);
 
   return (
     <BrowserRouter>
+      <TelemetryProvider />
       <ScrollToTop />
       <Layout />
       <PWAInstallBanner show={showPWA} />
@@ -155,4 +157,3 @@ function App() {
 }
 
 export default App;
-

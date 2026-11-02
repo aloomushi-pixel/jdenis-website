@@ -1,15 +1,27 @@
+import { useEffect, useRef } from 'react';
 import { usePWAInstall } from '../hooks/usePWAInstall';
+import { trackEvent } from '../utils/telemetry';
 
 interface PWAInstallBannerProps {
-    /** Show the banner — typically set to true after login/register */
+    /** Show the banner — typically set to true after login/register or engagement */
     show: boolean;
 }
 
 export default function PWAInstallBanner({ show }: PWAInstallBannerProps) {
     const { status, install, dismiss } = usePWAInstall();
+    const promptTrackedRef = useRef(false);
 
     // Only show when the parent says so AND we have something to offer
     const visible = show && (status === 'installable' || status === 'ios');
+
+    useEffect(() => {
+        if (visible && !promptTrackedRef.current) {
+            promptTrackedRef.current = true;
+            trackEvent('pwa_prompt_shown', 'pwa', {
+                platform_status: status,
+            });
+        }
+    }, [visible, status]);
 
     const handleInstall = async () => {
         if (status === 'installable') {
@@ -27,12 +39,14 @@ export default function PWAInstallBanner({ show }: PWAInstallBannerProps) {
                     <img
                         src="/logo-new.jpeg"
                         alt="J. Denis"
+                        width={48}
+                        height={48}
                         className="w-12 h-12 rounded-xl object-cover flex-shrink-0"
                     />
                     <div className="flex-1 min-w-0">
-                        <p className="font-bold text-sm leading-tight">J. Denis</p>
+                        <p className="font-bold text-sm leading-tight">J. Denis Cosméticos</p>
                         <p className="text-white/70 text-xs mt-0.5 leading-tight">
-                            Instala la app gratis — acceso rápido sin navegador
+                            Instala la app gratis — pedidos y recompra rápida sin navegador
                         </p>
                     </div>
                     <button

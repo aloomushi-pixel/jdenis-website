@@ -3,34 +3,54 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useCartStore } from '../store/cartStore';
 import { incrementCouponUsage, markCartConverted } from '../lib/supabase';
+import { trackEvent } from '../utils/telemetry';
 
 export default function PaymentResult() {
     const [searchParams] = useSearchParams();
-    const { clearCart, appliedCoupon } = useCartStore();
+    const { clearCart, appliedCoupon, total, itemCount } = useCartStore();
     const hasIncremented = useRef(false);
+    const hasTrackedResult = useRef(false);
 
     const status = searchParams.get('collection_status') || searchParams.get('status') || 'unknown';
     const paymentId = searchParams.get('payment_id') || searchParams.get('collection_id') || '';
     const externalRef = searchParams.get('external_reference') || '';
 
     useEffect(() => {
+        if (!hasTrackedResult.current && status !== 'unknown') {
+            hasTrackedResult.current = true;
+            if (status === 'approved') {
+                trackEvent('purchase_complete', 'ecommerce', {
+                    payment_id: paymentId,
+                    external_reference: externalRef,
+                    status,
+                    cart_total: total(),
+                    items_count: itemCount(),
+                });
+            } else if (status === 'rejected') {
+                trackEvent('payment_error', 'ecommerce', {
+                    payment_id: paymentId,
+                    external_reference: externalRef,
+                    status: 'rejected_by_gateway',
+                });
+            }
+        }
+
         if (status === 'approved') {
             if (appliedCoupon && !hasIncremented.current) {
                 hasIncremented.current = true;
                 incrementCouponUsage(appliedCoupon.id).catch(console.error);
             }
-            
-            // Mark cart as converted before clearing it, so we don't accidentally send abandoned cart emails
+
             import('../store/authStore').then(({ useAuthStore }) => {
                 const user = useAuthStore.getState().user;
                 if (user?.email) {
                     markCartConverted(user.email).catch(console.error);
                 }
             });
-            
+
             clearCart();
         }
-    }, [status, clearCart, appliedCoupon]);
+    }, [status, clearCart, appliedCoupon, paymentId, externalRef, total, itemCount]);
 
     const statusConfig: Record<string, { icon: string; title: string; message: string; color: string }> = {
         approved: {

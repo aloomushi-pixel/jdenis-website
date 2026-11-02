@@ -1,12 +1,14 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import ProductSkeleton from '../components/ProductSkeleton';
 import { useProducts } from '../hooks/useProducts';
 import { useVariants } from '../hooks/useVariants';
 import { usePageMeta } from '../hooks/usePageMeta';
 import { useSearchStore } from '../store/searchStore';
+import { buildOrganizationSchema, getCategorySEO, matchesProductSearch } from '../utils/seoData';
+import { trackEvent } from '../utils/telemetry';
 
 // Category filter definitions (UI constants with SVG icon paths)
 const shopCategories = [
@@ -26,11 +28,9 @@ const shopCategories = [
     { id: 'microblading', name: 'Microblading', icon: 'M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10' },
 ];
 
-// Price boundaries
 const PRICE_MIN = 0;
 const DEFAULT_PRICE_MAX = 5000;
 
-// Sort options
 const sortOptions = [
     { value: 'name', label: 'Nombre A-Z', shortLabel: 'A-Z' },
     { value: 'name-desc', label: 'Nombre Z-A', shortLabel: 'Z-A' },
@@ -41,7 +41,7 @@ const sortOptions = [
 ];
 
 export default function Shop() {
-    const [searchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
     const [activeCategory, setActiveCategory] = useState(searchParams.get('cat') || 'all');
     const [sortBy, setSortBy] = useState('featured');
     const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
@@ -52,7 +52,6 @@ export default function Shop() {
         if (q !== null) setSearchQuery(q);
     }, [searchParams]);
 
-    // Advanced filters
     const [priceRange, setPriceRange] = useState<[number, number]>([PRICE_MIN, DEFAULT_PRICE_MAX]);
     const [showOffersOnly, setShowOffersOnly] = useState(false);
     const [showPricePopover, setShowPricePopover] = useState(false);
@@ -64,20 +63,16 @@ export default function Shop() {
         setShowPricePopover(true);
     };
 
-    // Supabase-backed product data
     const { products, loading } = useProducts();
     const { groups } = useVariants();
 
-    // Group products so we only show one representative per variant group
     const { groupedProducts, variantCounts } = useMemo(() => {
         const counts = new Map<string, number>();
-        const groupFirstProductIds = new Map<string, string>(); // group_id -> representative product_id
-        const productToGroup = new Map<string, any>(); // product_id -> group
+        const groupFirstProductIds = new Map<string, string>();
+        const productToGroup = new Map<string, typeof groups[number]>();
 
         groups.forEach(group => {
             if (group.variants && group.variants.length > 0) {
-                // Determine the representative product for this group
-                // We pick the first one from the loaded variants
                 const firstVariant = group.variants[0];
                 groupFirstProductIds.set(group.id, firstVariant.product_id);
                 counts.set(firstVariant.product_id, group.variants.length);
@@ -90,27 +85,22 @@ export default function Shop() {
 
         const grouped = products.filter(p => {
             const group = productToGroup.get(p.id);
-            if (!group) return true; // Not in any group, show normally
-
-            // If it is in a group, only show it if it's the representative
+            if (!group) return true;
             return groupFirstProductIds.get(group.id) === p.id;
         }).map(p => {
             const group = productToGroup.get(p.id);
             if (group && groupFirstProductIds.get(group.id) === p.id) {
-                // Rename the representative product to the group's base name
                 return { ...p, name: group.name };
             }
             return p;
         });
 
-        // Add a hidden _searchData field to all returned products for deep search
         const enriched = grouped.map(p => {
             let searchStr = `${p.name} ${p.description || ''} ${p.category || ''}`;
             const group = productToGroup.get(p.id);
             if (group && groupFirstProductIds.get(group.id) === p.id) {
-                // Collect names of all variants in this group so their hidden attributes (like 10mm, curva C) become searchable
-                const variantNames = group.variants
-                    .map((v: any) => products.find(prod => prod.id === v.product_id)?.name || '')
+                const variantNames = (group.variants || [])
+                    .map((v) => products.find(prod => prod.id === v.product_id)?.name || '')
                     .join(' ');
                 searchStr += ` ${variantNames}`;
             }
@@ -120,46 +110,14 @@ export default function Shop() {
         return { groupedProducts: enriched, variantCounts: counts };
     }, [products, groups]);
 
-    // ─── SEO: dynamic title, meta description & JSON-LD via usePageMeta ───
-    usePageMeta({
-        title: 'Tienda Profesional de Cejas y Pestañas | Insumos J. Denis México',
-        description: 'Compra insumos profesionales para cejas y pestañas: lash lifting, extensiones, pigmentos, adhesivos y herramientas. Calidad de laboratorio, envíos a todo México. J. Denis desde 1998.',
-        canonical: 'https://jdenis.store/tienda',
-        type: 'website',
-        jsonLd: [
-            {
-                '@context': 'https://schema.org',
-                '@type': 'CollectionPage',
-                'name': 'Tienda Profesional J. Denis',
-                'description': 'Catálogo de insumos profesionales para cejas y pestañas con calidad de laboratorio.',
-                'url': 'https://jdenis.store/tienda',
-                'provider': {
-                    '@type': 'Organization',
-                    'name': 'J. Denis México',
-                    'foundingDate': '1998',
-                    'url': 'https://jdenis.store',
-                },
-                'breadcrumb': {
-                    '@type': 'BreadcrumbList',
-                    'itemListElement': [
-                        { '@type': 'ListItem', 'position': 1, 'name': 'Inicio', 'item': 'https://jdenis.store' },
-                        { '@type': 'ListItem', 'position': 2, 'name': 'Tienda', 'item': 'https://jdenis.store/tienda' },
-                    ],
-                },
-            },
-            ...(groupedProducts.length > 0 ? [{
-                '@context': 'https://schema.org',
-                '@type': 'ItemList',
-                'itemListElement': groupedProducts.slice(0, 30).map((p, i) => ({
-                    '@type': 'ListItem',
-                    'position': i + 1,
-                    'url': `https://jdenis.store/producto/${p.slug || p.id}`
-                }))
-            }] : [])
-        ],
-    });
+    // Active category display name & SEO metadata
+    const activeCategoryObj = useMemo(() => {
+        return shopCategories.find(c => c.id === activeCategory || c.name.toLowerCase() === activeCategory.toLowerCase());
+    }, [activeCategory]);
 
-    // Calculate max price once when products change (via ref to avoid re-render cascade)
+    const activeCategoryName = activeCategoryObj ? activeCategoryObj.name : 'Todos';
+    const categorySeo = useMemo(() => getCategorySEO(activeCategoryName), [activeCategoryName]);
+
     const maxPriceRef = useRef(DEFAULT_PRICE_MAX);
     const computedMax = useMemo(() => {
         if (groupedProducts.length === 0) return DEFAULT_PRICE_MAX;
@@ -176,24 +134,6 @@ export default function Shop() {
         if (cat) setTimeout(() => setActiveCategory(cat), 0);
     }, [searchParams]);
 
-
-    // Featured products
-    const featuredProducts = useMemo(() => {
-        return groupedProducts.filter(p =>
-            p.isFeatured &&
-            (p.stock === null || p.stock === undefined || p.stock > 0)
-        ).slice(0, 40);
-    }, [groupedProducts]);
-
-    // Non-featured products for the catalog section
-    const catalogProducts = useMemo(() => {
-        return groupedProducts.filter(p =>
-            !p.isFeatured &&
-            (p.stock === null || p.stock === undefined || p.stock > 0)
-        );
-    }, [groupedProducts]);
-
-    // Check if any advanced filter is active
     const hasActiveFilters = useMemo(() => {
         return (
             priceRange[0] > PRICE_MIN ||
@@ -210,21 +150,11 @@ export default function Shop() {
         setSearchQuery('');
         setActiveCategory('all');
         setSortBy('name');
+        setSearchParams({});
     };
-
-    const normalizeStr = (str?: string) => {
-        if (!str) return '';
-        return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    };
-
-    // Check if user is actively filtering/searching (to decide layout)
-    const isFiltering = useMemo(() => {
-        return searchQuery.length > 0 || activeCategory !== 'all' || showOffersOnly || priceRange[0] > PRICE_MIN || priceRange[1] < computedMax;
-    }, [searchQuery, activeCategory, showOffersOnly, priceRange, computedMax]);
 
     const filteredProducts = useMemo(() => {
-        // Show all products (featured + non-featured) directly in the catalog
-        let source = groupedProducts;
+        const source = groupedProducts;
         let result = source.filter(p => p.stock === undefined || p.stock === null || p.stock >= 1);
 
         if (activeCategory !== 'all') {
@@ -233,23 +163,27 @@ export default function Shop() {
             result = result.filter(p => p.category === catName || p.category.toLowerCase() === activeCategory.toLowerCase());
         }
 
-        if (searchQuery) {
-            const query = normalizeStr(searchQuery);
+        if (searchQuery.trim()) {
             result = result.filter(p => {
-                const searchableText = (p as any)._searchData || `${p.name} ${p.description || ''} ${p.category || ''}`;
-                return normalizeStr(searchableText).includes(query);
+                const { matches } = matchesProductSearch(
+                    {
+                        name: `${p.name} ${p._searchData || ''}`,
+                        category: p.category,
+                        description: p.description,
+                        benefits: p.benefits,
+                    },
+                    searchQuery
+                );
+                return matches;
             });
         }
 
-        // Price range filter
         result = result.filter(p => p.price >= priceRange[0] && p.price <= priceRange[1]);
 
-        // Offers-only filter
         if (showOffersOnly) {
             result = result.filter(p => p.originalPrice && p.originalPrice > p.price);
         }
 
-        // Sort
         result = [...result].sort((a, b) => {
             if (sortBy === 'featured') {
                 const aFeat = a.isFeatured ? 1 : 0;
@@ -270,12 +204,88 @@ export default function Shop() {
         });
 
         return result;
-    }, [groupedProducts, catalogProducts, isFiltering, activeCategory, sortBy, searchQuery, priceRange, showOffersOnly]);
+    }, [groupedProducts, activeCategory, sortBy, searchQuery, priceRange, showOffersOnly]);
+
+    // Track catalog searches in telemetry
+    useEffect(() => {
+        if (!searchQuery.trim() || loading) return;
+        const t = setTimeout(() => {
+            trackEvent('product_search', 'ecommerce', {
+                query: searchQuery.trim(),
+                results_count: filteredProducts.length,
+                category_filter: activeCategoryName,
+                source: 'shop_catalog',
+            });
+        }, 500);
+        return () => clearTimeout(t);
+    }, [searchQuery, filteredProducts.length, activeCategoryName, loading]);
+
+    // ─── SEO & GEO: dynamic title, meta description & JSON-LD via usePageMeta ───
+    const canonicalUrl = activeCategory !== 'all'
+        ? `https://jdenis.store/tienda?cat=${encodeURIComponent(activeCategory)}`
+        : 'https://jdenis.store/tienda';
+
+    usePageMeta({
+        title: categorySeo.metaTitle,
+        description: categorySeo.metaDescription,
+        canonical: canonicalUrl,
+        type: 'website',
+        jsonLd: [
+            buildOrganizationSchema(),
+            {
+                '@context': 'https://schema.org',
+                '@type': 'CollectionPage',
+                name: categorySeo.h1Title,
+                description: categorySeo.metaDescription,
+                url: canonicalUrl,
+                provider: {
+                    '@type': 'Organization',
+                    name: 'J. Denis Cosméticos',
+                    foundingDate: '1998',
+                    url: 'https://jdenis.store',
+                },
+                breadcrumb: {
+                    '@type': 'BreadcrumbList',
+                    itemListElement: [
+                        { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://jdenis.store' },
+                        { '@type': 'ListItem', position: 2, name: 'Catálogo de Cosméticos', item: 'https://jdenis.store/tienda' },
+                        ...(activeCategory !== 'all'
+                            ? [{ '@type': 'ListItem', position: 3, name: activeCategoryName, item: canonicalUrl }]
+                            : []),
+                    ],
+                },
+            },
+            ...(filteredProducts.length > 0 ? [{
+                '@context': 'https://schema.org',
+                '@type': 'ItemList',
+                name: categorySeo.h1Title,
+                numberOfItems: filteredProducts.length,
+                itemListElement: filteredProducts.slice(0, 30).map((p, i) => ({
+                    '@type': 'ListItem',
+                    position: i + 1,
+                    name: p.name,
+                    url: `https://jdenis.store/producto/${p.slug || p.id}`,
+                })),
+            }] : []),
+            ...(categorySeo.faqs.length > 0 ? [{
+                '@context': 'https://schema.org',
+                '@type': 'FAQPage',
+                mainEntity: categorySeo.faqs.map(faq => ({
+                    '@type': 'Question',
+                    name: faq.question,
+                    acceptedAnswer: {
+                        '@type': 'Answer',
+                        text: faq.answer,
+                    },
+                })),
+            }] : []),
+        ],
+    });
 
     if (loading) {
         return (
             <div className="min-h-screen bg-cream">
-                <div className="container-luxury py-12">
+                <div className="container-luxury py-12 pt-28">
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
                         <ProductSkeleton count={8} />
                     </div>
@@ -284,7 +294,6 @@ export default function Shop() {
         );
     }
 
-    // Active filter chips
     const renderActiveFilterChips = () => {
         const chips: { label: string; onRemove: () => void }[] = [];
 
@@ -346,69 +355,32 @@ export default function Shop() {
 
     return (
         <div className="min-h-screen bg-cream">
-            {/* Espaciado para compensar el header fijo, sin HERO visible según solicitud del usuario */}
             <div className="pt-20 md:pt-28 bg-cream"></div>
 
-            {/* ═══════════════════════════════════════════════════
-                FEATURED PRODUCTS — Oculto temporalmente
-               ═══════════════════════════════════════════════════ */}
-            {false && featuredProducts.length > 0 && !isFiltering && (
-                <section className="py-10 md:py-14 bg-gradient-to-b from-forest/5 via-cream to-cream">
-                    <div className="container-luxury">
-                        {/* Section Header */}
-                        <div className="text-center mb-8 md:mb-10">
-                            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-gold/10 border border-gold/20 rounded-full mb-4">
-                                <span className="text-sm">⭐</span>
-                                <span className="text-xs font-semibold uppercase tracking-[0.15em] text-gold">Selección Profesional</span>
-                            </div>
-                            <h2 className="font-serif text-2xl md:text-3xl lg:text-4xl text-forest mb-2">Nuestros Favoritos</h2>
-                            <p className="text-charcoal/50 text-sm md:text-base max-w-lg mx-auto">Los productos más populares y recomendados por profesionales de la belleza</p>
-                        </div>
-
-                        {/* Featured Products Grid */}
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
-                            {featuredProducts.map((product, index) => (
-                                <ProductCard
-                                    key={product.id}
-                                    product={product}
-                                    index={index}
-                                    variantCount={variantCounts.get(product.id) || 0}
-                                />
-                            ))}
-                        </div>
-
-                        {/* Scroll-to-catalog CTA */}
-                        <div className="text-center mt-10">
-                            <button
-                                onClick={() => {
-                                    const el = document.getElementById('shop-catalog');
-                                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                                }}
-                                className="inline-flex items-center gap-2.5 px-8 py-3.5 bg-white border-2 border-forest/20 text-forest text-sm font-semibold rounded-full hover:border-gold hover:text-gold hover:shadow-lg transition-all duration-300 group"
-                            >
-                                <span>Explorar catálogo completo</span>
-                                <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-y-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" />
-                                </svg>
-                            </button>
-                        </div>
+            {/* ─── Semantic SEO Header (Compact & High-Value for B2C + B2B) ─── */}
+            <header className="container-luxury pt-2 pb-4">
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 border-b border-kraft/20 pb-4">
+                    <div>
+                        <span className="text-[11px] uppercase tracking-widest text-gold font-semibold">
+                            Fabricante Nacional Mexicano · Menudeo y Mayoreo
+                        </span>
+                        <h1 className="font-serif text-xl md:text-2xl lg:text-3xl text-forest mt-0.5">
+                            {categorySeo.h1Title}
+                        </h1>
                     </div>
-                </section>
-            )}
+                    <p className="text-xs md:text-sm text-charcoal/70 max-w-xl">
+                        {categorySeo.b2cSummary}
+                    </p>
+                </div>
+            </header>
 
-            {/* ═══════════════════════════════════════════════════
-                CATALOG SECTION — Full catalog with categories & filters
-               ═══════════════════════════════════════════════════ */}
             <section id="shop-catalog" className="section section-cream py-0 md:py-0 relative">
-                
                 {/* ─── Natively Sticky Shop Bar ─── */}
                 <div className="sticky top-0 z-40 w-full bg-cream/95 backdrop-blur-md pt-4 pb-4 border-b border-gray-200/50 shadow-sm transition-all duration-300">
                     <div className="container-luxury flex flex-col gap-3">
-                        
                         {/* TOP ROW: Categories Carousel */}
                         <div className="relative group w-full flex items-center">
-                            {/* Left Arrow */}
-                            <button 
+                            <button
                                 onClick={() => {
                                     const container = document.getElementById('category-scroll-container');
                                     if (container) container.scrollBy({ left: -250, behavior: 'smooth' });
@@ -420,7 +392,6 @@ export default function Shop() {
                                 </svg>
                             </button>
 
-                            {/* Fade gradient left */}
                             <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-cream to-transparent z-[5] pointer-events-none hidden md:block"></div>
 
                             <div id="category-scroll-container" className="overflow-x-auto scrollbar-hide md:scrollbar-default scroll-smooth w-full px-1 md:px-0">
@@ -441,11 +412,9 @@ export default function Shop() {
                                 </div>
                             </div>
 
-                            {/* Fade gradient right */}
                             <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-cream to-transparent z-[5] pointer-events-none hidden md:block group-hover:from-cream"></div>
 
-                            {/* Right Arrow */}
-                            <button 
+                            <button
                                 onClick={() => {
                                     const container = document.getElementById('category-scroll-container');
                                     if (container) container.scrollBy({ left: 250, behavior: 'smooth' });
@@ -460,9 +429,7 @@ export default function Shop() {
 
                         {/* BOTTOM ROW: Filters & Sort */}
                         <div className="flex flex-nowrap items-center gap-3 overflow-x-auto scrollbar-hide pb-1 w-full md:w-auto md:justify-between">
-                            {/* Left Side: Buttons */}
                             <div className="flex items-center gap-2 flex-nowrap shrink-0">
-                                {/* Search Icon (small) */}
                                 <button
                                     onClick={openSearch}
                                     className="p-2 md:p-2.5 bg-white border border-kraft/30 text-charcoal/70 hover:text-forest hover:border-forest/40 rounded-full transition-all shrink-0 shadow-sm"
@@ -471,7 +438,6 @@ export default function Shop() {
                                     <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
                                 </button>
 
-                                {/* Todo */}
                                 <button
                                     onClick={() => setActiveCategory('all')}
                                     className={`px-4 md:px-5 py-2 md:py-2.5 text-xs md:text-sm rounded-full border transition-all shrink-0 ${activeCategory === 'all'
@@ -482,8 +448,7 @@ export default function Shop() {
                                     <span className="hidden md:inline">Ver Todo</span>
                                     <span className="md:hidden">Todo</span>
                                 </button>
-                                
-                                {/* Ofertas */}
+
                                 <button
                                     onClick={() => setShowOffersOnly(!showOffersOnly)}
                                     className={`px-4 md:px-5 py-2 md:py-2.5 text-xs md:text-sm rounded-full border transition-all flex items-center gap-1.5 shrink-0 ${showOffersOnly
@@ -494,7 +459,6 @@ export default function Shop() {
                                     🔥 <span className="hidden md:inline">Ofertas</span>
                                 </button>
 
-                                {/* Precio */}
                                 <button
                                     onClick={handleOpenPrice}
                                     className={`px-4 md:px-5 py-2 md:py-2.5 text-xs md:text-sm rounded-full border transition-all flex items-center gap-1.5 shrink-0 ${(priceRange[0] > PRICE_MIN || priceRange[1] < computedMax)
@@ -509,7 +473,6 @@ export default function Shop() {
                                 </button>
                             </div>
 
-                            {/* Right Side: Sort */}
                             <div className="relative shrink-0 md:ml-auto">
                                 <select
                                     value={sortBy}
@@ -529,8 +492,6 @@ export default function Shop() {
                 </div>
 
                 <div className="container-luxury mt-8">
-
-                    {/* Active filter chips */}
                     {renderActiveFilterChips()}
 
                     {/* Products Grid */}
@@ -566,11 +527,111 @@ export default function Shop() {
                 </div>
             </section>
 
+            {/* ─── Semantic SEO & GEO Knowledge Block (B2C + B2B Wholesale + FAQs) ─── */}
+            <section className="container-luxury py-12 mt-12 border-t border-kraft/20">
+                <div className="bg-white rounded-3xl p-6 md:p-10 shadow-sm border border-kraft/20">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                        <div className="lg:col-span-7 space-y-4">
+                            <span className="inline-block px-3 py-1 rounded-full bg-gold/10 text-gold text-xs font-semibold uppercase tracking-wider">
+                                Guía Profesional y Venta al Mayoreo
+                            </span>
+                            <h2 className="font-serif text-2xl md:text-3xl text-forest">
+                                {categorySeo.h1Title} — Calidad de Laboratorio Mexicano
+                            </h2>
+                            <p className="text-sm text-charcoal/80 leading-relaxed">
+                                {categorySeo.b2cSummary}
+                            </p>
+                            <div className="p-4 rounded-2xl bg-cream border border-gold/20">
+                                <h3 className="font-semibold text-sm text-forest mb-1">
+                                    🏭 Venta al Mayoreo y Distribuidores en Todo México (B2B)
+                                </h3>
+                                <p className="text-xs text-charcoal/70 leading-relaxed mb-3">
+                                    {categorySeo.b2bWholesalePitch}
+                                </p>
+                                <Link
+                                    to="/registro-distribuidor"
+                                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-forest hover:text-gold transition-colors underline underline-offset-4"
+                                >
+                                    Solicitar lista de precios de mayoreo y distribuidor →
+                                </Link>
+                            </div>
+
+                            <div>
+                                <h3 className="font-semibold text-sm text-forest mb-2">
+                                    Ventajas Clave de la Línea {activeCategoryName} J. Denis
+                                </h3>
+                                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    {categorySeo.keyBenefits.map((benefit, idx) => (
+                                        <li key={idx} className="flex items-start gap-2 text-xs text-charcoal/80">
+                                            <span className="text-gold font-bold">✓</span>
+                                            <span>{benefit}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+
+                            <div className="pt-2">
+                                <p className="text-[11px] text-charcoal/50 uppercase tracking-wider mb-1.5">
+                                    Búsquedas relacionadas en México:
+                                </p>
+                                <div className="flex flex-wrap gap-1.5">
+                                    {categorySeo.genericKeywords.map((kw) => (
+                                        <button
+                                            key={kw}
+                                            type="button"
+                                            onClick={() => {
+                                                setSearchQuery(kw);
+                                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                                            }}
+                                            className="px-2.5 py-1 rounded-full bg-cream text-charcoal/70 hover:text-forest hover:bg-gold/15 text-[11px] transition-colors border border-kraft/20"
+                                        >
+                                            {kw}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="lg:col-span-5 space-y-4">
+                            <div className="p-5 rounded-2xl bg-forest text-white">
+                                <h3 className="font-serif text-lg text-gold mb-2">
+                                    Modo de Uso y Recomendación Técnica
+                                </h3>
+                                <p className="text-xs text-white/85 leading-relaxed">
+                                    {categorySeo.usageTips}
+                                </p>
+                            </div>
+
+                            {categorySeo.faqs.length > 0 && (
+                                <div className="space-y-3">
+                                    <h3 className="font-serif text-lg text-forest">
+                                        Preguntas Frecuentes sobre {activeCategoryName}
+                                    </h3>
+                                    {categorySeo.faqs.map((faq, idx) => (
+                                        <details
+                                            key={idx}
+                                            className="group rounded-xl border border-kraft/25 bg-cream/50 px-4 py-3"
+                                        >
+                                            <summary className="cursor-pointer font-medium text-xs md:text-sm text-forest flex items-center justify-between gap-2">
+                                                <span>{faq.question}</span>
+                                                <span className="text-gold group-open:rotate-180 transition-transform">▼</span>
+                                            </summary>
+                                            <p className="mt-2 text-xs text-charcoal/75 leading-relaxed">
+                                                {faq.answer}
+                                            </p>
+                                        </details>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             {/* Price Filter Modal/Bottom Sheet */}
             <AnimatePresence>
                 {showPricePopover && (
                     <>
-                        {/* Backdrop */}
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
@@ -578,7 +639,6 @@ export default function Shop() {
                             onClick={() => setShowPricePopover(false)}
                             className="fixed inset-0 bg-charcoal/40 backdrop-blur-sm z-[100]"
                         />
-                        {/* Modal */}
                         <motion.div
                             initial={window.innerWidth >= 768 ? { opacity: 0, y: -10 } : { opacity: 0, y: '100%' }}
                             animate={{ opacity: 1, y: 0 }}
@@ -594,28 +654,28 @@ export default function Shop() {
                                     </svg>
                                 </button>
                             </div>
-                            
+
                             <div className="mb-4">
                                 <span className="text-sm font-medium text-charcoal/70">Precio Máximo:</span>
                                 <span className="text-3xl font-semibold text-gold block mt-1">${priceRange[1].toLocaleString()} <span className="text-sm text-charcoal/40 font-medium">MXN</span></span>
                             </div>
-                            
-                            <input 
-                                type="range" 
-                                min={PRICE_MIN} 
-                                max={computedMax} 
-                                value={priceRange[1]} 
+
+                            <input
+                                type="range"
+                                min={PRICE_MIN}
+                                max={computedMax}
+                                value={priceRange[1]}
                                 onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
                                 className="w-full accent-gold h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer mt-4"
                             />
-                            
+
                             <div className="flex justify-between text-xs text-charcoal/40 mt-3 font-medium">
                                 <span>${PRICE_MIN}</span>
                                 <span>${computedMax.toLocaleString()}</span>
                             </div>
 
                             <div className="mt-8">
-                                <button 
+                                <button
                                     onClick={() => setShowPricePopover(false)}
                                     className="w-full py-3.5 bg-forest text-white rounded-xl font-medium hover:bg-forest-light transition-colors shadow-lg shadow-forest/20"
                                 >
@@ -626,7 +686,6 @@ export default function Shop() {
                     </>
                 )}
             </AnimatePresence>
-
         </div>
     );
 }

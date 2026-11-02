@@ -15,6 +15,15 @@ const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsI
 const supabase = createClient(supabaseUrl, supabaseKey);
 const BASE_URL = 'https://jdenis.store';
 
+function escapeXml(str) {
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&apos;');
+}
+
 async function generateSitemap() {
     console.log('Generating sitemap...');
     const sitemapLines = [];
@@ -22,31 +31,55 @@ async function generateSitemap() {
     sitemapLines.push('<?xml version="1.0" encoding="UTF-8"?>');
     sitemapLines.push('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">');
 
-    const addUrl = (loc, lastmod, priority) => {
+    const addUrl = (loc, lastmod, priority, changefreq = 'weekly') => {
         sitemapLines.push('  <url>');
-        sitemapLines.push(`    <loc>${BASE_URL}${loc}</loc>`);
+        sitemapLines.push(`    <loc>${escapeXml(`${BASE_URL}${loc}`)}</loc>`);
         if (lastmod) sitemapLines.push(`    <lastmod>${lastmod.split('T')[0]}</lastmod>`);
+        if (changefreq) sitemapLines.push(`    <changefreq>${changefreq}</changefreq>`);
         if (priority) sitemapLines.push(`    <priority>${priority}</priority>`);
         sitemapLines.push('  </url>');
     };
 
-    // Static pages
     const today = new Date().toISOString();
-    addUrl('/', today, '1.0');
-    addUrl('/tienda', today, '0.9');
-    addUrl('/academia', today, '0.8');
-    addUrl('/blog', today, '0.8');
-    addUrl('/nosotros', today, '0.8');
-    addUrl('/contacto', today, '0.7');
 
-    // Products
+    // Core Public Pages
+    addUrl('/', today, '1.0', 'daily');
+    addUrl('/tienda', today, '0.95', 'daily');
+    addUrl('/registro-distribuidor', today, '0.9', 'weekly');
+    addUrl('/academia', today, '0.85', 'weekly');
+    addUrl('/blog', today, '0.85', 'daily');
+    addUrl('/nosotros', today, '0.8', 'monthly');
+    addUrl('/solicitar-factura', today, '0.6', 'monthly');
+    addUrl('/aviso-de-privacidad', today, '0.4', 'yearly');
+
+    // Category Landing Views (B2C + B2B Wholesale SEO)
+    const categoryIds = [
+        'brow-henna',
+        'cejas',
+        'pigmentos',
+        'lash-lifting',
+        'lash-curling',
+        'extensiones',
+        'adhesivos',
+        'tratamientos',
+        'herramientas',
+        'accesorios',
+        'higiene',
+        'pestanas-en-tira',
+        'microblading'
+    ];
+    for (const catId of categoryIds) {
+        addUrl(`/tienda?cat=${catId}`, today, '0.88', 'daily');
+    }
+
+    // Active Products
     const { data: products, error: pError } = await supabase
         .from('products')
         .select('id, updated_at')
         .eq('is_active', true);
-    
+
     if (!pError && products) {
-        products.forEach(p => addUrl(`/producto/${p.id}`, p.updated_at || today, '0.9'));
+        products.forEach(p => addUrl(`/producto/${encodeURIComponent(p.id)}`, p.updated_at || today, '0.9', 'weekly'));
     }
 
     // Blog & News Posts
@@ -58,7 +91,7 @@ async function generateSitemap() {
     if (!bError && posts) {
         posts.forEach(p => {
             const prefix = p.post_type === 'news' ? '/noticias' : '/blog';
-            addUrl(`${prefix}/${p.slug}`, p.updated_at || today, '0.8');
+            addUrl(`${prefix}/${encodeURIComponent(p.slug)}`, p.updated_at || today, '0.8', 'weekly');
         });
     }
 
@@ -66,7 +99,7 @@ async function generateSitemap() {
 
     const sitemapContent = sitemapLines.join('\n');
     fs.writeFileSync(path.resolve(__dirname, '../public/sitemap.xml'), sitemapContent);
-    console.log('Sitemap successfully generated at public/sitemap.xml');
+    console.log(`Sitemap successfully generated at public/sitemap.xml (${(products || []).length} products, ${(posts || []).length} posts)`);
 }
 
 generateSitemap().catch(console.error);

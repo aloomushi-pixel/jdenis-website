@@ -1,5 +1,49 @@
+# J. Denis Cosméticos México — robots.txt (SEO + GEO AI Crawlers Enabled)
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /mi-cuenta
+Disallow: /checkout
+Disallow: /pago-resultado
+Disallow: /restablecer-contrasena
 
-# Sitemap
+# Traditional Search Engines
+User-agent: Googlebot
+Allow: /
+Disallow: /admin
+
+User-agent: Bingbot
+Allow: /
+Disallow: /admin
+
+# Generative AI & Answer Engine Crawlers (GEO)
+User-agent: GPTBot
+Allow: /
+Disallow: /admin
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /admin
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /admin
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /admin
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /admin
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /admin
+
+User-agent: Applebot-Extended
+Allow: /
+Disallow: /admin
+
 Sitemap: https://jdenis.store/sitemap.xml

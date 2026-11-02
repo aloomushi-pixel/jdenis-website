@@ -4,6 +4,7 @@ import { FileText, Calculator, ChevronDown, Clock, CheckCircle, XCircle, Send, S
 import Quoter from '../../components/crm/Quoter';
 import { getQuotations, getQuotationItems, updateQuotationStatus, type Quotation, type QuotationItem } from '../../lib/erp';
 import { supabase } from '../../lib/supabase';
+import { trackEvent, withOperationalTelemetry } from '../../utils/telemetry';
 
 type Tab = 'quoter' | 'manage';
 
@@ -28,7 +29,7 @@ export default function SalesOrders() {
   const [quotations, setQuotations] = useState<Quotation[]>([]);
   const [loading, setLoading] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [itemsCache, setItemsCache] = useState<Record<string, (QuotationItem & { product_name?: string; product_image?: string })[]>>({});
+  const [itemsCache, setItemsCache] = useState<Record<string, (QuotationItem & { product_name?: string; product_image?: string | null })[]>>({});
   const [filterStatus, setFilterStatus] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [updatingId, setUpdatingId] = useState<string | null>(null);
@@ -36,9 +37,9 @@ export default function SalesOrders() {
   const loadQuotations = useCallback(async () => {
     setLoading(true);
     try {
-      const filters: any = {};
-      if (filterStatus) filters.status = filterStatus;
-      const data = await getQuotations(filters);
+      const filters: { status?: Quotation['status'] } = {};
+      if (filterStatus) filters.status = filterStatus as Quotation['status'];
+      const data = await withOperationalTelemetry('get_quotations', () => getQuotations(filters));
       setQuotations(data || []);
     } catch (e) {
       console.error('Error loading quotations:', e);
@@ -51,45 +52,62 @@ export default function SalesOrders() {
     if (activeTab === 'manage') loadQuotations();
   }, [activeTab, loadQuotations]);
 
+  // Fixed N+1 query: getQuotationItems already batch-enriches product_name and product_image
   const handleExpand = async (id: string) => {
     if (expandedId === id) { setExpandedId(null); return; }
     setExpandedId(id);
     if (!itemsCache[id]) {
       try {
-        const items = await getQuotationItems(id);
-        // Enrich with product names
-        const enriched = await Promise.all(items.map(async (item) => {
-          const { data: prod } = await supabase.from('products').select('name, image_url').eq('id', item.resource_id).single();
-          return { ...item, product_name: prod?.name || item.resource_id, product_image: prod?.image_url || null };
-        }));
-        setItemsCache(prev => ({ ...prev, [id]: enriched }));
-      } catch (e) { console.error(e); }
+        const items = await withOperationalTelemetry('get_quotation_items', () => getQuotationItems(id));
+        setItemsCache(prev => ({ ...prev, [id]: items }));
+      } catch (e) {
+        console.error(e);
+      }
     }
   };
 
   const handleStatusChange = async (id: string, status: string) => {
+    const startMs = Date.now();
     setUpdatingId(id);
     try {
-      await updateQuotationStatus(id, status as any);
-      setQuotations(prev => prev.map(q => q.id === id ? { ...q, status: status as any } : q));
-    } catch (e) { console.error(e); }
-    finally { setUpdatingId(null); }
+      await withOperationalTelemetry('update_quotation_status', () =>
+        updateQuotationStatus(id, status as Quotation['status'])
+      );
+      const durationMs = Date.now() - startMs;
+      setQuotations(prev => prev.map(q => q.id === id ? { ...q, status: status as Quotation['status'] } : q));
+      trackEvent(
+        'order_flow_saved',
+        'operations',
+        {
+          quotation_id: id,
+          new_status: status,
+          duration_ms: durationMs,
+        },
+        durationMs
+      );
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setUpdatingId(null);
+    }
   };
 
-  // Enrich quotations with customer names
+  // Enrich quotations with customer names in a single batch query
   const [customerNames, setCustomerNames] = useState<Record<string, string>>({});
   useEffect(() => {
-    const ids = quotations.map(q => q.customer_id).filter(id => !customerNames[id]);
+    const ids = quotations.map(q => q.customer_id).filter(id => id && !customerNames[id]);
     if (ids.length === 0) return;
     const unique = [...new Set(ids)];
     supabase.from('users').select('id, fullName, email').in('id', unique).then(({ data }) => {
       if (data) {
         const map: Record<string, string> = {};
-        data.forEach((u: any) => { map[u.id] = u.fullName || u.email; });
+        data.forEach((u: { id: string; fullName?: string; email?: string }) => {
+          map[u.id] = u.fullName || u.email || u.id;
+        });
         setCustomerNames(prev => ({ ...prev, ...map }));
       }
     });
-  }, [quotations]);
+  }, [quotations, customerNames]);
 
   const filtered = quotations.filter(q => {
     if (searchTerm) {
@@ -240,12 +258,12 @@ export default function SalesOrders() {
                                     {items.map((item, i) => (
                                       <li key={item.id || i} className="p-4 flex items-center gap-4 hover:bg-gray-50/50">
                                         {item.product_image ? (
-                                          <img src={item.product_image} alt="" className="w-12 h-12 rounded-lg object-cover border border-gray-100" />
+                                          <img src={item.product_image} alt="" width={48} height={48} loading="lazy" className="w-12 h-12 rounded-lg object-cover border border-gray-100" />
                                         ) : (
                                           <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-xs">IMG</div>
                                         )}
                                         <div className="flex-1 min-w-0">
-                                          <p className="text-sm font-medium text-gray-900 truncate">{item.product_name}</p>
+                                          <p className="text-sm font-medium text-gray-900 truncate">{item.product_name || item.resource_id}</p>
                                           <p className="text-sm text-gray-500">Cant: <span className="font-medium text-gray-700">{item.quantity}</span> × {fmtMoney(item.unit_price)}</p>
                                         </div>
                                         <div className="text-sm font-bold text-gray-900">{fmtMoney(item.unit_price * item.quantity)}</div>
@@ -258,10 +276,10 @@ export default function SalesOrders() {
                                   </div>
                                 </div>
                               )}
-                              
+
                               {q.status === 'DRAFT' && (
                                 <div className="mt-4 flex justify-end">
-                                  <button 
+                                  <button
                                     onClick={() => handleStatusChange(q.id, 'SENT')}
                                     disabled={updatingId === q.id}
                                     className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 px-6 rounded-xl transition-colors flex items-center gap-2 shadow-md hover:shadow-lg disabled:opacity-50"
