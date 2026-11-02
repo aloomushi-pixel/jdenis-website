@@ -42,9 +42,14 @@ async function generateSitemap() {
 
     const today = new Date().toISOString();
 
-    // Core Public Pages
+    // Core Public Pages & Dedicated SEO Category Hubs
     addUrl('/', today, '1.0', 'daily');
     addUrl('/tienda', today, '0.95', 'daily');
+    addUrl('/cejas', today, '0.95', 'daily');
+    addUrl('/pestanas', today, '0.95', 'daily');
+    addUrl('/laminado-de-cejas', today, '0.95', 'daily');
+    addUrl('/lash-lifting', today, '0.95', 'daily');
+    addUrl('/henna-y-pigmentos', today, '0.95', 'daily');
     addUrl('/registro-distribuidor', today, '0.9', 'weekly');
     addUrl('/academia', today, '0.85', 'weekly');
     addUrl('/blog', today, '0.85', 'daily');
@@ -72,14 +77,20 @@ async function generateSitemap() {
         addUrl(`/tienda?cat=${catId}`, today, '0.88', 'daily');
     }
 
-    // Active Products
+    // Active Products (using canonical semantic slug)
     const { data: products, error: pError } = await supabase
         .from('products')
-        .select('id, updated_at')
+        .select('id, slug, updated_at')
         .eq('is_active', true);
 
     if (!pError && products) {
-        products.forEach(p => addUrl(`/producto/${encodeURIComponent(p.id)}`, p.updated_at || today, '0.9', 'weekly'));
+        const seenSlugs = new Set();
+        products.forEach(p => {
+            const key = p.slug || p.id;
+            if (seenSlugs.has(key)) return;
+            seenSlugs.add(key);
+            addUrl(`/producto/${encodeURIComponent(key)}`, p.updated_at || today, '0.9', 'weekly');
+        });
     }
 
     // Blog & News Posts

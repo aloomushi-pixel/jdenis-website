@@ -1,8 +1,8 @@
 {
-  "commitSha": "b64498a (b64498a89f6249c13d6e72e28a3cac723a611600)",
-  "shortSha": "b64498a",
-  "fullSha": "b64498a89f6249c13d6e72e28a3cac723a611600",
-  "commitMessage": "perf(telemetry-and-catalog): immediate e-commerce/product_view flush, dynamic SEO title capture & shared useProducts cache (v2.0.3-auto)",
-  "builtAt": "2026-11-02T22:13:25.911Z",
+  "commitSha": "9e25566 (9e25566a35dcdbc4583ebf41f2d48a4bb678c3d3)",
+  "shortSha": "9e25566",
+  "fullSha": "9e25566a35dcdbc4583ebf41f2d48a4bb678c3d3",
+  "commitMessage": "feat(seo-gsc-pivot): integrate Google Search Console API & optimize high-impression queries/pages (v2.0.5-gsc-pivot)",
+  "builtAt": "2026-11-02T22:27:23.384Z",
   "environment": "production"
 }

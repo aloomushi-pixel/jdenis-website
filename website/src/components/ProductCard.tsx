@@ -22,11 +22,13 @@ export default function ProductCard({ product, index = 0, variantCount = 0 }: Pr
 
     const [isAdding, setIsAdding] = useState(false);
 
+    const productSlugOrId = product.slug || product.id;
+
     const handleAddToCart = (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
         if (hasVariants) {
-            navigate(`/producto/${product.id}`);
+            navigate(`/producto/${productSlugOrId}`);
         } else {
             if (isOutOfStock) return;
             setIsAdding(true);
@@ -45,7 +47,7 @@ export default function ProductCard({ product, index = 0, variantCount = 0 }: Pr
             transition={{ delay: Math.min(index * 0.04, 0.3), duration: 0.4 }}
             className="h-full"
         >
-            <Link to={`/producto/${product.id}`} className="product-card block group h-full flex flex-col bg-white rounded-xl border border-gray-100/60 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+            <Link to={`/producto/${productSlugOrId}`} className="product-card block group h-full flex flex-col bg-white rounded-xl border border-gray-100/60 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                 <div className="relative overflow-hidden bg-cream-dark aspect-square">
                     <img
                         src={product.image}

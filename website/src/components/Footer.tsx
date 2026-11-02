@@ -10,7 +10,7 @@ export default function Footer() {
                     <div className="lg:col-span-1">
                         <img src="/logo-new.jpeg" alt="J. Denis Logo" className="h-12 w-auto object-contain mb-4" />
                         <p className="text-cream/50 text-sm leading-relaxed mb-6">
-                            Mas de 25 anos de innovacion tecnica y patentes mexicanas. Elevamos la belleza profesional a una ciencia.
+                            Más de 25 años de innovación técnica y patentes mexicanas en Lindavista, CDMX. Elevamos la belleza profesional de cejas y pestañas a una ciencia.
                         </p>
                         <div className="flex gap-3">
                             {[
@@ -26,16 +26,17 @@ export default function Footer() {
                         </div>
                     </div>
 
-                    {/* Tienda */}
+                    {/* Tienda & Hubs */}
                     <div>
-                        <h4 className="text-xs tracking-[0.2em] uppercase text-gold mb-5 font-semibold">Tienda</h4>
-                        <ul className="space-y-3">
+                        <h4 className="text-xs tracking-[0.2em] uppercase text-gold mb-5 font-semibold">Líneas y Tienda</h4>
+                        <ul className="space-y-2.5">
                             {[
-                                { to: '/tienda?cat=lash-lifting', label: 'Lash Lifting & Rizado' },
-                                { to: '/tienda?cat=cejas', label: 'Cejas & Henna' },
-                                { to: '/tienda?cat=extensiones', label: 'Extensiones' },
-                                { to: '/tienda?cat=herramientas', label: 'Herramientas' },
-                                { to: '/tienda?cat=higiene', label: 'Cuidado e Higiene' },
+                                { to: '/cejas', label: 'J. Denis Cejas (Catálogo)' },
+                                { to: '/pestanas', label: 'J. Denis Pestañas (Catálogo)' },
+                                { to: '/laminado-de-cejas', label: 'Laminado y Planchado de Cejas' },
+                                { to: '/lash-lifting', label: 'Lash Lifting con Cisteamina' },
+                                { to: '/henna-y-pigmentos', label: 'Brow Henna y Pigmentos' },
+                                { to: '/registro-distribuidor', label: 'Venta al Mayoreo / Distribuidores' },
                             ].map((link, i) => (
                                 <li key={i}><Link to={link.to} className="text-sm text-cream/50 hover:text-gold transition-colors">{link.label}</Link></li>
                             ))}
@@ -46,10 +47,10 @@ export default function Footer() {
                     <div>
                         <h4 className="text-xs tracking-[0.2em] uppercase text-gold mb-5 font-semibold">Academia</h4>
                         <ul className="space-y-3">
-                            <li><Link to="/academia" className="text-sm text-cream/50 hover:text-gold transition-colors">Cursos Presenciales</Link></li>
-                            <li><Link to="/academia" className="text-sm text-cream/50 hover:text-gold transition-colors">Certificaciones</Link></li>
-                            <li><Link to="/academia" className="text-sm text-cream/50 hover:text-gold transition-colors">Seminarios Online</Link></li>
-                            <li><a href="https://youtube.com/@JDenismexico" className="text-sm text-cream/50 hover:text-gold transition-colors">Tutoriales YouTube</a></li>
+                            <li><Link to="/academia" className="text-sm text-cream/50 hover:text-gold transition-colors">Cursos Presenciales CDMX</Link></li>
+                            <li><Link to="/academia" className="text-sm text-cream/50 hover:text-gold transition-colors">Certificaciones STPS DC-3</Link></li>
+                            <li><Link to="/nosotros" className="text-sm text-cream/50 hover:text-gold transition-colors">Sede Lindavista CDMX</Link></li>
+                            <li><a href="https://youtube.com/@JDenismexico" target="_blank" rel="noopener noreferrer" className="text-sm text-cream/50 hover:text-gold transition-colors">Tutoriales YouTube</a></li>
                         </ul>
                     </div>
 
@@ -67,7 +68,7 @@ export default function Footer() {
                             </li>
                             <li className="flex items-center gap-3 text-cream/50">
                                 <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                                <span>Ciudad de Mexico, MX</span>
+                                <span>Av. Montevideo 136, Lindavista, CDMX</span>
                             </li>
                         </ul>
                     </div>
@@ -78,12 +79,12 @@ export default function Footer() {
             <div className="border-t border-cream/5">
                 <div className="container-luxury py-5 md:py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
                     <p className="text-cream/30 text-xs tracking-wider">
-                        {`\u00A9 ${new Date().getFullYear()} J. Denis - Cosmetica Profesional Mexicana`}
+                        {`\u00A9 ${new Date().getFullYear()} J. Denis - Cosmética Profesional Mexicana`}
                     </p>
                     <Link to="/aviso-de-privacidad" className="text-cream/30 text-xs hover:text-gold transition-colors">
                         Aviso de Privacidad
                     </Link>
-                    <p className="text-cream/30 text-xs">Hecho con orgullo en Mexico</p>
+                    <p className="text-cream/30 text-xs">Hecho con orgullo en México</p>
                 </div>
             </div>
         </footer>

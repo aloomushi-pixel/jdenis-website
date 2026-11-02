@@ -437,13 +437,342 @@ export const GSC_PRODUCT_SEO_OVERRIDES: Record<string, ProductGscSeoOverride> = 
             },
         ],
     },
-    '21403ce0-8bde-4350-973c-8bbd7fbe7b39': {
-        metaTitle: 'Extensiones de Pestañas Curva LC Profesional por Blíster | J. Denis México',
-        metaDescription: 'Blíster de Extensiones de Pestañas Curva LC J. Denis. Efecto delineado lifting ideal para párpado encapotado y mirada felina (Foxy Eye). Insumos profesionales directo de fábrica.',
+    'dark-red-pigmento-cejas': {
+        metaTitle: 'Pigmento para Cejas Dark Red (Pelirrojo / Caoba) Profesional | J. Denis México',
+        metaDescription: 'Pigmento profesional para cejas tono Dark Red (Pelirrojo / Caoba) J. Denis. Coloración de alta retención en piel y vello o para neutralizar subtonos fríos. Directo de fábrica en México.',
         extraFaqs: [
             {
-                question: '¿Qué ventaja tiene la Curva LC en extensiones de pestañas?',
-                answer: 'La Curva LC tiene una base recta con elevación pronunciada que supera el pliegue del párpado encapotado y ofrece mayor superficie de contacto con el adhesivo para máxima retención.',
+                question: '¿Para qué sirve el Pigmento para Cejas Dark Red de J. Denis?',
+                answer: 'El tono Dark Red está diseñado para cabellos pelirrojos o caobas y como modificador cálido al mezclar con tonos castaños para personalizar el diseño de ceja.',
+            },
+        ],
+    },
+    '21403ce0-8bde-4350-973c-8bbd7fbe7b39': {
+        metaTitle: 'Pigmento para Cejas Dark Red (Pelirrojo / Caoba) Profesional | J. Denis México',
+        metaDescription: 'Pigmento profesional para cejas tono Dark Red (Pelirrojo / Caoba) J. Denis. Coloración de alta retención en piel y vello o para neutralizar subtonos fríos. Directo de fábrica en México.',
+        extraFaqs: [
+            {
+                question: '¿Para qué sirve el Pigmento para Cejas Dark Red de J. Denis?',
+                answer: 'El tono Dark Red está diseñado para cabellos pelirrojos o caobas y como modificador cálido al mezclar con tonos castaños para personalizar el diseño de ceja.',
+            },
+        ],
+    },
+    'gel-ondulante-blue': {
+        metaTitle: 'Gel Ondulante Blue para Rizado Permanente de Pestañas | J. Denis México',
+        metaDescription: 'Gel Ondulante Blue profesional J. Denis para rizado de pestañas. Fórmula de acción controlada y alta eficacia para salón y lashistas. Venta menudeo y mayoreo directo de fábrica.',
+        extraFaqs: [
+            {
+                question: '¿Cuál es el tiempo de pose del Gel Ondulante Blue J. Denis?',
+                answer: 'El tiempo de pose recomendado oscila entre 10 y 15 minutos según el grosor de la pestaña natural, seguido siempre de la aplicación del Gel Neutralizante J. Denis.',
+            },
+        ],
+    },
+    '30920cc6-cd8f-4f9c-ab74-4e2264b2d33c': {
+        metaTitle: 'Gel Ondulante Blue para Rizado Permanente de Pestañas | J. Denis México',
+        metaDescription: 'Gel Ondulante Blue profesional J. Denis para rizado de pestañas. Fórmula de acción controlada y alta eficacia para salón y lashistas. Venta menudeo y mayoreo directo de fábrica.',
+        extraFaqs: [],
+    },
+    'light-brown-pigmento-cejas': {
+        metaTitle: 'Pigmento para Cejas Light Brown (Castaño Claro / Rubio Oscuro) | J. Denis',
+        metaDescription: 'Pigmento profesional para cejas Light Brown (Castaño Claro) J. Denis. Efecto sombreado natural ideal para fototipos claros y rubios sin oscurecer en exceso.',
+        extraFaqs: [
+            {
+                question: '¿En qué tonos de cabello luce mejor el pigmento Light Brown J. Denis?',
+                answer: 'Es ideal para clientas con cabello rubio medio a oscuro o castaño claro que buscan definir la ceja con un efecto empolvado suave y luminoso.',
+            },
+        ],
+    },
+    '094eccd7-5967-48ad-bfc3-a6f07976b37d': {
+        metaTitle: 'Pigmento para Cejas Light Brown (Castaño Claro / Rubio Oscuro) | J. Denis',
+        metaDescription: 'Pigmento profesional para cejas Light Brown (Castaño Claro) J. Denis. Efecto sombreado natural ideal para fototipos claros y rubios sin oscurecer en exceso.',
+        extraFaqs: [],
+    },
+    'adhesivo-transparente-grupo': {
+        metaTitle: 'Adhesivo Transparente para Pestañas de Grupo y Punto | J. Denis México',
+        metaDescription: 'Adhesivo transparente hipoalergénico para pestañas en grupo o por punto J. Denis. Fijación segura, acabado invisible y secado rápido. Compra menudeo y mayoreo.',
+        extraFaqs: [
+            {
+                question: '¿Cómo retirar las pestañas aplicadas con Adhesivo Transparente J. Denis?',
+                answer: 'Aplica Removedor de Adhesivo J. Denis con un microbrush sobre la unión y desliza suavemente sin tirar de la pestaña natural.',
+            },
+        ],
+    },
+    '20719896-e95a-42c7-a01a-c57a9983026a': {
+        metaTitle: 'Adhesivo Transparente para Pestañas de Grupo y Punto | J. Denis México',
+        metaDescription: 'Adhesivo transparente hipoalergénico para pestañas en grupo o por punto J. Denis. Fijación segura, acabado invisible y secado rápido. Compra menudeo y mayoreo.',
+        extraFaqs: [],
+    },
+    'microbrush-10': {
+        metaTitle: 'Microbrush Aplicadores de Precisión para Pestañas y Cejas (10 pzas) | J. Denis',
+        metaDescription: 'Paquete de 10 aplicadores Microbrush de precisión sin pelusa J. Denis para Lash Lifting, extensión de pestañas, laminado y retiro de adhesivo. Insumos profesionales en México.',
+        extraFaqs: [],
+    },
+    '04356a42-e90f-4f02-aa7a-53a2010194a5': {
+        metaTitle: 'Microbrush Aplicadores de Precisión para Pestañas y Cejas (10 pzas) | J. Denis',
+        metaDescription: 'Paquete de 10 aplicadores Microbrush de precisión sin pelusa J. Denis para Lash Lifting, extensión de pestañas, laminado y retiro de adhesivo. Insumos profesionales en México.',
+        extraFaqs: [],
+    },
+};
+
+export interface CategorySeoHubConfig {
+    slug: 'cejas' | 'pestanas' | 'laminado-de-cejas' | 'lash-lifting' | 'henna-y-pigmentos';
+    path: string;
+    badge: string;
+    h1Title: string;
+    subtitle: string;
+    metaTitle: string;
+    metaDescription: string;
+    targetCategories: string[];
+    searchKeywords: string[];
+    featuredProductSlugs: string[];
+    technicalGuideTitle: string;
+    technicalGuideIntro: string;
+    protocolSteps: Array<{ step: string; title: string; detail: string }>;
+    b2bHighlight: string;
+    faqs: Array<{ question: string; answer: string }>;
+}
+
+export const CATEGORY_HUB_CONFIGS: Record<CategorySeoHubConfig['slug'], CategorySeoHubConfig> = {
+    'cejas': {
+        slug: 'cejas',
+        path: '/cejas',
+        badge: 'Línea Oficial J. Denis Cejas · Fabricante Mexicano desde 1998',
+        h1Title: 'Productos Profesionales para Cejas J. Denis: Planchado, Laminado, Henna y Pigmentos',
+        subtitle: 'Creadores del Planchado de Cejas en México. Todo el catálogo oficial J. Denis para diseño, fijación, laminado con cisteamina, rubor de henna y pigmentos de alta retención a precio de tienda y mayoreo.',
+        metaTitle: 'J. Denis Cejas: Planchado, Laminado, Brow Henna y Pigmentos | Tienda Oficial México',
+        metaDescription: 'Catálogo oficial J. Denis Cejas en México: Kits de Planchado y Laminado de Cejas con Cisteamina, Brow Henna, Pigmentos, Gel Fijador y Herramientas. Compra individual o mayoreo directo de fábrica.',
+        targetCategories: ['Diseño de Cejas', 'Brow Henna', 'Pigmentos', 'Microblading', 'Tratamientos'],
+        searchKeywords: ['ceja', 'planchado', 'laminado', 'henna', 'pigmento'],
+        featuredProductSlugs: ['laminado-cejas', 'chocolate-pigmento-cejas', 'activador-henna', 'tintura-topica-castano-medio'],
+        technicalGuideTitle: '¿Por qué los especialistas en México eligen la línea de Cejas J. Denis?',
+        technicalGuideIntro: 'Desde 1998, nuestro laboratorio en Lindavista, Ciudad de México, ha formulado los productos estándar de la industria mexicana para moldear, pigmentar y nutrir la ceja latina sin maltratar la piel ni el folículo.',
+        protocolSteps: [
+            {
+                step: '01',
+                title: 'Higiene y Visagismo de Precisión',
+                detail: 'Limpia la zona con Espuma Limpiadora J. Denis y realiza el mapeo anatómico con hilo pigmentado y vernier profesional.',
+            },
+            {
+                step: '02',
+                title: 'Moldeado: Planchado o Laminado con Cisteamina',
+                detail: 'Alinea el vello rebelde con nuestro Kit de Planchado de Cejas clásico o el sistema Laminado Evolución con Cisteamina libre de tioglicolato agresivo.',
+            },
+            {
+                step: '03',
+                title: 'Coloración Efecto Sombra (Brow Henna o Pigmento)',
+                detail: 'Deposita color uniforme en piel (7-14 días) y vello (hasta 4 semanas) con los 6 tonos de Brow Henna y Pigmentos J. Denis activados con Activador Orgánico.',
+            },
+            {
+                step: '04',
+                title: 'Nutrición Pos-Servicio y Cuidado en Casa',
+                detail: 'Sella la cutícula con Botox de Pestañas y Cejas o Gel Reestructurante con Queratina para prolongar el efecto laminado todos los días.',
+            },
+        ],
+        b2bHighlight: 'Abastece tu estudio de cejas, estética o distribuidora con hasta 30 a 60 servicios por kit profesional y precios escalonados directo de fábrica.',
+        faqs: [
+            {
+                question: '¿Cuáles son los productos para cejas más vendidos de J. Denis?',
+                answer: 'Los favoritos en México son el Kit de Laminado de Cejas con Cisteamina (30 aplicaciones), el Kit de Planchado de Cejas tradicional, la línea Brow Henna (tonos Chocolate, Castaño Claro, Medio y Oscuro), el Activador de Henna Orgánico y el Gel Fijador Reestructurante.',
+            },
+            {
+                question: '¿Qué diferencia hay entre el Planchado de Cejas y el Laminado de Cejas J. Denis?',
+                answer: 'El Planchado de Cejas fija y alisa el vello rebelde con una estructura definida clásica, mientras que el Laminado de Cejas con Cisteamina moldea la fibra con mayor suavidad, efecto pluma orgánico y nutrición intensiva.',
+            },
+            {
+                question: '¿Puedo comprar productos J. Denis para cejas por mayoreo en México?',
+                answer: 'Sí. Somos fabricantes nacionales y enviamos a los 32 estados de la República Mexicana con precios preferenciales para distribuidores, academias y salones de belleza.',
+            },
+        ],
+    },
+    'pestanas': {
+        slug: 'pestanas',
+        path: '/pestanas',
+        badge: 'Línea Oficial J. Denis Pestañas · Innovación Oftalmológica y Cosmética',
+        h1Title: 'Productos para Pestañas J. Denis: Lash Lifting, Rizado Permanente, Extensiones y Adhesivos',
+        subtitle: 'Catálogo completo de insumos profesionales para lashistas y cuidado diario: Kits de Lash Lifting con Cisteamina, Gel Ondulante Jade, Blísters de Extensiones, Adhesivos y Tratamientos con Queratina.',
+        metaTitle: 'J. Denis Pestañas: Lash Lifting, Rizado, Extensiones y Adhesivos | Tienda Oficial',
+        metaDescription: 'Insumos profesionales J. Denis para pestañas en México: Kits de Lash Lifting con Cisteamina, Rizado Permanente Jade, Extensiones por blíster, Adhesivos hipoalergénicos y Botox. Menudeo y mayoreo.',
+        targetCategories: ['Lash Lifting', 'Lash Curling', 'Extensiones', 'Adhesivos', 'Pestañas en Tira', 'Tratamientos'],
+        searchKeywords: ['pestaña', 'lash', 'ondulante', 'rizado', 'adhesivo', 'botox'],
+        featuredProductSlugs: ['jade-rizado-pestanas', 'gel-ondulante-blue', 'botox-pestanas', 'adhesivo-transparente-grupo'],
+        technicalGuideTitle: 'Tecnología Mexicana para Elevación, Rizado y Extensión de Pestañas',
+        technicalGuideIntro: 'Nuestras fórmulas para pestañas están diseñadas para ofrecer elevación de 6 a 8 semanas, retención superior en clima húmedo o cálido y nutrición profunda del folículo.',
+        protocolSteps: [
+            {
+                step: '01',
+                title: 'Lash Lifting Evolución con Cisteamina',
+                detail: 'Eleva desde la raíz sin deshidratar ni quemar las puntas gracias a su fórmula suave con aminoácidos en sobres monodosis o presentación profesional.',
+            },
+            {
+                step: '02',
+                title: 'Lash Curling y Gel Ondulante Jade / Blue',
+                detail: 'El sistema clásico líder en México para rizado permanente con rulos o pads anatómicos de silicón.',
+            },
+            {
+                step: '03',
+                title: 'Extensiones Tecnológicas y Pestañas de Grupo',
+                detail: 'Fibras ultraligeras en curvas C, CC, D y LC acompañadas de adhesivos quirúrgicos y transparentes de baja emisión de vapores.',
+            },
+            {
+                step: '04',
+                title: 'Recuperación con Botox y Rímel de Queratina',
+                detail: 'Engrosa y sella la pestaña natural después del procedimiento químico y aumenta tu ticket promedio con tratamientos de reventa en salón.',
+            },
+        ],
+        b2bHighlight: 'Equipa tu cabina de pestañas o academia con kits de alto rendimiento y reposición individual de cada fase (ondulante, neutralizante, reestructurante y adhesivo).',
+        faqs: [
+            {
+                question: '¿Cuánto dura el efecto del Rizado y Lash Lifting de J. Denis?',
+                answer: 'El levantamiento o rizado permanece entre 6 y 8 semanas siguiendo el ciclo natural de renovación de la pestaña, sin necesidad de usar rizador mecánico.',
+            },
+            {
+                question: '¿Venden los geles ondulantes y neutralizantes J. Denis por separado?',
+                answer: 'Sí, además de los kits completos, puedes adquirir individualmente el Gel Ondulante (Jade o Blue), Gel Neutralizante, Gel Reestructurante, Adhesivo para Lifting y Botox de Pestañas.',
+            },
+            {
+                question: '¿Cómo obtengo precios de distribuidor en la línea de pestañas J. Denis?',
+                answer: 'Regístrate en nuestra sección de Distribuidores o solicita cotización por volumen vía WhatsApp para recibir tarifas de fabricante nacional.',
+            },
+        ],
+    },
+    'laminado-de-cejas': {
+        slug: 'laminado-de-cejas',
+        path: '/laminado-de-cejas',
+        badge: 'Especialidad Clínica J. Denis · Fórmula con Cisteamina',
+        h1Title: 'Laminado de Cejas y Planchado Profesional J. Denis con Cisteamina',
+        subtitle: 'Domina la técnica de Brow Lamination y Planchado de Cejas con la marca creadora del procedimiento en México. Fórmulas seguras de 3 pasos que alinean, dan volumen y nutren la ceja.',
+        metaTitle: 'Laminado de Cejas J. Denis con Cisteamina y Kits de Planchado | Tienda Oficial',
+        metaDescription: 'Compra el Kit de Laminado de Cejas y Planchado Profesional J. Denis con Cisteamina (hasta 30 aplicaciones). Alinea cejas rebeldes sin maltratar. Envío a todo México menudeo y mayoreo.',
+        targetCategories: ['Diseño de Cejas', 'Tratamientos', 'Herramientas'],
+        searchKeywords: ['laminado', 'planchado', 'ceja', 'fijador', 'reestructurante', 'cisteamina'],
+        featuredProductSlugs: ['laminado-cejas', 'botox-pestanas'],
+        technicalGuideTitle: 'Protocolo Oficial de Laminado de Cejas J. Denis (Paso a Paso)',
+        technicalGuideIntro: 'El sistema de Laminado de Cejas J. Denis flexibiliza los puentes disulfuro del vello mediante Cisteamina de grado cosmético para redirigir la ceja con total seguridad dérmica.',
+        protocolSteps: [
+            {
+                step: 'Paso 1',
+                title: 'Crema / Gel Direccionador con Cisteamina',
+                detail: 'Ablanda suavemente la estructura del vello en 8 a 12 minutos permitiendo peinar la ceja en dirección ascendente para cubrir huecos y dar simetría.',
+            },
+            {
+                step: 'Paso 2',
+                title: 'Fijador Neutralizante Estabilizador',
+                detail: 'Reconstruye los enlaces capilares en la nueva dirección deseada manteniendo el diseño intacto de 4 a 6 semanas.',
+            },
+            {
+                step: 'Paso 3',
+                title: 'Gel Reestructurante y Botox Nutritivo',
+                detail: 'Hidrata profundamente con queratina, pantenol y biotina para un acabado sedoso, brillante y elástico.',
+            },
+            {
+                step: 'Extra',
+                title: 'Diseño y Coloración Complementaria',
+                detail: 'Compatible con nuestros Pigmentos para Cejas y Brow Henna J. Denis para entregar un servicio completo de diseño + laminado + color.',
+            },
+        ],
+        b2bHighlight: 'Con un solo Kit de Laminado de Cejas J. Denis realizas hasta 30 servicios profesionales de alto margen en tu estudio o estética.',
+        faqs: [
+            {
+                question: '¿Cuántos servicios rinde el Kit de Laminado de Cejas J. Denis?',
+                answer: 'Rinde aproximadamente 30 aplicaciones completas, convirtiéndolo en uno de los tratamientos más rentables para estudios de cejas y salones en México.',
+            },
+            {
+                question: '¿Se puede aplicar tinte o henna el mismo día del laminado de cejas?',
+                answer: 'Sí, recomendamos aplicar Pigmento para Cejas J. Denis después del paso neutralizante y finalizar siempre con Botox o Gel Reestructurante hidratante.',
+            },
+        ],
+    },
+    'lash-lifting': {
+        slug: 'lash-lifting',
+        path: '/lash-lifting',
+        badge: 'Sistema Evolución J. Denis · Sin Daño Capilar',
+        h1Title: 'Lash Lifting J. Denis con Cisteamina: Kits, Monodosis, Pads y Adhesivos',
+        subtitle: 'Elevación panorámica de pestañas naturales desde la raíz. Fórmulas frescas en sobres monodosis y kits profesionales con Cisteamina que cuidan la salud ocular y capilar.',
+        metaTitle: 'Kit Lash Lifting J. Denis con Cisteamina, Pads y Adhesivos | Tienda Oficial México',
+        metaDescription: 'Catálogo oficial de Lash Lifting J. Denis en México: Kits Evolución con Cisteamina, sobres monodosis, pads de silicón anatómicos, adhesivo hidrosoluble y Botox. Venta individual y mayoreo.',
+        targetCategories: ['Lash Lifting', 'Lash Curling', 'Adhesivos', 'Tratamientos', 'Herramientas'],
+        searchKeywords: ['lifting', 'cisteamina', 'ondulante', 'pad', 'botox', 'adhesivo'],
+        featuredProductSlugs: ['jade-rizado-pestanas', 'gel-ondulante-blue', 'botox-pestanas', 'microbrush-10'],
+        technicalGuideTitle: 'Ventajas del Sistema Lash Lifting Evolución con Cisteamina J. Denis',
+        technicalGuideIntro: 'A diferencia de los permanentes alcalinos agresivos, el Lash Lifting con Cisteamina J. Denis actúa respetando la elasticidad natural de la pestaña, evitando puntas quemadas o sobre-rizadas.',
+        protocolSteps: [
+            {
+                step: 'Fase 1',
+                title: 'Acoplamiento con Pads Anatómicos y Adhesivo Lifting',
+                detail: 'Selecciona la talla exacta del pad de silicón (S, M, M1, M2, L) y alinea cada pestaña con nuestro adhesivo hidrosoluble de secado controlado.',
+            },
+            {
+                step: 'Fase 2',
+                title: 'Elevación con Crema Cisteamina (Paso 1)',
+                detail: 'Aplica de la base al tercio medio de la pestaña (nunca en las puntas) para crear un levantamiento limpio de 45° a 90°.',
+            },
+            {
+                step: 'Fase 3',
+                title: 'Fijación Estructural (Paso 2) y Tinte',
+                detail: 'Sella la curvatura con la fase neutralizante y potencia la mirada con Pigmento Negro Azulado o Castaño J. Denis.',
+            },
+            {
+                step: 'Fase 4',
+                title: 'Sellado con Botox de Pestañas y Queratina',
+                detail: 'Retira residuos suavemente y nutre con Botox de Pestañas J. Denis para devolver brillo, grosor y resistencia.',
+            },
+        ],
+        b2bHighlight: 'Ideal para lashistas profesionales y academias de belleza: empaques que conservan el 100% de la potencia activa en cada aplicación.',
+        faqs: [
+            {
+                question: '¿Por qué es mejor el Lash Lifting con Cisteamina J. Denis?',
+                answer: 'La cisteamina es un agente moldeador biocompatible mucho más gentil con la pestaña que el ácido tioglicólico tradicional, logrando una elevación duradera sin resecar la fibra.',
+            },
+            {
+                question: '¿Qué incluye un kit completo de Lash Lifting J. Denis?',
+                answer: 'Dependiendo de la presentación, incluye las fases de levantamiento, fijación y reestructuración, adhesivo para lifting, pads de silicón reutilizables y cepillos/herramientas de aislamiento.',
+            },
+        ],
+    },
+    'henna-y-pigmentos': {
+        slug: 'henna-y-pigmentos',
+        path: '/henna-y-pigmentos',
+        badge: 'Colorimetría Latina J. Denis · Rubor y Sombra para Cejas',
+        h1Title: 'Brow Henna, Rubor para Cejas y Pigmentos Profesionales J. Denis',
+        subtitle: 'La gama de tonos diseñada específicamente para fototipos latinos: Rubio, Castaño Claro, Castaño Medio (Chocolate), Castaño Oscuro, Dark Red y Negro sin oxidación rojiza indeseada.',
+        metaTitle: 'Brow Henna, Rubor y Pigmentos para Cejas J. Denis (Todos los Tonos) | México',
+        metaDescription: 'Compra Brow Henna, Rubor/Sombra para Cejas, Tintura Tópica, Activador Orgánico y Pigmentos J. Denis en México. Tonos Chocolate, Castaño Claro, Medio, Oscuro y Negro. Menudeo y mayoreo.',
+        targetCategories: ['Brow Henna', 'Pigmentos', 'Diseño de Cejas'],
+        searchKeywords: ['henna', 'pigmento', 'tintura', 'castaño', 'chocolate', 'activador', 'rubor'],
+        featuredProductSlugs: ['chocolate-pigmento-cejas', 'light-brown-pigmento-cejas', 'dark-red-pigmento-cejas', 'tintura-topica-castano-medio', 'activador-henna'],
+        technicalGuideTitle: 'Guía de Colorimetría: Brow Henna vs. Pigmentos y Tinturas J. Denis',
+        technicalGuideIntro: 'Tanto si buscas un efecto maquillaje empolvado ("rubor para cejas") que sombree la piel como si deseas teñir vello cano o claro tras un laminado, J. Denis cuenta con la fórmula exacta.',
+        protocolSteps: [
+            {
+                step: 'Tono 01',
+                title: 'Light Brown / Rubio y Castaño Claro',
+                detail: 'Perfectos para cabellos rubios, cenizos o castaños claros que requieren definición suave y luminosa.',
+            },
+            {
+                step: 'Tono 02',
+                title: 'Chocolate / Castaño Medio (Best-Seller Nacional)',
+                detail: 'El tono universal para pieles y cabellos latinos: aporta profundidad cálida y natural sin endurecer las facciones.',
+            },
+            {
+                step: 'Tono 03',
+                title: 'Castaño Oscuro, Dark Red y Negro',
+                detail: 'Ideales para cabellos oscuros, pelirrojos/caobas o para teñir pestañas con intensidad tipo rímel.',
+            },
+            {
+                step: 'Potenciador',
+                title: 'Activador de Henna Orgánico J. Denis',
+                detail: 'Mezcla de 3 a 5 gotas por medida en godete de cristal para obtener una pasta homogénea que duplica la retención en piel y vello.',
+            },
+        ],
+        b2bHighlight: 'Cada frasco de Brow Henna o Pigmento J. Denis rinde decenas de servicios de diseño de ceja con costo por aplicación mínimo para tu salón.',
+        faqs: [
+            {
+                question: '¿Cuánto dura la Brow Henna y el Pigmento J. Denis en piel y vello?',
+                answer: 'El sombreado en piel dura de 7 a 14 días (según el tipo de piel y cuidados posteriores) y la coloración en el vello permanece hasta por 4 semanas.',
+            },
+            {
+                question: '¿Para qué sirve el Activador de Henna J. Denis?',
+                answer: 'Sustituye al agua común en la preparación de la henna para estabilizar el pH, acelerar la liberación del pigmento botánico y prolongar la fijación del tono.',
             },
         ],
     },

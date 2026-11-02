@@ -47,6 +47,7 @@ import PaymentResult from './pages/PaymentResult';
 import ResetPassword from './pages/ResetPassword';
 import AvisoPrivacidad from './pages/AvisoPrivacidad';
 import SolicitarFactura from './pages/SolicitarFactura';
+import CategorySeoHub from './pages/CategorySeoHub';
 import { useAuthStore } from './store/authStore';
 
 function ScrollToTop() {
@@ -73,6 +74,11 @@ function Layout() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/tienda" element={<Shop />} />
+          <Route path="/cejas" element={<CategorySeoHub key="cejas" hubSlug="cejas" />} />
+          <Route path="/pestanas" element={<CategorySeoHub key="pestanas" hubSlug="pestanas" />} />
+          <Route path="/laminado-de-cejas" element={<CategorySeoHub key="laminado-de-cejas" hubSlug="laminado-de-cejas" />} />
+          <Route path="/lash-lifting" element={<CategorySeoHub key="lash-lifting" hubSlug="lash-lifting" />} />
+          <Route path="/henna-y-pigmentos" element={<CategorySeoHub key="henna-y-pigmentos" hubSlug="henna-y-pigmentos" />} />
           <Route path="/producto/:id" element={<ProductDetailWrapper />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/login" element={<Login />} />

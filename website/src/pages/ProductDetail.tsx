@@ -41,6 +41,15 @@ export default function ProductDetail() {
         );
     }, [products, currentProductId, id]);
 
+    // Normalize browser URL to semantic slug when accessed via raw UUID
+    useEffect(() => {
+        if (!product?.slug || typeof window === 'undefined') return;
+        const expectedPath = `/producto/${product.slug}`;
+        if (window.location.pathname !== expectedPath) {
+            window.history.replaceState(null, '', expectedPath);
+        }
+    }, [product?.slug]);
+
     // Track product_view telemetry
     useEffect(() => {
         if (!product || lastTrackedProductIdRef.current === product.id) return;
@@ -142,7 +151,7 @@ export default function ProductDetail() {
             : 'Producto cosmético profesional de alta calidad fabricado en México por J. Denis desde 1998.',
         image: product?.image || '/hero-products.jpg',
         type: 'product',
-        canonical: product ? `https://jdenis.store/producto/${product.id}` : undefined,
+        canonical: product ? `https://jdenis.store/producto/${product.slug || product.id}` : undefined,
         jsonLd: product ? [
             buildOrganizationSchema(),
             {
@@ -174,7 +183,7 @@ export default function ProductDetail() {
                             ? 'https://schema.org/OutOfStock'
                             : 'https://schema.org/InStock',
                         seller: { '@type': 'Organization', name: 'J. Denis Cosméticos México' },
-                        url: `https://jdenis.store/producto/${product.id}`,
+                        url: `https://jdenis.store/producto/${product.slug || product.id}`,
                     }
                     : {
                         '@type': 'Offer',
@@ -184,7 +193,7 @@ export default function ProductDetail() {
                             ? 'https://schema.org/OutOfStock'
                             : 'https://schema.org/InStock',
                         seller: { '@type': 'Organization', name: 'J. Denis Cosméticos México' },
-                        url: `https://jdenis.store/producto/${product.id}`,
+                        url: `https://jdenis.store/producto/${product.slug || product.id}`,
                     },
             },
             {
@@ -194,7 +203,7 @@ export default function ProductDetail() {
                     { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://jdenis.store' },
                     { '@type': 'ListItem', position: 2, name: 'Tienda', item: 'https://jdenis.store/tienda' },
                     { '@type': 'ListItem', position: 3, name: product.category, item: `https://jdenis.store/tienda?cat=${encodeURIComponent(product.category)}` },
-                    { '@type': 'ListItem', position: 4, name: product.name, item: `https://jdenis.store/producto/${product.id}` },
+                    { '@type': 'ListItem', position: 4, name: product.name, item: `https://jdenis.store/producto/${product.slug || product.id}` },
                 ],
             },
             {
@@ -257,7 +266,7 @@ export default function ProductDetail() {
             category: product.category,
         });
         setCurrentProductId(newProductId);
-        window.history.replaceState(null, '', `/producto/${newProductId}`);
+        window.history.replaceState(null, '', `/producto/${nextProd?.slug || newProductId}`);
     };
 
     const hasBenefits = Boolean(product.benefits && product.benefits.length > 0);
