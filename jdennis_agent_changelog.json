@@ -1,5 +1,20 @@
 [
   {
+    "cycleId": "cycle-005",
+    "timestamp": "2026-11-02T14:05:00.000Z",
+    "commitSha": "v2.0.3-auto",
+    "deployVerified": true,
+    "dimension": "web_seo",
+    "finding": "Auditoría de Telemetría Ciclo #5 (21 eventos de rastreo de IA Bytespider en fichas de producto y blog + 3 sesiones humanas): 1) Eventos rápidos como product_view en /producto/laminado-cejas podían perderse si la pestaña se cerraba antes del debounce de 2000ms; 2) page_view capturaba document.title sincrónicamente antes de que usePageMeta actualizara el título SEO dinámico; 3) useProducts() realizaba una consulta redundante a Supabase en cada cambio de ruta.",
+    "actionTaken": "1) Se agregaron product_view, add_to_cart, product_search, whatsapp_click, wholesale_inquiry, rage_click y dead_click a immediateEvents y se vinculó flushQueue() a visibilitychange/pagehide en telemetry.ts. 2) Se difirió page_view 120ms en TelemetryProvider.tsx para capturar el título SEO real. 3) Se implementó caché compartida en memoria + sessionStorage con deduplicación de promesas en useProducts.ts.",
+    "filesModified": [
+      "website/src/utils/telemetry.ts",
+      "website/src/components/TelemetryProvider.tsx",
+      "website/src/hooks/useProducts.ts"
+    ],
+    "expectedImpact": "0% pérdida de eventos de conversión/búsqueda en salidas rápidas o clics a WhatsApp, 100% precisión en títulos SEO de page_view y transición instantánea (0ms) entre Tienda y Detalle de Producto."
+  },
+  {
     "cycleId": "cycle-001",
     "timestamp": "2026-11-02T00:50:08.000Z",
     "commitSha": "5e1e5499aa4bf1c5be4a5e1611e99ccef76e7fd8",

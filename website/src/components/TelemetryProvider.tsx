@@ -97,15 +97,19 @@ export default function TelemetryProvider() {
         lastModifiedFieldRef.current = null;
         formSubmittedRef.current = false;
 
-        // Emit page_view
-        trackEvent({
-            event_name: 'page_view',
-            event_category: 'navigation',
-            path: newFullPath,
-            metadata: {
-                title: document.title,
-            },
-        });
+        // Emit page_view after 120ms so child route usePageMeta updates document.title first
+        const timer = setTimeout(() => {
+            trackEvent({
+                event_name: 'page_view',
+                event_category: 'navigation',
+                path: newFullPath,
+                metadata: {
+                    title: document.title,
+                },
+            });
+        }, 120);
+
+        return () => clearTimeout(timer);
     }, [location.pathname, location.search]);
 
     // 3. Visibility change & pagehide for accurate active + hidden duration

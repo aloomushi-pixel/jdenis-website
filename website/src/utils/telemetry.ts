@@ -261,18 +261,35 @@ export function resolveUserRoleAndContext(pathname: string): {
 // Non-blocking batch queue
 let eventQueue: Record<string, unknown>[] = [];
 let flushTimeout: ReturnType<typeof setTimeout> | null = null;
+let lifecycleFlushBound = false;
 
-async function flushQueue() {
+export async function flushQueue() {
     if (eventQueue.length === 0) return;
     const batch = [...eventQueue];
     eventQueue = [];
-    flushTimeout = null;
+    if (flushTimeout) {
+        clearTimeout(flushTimeout);
+        flushTimeout = null;
+    }
 
     try {
         await supabase.from('analytics_events').insert(batch);
     } catch {
         // Silent fail — telemetry must never break user experience
     }
+}
+
+function ensureLifecycleFlushListener() {
+    if (typeof window === 'undefined' || lifecycleFlushBound) return;
+    lifecycleFlushBound = true;
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') {
+            flushQueue();
+        }
+    });
+    window.addEventListener('pagehide', () => {
+        flushQueue();
+    });
 }
 
 export function trackEvent(payload: TelemetryEventPayload): void;
@@ -343,6 +360,7 @@ export function trackEvent(
             },
         };
 
+        ensureLifecycleFlushListener();
         eventQueue.push(record);
 
         const immediateEvents = [
@@ -350,6 +368,18 @@ export function trackEvent(
             'payment_error',
             'payment_attempt',
             'checkout_start',
+            'add_to_cart',
+            'remove_from_cart',
+            'cart_view',
+            'product_view',
+            'product_search',
+            'whatsapp_click',
+            'wholesale_inquiry',
+            'rage_click',
+            'dead_click',
+            'form_abandon',
+            'scroll_return_prices',
+            'text_copy',
             'quote_flow_saved',
             'quote_save_error',
             'order_flow_saved',
@@ -357,10 +387,10 @@ export function trackEvent(
             'page_leave',
         ];
 
-        if (immediateEvents.includes(payload.event_name) || eventQueue.length >= 10) {
+        if (immediateEvents.includes(payload.event_name) || eventQueue.length >= 8) {
             flushQueue();
         } else if (!flushTimeout) {
-            flushTimeout = setTimeout(flushQueue, 2000);
+            flushTimeout = setTimeout(flushQueue, 600);
         }
     } catch {
         // Silent fail

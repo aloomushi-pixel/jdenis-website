@@ -96,37 +96,106 @@ export function toDisplayProduct(p: SupabaseProduct, userRole: string | undefine
     };
 }
 
+const PRODUCTS_CACHE_KEY = 'jdennis_products_raw_cache_v1';
+const PRODUCTS_CACHE_TTL_MS = 2 * 60 * 1000; // 2 minutes fresh, stale-while-revalidate after
+
+let memoryRawProducts: SupabaseProduct[] | null = null;
+let memoryFetchedAt = 0;
+let inFlightProductsPromise: Promise<SupabaseProduct[]> | null = null;
+
+function getInitialCachedProducts(): SupabaseProduct[] | null {
+    if (memoryRawProducts && memoryRawProducts.length > 0) return memoryRawProducts;
+    if (typeof window === 'undefined') return null;
+    try {
+        const raw = sessionStorage.getItem(PRODUCTS_CACHE_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw) as { ts: number; data: SupabaseProduct[] };
+        if (parsed && Array.isArray(parsed.data) && parsed.data.length > 0) {
+            memoryRawProducts = parsed.data;
+            memoryFetchedAt = parsed.ts || 0;
+            return parsed.data;
+        }
+    } catch {
+        // ignore storage errors
+    }
+    return null;
+}
+
+function updateCachedProducts(rows: SupabaseProduct[]) {
+    memoryRawProducts = rows;
+    memoryFetchedAt = Date.now();
+    if (typeof window !== 'undefined') {
+        try {
+            sessionStorage.setItem(PRODUCTS_CACHE_KEY, JSON.stringify({ ts: memoryFetchedAt, data: rows }));
+        } catch {
+            // ignore quota errors
+        }
+    }
+}
+
+function invalidateProductsCache() {
+    memoryFetchedAt = 0;
+}
+
 /**
- * Pure Supabase hook — fetches all active products and provides
- * save helpers for the admin editor.
+ * Pure Supabase hook — fetches all active products with shared in-memory/sessionStorage
+ * cache + request deduplication, and provides save helpers for the admin editor.
  */
 export function useProducts() {
     const userRole = useAuthStore(state => state.user?.role);
 
-    const [products, setProducts] = useState<DisplayProduct[]>([]);
-    const [loading, setLoading] = useState(true);
+    const initialRaw = getInitialCachedProducts();
+    const [products, setProducts] = useState<DisplayProduct[]>(() =>
+        initialRaw ? initialRaw.map(p => toDisplayProduct(p, userRole)) : []
+    );
+    const [loading, setLoading] = useState<boolean>(() => !initialRaw);
     const [error, setError] = useState<string | null>(null);
-    const [synced, setSynced] = useState(false);
+    const [synced, setSynced] = useState<boolean>(() => Boolean(initialRaw));
     const [saveStatus, setSaveStatus] = useState<Record<string, 'saving' | 'saved' | 'error'>>({});
 
-    const fetchProducts = useCallback(async () => {
-        setLoading(true);
+    const fetchProducts = useCallback(async (forceRefresh = false) => {
+        const cached = getInitialCachedProducts();
+        const isFresh = cached && Date.now() - memoryFetchedAt < PRODUCTS_CACHE_TTL_MS;
+
+        if (cached) {
+            setProducts(cached.map(p => toDisplayProduct(p, userRole)));
+            setLoading(false);
+            setSynced(true);
+            if (isFresh && !forceRefresh) {
+                return;
+            }
+        } else {
+            setLoading(true);
+        }
+
         try {
-            const { data, error: fetchError } = await supabase
-                .from('products')
-                .select('*')
-                .eq('is_active', true)
-                .order('sort_order', { ascending: true });
+            if (!inFlightProductsPromise || forceRefresh) {
+                inFlightProductsPromise = Promise.resolve(
+                    supabase
+                        .from('products')
+                        .select('*')
+                        .eq('is_active', true)
+                        .order('sort_order', { ascending: true })
+                )
+                    .then(({ data, error: fetchError }) => {
+                        if (fetchError) throw fetchError;
+                        const rows = (data || []) as SupabaseProduct[];
+                        updateCachedProducts(rows);
+                        return rows;
+                    })
+                    .finally(() => {
+                        inFlightProductsPromise = null;
+                    });
+            }
 
-            if (fetchError) throw fetchError;
-
-            setProducts((data || []).map(p => toDisplayProduct(p, userRole)));
+            const rows = await inFlightProductsPromise;
+            setProducts(rows.map(p => toDisplayProduct(p, userRole)));
             setSynced(true);
             setError(null);
         } catch (err: unknown) {
             console.error('useProducts fetch error:', err);
-            setError((err as any).message || 'Error al cargar productos');
-            setSynced(false);
+            setError((err as { message?: string }).message || 'Error al cargar productos');
+            if (!cached) setSynced(false);
         } finally {
             setLoading(false);
         }
@@ -178,6 +247,7 @@ export function useProducts() {
 
             if (updateError) throw updateError;
 
+            invalidateProductsCache();
             // Update local state
             setProducts(prev => prev.map(p =>
                 p.id === productId ? { ...p, [field]: value } : p
@@ -234,6 +304,7 @@ export function useProducts() {
 
             if (updateError) throw updateError;
 
+            invalidateProductsCache();
             // Update local state
             setProducts(prev => prev.map(p => p.id === productId ? { ...p, ...updates } : p));
             setSaveStatus(prev => ({ ...prev, [productId]: 'saved' }));
@@ -288,8 +359,9 @@ export function useProducts() {
 
             if (insertError) throw insertError;
 
+            invalidateProductsCache();
             // Refetch or add directly
-            await fetchProducts();
+            await fetchProducts(true);
             return true;
         } catch (err) {
             console.error('useProducts.createProduct error:', err);
@@ -310,6 +382,7 @@ export function useProducts() {
 
             if (deleteError) throw deleteError;
 
+            invalidateProductsCache();
             // Update local state by removing it
             setProducts(prev => prev.filter(p => p.id !== productId));
             return true;
