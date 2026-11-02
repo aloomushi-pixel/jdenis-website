@@ -33,6 +33,95 @@ export interface TelemetryEventPayload {
 const SESSION_KEY = 'jdennis_telemetry_session_id';
 const VISITOR_KEY = 'jdennis_telemetry_visitor_id';
 const UTM_KEY = 'jdennis_telemetry_utms';
+const ATTR_KEY = 'jdennis_telemetry_attribution';
+const GEO_KEY = 'jdennis_telemetry_geo';
+
+let cachedGeo: { geo_country: string; geo_region: string; geo_city: string } | null = null;
+let geoFetchStarted = false;
+
+export function initGeoTelemetry(): void {
+    if (typeof window === 'undefined' || geoFetchStarted) return;
+    geoFetchStarted = true;
+    try {
+        const saved = sessionStorage.getItem(GEO_KEY);
+        if (saved) {
+            cachedGeo = JSON.parse(saved);
+            return;
+        }
+    } catch {
+        // ignore
+    }
+
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/Mexico_City';
+    const fallbackCity = tz.includes('/') ? tz.split('/')[1].replace(/_/g, ' ') : 'México';
+    cachedGeo = {
+        geo_country: 'MX',
+        geo_region: tz,
+        geo_city: fallbackCity,
+    };
+
+    fetch('https://ipapi.co/json/', { mode: 'cors' })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((data) => {
+            if (data && (data.country_name || data.country_code)) {
+                cachedGeo = {
+                    geo_country: data.country_name || data.country_code || 'MX',
+                    geo_region: data.region || tz,
+                    geo_city: data.city || fallbackCity,
+                };
+                try {
+                    sessionStorage.setItem(GEO_KEY, JSON.stringify(cachedGeo));
+                } catch {
+                    // ignore
+                }
+            }
+        })
+        .catch(() => {
+            // Keep timezone fallback
+        });
+}
+
+export function detectTrafficAttribution(): { attribution_channel: string; ai_engine: string | null } {
+    if (typeof window === 'undefined') return { attribution_channel: 'direct', ai_engine: null };
+    try {
+        const saved = sessionStorage.getItem(ATTR_KEY);
+        if (saved) return JSON.parse(saved);
+
+        const ref = (document.referrer || '').toLowerCase();
+        const search = (window.location.search || '').toLowerCase();
+        const combined = `${ref} ${search}`;
+
+        let result: { attribution_channel: string; ai_engine: string | null } = {
+            attribution_channel: 'direct',
+            ai_engine: null,
+        };
+
+        if (combined.includes('chatgpt.com') || combined.includes('openai.com')) {
+            result = { attribution_channel: 'geo_ai', ai_engine: 'ChatGPT' };
+        } else if (combined.includes('perplexity.ai')) {
+            result = { attribution_channel: 'geo_ai', ai_engine: 'Perplexity' };
+        } else if (combined.includes('claude.ai') || combined.includes('anthropic.com')) {
+            result = { attribution_channel: 'geo_ai', ai_engine: 'Claude' };
+        } else if (combined.includes('gemini.google.com') || combined.includes('bard.google.com')) {
+            result = { attribution_channel: 'geo_ai', ai_engine: 'Gemini' };
+        } else if (combined.includes('copilot.microsoft.com')) {
+            result = { attribution_channel: 'geo_ai', ai_engine: 'Copilot' };
+        } else if (/google\.|bing\.|duckduckgo\.|yahoo\./i.test(ref)) {
+            result = { attribution_channel: 'organic_search', ai_engine: null };
+        } else if (/instagram\.|facebook\.|tiktok\.|t\.co|youtube\./i.test(ref)) {
+            result = { attribution_channel: 'social', ai_engine: null };
+        } else if (search.includes('utm_medium=cpc') || search.includes('gclid=') || search.includes('fbclid=')) {
+            result = { attribution_channel: 'paid', ai_engine: null };
+        } else if (ref && !ref.includes(window.location.hostname)) {
+            result = { attribution_channel: 'referral', ai_engine: null };
+        }
+
+        sessionStorage.setItem(ATTR_KEY, JSON.stringify(result));
+        return result;
+    } catch {
+        return { attribution_channel: 'direct', ai_engine: null };
+    }
+}
 
 function generateUuid(): string {
     if (typeof crypto !== 'undefined' && crypto.randomUUID) {
@@ -216,6 +305,8 @@ export function trackEvent(
         const { user_id, user_role, app_context, raw_role } = resolveUserRoleAndContext(window.location.pathname);
         const utms = getUtmParams();
         const botInfo = detectBot(navigator.userAgent || '');
+        const attribution = detectTrafficAttribution();
+        if (!cachedGeo) initGeoTelemetry();
 
         const record = {
             session_id: getSessionId(),
@@ -227,8 +318,8 @@ export function trackEvent(
             event_category: payload.event_category,
             path: pathname,
             referrer: document.referrer || null,
-            utm_source: utms.utm_source,
-            utm_medium: utms.utm_medium,
+            utm_source: utms.utm_source || attribution.ai_engine,
+            utm_medium: utms.utm_medium || attribution.attribution_channel,
             utm_campaign: utms.utm_campaign,
             device_type: getDeviceType(),
             viewport_w: window.innerWidth || 0,
@@ -244,6 +335,9 @@ export function trackEvent(
             element_id: payload.element_id ? payload.element_id.slice(0, 120) : null,
             element_text: payload.element_text ? payload.element_text.slice(0, 200) : null,
             metadata: {
+                attribution_channel: attribution.attribution_channel,
+                ai_engine: attribution.ai_engine,
+                ...(cachedGeo || {}),
                 ...(payload.metadata || {}),
                 ...(raw_role ? { erp_role: raw_role } : {}),
             },

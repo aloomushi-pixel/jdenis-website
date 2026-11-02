@@ -1,8 +1,8 @@
 [
   {
     "cycleId": "cycle-001",
-    "timestamp": "2026-11-01T18:30:00.000Z",
-    "commitSha": "initial-6-phase-architecture",
+    "timestamp": "2026-11-02T00:50:08.000Z",
+    "commitSha": "5e1e5499aa4bf1c5be4a5e1611e99ccef76e7fd8",
     "deployVerified": true,
     "dimension": "full_stack",
     "finding": "Auditoría Inicial Fase 0-5: Tablas ERP (quotations, quotation_items, sales_orders, sales_order_items) carecían de DEFAULT gen_random_uuid() y políticas RLS; abandoned_carts carecía de constraint UNIQUE(email); getSalesMetrics apuntaba a tabla inexistente orders_b2b; SalesOrders realizaba consultas N+1 al expandir cotizaciones; buscador carecía de mapeo de sinónimos genéricos ('rubor para cejas', 'gel fijador', 'pigmento').",

@@ -11,8 +11,12 @@ interface ClickPoint {
 export default function TelemetryProvider() {
     const location = useLocation();
     const activeTimeRef = useRef<number>(0);
+    const hiddenTimeRef = useRef<number>(0);
     const lastActiveStartRef = useRef<number>(Date.now());
+    const lastHiddenStartRef = useRef<number | null>(null);
     const maxScrollRef = useRef<number>(0);
+    const maxScrollPxRef = useRef<number>(0);
+    const scrollReturnReportedRef = useRef<boolean>(false);
     const scrollMilestonesRef = useRef<Set<number>>(new Set());
     const currentPathRef = useRef<string>(location.pathname + location.search);
     const clicksRef = useRef<ClickPoint[]>([]);
@@ -48,6 +52,8 @@ export default function TelemetryProvider() {
         if (prevPath && prevPath !== newFullPath) {
             if (document.visibilityState === 'visible') {
                 activeTimeRef.current += Date.now() - lastActiveStartRef.current;
+            } else if (lastHiddenStartRef.current) {
+                hiddenTimeRef.current += Date.now() - lastHiddenStartRef.current;
             }
             if (activeTimeRef.current > 200) {
                 trackEvent({
@@ -58,6 +64,8 @@ export default function TelemetryProvider() {
                     scroll_pct: maxScrollRef.current,
                     metadata: {
                         next_path: newFullPath,
+                        active_time_ms: activeTimeRef.current,
+                        hidden_time_ms: hiddenTimeRef.current,
                     },
                 });
             }
@@ -79,8 +87,12 @@ export default function TelemetryProvider() {
         // Reset counters for new page
         currentPathRef.current = newFullPath;
         activeTimeRef.current = 0;
+        hiddenTimeRef.current = 0;
         lastActiveStartRef.current = Date.now();
+        lastHiddenStartRef.current = null;
         maxScrollRef.current = 0;
+        maxScrollPxRef.current = 0;
+        scrollReturnReportedRef.current = false;
         scrollMilestonesRef.current.clear();
         lastModifiedFieldRef.current = null;
         formSubmittedRef.current = false;
@@ -96,19 +108,28 @@ export default function TelemetryProvider() {
         });
     }, [location.pathname, location.search]);
 
-    // 3. Visibility change & pagehide for accurate active duration
+    // 3. Visibility change & pagehide for accurate active + hidden duration
     useEffect(() => {
         const handleVisibilityChange = () => {
+            const now = Date.now();
             if (document.visibilityState === 'hidden') {
-                activeTimeRef.current += Date.now() - lastActiveStartRef.current;
+                activeTimeRef.current += now - lastActiveStartRef.current;
+                lastHiddenStartRef.current = now;
             } else {
-                lastActiveStartRef.current = Date.now();
+                if (lastHiddenStartRef.current) {
+                    hiddenTimeRef.current += now - lastHiddenStartRef.current;
+                    lastHiddenStartRef.current = null;
+                }
+                lastActiveStartRef.current = now;
             }
         };
 
         const handlePageHide = () => {
+            const now = Date.now();
             if (document.visibilityState === 'visible') {
-                activeTimeRef.current += Date.now() - lastActiveStartRef.current;
+                activeTimeRef.current += now - lastActiveStartRef.current;
+            } else if (lastHiddenStartRef.current) {
+                hiddenTimeRef.current += now - lastHiddenStartRef.current;
             }
             if (activeTimeRef.current > 200) {
                 trackEvent({
@@ -117,6 +138,10 @@ export default function TelemetryProvider() {
                     path: currentPathRef.current,
                     duration_ms: activeTimeRef.current,
                     scroll_pct: maxScrollRef.current,
+                    metadata: {
+                        active_time_ms: activeTimeRef.current,
+                        hidden_time_ms: hiddenTimeRef.current,
+                    },
                 });
             }
             if (lastModifiedFieldRef.current && !formSubmittedRef.current) {
@@ -141,7 +166,7 @@ export default function TelemetryProvider() {
         };
     }, []);
 
-    // 4. Scroll Depth Tracking (25%, 50%, 75%, 90%, 100%)
+    // 4. Scroll Depth Tracking (25%, 50%, 75%, 90%, 100%) + scroll_return_prices
     useEffect(() => {
         let ticking = false;
         const milestones = [25, 50, 75, 90, 100];
@@ -160,6 +185,27 @@ export default function TelemetryProvider() {
                     const pct = Math.min(100, Math.round((scrollTop / docHeight) * 100));
                     if (pct > maxScrollRef.current) {
                         maxScrollRef.current = pct;
+                    }
+                    if (scrollTop > maxScrollPxRef.current) {
+                        maxScrollPxRef.current = scrollTop;
+                    } else if (
+                        !scrollReturnReportedRef.current &&
+                        maxScrollRef.current >= 45 &&
+                        maxScrollPxRef.current - scrollTop >= 220 &&
+                        (window.location.pathname.startsWith('/tienda') ||
+                            window.location.pathname.startsWith('/producto') ||
+                            window.location.pathname === '/')
+                    ) {
+                        scrollReturnReportedRef.current = true;
+                        trackEvent({
+                            event_name: 'scroll_return_prices',
+                            event_category: 'ecommerce',
+                            scroll_pct: pct,
+                            metadata: {
+                                peak_scroll_pct: maxScrollRef.current,
+                                returned_to_pct: pct,
+                            },
+                        });
                     }
                     for (const m of milestones) {
                         if (pct >= m && !scrollMilestonesRef.current.has(m)) {
@@ -305,14 +351,36 @@ export default function TelemetryProvider() {
             lastModifiedFieldRef.current = null;
         };
 
+        const handleCopy = () => {
+            try {
+                const selected = (window.getSelection()?.toString() || '').trim();
+                if (!selected || selected.length < 2) return;
+                const snippet = selected.replace(/\s+/g, ' ').slice(0, 120);
+                const hasPrice = /\$\s*\d+|\d+\.\d{2}|mxn/i.test(snippet);
+                trackEvent({
+                    event_name: 'text_copy',
+                    event_category: 'ecommerce',
+                    element_text: snippet,
+                    metadata: {
+                        copied_length: selected.length,
+                        has_price: hasPrice,
+                    },
+                });
+            } catch {
+                // ignore
+            }
+        };
+
         document.addEventListener('click', handleClick, { passive: true });
         document.addEventListener('focusin', handleFocusIn, { passive: true });
         document.addEventListener('submit', handleSubmit, { passive: true });
+        document.addEventListener('copy', handleCopy, { passive: true });
 
         return () => {
             document.removeEventListener('click', handleClick);
             document.removeEventListener('focusin', handleFocusIn);
             document.removeEventListener('submit', handleSubmit);
+            document.removeEventListener('copy', handleCopy);
         };
     }, []);
 

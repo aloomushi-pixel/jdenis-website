@@ -4,6 +4,8 @@
  * Uso: node scripts/jdennis-digest-engine.mjs [--days=7]
  */
 import { execSync } from 'child_process';
+import fs from 'fs';
+import path from 'path';
 
 const SUPABASE_URL = process.env.VITE_SUPABASE_URL || 'https://zdciwzeokkrwcxvsgusc.supabase.co';
 const SUPABASE_KEY = process.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkY2l3emVva2tyd2N4dnNndXNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NTM3NTksImV4cCI6MjA4ODIyOTc1OX0.qbXG0M2Zsjz-rOXY0CgAV2RfLledS67nqBw_dnvzkbg';
@@ -30,10 +32,20 @@ async function fetchSupabase(table, queryParams) {
 
 async function checkDokployVersion() {
     let localSha = 'unknown';
+    let prebuildSha = null;
     try {
         localSha = execSync('git rev-parse HEAD', { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim();
     } catch {
         // Ignore git error
+    }
+    try {
+        const localVersionFile = path.resolve(process.cwd(), 'website/public/__version.json');
+        if (fs.existsSync(localVersionFile)) {
+            const parsed = JSON.parse(fs.readFileSync(localVersionFile, 'utf8'));
+            prebuildSha = parsed.fullSha || parsed.shortSha || null;
+        }
+    } catch {
+        // Ignore file error
     }
 
     try {
@@ -63,6 +75,8 @@ async function checkDokployVersion() {
             };
         }
         const remoteSha = json.fullSha || json.commitSha || null;
+        const matchesDirectHead = Boolean(remoteSha && (localSha.startsWith(remoteSha) || remoteSha.startsWith(localSha.slice(0, 7))));
+        const matchesPrebuildArtifact = Boolean(remoteSha && prebuildSha && (remoteSha === prebuildSha || remoteSha.startsWith(prebuildSha.slice(0, 7))));
         return {
             reachable: true,
             status: res.status,
@@ -70,7 +84,7 @@ async function checkDokployVersion() {
             remoteSha,
             builtAt: json.builtAt,
             commitMessage: json.commitMessage,
-            matchesHead: Boolean(remoteSha && (localSha.startsWith(remoteSha) || remoteSha.startsWith(localSha.slice(0, 7)))),
+            matchesHead: matchesDirectHead || matchesPrebuildArtifact,
         };
     } catch (err) {
         return {

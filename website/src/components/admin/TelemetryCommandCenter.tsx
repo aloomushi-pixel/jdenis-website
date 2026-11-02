@@ -62,6 +62,24 @@ interface AgentChangelogEntry {
     expectedImpact: string;
 }
 
+interface AutonomousEvolutionLogRow {
+    id: string;
+    project_name: string;
+    version_tag: string;
+    cycle_number: number;
+    status: 'IMPLEMENTED' | 'POSTPONED' | 'ACTION_REQUIRED' | 'TEST_SYNC';
+    short_summary: string | null;
+    telemetry_findings: string | null;
+    changes_applied: unknown;
+    postponed_reason: string | null;
+    human_action_required: string | null;
+    commit_hash: string | null;
+    deployment_uuid: string | null;
+    next_timer_seconds: number | null;
+    email_sent: boolean | null;
+    created_at: string;
+}
+
 type DateRangeKey = '1d' | '7d' | '30d' | '90d';
 type CommandTab = 'executive' | 'funnel' | 'seo_geo' | 'pwa' | 'operations' | 'ai_digest';
 
@@ -75,6 +93,7 @@ export default function TelemetryCommandCenter() {
     const [quotesTotal, setQuotesTotal] = useState(0);
     const [versionInfo, setVersionInfo] = useState<VersionInfo | null>(null);
     const [changelog, setChangelog] = useState<AgentChangelogEntry[]>([]);
+    const [evolutionLogs, setEvolutionLogs] = useState<AutonomousEvolutionLogRow[]>([]);
     const [loading, setLoading] = useState(true);
     const [copiedDigest, setCopiedDigest] = useState(false);
 
@@ -85,7 +104,7 @@ export default function TelemetryCommandCenter() {
             const days = daysMap[dateRange];
             const sinceIso = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
 
-            const [eventsRes, webOrdersRes, quotesRes, versionRes, changelogRes] = await Promise.allSettled([
+            const [eventsRes, webOrdersRes, quotesRes, versionRes, changelogRes, evoLogsRes] = await Promise.allSettled([
                 supabase
                     .from('analytics_events')
                     .select('*')
@@ -102,6 +121,11 @@ export default function TelemetryCommandCenter() {
                     .gte('created_at', sinceIso),
                 fetch(`/__version.json?t=${Date.now()}`, { cache: 'no-store' }).then(r => r.ok ? r.json() : null),
                 fetch(`/jdennis_agent_changelog.json?t=${Date.now()}`, { cache: 'no-store' }).then(r => r.ok ? r.json() : []),
+                supabase
+                    .from('autonomous_evolution_logs')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(20),
             ]);
 
             if (eventsRes.status === 'fulfilled' && eventsRes.value.data) {
@@ -122,6 +146,9 @@ export default function TelemetryCommandCenter() {
             }
             if (changelogRes.status === 'fulfilled' && Array.isArray(changelogRes.value)) {
                 setChangelog(changelogRes.value as AgentChangelogEntry[]);
+            }
+            if (evoLogsRes.status === 'fulfilled' && evoLogsRes.value.data) {
+                setEvolutionLogs(evoLogsRes.value.data as AutonomousEvolutionLogRow[]);
             }
         } catch (err) {
             console.error('Error loading telemetry command center:', err);
@@ -595,6 +622,55 @@ Analiza este Digest de Telemetría Real de J. Denis y ejecuta mejoras directas e
                                 )}
                             </div>
                         </div>
+
+                        {/* Compact Block: 🤖 Control de Versiones IA (Estándar Maestro v2.0) */}
+                        <div className="p-5 rounded-2xl border border-indigo-200 bg-gradient-to-r from-indigo-50/60 via-white to-indigo-50/40">
+                            <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                                <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                                    <Bot className="w-4 h-4 text-indigo-600" />
+                                    🤖 Control de Versiones IA (`autonomous_evolution_logs`)
+                                </h3>
+                                <button
+                                    onClick={() => setActiveTab('ai_digest')}
+                                    className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 underline"
+                                >
+                                    Ver historial completo ({evolutionLogs.length}) →
+                                </button>
+                            </div>
+                            {evolutionLogs.length === 0 ? (
+                                <p className="text-xs text-slate-500">Sincronizando controlador de versiones IA...</p>
+                            ) : (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    {evolutionLogs.slice(0, 2).map((log) => (
+                                        <div key={log.id} className="p-3.5 rounded-xl bg-white border border-slate-200 text-xs space-y-1 shadow-sm">
+                                            <div className="flex items-center justify-between gap-2">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="font-bold text-slate-900">{log.version_tag}</span>
+                                                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                                                        log.status === 'IMPLEMENTED'
+                                                            ? 'bg-emerald-100 text-emerald-800'
+                                                            : log.status === 'ACTION_REQUIRED'
+                                                            ? 'bg-amber-100 text-amber-800'
+                                                            : 'bg-indigo-100 text-indigo-800'
+                                                    }`}>
+                                                        {log.status}
+                                                    </span>
+                                                </div>
+                                                <span className="text-[11px] text-slate-400 font-mono">
+                                                    Ciclo #{log.cycle_number} · ✉️ {log.email_sent ? 'OK' : 'Pendiente'}
+                                                </span>
+                                            </div>
+                                            <p className="text-slate-700 line-clamp-2">{log.short_summary}</p>
+                                            {log.human_action_required && (
+                                                <p className="text-[11px] text-amber-800 font-semibold">
+                                                    🙋‍♂️ {log.human_action_required}
+                                                </p>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
                     </div>
                 )}
 
@@ -921,6 +997,65 @@ Analiza este Digest de Telemetría Real de J. Denis y ejecuta mejoras directas e
                         <pre className="p-4 rounded-2xl bg-slate-900 text-slate-100 text-xs font-mono overflow-x-auto max-h-80 leading-relaxed">
                             {aiPromptDigest}
                         </pre>
+
+                        {/* Autonomous Evolution Logs (Estándar Maestro v2.0) */}
+                        <div className="border border-indigo-200 bg-indigo-50/30 rounded-2xl p-5">
+                            <div className="flex items-center justify-between mb-3">
+                                <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                                    <Bot className="w-4 h-4 text-indigo-600" />
+                                    🤖 Control de Versiones IA (`public.autonomous_evolution_logs`)
+                                </h4>
+                                <span className="text-[11px] font-semibold text-indigo-700 bg-indigo-100 px-2.5 py-0.5 rounded-full">
+                                    Estándar Maestro v2.0 · Resend Activo
+                                </span>
+                            </div>
+                            {evolutionLogs.length === 0 ? (
+                                <p className="text-xs text-slate-400">Sin registros aún en `autonomous_evolution_logs`.</p>
+                            ) : (
+                                <div className="space-y-3">
+                                    {evolutionLogs.map((log) => {
+                                        const badgeColor =
+                                            log.status === 'IMPLEMENTED'
+                                                ? 'bg-emerald-100 text-emerald-800 border-emerald-200'
+                                                : log.status === 'ACTION_REQUIRED'
+                                                ? 'bg-amber-100 text-amber-800 border-amber-200'
+                                                : log.status === 'TEST_SYNC'
+                                                ? 'bg-indigo-100 text-indigo-800 border-indigo-200'
+                                                : 'bg-slate-100 text-slate-700 border-slate-200';
+                                        return (
+                                            <div key={log.id} className="p-4 rounded-xl bg-white border border-slate-200 text-xs space-y-1.5 shadow-sm">
+                                                <div className="flex flex-wrap items-center justify-between gap-2">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="font-extrabold text-slate-900">{log.version_tag}</span>
+                                                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${badgeColor}`}>
+                                                            {log.status}
+                                                        </span>
+                                                        <span className="text-slate-500">Ciclo #{log.cycle_number}</span>
+                                                    </div>
+                                                    <span className="text-slate-500 font-mono text-[11px]">
+                                                        {new Date(log.created_at).toLocaleString('es-MX')} · SHA: {log.commit_hash ? log.commit_hash.slice(0, 7) : 'N/A'} · ✉️ {log.email_sent ? 'Enviado' : 'Pendiente'}
+                                                    </span>
+                                                </div>
+                                                {log.short_summary && (
+                                                    <p className="text-slate-800 font-medium">{log.short_summary}</p>
+                                                )}
+                                                {log.telemetry_findings && (
+                                                    <p className="text-slate-600"><strong>Telemetría:</strong> {log.telemetry_findings}</p>
+                                                )}
+                                                {log.postponed_reason && (
+                                                    <p className="text-slate-500 italic"><strong>Razón Pospuesto:</strong> {log.postponed_reason}</p>
+                                                )}
+                                                {log.human_action_required && (
+                                                    <p className="text-amber-800 font-semibold bg-amber-50 p-2 rounded-lg border border-amber-200">
+                                                        🙋‍♂️ <strong>Acción Requerida del Humano:</strong> {log.human_action_required}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
+                        </div>
 
                         {/* Autonomous Agent Changelog */}
                         <div className="border border-slate-200 rounded-2xl p-5">
