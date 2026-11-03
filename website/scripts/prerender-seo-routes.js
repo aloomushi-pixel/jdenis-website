@@ -443,9 +443,9 @@ export async function prerenderSeoRoutes() {
                         applicableCountry: 'MX',
                         merchantReturnLink: `${BASE_URL}/politica-de-devoluciones`,
                         returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
-                        merchantReturnDays: 15,
+                        merchantReturnDays: 7,
                         returnMethod: 'https://schema.org/ReturnByMail',
-                        returnFees: 'https://schema.org/FreeReturn',
+                        returnFees: 'https://schema.org/ReturnFeesCustomerResponsibility',
                     },
                 },
             };

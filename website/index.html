@@ -49,9 +49,10 @@
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": ["Organization", "Brand", "HealthAndBeautyBusiness"],
+        "@type": ["Organization", "OnlineStore", "Brand", "HealthAndBeautyBusiness"],
         "@id": "https://jdenis.store/#organization",
         "name": "J. Denis Cosméticos México",
+        "legalName": "J.J. Denis S.A. de C.V.",
         "alternateName": ["J. Denis", "JDenis", "J Denis Cejas y Pestañas", "J. Denis Lindavista"],
         "url": "https://jdenis.store",
         "logo": "https://jdenis.store/logo-new.jpeg",
@@ -59,7 +60,21 @@
         "description": "Fabricante nacional mexicano líder desde 1998 en cosméticos profesionales para cejas y pestañas: laminado y planchado de cejas, lash lifting con cisteamina, brow henna, pigmentos, activador orgánico de henna, gel ondulante, botox capilar, adhesivos y venta al mayoreo.",
         "foundingDate": "1998",
         "priceRange": "$$",
-        "telephone": "+52-55-5754-5568",
+        "email": "hola@jdenis.com",
+        "telephone": "+52-55-2727-1067",
+        "sameAs": [
+          "https://facebook.com/JDenisMexico",
+          "https://www.instagram.com/jdenismx/",
+          "https://youtube.com/@JDenismexico"
+        ],
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": "+52-55-2727-1067",
+          "email": "hola@jdenis.com",
+          "contactType": "customer service",
+          "areaServed": "MX",
+          "availableLanguage": "Spanish"
+        },
         "address": {
           "@type": "PostalAddress",
           "streetAddress": "Av. Montevideo #136, Col. Lindavista",
@@ -67,6 +82,16 @@
           "addressRegion": "CDMX",
           "postalCode": "07300",
           "addressCountry": "MX"
+        },
+        "hasMerchantReturnPolicy": {
+          "@type": "MerchantReturnPolicy",
+          "@id": "https://jdenis.store/#return-policy",
+          "applicableCountry": "MX",
+          "merchantReturnLink": "https://jdenis.store/politica-de-devoluciones",
+          "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+          "merchantReturnDays": 7,
+          "returnMethod": "https://schema.org/ReturnByMail",
+          "returnFees": "https://schema.org/ReturnFeesCustomerResponsibility"
         }
       },
       {
