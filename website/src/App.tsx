@@ -46,6 +46,7 @@ import Shop from './pages/Shop';
 import PaymentResult from './pages/PaymentResult';
 import ResetPassword from './pages/ResetPassword';
 import AvisoPrivacidad from './pages/AvisoPrivacidad';
+import PoliticaDevoluciones from './pages/PoliticaDevoluciones';
 import SolicitarFactura from './pages/SolicitarFactura';
 import CategorySeoHub from './pages/CategorySeoHub';
 import { useAuthStore } from './store/authStore';
@@ -90,6 +91,8 @@ function Layout() {
           <Route path="/noticias/:slug" element={<NewsPost />} />
           <Route path="/registro-distribuidor" element={<RegistroDistribuidor />} />
           <Route path="/aviso-de-privacidad" element={<AvisoPrivacidad />} />
+          <Route path="/politica-de-devoluciones" element={<PoliticaDevoluciones />} />
+          <Route path="/devoluciones" element={<PoliticaDevoluciones />} />
           <Route path="/solicitar-factura" element={<SolicitarFactura />} />
           <Route path="/pago-resultado" element={<PaymentResult />} />
           <Route path="/restablecer-contrasena" element={<ResetPassword />} />

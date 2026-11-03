@@ -75,7 +75,8 @@ async function generateSitemapAndFeeds() {
     addUrl(sitemapLines, '/blog', today, '0.85', 'daily');
     addUrl(sitemapLines, '/nosotros', today, '0.8', 'monthly');
     addUrl(sitemapLines, '/solicitar-factura', today, '0.6', 'monthly');
-    addUrl(sitemapLines, '/aviso-de-privacidad', today, '0.4', 'yearly');
+    addUrl(sitemapLines, '/aviso-de-privacidad', today, '0.5', 'yearly');
+    addUrl(sitemapLines, '/politica-de-devoluciones', today, '0.6', 'yearly');
 
     // Category Landing Views (B2C + B2B Wholesale SEO)
     const categoryIds = [

@@ -166,6 +166,24 @@ const STATIC_ROUTES = [
         h1: 'Blog Técnico de Cosmética Profesional J. Denis',
         description: 'Guías paso a paso, protocolos químicos de cisteamina, tiempos de pose de gel ondulante, colorimetría de Brow Henna y consejos de negocio para especialistas en cejas y pestañas.',
     },
+    {
+        route: 'politica-de-devoluciones',
+        title: 'Política de Cambios y Devoluciones | J. Denis México',
+        h1: 'Política de Cambios y Devoluciones — J. Denis',
+        description: 'Lineamientos generales de atención, revisión de pedidos, cambios y devoluciones para compras realizadas en los canales oficiales de J. Denis México.',
+    },
+    {
+        route: 'devoluciones',
+        title: 'Política de Cambios y Devoluciones | J. Denis México',
+        h1: 'Política de Cambios y Devoluciones — J. Denis',
+        description: 'Lineamientos generales de atención, revisión de pedidos, cambios y devoluciones para compras realizadas en los canales oficiales de J. Denis México.',
+    },
+    {
+        route: 'aviso-de-privacidad',
+        title: 'Aviso de Privacidad | J. Denis México',
+        h1: 'Aviso de Privacidad — J. Denis',
+        description: 'Aviso de privacidad oficial de J.J. Denis S.A. de C.V. para el tratamiento y protección de datos personales de clientes y distribuidores.',
+    },
 ];
 
 function buildRouteHtml(baseHtml, { title, description, canonical, ogType = 'website', image = `${BASE_URL}/hero-products.jpg`, jsonLd = [], noscriptHtml = '' }) {
@@ -423,6 +441,7 @@ export async function prerenderSeoRoutes() {
                     hasMerchantReturnPolicy: {
                         '@type': 'MerchantReturnPolicy',
                         applicableCountry: 'MX',
+                        merchantReturnLink: `${BASE_URL}/politica-de-devoluciones`,
                         returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
                         merchantReturnDays: 15,
                         returnMethod: 'https://schema.org/ReturnByMail',

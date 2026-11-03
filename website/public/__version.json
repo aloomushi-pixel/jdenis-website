@@ -1,8 +1,8 @@
 {
-  "commitSha": "21f0ef0 (21f0ef06a62d15bb9fc4114939e89ec4f67dc8c1)",
-  "shortSha": "21f0ef0",
-  "fullSha": "21f0ef06a62d15bb9fc4114939e89ec4f67dc8c1",
-  "commitMessage": "feat(seo-gsc): hook prerenderSeoRoutes into Vite closeBundle & add GSC CTR overrides for Godete, Curva LC, Adhesivos and Lifting Coreano (v2.1.1)",
-  "builtAt": "2026-11-03T02:37:46.351Z",
+  "commitSha": "96b866c (96b866c4183f07d86facfa4bae1aefbe45906e11)",
+  "shortSha": "96b866c",
+  "fullSha": "96b866c4183f07d86facfa4bae1aefbe45906e11",
+  "commitMessage": "feat(gsc): enable Google Indexing API v3 batch push for product catalog and category hubs",
+  "builtAt": "2026-11-03T04:56:40.938Z",
   "environment": "production"
 }

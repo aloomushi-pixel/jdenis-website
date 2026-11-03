@@ -239,6 +239,7 @@ export default function ProductDetail() {
                     hasMerchantReturnPolicy: {
                         '@type': 'MerchantReturnPolicy',
                         applicableCountry: 'MX',
+                        merchantReturnLink: 'https://jdenis.store/politica-de-devoluciones',
                         returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
                         merchantReturnDays: 15,
                         returnMethod: 'https://schema.org/ReturnByMail',
