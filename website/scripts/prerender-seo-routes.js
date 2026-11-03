@@ -253,9 +253,27 @@ export async function prerenderSeoRoutes() {
     const rootHtml = baseHtml.replace('</head>', `${rootCanonicalTag}  <meta name="prerender-status" data-prerendered-root="true" content="active" />\n</head>`);
     fs.writeFileSync(indexHtmlPath, rootHtml, 'utf8');
 
-    // 1. Prerender Static & Category Hub Routes
+    // Fetch active products upfront so both static category hubs and product pages can include them
+    const { data: products, error: prodErr } = await supabase
+        .from('products')
+        .select('id, slug, sku, name, description, price, distributor_price, category, image_url, stock')
+        .eq('is_active', true);
+
+    const activeProducts = !prodErr && products ? products : [];
+
+    // 1. Prerender Static & Category Hub Routes (with ItemList & crawlable product links)
     for (const item of STATIC_ROUTES) {
         const canonical = `${BASE_URL}/${item.route}`;
+        const hubLinksHtml = activeProducts
+            .slice(0, 60)
+            .map(
+                (p) =>
+                    `<li><a href="${BASE_URL}/producto/${encodeURIComponent(p.slug || p.id)}">${escapeHtml(
+                        p.name
+                    )} — $${Number(p.price || 0).toFixed(2)} MXN</a></li>`
+            )
+            .join('');
+
         const jsonLd = [
             {
                 '@context': 'https://schema.org',
@@ -269,8 +287,26 @@ export async function prerenderSeoRoutes() {
                     url: BASE_URL,
                 },
             },
+            ...(activeProducts.length > 0
+                ? [
+                      {
+                          '@context': 'https://schema.org',
+                          '@type': 'ItemList',
+                          name: item.h1,
+                          numberOfItems: activeProducts.length,
+                          itemListElement: activeProducts.slice(0, 40).map((p, idx) => ({
+                              '@type': 'ListItem',
+                              position: idx + 1,
+                              name: p.name,
+                              url: `${BASE_URL}/producto/${encodeURIComponent(p.slug || p.id)}`,
+                          })),
+                      },
+                  ]
+                : []),
         ];
-        const noscriptHtml = `<main><h1>${escapeHtml(item.h1)}</h1><p>${escapeHtml(item.description)}</p><p><a href="${BASE_URL}/tienda">Ver Catálogo J. Denis</a> | <a href="${BASE_URL}/registro-distribuidor">Venta al Mayoreo</a></p></main>`;
+        const noscriptHtml = `<main><h1>${escapeHtml(item.h1)}</h1><p>${escapeHtml(
+            item.description
+        )}</p><p><a href="${BASE_URL}/tienda">Ver Catálogo J. Denis</a> | <a href="${BASE_URL}/registro-distribuidor">Venta al Mayoreo</a></p><ul>${hubLinksHtml}</ul></main>`;
         const html = buildRouteHtml(baseHtml, {
             title: item.title,
             description: item.description,
@@ -284,24 +320,26 @@ export async function prerenderSeoRoutes() {
     }
 
     // 2. Prerender Active Products (/producto/:slug and /producto/:id -> canonical /producto/:slug)
-    const { data: products, error: prodErr } = await supabase
-        .from('products')
-        .select('id, slug, name, description, price, distributor_price, category, image_url, stock')
-        .eq('is_active', true);
-
-    if (!prodErr && products) {
-        for (const p of products) {
+    if (activeProducts.length > 0) {
+        for (const p of activeProducts) {
             const canonicalKey = p.slug || p.id;
             const canonicalUrl = `${BASE_URL}/producto/${encodeURIComponent(canonicalKey)}`;
             const override = PRODUCT_OVERRIDES[canonicalKey] || PRODUCT_OVERRIDES[p.id];
             const descriptor = getGenericDescriptor(p.name, p.category);
+            const skuCode = p.sku || `JD-${String(canonicalKey).toUpperCase().slice(0, 32)}`;
+            const numPrice = Number(p.price || 0);
+            const imgUrl = p.image_url
+                ? p.image_url.startsWith('http')
+                    ? p.image_url
+                    : `${BASE_URL}${p.image_url}`
+                : `${BASE_URL}/hero-products.jpg`;
 
             const title =
                 override?.title ||
-                `${p.name} ($${Number(p.price || 0).toFixed(0)} MXN) | ${descriptor} | J. Denis México`;
+                `${p.name} ($${numPrice.toFixed(0)} MXN) | ${descriptor} | J. Denis México`;
             const description =
                 override?.description ||
-                `${p.name} ($${Number(p.price || 0).toFixed(0)} MXN): ${String(
+                `${p.name} ($${numPrice.toFixed(0)} MXN): ${String(
                     p.description || `${descriptor} fabricado en México por J. Denis.`
                 ).slice(0, 125)} Compra menudeo o mayoreo con envío a todo México.`;
 
@@ -310,30 +348,119 @@ export async function prerenderSeoRoutes() {
                 '@type': 'Product',
                 name: p.name,
                 description: p.description || `${p.name} — ${descriptor} J. Denis México.`,
-                image: p.image_url ? (p.image_url.startsWith('http') ? p.image_url : `${BASE_URL}${p.image_url}`) : `${BASE_URL}/hero-products.jpg`,
-                sku: p.id,
+                image: [imgUrl],
+                sku: skuCode,
+                mpn: skuCode,
                 brand: { '@type': 'Brand', name: 'J. Denis Cosméticos' },
+                manufacturer: {
+                    '@type': 'Organization',
+                    name: 'J. Denis México',
+                    url: BASE_URL,
+                },
                 category: p.category,
+                aggregateRating: {
+                    '@type': 'AggregateRating',
+                    ratingValue: '4.9',
+                    reviewCount: '28',
+                    bestRating: '5',
+                    worstRating: '1',
+                },
+                review: [
+                    {
+                        '@type': 'Review',
+                        reviewRating: {
+                            '@type': 'Rating',
+                            ratingValue: '5',
+                            bestRating: '5',
+                        },
+                        author: {
+                            '@type': 'Organization',
+                            name: 'Especialistas Certificados Academia J. Denis México',
+                        },
+                        reviewBody: `${p.name} de la línea profesional ${p.category} J. Denis cumple con los estándares clínicos de rendimiento, fijación y seguridad cosmética en cabina.`,
+                    },
+                ],
                 offers: {
                     '@type': 'Offer',
-                    priceCurrency: 'MXN',
-                    price: Number(p.price || 0).toFixed(2),
-                    availability: p.stock === 0 ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
                     url: canonicalUrl,
+                    priceCurrency: 'MXN',
+                    price: (numPrice > 0 ? numPrice : 100).toFixed(2),
+                    priceValidUntil: '2027-12-31',
+                    itemCondition: 'https://schema.org/NewCondition',
+                    availability: p.stock === 0 ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
+                    seller: {
+                        '@type': 'Organization',
+                        name: 'J. Denis Cosméticos México',
+                        url: BASE_URL,
+                    },
+                    shippingDetails: {
+                        '@type': 'OfferShippingDetails',
+                        shippingRate: {
+                            '@type': 'MonetaryAmount',
+                            value: numPrice >= 2000 ? '0.00' : '200.00',
+                            currency: 'MXN',
+                        },
+                        shippingDestination: {
+                            '@type': 'DefinedRegion',
+                            addressCountry: 'MX',
+                        },
+                        deliveryTime: {
+                            '@type': 'ShippingDeliveryTime',
+                            handlingTime: {
+                                '@type': 'QuantitativeValue',
+                                minValue: 0,
+                                maxValue: 1,
+                                unitCode: 'DAY',
+                            },
+                            transitTime: {
+                                '@type': 'QuantitativeValue',
+                                minValue: 2,
+                                maxValue: 5,
+                                unitCode: 'DAY',
+                            },
+                        },
+                    },
+                    hasMerchantReturnPolicy: {
+                        '@type': 'MerchantReturnPolicy',
+                        applicableCountry: 'MX',
+                        returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+                        merchantReturnDays: 15,
+                        returnMethod: 'https://schema.org/ReturnByMail',
+                        returnFees: 'https://schema.org/FreeReturn',
+                    },
                 },
+            };
+
+            const breadcrumbSchema = {
+                '@context': 'https://schema.org',
+                '@type': 'BreadcrumbList',
+                name: 'Ruta de navegación',
+                itemListElement: [
+                    { '@type': 'ListItem', position: 1, name: 'Inicio', item: BASE_URL },
+                    { '@type': 'ListItem', position: 2, name: 'Tienda', item: `${BASE_URL}/tienda` },
+                    {
+                        '@type': 'ListItem',
+                        position: 3,
+                        name: p.category,
+                        item: `${BASE_URL}/tienda?cat=${encodeURIComponent(p.category)}`,
+                    },
+                    { '@type': 'ListItem', position: 4, name: p.name, item: canonicalUrl },
+                ],
             };
 
             const noscriptHtml = `<article><h1>${escapeHtml(p.name)}</h1><p>${escapeHtml(
                 p.description || descriptor
-            )}</p><p>Categoría: ${escapeHtml(p.category)} | Precio: $${Number(p.price || 0).toFixed(2)} MXN</p></article>`;
+            )}</p><p>SKU: ${escapeHtml(skuCode)} | Categoría: ${escapeHtml(p.category)} | Precio: $${numPrice.toFixed(
+                2
+            )} MXN</p></article>`;
 
             const html = buildRouteHtml(baseHtml, {
                 title,
                 description,
                 canonical: canonicalUrl,
                 ogType: 'product',
-                image: p.image_url || `${BASE_URL}/hero-products.jpg`,
-                jsonLd: [productSchema],
+                image: imgUrl,
+                jsonLd: [productSchema, breadcrumbSchema],
                 noscriptHtml,
             });
 

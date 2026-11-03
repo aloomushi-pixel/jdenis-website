@@ -44,7 +44,7 @@ export default defineConfig({
       includeAssets: ['logo-new.jpeg', 'hero-products.jpg', 'robots.txt', 'llms.txt'],
       workbox: {
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5 MiB
-        navigateFallbackDenylist: [/^\/__version\.json$/, /^\/sitemap\.xml$/, /^\/robots\.txt$/, /^\/llms\.txt$/],
+        navigateFallbackDenylist: [/^\/__version\.json$/, /^\/sitemap\.xml$/, /^\/sitemap-productos\.xml$/, /^\/google-merchant-feed\.xml$/, /^\/robots\.txt$/, /^\/llms\.txt$/],
         runtimeCaching: [
           {
             urlPattern: /\/__version\.json/,

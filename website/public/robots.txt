@@ -47,3 +47,4 @@ Allow: /
 Disallow: /admin
 
 Sitemap: https://jdenis.store/sitemap.xml
+Sitemap: https://jdenis.store/sitemap-productos.xml

@@ -1,8 +1,8 @@
 {
-  "commitSha": "37360b0 (37360b039d9cdfb2cea36f7caaae972ff31f3226)",
-  "shortSha": "37360b0",
-  "fullSha": "37360b039d9cdfb2cea36f7caaae972ff31f3226",
-  "commitMessage": "feat(seo-arch): execute approved 3-pillar GSC architectural pivot v2.1.0 (5 category hubs, canonical slugs, 353 static pre-rendered routes)",
-  "builtAt": "2026-11-03T02:20:52.240Z",
+  "commitSha": "21f0ef0 (21f0ef06a62d15bb9fc4114939e89ec4f67dc8c1)",
+  "shortSha": "21f0ef0",
+  "fullSha": "21f0ef06a62d15bb9fc4114939e89ec4f67dc8c1",
+  "commitMessage": "feat(seo-gsc): hook prerenderSeoRoutes into Vite closeBundle & add GSC CTR overrides for Godete, Curva LC, Adhesivos and Lifting Coreano (v2.1.1)",
+  "builtAt": "2026-11-03T02:37:46.351Z",
   "environment": "production"
 }
