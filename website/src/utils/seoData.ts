@@ -512,6 +512,51 @@ export const GSC_PRODUCT_SEO_OVERRIDES: Record<string, ProductGscSeoOverride> = 
         metaDescription: 'Paquete de 10 aplicadores Microbrush de precisión sin pelusa J. Denis para Lash Lifting, extensión de pestañas, laminado y retiro de adhesivo. Insumos profesionales en México.',
         extraFaqs: [],
     },
+    'godete-cristal': {
+        metaTitle: 'Godete de Cristal Profesional para Henna, Pigmentos y Tintes de Cejas | J. Denis',
+        metaDescription: 'Godete de Cristal macizo profesional J. Denis ($295 MXN) para mezclar Brow Henna, pigmentos de cejas, tintes y monómero sin absorber ni alterar la fórmula. Envío a todo México.',
+        extraFaqs: [
+            {
+                question: '¿Por qué es indispensable mezclar la Henna y el Pigmento de cejas en un Godete de Cristal?',
+                answer: 'El godete de cristal macizo es no poroso y químicamente inerte, lo que evita que el activador de henna o el oxidante reaccionen como ocurre con recipientes plásticos o metálicos.',
+            },
+        ],
+    },
+    'curva-lc-015-combo': {
+        metaTitle: 'Extensiones de Pestañas Curva LC 0.15 Mixta (Efecto Foxy Eye y Lifting) | J. Denis',
+        metaDescription: 'Blíster de Extensiones de Pestañas Curva LC grosor 0.15 Mixta J. Denis ($280 MXN). Base recta de alta retención y elevación tipo delineado ideal para párpado encapotado.',
+        extraFaqs: [
+            {
+                question: '¿Para qué tipo de ojo se recomienda la Curva LC en extensiones de pestañas?',
+                answer: 'La Curva LC es ideal para ojos con párpado encapotado, ojos profundos o diseños Foxy Eye / Cat Eye, ya que su base recta proyecta la pestaña hacia afuera antes de elevarla.',
+            },
+        ],
+    },
+    'curva-lc-010-combo': {
+        metaTitle: 'Extensiones de Pestañas Curva LC 0.10 Mixta Profesional | J. Denis México',
+        metaDescription: 'Blíster de Extensiones de Pestañas Curva LC grosor 0.10 Mixta J. Denis ($280 MXN). Ligereza superior y máxima superficie de contacto con el adhesivo para diseños Foxy Eye.',
+        extraFaqs: [
+            {
+                question: '¿Qué diferencia hay entre Curva LC 0.10 y 0.15 J. Denis?',
+                answer: 'El grosor 0.10 permite trabajar técnica clásica ligera o volumen tecnológico suave en pestañas naturales finas sin aportar peso extra.',
+            },
+        ],
+    },
+    'adhesivo-pads-lifting': {
+        metaTitle: 'Adhesivo J. Denis para Pads de Lash Lifting y Rizado de Pestañas | Tienda Oficial',
+        metaDescription: 'Adhesivo profesional hidrosoluble J. Denis para fijar pads de silicón y alinear pestañas en Lash Lifting y Rizado. Secado controlado y fácil retiro con agua.',
+        extraFaqs: [
+            {
+                question: '¿Cómo se retira el Adhesivo para Pads de Lash Lifting J. Denis?',
+                answer: 'Al ser una fórmula hidrosoluble de grado cosmético, se retira fácilmente al finalizar el procedimiento limpiando suavemente con agua purificada o solución fisiológica.',
+            },
+        ],
+    },
+    'adhesivo-rulos-blue': {
+        metaTitle: 'Adhesivo J. Denis Blue para Rulos y Pads de Rizado de Pestañas ($60 MXN)',
+        metaDescription: 'Adhesivo para Rulos y Pads línea Blue J. Denis ($60 MXN). Fijación firme y rápida para rizado permanente de pestañas y lash lifting profesional.',
+        extraFaqs: [],
+    },
 };
 
 export interface CategorySeoHubConfig {

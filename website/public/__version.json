@@ -1,8 +1,8 @@
 {
-  "commitSha": "9e25566 (9e25566a35dcdbc4583ebf41f2d48a4bb678c3d3)",
-  "shortSha": "9e25566",
-  "fullSha": "9e25566a35dcdbc4583ebf41f2d48a4bb678c3d3",
-  "commitMessage": "feat(seo-gsc-pivot): integrate Google Search Console API & optimize high-impression queries/pages (v2.0.5-gsc-pivot)",
-  "builtAt": "2026-11-02T22:27:23.384Z",
+  "commitSha": "37360b0 (37360b039d9cdfb2cea36f7caaae972ff31f3226)",
+  "shortSha": "37360b0",
+  "fullSha": "37360b039d9cdfb2cea36f7caaae972ff31f3226",
+  "commitMessage": "feat(seo-arch): execute approved 3-pillar GSC architectural pivot v2.1.0 (5 category hubs, canonical slugs, 353 static pre-rendered routes)",
+  "builtAt": "2026-11-03T02:20:52.240Z",
   "environment": "production"
 }

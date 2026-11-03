@@ -83,6 +83,26 @@ const PRODUCT_OVERRIDES = {
         title: 'Microbrush Aplicadores de Precisión para Pestañas y Cejas (10 pzas) | J. Denis',
         description: 'Paquete de 10 aplicadores Microbrush de precisión sin pelusa J. Denis para Lash Lifting, extensión de pestañas, laminado y retiro de adhesivo. Insumos profesionales en México.',
     },
+    'godete-cristal': {
+        title: 'Godete de Cristal Profesional para Henna, Pigmentos y Tintes de Cejas | J. Denis',
+        description: 'Godete de Cristal macizo profesional J. Denis ($295 MXN) para mezclar Brow Henna, pigmentos de cejas, tintes y monómero sin absorber ni alterar la fórmula. Envío a todo México.',
+    },
+    'curva-lc-015-combo': {
+        title: 'Extensiones de Pestañas Curva LC 0.15 Mixta (Efecto Foxy Eye y Lifting) | J. Denis',
+        description: 'Blíster de Extensiones de Pestañas Curva LC grosor 0.15 Mixta J. Denis ($280 MXN). Base recta de alta retención y elevación tipo delineado ideal para párpado encapotado.',
+    },
+    'curva-lc-010-combo': {
+        title: 'Extensiones de Pestañas Curva LC 0.10 Mixta Profesional | J. Denis México',
+        description: 'Blíster de Extensiones de Pestañas Curva LC grosor 0.10 Mixta J. Denis ($280 MXN). Ligereza superior y máxima superficie de contacto con el adhesivo para diseños Foxy Eye.',
+    },
+    'adhesivo-pads-lifting': {
+        title: 'Adhesivo J. Denis para Pads de Lash Lifting y Rizado de Pestañas | Tienda Oficial',
+        description: 'Adhesivo profesional hidrosoluble J. Denis para fijar pads de silicón y alinear pestañas en Lash Lifting y Rizado. Secado controlado y fácil retiro con agua.',
+    },
+    'adhesivo-rulos-blue': {
+        title: 'Adhesivo J. Denis Blue para Rulos y Pads de Rizado de Pestañas ($60 MXN)',
+        description: 'Adhesivo para Rulos y Pads línea Blue J. Denis ($60 MXN). Fijación firme y rápida para rizado permanente de pestañas y lash lifting profesional.',
+    },
 };
 
 const STATIC_ROUTES = [
@@ -213,7 +233,7 @@ function writeRouteFile(relativeRoute, htmlContent) {
     fs.writeFileSync(path.join(targetDir, 'index.html'), htmlContent, 'utf8');
 }
 
-async function prerenderSeoRoutes() {
+export async function prerenderSeoRoutes() {
     const indexHtmlPath = path.join(DIST_DIR, 'index.html');
     if (!fs.existsSync(indexHtmlPath)) {
         console.warn('[Prerender] dist/index.html not found, skipping prerender.');
@@ -221,13 +241,17 @@ async function prerenderSeoRoutes() {
     }
 
     const baseHtml = fs.readFileSync(indexHtmlPath, 'utf8');
+    // Guard against running twice on the same dist/
+    if (baseHtml.includes('data-prerendered-root="true"')) {
+        console.log('[Prerender] dist/ already prerendered, skipping duplicate run.');
+        return;
+    }
     let generatedCount = 0;
 
-    // Also ensure root dist/index.html has canonical link to https://jdenis.store
-    if (!baseHtml.includes('rel="canonical"')) {
-        const rootCanonicalHtml = baseHtml.replace('</head>', `  <link rel="canonical" href="${BASE_URL}" />\n</head>`);
-        fs.writeFileSync(indexHtmlPath, rootCanonicalHtml, 'utf8');
-    }
+    // Also ensure root dist/index.html has canonical link to https://jdenis.store and root marker
+    const rootCanonicalTag = baseHtml.includes('rel="canonical"') ? '' : `  <link rel="canonical" href="${BASE_URL}" />\n`;
+    const rootHtml = baseHtml.replace('</head>', `${rootCanonicalTag}  <meta name="prerender-status" data-prerendered-root="true" content="active" />\n</head>`);
+    fs.writeFileSync(indexHtmlPath, rootHtml, 'utf8');
 
     // 1. Prerender Static & Category Hub Routes
     for (const item of STATIC_ROUTES) {
@@ -336,8 +360,14 @@ async function prerenderSeoRoutes() {
             if (!post.slug) continue;
             const prefix = post.post_type === 'news' ? 'noticias' : 'blog';
             const canonicalUrl = `${BASE_URL}/${prefix}/${encodeURIComponent(post.slug)}`;
-            const title = `${post.title} | Blog Oficial J. Denis México`;
-            const description = post.excerpt || `${post.title} — Guía técnica y profesional por J. Denis Cosméticos México.`;
+            const title =
+                post.slug === 'lifting-coreano-vs-clasico'
+                    ? 'Lifting Coreano vs. Lash Lifting Clásico: Diferencias, Cisteamina y Cuál Elegir | J. Denis'
+                    : `${post.title} | Blog Oficial J. Denis México`;
+            const description =
+                post.slug === 'lifting-coreano-vs-clasico'
+                    ? 'Comparativa técnica entre Lifting Coreano con Cisteamina y Lash Lifting Clásico J. Denis: tiempos de pose, salud de la pestaña, pads anatómicos y duración de 6 a 8 semanas.'
+                    : post.excerpt || `${post.title} — Guía técnica y profesional por J. Denis Cosméticos México.`;
 
             const articleSchema = {
                 '@context': 'https://schema.org',
@@ -370,6 +400,9 @@ async function prerenderSeoRoutes() {
     console.log(`[Prerender] Successfully generated ${generatedCount} static SEO route HTML files in dist/`);
 }
 
-prerenderSeoRoutes().catch((err) => {
-    console.error('[Prerender] Error:', err);
-});
+// Run if invoked directly from CLI
+if (process.argv[1] && path.resolve(process.argv[1]) === __filename) {
+    prerenderSeoRoutes().catch((err) => {
+        console.error('[Prerender] Error:', err);
+    });
+}

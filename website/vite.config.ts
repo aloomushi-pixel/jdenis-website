@@ -4,6 +4,8 @@ import { VitePWA } from 'vite-plugin-pwa';
 import fs from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
+// @ts-expect-error - MJS build script
+import { prerenderSeoRoutes } from './scripts/prerender-seo-routes.js';
 
 function getAppVersion() {
   try {
@@ -87,6 +89,18 @@ export default defineConfig({
           }
         ]
       }
-    })
+    }),
+    {
+      name: 'prerender-seo-routes-plugin',
+      apply: 'build',
+      enforce: 'post',
+      closeBundle: {
+        order: 'post',
+        sequential: true,
+        async handler() {
+          await prerenderSeoRoutes();
+        }
+      }
+    }
   ],
 });
