@@ -29,7 +29,7 @@ export function usePageMeta({
 }: PageMetaOptions) {
     useEffect(() => {
         // Title
-        const fullTitle = title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`;
+        const fullTitle = /J\.?\s*Denis/i.test(title) ? title : `${title} | ${SITE_NAME}`;
         document.title = fullTitle;
 
         // Helper to set/update meta tags

@@ -543,6 +543,17 @@ export async function prerenderSeoRoutes() {
         }
     }
 
+    const distVersionPath = path.join(DIST_DIR, '__version.json');
+    if (fs.existsSync(distVersionPath)) {
+        try {
+            const vData = JSON.parse(fs.readFileSync(distVersionPath, 'utf8'));
+            vData.builtAt = new Date().toISOString();
+            fs.writeFileSync(distVersionPath, JSON.stringify(vData, null, 2), 'utf8');
+        } catch {
+            // ignore
+        }
+    }
+
     console.log(`[Prerender] Successfully generated ${generatedCount} static SEO route HTML files in dist/`);
 }
 
