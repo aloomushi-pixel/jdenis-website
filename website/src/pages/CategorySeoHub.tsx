@@ -135,6 +135,7 @@ export default function CategorySeoHub({ hubSlug }: CategorySeoHubProps) {
                 },
                 breadcrumb: {
                     '@type': 'BreadcrumbList',
+                    name: 'Ruta de navegación',
                     itemListElement: [
                         { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://jdenis.store' },
                         { '@type': 'ListItem', position: 2, name: 'Tienda', item: 'https://jdenis.store/tienda' },

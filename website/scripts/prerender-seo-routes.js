@@ -305,6 +305,15 @@ export async function prerenderSeoRoutes() {
                     url: BASE_URL,
                 },
             },
+            {
+                '@context': 'https://schema.org',
+                '@type': 'BreadcrumbList',
+                name: 'Ruta de navegación',
+                itemListElement: [
+                    { '@type': 'ListItem', position: 1, name: 'Inicio', item: BASE_URL },
+                    { '@type': 'ListItem', position: 2, name: item.h1, item: canonical },
+                ],
+            },
             ...(activeProducts.length > 0
                 ? [
                       {
@@ -403,6 +412,7 @@ export async function prerenderSeoRoutes() {
                     url: canonicalUrl,
                     priceCurrency: 'MXN',
                     price: (numPrice > 0 ? numPrice : 100).toFixed(2),
+                    validFrom: '2026-01-01',
                     priceValidUntil: '2027-12-31',
                     itemCondition: 'https://schema.org/NewCondition',
                     availability: p.stock === 0 ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',

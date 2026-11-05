@@ -12,6 +12,7 @@ interface PageMetaOptions {
     type?: 'website' | 'article' | 'product';
     jsonLd?: Record<string, unknown> | Record<string, unknown>[];
     noindex?: boolean;
+    enabled?: boolean;
 }
 
 const SITE_NAME = 'J. Denis México';
@@ -26,8 +27,11 @@ export function usePageMeta({
     type = 'website',
     jsonLd,
     noindex = false,
+    enabled = true,
 }: PageMetaOptions) {
     useEffect(() => {
+        if (!enabled) return;
+
         // Title
         const fullTitle = /J\.?\s*Denis/i.test(title) ? title : `${title} | ${SITE_NAME}`;
         document.title = fullTitle;
@@ -99,5 +103,5 @@ export function usePageMeta({
             // Restore default title on unmount con un pequeño delay
             // para no limpiar si hay navegación a otra ruta
         };
-    }, [title, description, canonical, image, type, noindex, jsonLd]);
+    }, [title, description, canonical, image, type, noindex, jsonLd, enabled]);
 }

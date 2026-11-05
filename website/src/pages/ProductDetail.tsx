@@ -143,6 +143,7 @@ export default function ProductDetail() {
 
     // Dynamic meta tags + rich structured data (Product, Offer/AggregateOffer, Brand, BreadcrumbList, FAQPage)
     usePageMeta({
+        enabled: !productsLoading && !!product,
         title: product
             ? gscOverride?.metaTitle || `${product.name} ($${product.price} MXN) | ${genericDescriptor} | J. Denis México`
             : 'Producto Cosmético Profesional | J. Denis México',
@@ -199,6 +200,7 @@ export default function ProductDetail() {
                     url: `https://jdenis.store/producto/${product.slug || product.id}`,
                     priceCurrency: 'MXN',
                     price: product.price > 0 ? product.price.toFixed(2) : '100.00',
+                    validFrom: '2026-01-01',
                     priceValidUntil: '2027-12-31',
                     itemCondition: 'https://schema.org/NewCondition',
                     availability: product.stock === 0
