@@ -1,8 +1,8 @@
 {
-  "commitSha": "2532e2f (2532e2f2f1394227fc97668542cd57eb02055377)",
-  "shortSha": "2532e2f",
-  "fullSha": "2532e2f2f1394227fc97668542cd57eb02055377",
-  "commitMessage": "feat(schema): add OnlineStore merchant return policy in root JSON-LD and align ReturnFeesCustomerResponsibility",
-  "builtAt": "2026-11-04T21:46:51.460Z",
+  "commitSha": "ff9d29d (ff9d29df0a782dad17017c2e88e3d2235dc110ff)",
+  "shortSha": "ff9d29d",
+  "fullSha": "ff9d29df0a782dad17017c2e88e3d2235dc110ff",
+  "commitMessage": "fix(seo): add validFrom to Product Offer JSON-LD and preserve prerendered head tags during hydration (v2.1.7)",
+  "builtAt": "2026-11-06T05:57:52.069Z",
   "environment": "production"
 }

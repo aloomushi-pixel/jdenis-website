@@ -340,7 +340,7 @@ export default function TelemetryProvider() {
                         target.id ||
                         tag;
                     // Ignore global search bar
-                    if (fieldName.toLowerCase().includes('buscar')) return;
+                    if (/busca/i.test(fieldName)) return;
                     lastModifiedFieldRef.current = {
                         formId: form.id || form.getAttribute('name') || 'form',
                         fieldName,

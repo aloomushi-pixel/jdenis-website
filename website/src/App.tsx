@@ -142,12 +142,12 @@ function App() {
     checkSession();
   }, [checkSession]);
 
-  // Show PWA banner after engagement (3s for logged-in users, 12s for visitors) — max once per week
+  // Show PWA banner after engagement (4s for logged-in users, 25s for visitors) — max once per week
   useEffect(() => {
     const lastShown = localStorage.getItem('pwa-prompt-shown');
     const oneWeek = 7 * 24 * 60 * 60 * 1000;
     if (lastShown && Date.now() - Number(lastShown) < oneWeek) return;
-    const delayMs = isAuthenticated ? 3000 : 12000;
+    const delayMs = isAuthenticated ? 4000 : 25000;
     const t = setTimeout(() => {
       setShowPWA(true);
       localStorage.setItem('pwa-prompt-shown', String(Date.now()));

@@ -34,6 +34,7 @@ export default function Academy() {
             {
                 '@context': 'https://schema.org',
                 '@type': 'BreadcrumbList',
+                name: 'Ruta de navegación',
                 itemListElement: [
                     { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://jdenis.store' },
                     { '@type': 'ListItem', position: 2, name: 'Academia', item: 'https://jdenis.store/academia' },
@@ -108,13 +109,14 @@ export default function Academy() {
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
 
                 <div className="container-luxury text-center relative z-10">
-                    <motion.span
+                    <motion.a
+                        href="#cursos-dc3"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className="inline-block px-4 py-2 bg-gold/20 border border-gold/40 text-cream/70 text-sm font-medium mb-4"
+                        className="inline-block px-4 py-2 bg-gold/20 hover:bg-gold/30 border border-gold/40 text-cream/90 text-sm font-medium mb-4 transition-colors cursor-pointer"
                     >
-                        ACADEMIA J. DENIS · CERTIFICACIÓN DC-3 / STPS
-                    </motion.span>
+                        ACADEMIA J. DENIS · CERTIFICACIÓN DC-3 / STPS ↓
+                    </motion.a>
                     <motion.h1
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -130,6 +132,19 @@ export default function Academy() {
                     <div className="flex items-center justify-center gap-2 mt-4 text-cream/70 text-sm font-medium">
                         <Shield className="w-4 h-4" />
                         <span>Constancias DC-3 con validez oficial ante la Secretaría del Trabajo y Previsión Social</span>
+                    </div>
+                    <div className="flex flex-wrap items-center justify-center gap-3 mt-6">
+                        <a href="#cursos-dc3" className="btn bg-gold text-forest border-gold hover:bg-gold/90 font-semibold text-sm px-5 py-2.5">
+                            Ver Cursos DC-3 y Fechas ↓
+                        </a>
+                        <a
+                            href="https://api.whatsapp.com/send/?phone=525565116087&text=Hola%21+Quiero+informes+de+los+cursos+con+Constancia+DC-3+de+Academia+J.+Denis&type=phone_number&app_absent=0"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="btn bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700 font-semibold text-sm px-5 py-2.5"
+                        >
+                            WhatsApp Inscripciones
+                        </a>
                     </div>
                 </div>
             </section>
@@ -154,7 +169,7 @@ export default function Academy() {
             </section>
 
             {/* Courses */}
-            <section className="section section-cream">
+            <section id="cursos-dc3" className="section section-cream scroll-mt-24">
                 <div className="container-luxury">
                     <h2 className="font-serif text-3xl text-forest text-center mb-4">Cursos con Certificación DC-3</h2>
                     <p className="text-charcoal/60 text-center max-w-2xl mx-auto mb-12">Todos nuestros cursos presenciales incluyen constancia DC-3 con validez ante la STPS, cumpliendo la normativa de capacitación laboral en México.</p>
