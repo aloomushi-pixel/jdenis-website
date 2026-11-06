@@ -66,10 +66,10 @@ export default function GlobalSearchModal() {
 
   const filteredProducts = useMemo(() => scoredResults.slice(0, 9), [scoredResults]);
 
-  // Debounced search telemetry
+  // Debounced search telemetry (1200ms so partial keystrokes while typing don't spam events)
   useEffect(() => {
     const trimmed = query.trim();
-    if (trimmed.length < 2) return;
+    if (trimmed.length < 3) return;
     const timer = setTimeout(() => {
       trackEvent('product_search', 'ecommerce', {
         query: trimmed,
@@ -77,7 +77,7 @@ export default function GlobalSearchModal() {
         category_filter: activeCategory,
         source: 'global_modal',
       });
-    }, 650);
+    }, 1200);
     return () => clearTimeout(timer);
   }, [query, scoredResults.length, activeCategory]);
 
