@@ -93,13 +93,7 @@ export default function Academy() {
         loadData();
     }, []);
 
-    if (loading) {
-        return (
-            <div className="min-h-screen bg-cream pt-24 flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-pink-400"></div>
-            </div>
-        );
-    }
+
 
     return (
         <div className="min-h-screen bg-cream">
@@ -174,6 +168,20 @@ export default function Academy() {
                     <h2 className="font-serif text-3xl text-forest text-center mb-4">Cursos con Certificación DC-3</h2>
                     <p className="text-charcoal/60 text-center max-w-2xl mx-auto mb-12">Todos nuestros cursos presenciales incluyen constancia DC-3 con validez ante la STPS, cumpliendo la normativa de capacitación laboral en México.</p>
 
+                    {loading && courses.length === 0 ? (
+                        <div className="grid md:grid-cols-2 gap-8">
+                            {[0, 1].map((idx) => (
+                                <div key={idx} className="bg-white border border-kraft/30 p-6 animate-pulse">
+                                    <div className="h-5 w-40 bg-kraft/30 rounded mb-3" />
+                                    <div className="h-7 w-3/4 bg-kraft/40 rounded mb-2" />
+                                    <div className="h-4 w-32 bg-kraft/20 rounded mb-4" />
+                                    <div className="h-16 w-full bg-kraft/20 rounded mb-6" />
+                                    <div className="h-10 w-full bg-kraft/30 rounded" />
+                                </div>
+                            ))}
+                        </div>
+                    ) : null}
+
                     <div className="grid md:grid-cols-2 gap-8">
                         {courses.map((course, index) => (
                             <motion.div
@@ -214,15 +222,28 @@ export default function Academy() {
                                                 )}
                                             </div>
                                             <h3 className="font-serif text-xl text-forest">
-                                                {course.title}
+                                                <a
+                                                    href={course.link}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="hover:text-gold transition-colors"
+                                                >
+                                                    {course.title}
+                                                </a>
                                             </h3>
                                             <p className="text-charcoal/60 text-sm">
                                                 Duración: {course.duration}
                                             </p>
                                         </div>
-                                        <span className="px-3 py-1 bg-gold/20 border border-gold/40 text-gold text-sm shrink-0">
-                                            {course.next_date}
-                                        </span>
+                                        <a
+                                            href={course.link}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="px-3 py-1 bg-gold/20 hover:bg-gold/30 border border-gold/40 text-gold text-sm shrink-0 transition-colors"
+                                            title="Apartar lugar o solicitar informes"
+                                        >
+                                            {course.next_date} →
+                                        </a>
                                     </div>
 
                                     <p className="text-charcoal/70 mb-4">
@@ -249,8 +270,8 @@ export default function Academy() {
                                             </p>
                                             <video
                                                 controls
+                                                preload="metadata"
                                                 className="w-full"
-                                                poster=""
                                             >
                                                 <source src={course.video} type="video/mp4" />
                                                 Tu navegador no soporta el elemento de video.

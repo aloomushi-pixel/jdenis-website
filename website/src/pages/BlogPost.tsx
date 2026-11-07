@@ -118,23 +118,25 @@ export default function BlogPost() {
     }, [slug]);
 
     // Dynamic meta + JSON-LD for this blog post
+    const resolvedTitle = post?.title || hardcodedPost?.title;
     usePageMeta({
-        title: post ? `${post.title} | Blog J. Denis` : 'Artículo | Blog J. Denis',
+        enabled: !loading && Boolean(resolvedTitle),
+        title: resolvedTitle ? `${resolvedTitle} | Blog J. Denis` : 'Artículo | Blog J. Denis',
         description: post?.excerpt
             ? post.excerpt.slice(0, 155)
             : 'Artículo de formación profesional sobre lifting de pestañas, laminado de cejas y certificación DC-3 STPS por J. Denis México.',
-        canonical: post ? `https://jdenis.store/blog/${slug}` : undefined,
+        canonical: slug ? `https://jdenis.store/blog/${slug}` : undefined,
         image: post?.featured_image || '/hero-products.jpg',
         type: 'article',
-        jsonLd: post ? [
+        jsonLd: resolvedTitle ? [
             {
                 '@context': 'https://schema.org',
                 '@type': 'Article',
-                headline: post.title,
-                description: post.excerpt || 'Artículo de J. Denis México',
-                image: post.featured_image || 'https://jdenis.store/hero-products.jpg',
+                headline: resolvedTitle,
+                description: post?.excerpt || 'Artículo de J. Denis México',
+                image: post?.featured_image || 'https://jdenis.store/hero-products.jpg',
                 url: `https://jdenis.store/blog/${slug}`,
-                datePublished: post.published_at || new Date().toISOString(),
+                datePublished: post?.published_at || new Date().toISOString(),
                 author: { '@type': 'Person', name: 'Gabriela Elizalde' },
                 publisher: {
                     '@type': 'Organization',
@@ -149,7 +151,7 @@ export default function BlogPost() {
                 itemListElement: [
                     { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://jdenis.store' },
                     { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://jdenis.store/blog' },
-                    { '@type': 'ListItem', position: 3, name: post.title, item: `https://jdenis.store/blog/${slug}` },
+                    { '@type': 'ListItem', position: 3, name: resolvedTitle, item: `https://jdenis.store/blog/${slug}` },
                 ],
             },
         ] : undefined,

@@ -11,6 +11,7 @@ export default function NewsPost() {
     const [error, setError] = useState(false);
 
     usePageMeta({
+        enabled: !loading && Boolean(post),
         title: post ? `${post.title} | Noticias J. Denis` : 'Noticia | J. Denis México',
         description: post?.excerpt || 'Lee las últimas noticias y actualizaciones de J. Denis.',
         canonical: post ? `https://jdenis.store/noticias/${post.slug}` : undefined,
