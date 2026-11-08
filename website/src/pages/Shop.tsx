@@ -376,7 +376,7 @@ export default function Shop() {
 
             <section id="shop-catalog" className="section section-cream py-0 md:py-0 relative">
                 {/* ─── Natively Sticky Shop Bar ─── */}
-                <div className="sticky top-0 z-40 w-full bg-cream/95 backdrop-blur-md pt-4 pb-4 border-b border-gray-200/50 shadow-sm transition-all duration-300">
+                <div className="sticky top-0 z-30 w-full bg-cream/95 backdrop-blur-md pt-4 pb-4 border-b border-gray-200/50 shadow-sm transition-all duration-300">
                     <div className="container-luxury flex flex-col gap-3">
                         {/* TOP ROW: Categories Carousel */}
                         <div className="relative group w-full flex items-center">

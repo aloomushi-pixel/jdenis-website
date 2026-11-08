@@ -704,7 +704,7 @@ export default function ProductDetail() {
             </div>
 
             {/* Sticky Mobile Bottom Purchase & Wholesale Bar — resolves scroll_return_prices friction on mobile */}
-            <div className="fixed bottom-0 inset-x-0 z-40 lg:hidden bg-white/95 backdrop-blur-md border-t border-kraft/20 px-4 py-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
+            <div className="fixed bottom-0 inset-x-0 z-30 lg:hidden bg-white/95 backdrop-blur-md border-t border-kraft/20 px-4 py-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
                 <div className="max-w-lg mx-auto flex items-center justify-between gap-3">
                     <div className="min-w-0">
                         <p className="text-[11px] font-medium text-charcoal/60 truncate">{product.name}</p>

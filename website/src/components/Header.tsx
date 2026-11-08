@@ -35,6 +35,21 @@ export default function Header() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, [location.pathname]);
 
+    useEffect(() => {
+        setMobileMenuOpen(false);
+    }, [location.pathname]);
+
+    useEffect(() => {
+        if (mobileMenuOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [mobileMenuOpen]);
+
     const navLinks = [
         { path: '/', label: 'Inicio' },
         { path: '/tienda', label: 'Tienda' },
@@ -45,7 +60,7 @@ export default function Header() {
 
     return (
         <>
-            <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${hidden ? '-translate-y-full' : 'translate-y-0'} ${scrolled
+            <header className={`fixed top-0 w-full z-[60] transition-all duration-300 ${hidden && !mobileMenuOpen ? '-translate-y-full' : 'translate-y-0'} ${scrolled
                 ? 'bg-[#001641] shadow-botanical py-3 border-b border-gold/20'
                 : 'bg-[#001641] py-6'
                 }`}>
@@ -190,7 +205,7 @@ export default function Header() {
                     opacity: mobileMenuOpen ? 1 : 0,
                     y: mobileMenuOpen ? 0 : -20
                 }}
-                className={`fixed inset-0 z-40 backdrop-blur-xl md:hidden ${mobileMenuOpen ? 'pointer-events-auto' : 'pointer-events-none'
+                className={`fixed inset-0 z-[55] backdrop-blur-xl md:hidden ${mobileMenuOpen ? 'pointer-events-auto' : 'pointer-events-none'
                     }`}
                 style={{ paddingTop: '100px', background: 'rgba(0, 22, 65, 0.98)' }}
             >
