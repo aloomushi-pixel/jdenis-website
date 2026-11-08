@@ -14,9 +14,14 @@ export default {
         'accent-pink': '#FFD1E0',
         'accent-yellow': '#FFD33D',
         textMain: '#1A1A1A',
-        base: '#FFFFFF',
 
         // Remapping existing variable names used throughout the project
+        navy: {
+          DEFAULT: '#0E1738',
+          light: '#17204D',
+          dark: '#080E22',
+        },
+        'brand-blue': '#0E1738',
         forest: {
           DEFAULT: '#1E56FF',  // Now mapped to New Primary
           light: '#3B6AFF',
@@ -37,9 +42,17 @@ export default {
           light: '#F3F4F6',
           dark: '#D1D5DB',
         },
-        charcoal: '#1A1A1A',   // Texto Principal
+        charcoal: {
+          DEFAULT: '#1A1A1A',   // Texto Principal
+          light: '#4B5563',
+          dark: '#0F172A',
+        },
 
         // Legacy mappings for compatibility
+        ink: '#1A1A1A',
+        mauve: '#17204D',
+        blush: '#F0F7FF',
+        'rose-deep': '#E11D48',
         noir: '#1A1A1A',
         'rose-gold': '#FFD1E0',
         champagne: '#FFD33D',

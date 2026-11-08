@@ -398,7 +398,7 @@ export default function Checkout() {
                                     value={formData.notes}
                                     onChange={handleInputChange}
                                     rows={3}
-                                    className="w-full px-5 py-4 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all text-base bg-white shadow-sm resize-none"
+                                    className="w-full px-5 py-4 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all text-base text-navy placeholder:text-navy/40 bg-white shadow-sm resize-none"
                                     placeholder="Instrucciones especiales, horarios de entrega, etc."
                                 />
                             </div>

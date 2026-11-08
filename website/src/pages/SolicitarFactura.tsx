@@ -160,7 +160,7 @@ export default function SolicitarFactura() {
                     required
                     value={formData.ticketNumber}
                     onChange={handleChange}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black transition-shadow sm:text-sm bg-gray-50 focus:bg-white"
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black transition-shadow sm:text-sm bg-gray-50 focus:bg-white text-gray-900 placeholder:text-gray-400"
                     placeholder="Ej. TCK-987654"
                   />
                 </div>
@@ -178,7 +178,7 @@ export default function SolicitarFactura() {
                     required
                     value={formData.businessName}
                     onChange={handleChange}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black transition-shadow sm:text-sm bg-gray-50 focus:bg-white"
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black transition-shadow sm:text-sm bg-gray-50 focus:bg-white text-gray-900 placeholder:text-gray-400"
                     placeholder="Empresa S.A. de C.V."
                   />
                 </div>
@@ -196,7 +196,7 @@ export default function SolicitarFactura() {
                     required
                     value={formData.rfc}
                     onChange={handleChange}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black transition-shadow sm:text-sm bg-gray-50 focus:bg-white uppercase"
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black transition-shadow sm:text-sm bg-gray-50 focus:bg-white text-gray-900 placeholder:text-gray-400 uppercase"
                     placeholder="XAXX010101000"
                   />
                 </div>
@@ -215,7 +215,7 @@ export default function SolicitarFactura() {
                     maxLength={5}
                     value={formData.postalCode}
                     onChange={handleChange}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black transition-shadow sm:text-sm bg-gray-50 focus:bg-white"
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black transition-shadow sm:text-sm bg-gray-50 focus:bg-white text-gray-900 placeholder:text-gray-400"
                     placeholder="12345"
                   />
                 </div>
@@ -228,7 +228,7 @@ export default function SolicitarFactura() {
                   required
                   value={formData.taxRegime}
                   onChange={handleChange}
-                  className="block w-full pl-3 pr-10 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black transition-shadow sm:text-sm bg-gray-50 focus:bg-white"
+                  className="block w-full pl-3 pr-10 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black transition-shadow sm:text-sm bg-gray-50 focus:bg-white text-gray-900 placeholder:text-gray-400"
                 >
                   <option value="">Selecciona un régimen...</option>
                   <option value="601">601 - General de Ley Personas Morales</option>
@@ -245,7 +245,7 @@ export default function SolicitarFactura() {
                   required
                   value={formData.cfdiUse}
                   onChange={handleChange}
-                  className="block w-full pl-3 pr-10 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black transition-shadow sm:text-sm bg-gray-50 focus:bg-white"
+                  className="block w-full pl-3 pr-10 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black transition-shadow sm:text-sm bg-gray-50 focus:bg-white text-gray-900 placeholder:text-gray-400"
                 >
                   <option value="">Selecciona un uso...</option>
                   <option value="G01">G01 - Adquisición de mercancias</option>
@@ -267,7 +267,7 @@ export default function SolicitarFactura() {
                     required
                     value={formData.email}
                     onChange={handleChange}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black transition-shadow sm:text-sm bg-gray-50 focus:bg-white"
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black transition-shadow sm:text-sm bg-gray-50 focus:bg-white text-gray-900 placeholder:text-gray-400"
                     placeholder="contacto@empresa.com"
                   />
                 </div>

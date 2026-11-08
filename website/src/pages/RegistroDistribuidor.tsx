@@ -381,22 +381,22 @@ export default function RegistroDistribuidor() {
                                     <div className="grid md:grid-cols-2 gap-6">
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-1">Nombre completo del cliente *</label>
-                                            <input type="text" required value={formData.fullName} onChange={e => setFormData({...formData, fullName: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
+                                            <input type="text" required value={formData.fullName} onChange={e => setFormData({...formData, fullName: e.target.value})} className="w-full px-4 py-2 bg-white text-charcoal placeholder:text-charcoal/40 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-1">Nacionalidad *</label>
-                                            <input type="text" required value={formData.nationality} onChange={e => setFormData({...formData, nationality: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
+                                            <input type="text" required value={formData.nationality} onChange={e => setFormData({...formData, nationality: e.target.value})} className="w-full px-4 py-2 bg-white text-charcoal placeholder:text-charcoal/40 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
                                         </div>
                                     </div>
 
                                     <div className="grid md:grid-cols-2 gap-6">
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-1">Nombre de su local o comercio *</label>
-                                            <input type="text" required value={formData.businessName} onChange={e => setFormData({...formData, businessName: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
+                                            <input type="text" required value={formData.businessName} onChange={e => setFormData({...formData, businessName: e.target.value})} className="w-full px-4 py-2 bg-white text-charcoal placeholder:text-charcoal/40 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de establecimiento *</label>
-                                            <select required value={formData.establishmentType} onChange={e => setFormData({...formData, establishmentType: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold">
+                                            <select required value={formData.establishmentType} onChange={e => setFormData({...formData, establishmentType: e.target.value})} className="w-full px-4 py-2 bg-white text-charcoal placeholder:text-charcoal/40 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold">
                                                 <option value="">Selecciona...</option>
                                                 {establishmentTypes.map(t => <option key={t} value={t}>{t}</option>)}
                                             </select>
@@ -405,7 +405,7 @@ export default function RegistroDistribuidor() {
 
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Nombre de la persona encargada de hacer pedidos *</label>
-                                        <input type="text" required value={formData.managerName} onChange={e => setFormData({...formData, managerName: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
+                                        <input type="text" required value={formData.managerName} onChange={e => setFormData({...formData, managerName: e.target.value})} className="w-full px-4 py-2 bg-white text-charcoal placeholder:text-charcoal/40 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
                                     </div>
                                 </motion.div>
                             )}
@@ -423,70 +423,70 @@ export default function RegistroDistribuidor() {
                                     <div className="grid md:grid-cols-3 gap-6">
                                         <div className="md:col-span-2">
                                             <label className="block text-sm font-medium text-gray-700 mb-1">Calle *</label>
-                                            <input type="text" required value={formData.street} onChange={e => setFormData({...formData, street: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
+                                            <input type="text" required value={formData.street} onChange={e => setFormData({...formData, street: e.target.value})} className="w-full px-4 py-2 bg-white text-charcoal placeholder:text-charcoal/40 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-1">Número exterior *</label>
-                                            <input type="text" required value={formData.exteriorNumber} onChange={e => setFormData({...formData, exteriorNumber: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
+                                            <input type="text" required value={formData.exteriorNumber} onChange={e => setFormData({...formData, exteriorNumber: e.target.value})} className="w-full px-4 py-2 bg-white text-charcoal placeholder:text-charcoal/40 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
                                         </div>
                                     </div>
 
                                     <div className="grid md:grid-cols-3 gap-6">
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-1">Número interior</label>
-                                            <input type="text" value={formData.interiorNumber} onChange={e => setFormData({...formData, interiorNumber: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
+                                            <input type="text" value={formData.interiorNumber} onChange={e => setFormData({...formData, interiorNumber: e.target.value})} className="w-full px-4 py-2 bg-white text-charcoal placeholder:text-charcoal/40 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
                                         </div>
                                         <div className="md:col-span-2">
                                             <label className="block text-sm font-medium text-gray-700 mb-1">Entre qué calles está</label>
-                                            <input type="text" value={formData.betweenStreets} onChange={e => setFormData({...formData, betweenStreets: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
+                                            <input type="text" value={formData.betweenStreets} onChange={e => setFormData({...formData, betweenStreets: e.target.value})} className="w-full px-4 py-2 bg-white text-charcoal placeholder:text-charcoal/40 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
                                         </div>
                                     </div>
 
                                     <div className="grid md:grid-cols-3 gap-6">
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-1">Colonia *</label>
-                                            <input type="text" required value={formData.neighborhood} onChange={e => setFormData({...formData, neighborhood: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
+                                            <input type="text" required value={formData.neighborhood} onChange={e => setFormData({...formData, neighborhood: e.target.value})} className="w-full px-4 py-2 bg-white text-charcoal placeholder:text-charcoal/40 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-1">Código Postal *</label>
-                                            <input type="text" required value={formData.zipCode} onChange={e => setFormData({...formData, zipCode: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
+                                            <input type="text" required value={formData.zipCode} onChange={e => setFormData({...formData, zipCode: e.target.value})} className="w-full px-4 py-2 bg-white text-charcoal placeholder:text-charcoal/40 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-1">Ciudad *</label>
-                                            <input type="text" required value={formData.city} onChange={e => setFormData({...formData, city: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
+                                            <input type="text" required value={formData.city} onChange={e => setFormData({...formData, city: e.target.value})} className="w-full px-4 py-2 bg-white text-charcoal placeholder:text-charcoal/40 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
                                         </div>
                                     </div>
 
                                     <div className="grid md:grid-cols-2 gap-6">
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-1">Alcaldía / Municipio *</label>
-                                            <input type="text" required value={formData.municipality} onChange={e => setFormData({...formData, municipality: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
+                                            <input type="text" required value={formData.municipality} onChange={e => setFormData({...formData, municipality: e.target.value})} className="w-full px-4 py-2 bg-white text-charcoal placeholder:text-charcoal/40 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-1">Estado *</label>
-                                            <input type="text" required value={formData.state} onChange={e => setFormData({...formData, state: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
+                                            <input type="text" required value={formData.state} onChange={e => setFormData({...formData, state: e.target.value})} className="w-full px-4 py-2 bg-white text-charcoal placeholder:text-charcoal/40 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
                                         </div>
                                     </div>
 
                                     <div className="grid md:grid-cols-2 gap-6">
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-1">Teléfono del establecimiento *</label>
-                                            <input type="tel" required value={formData.businessPhone} onChange={e => setFormData({...formData, businessPhone: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
+                                            <input type="tel" required value={formData.businessPhone} onChange={e => setFormData({...formData, businessPhone: e.target.value})} className="w-full px-4 py-2 bg-white text-charcoal placeholder:text-charcoal/40 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-1">WhatsApp del negocio</label>
-                                            <input type="tel" value={formData.whatsapp} onChange={e => setFormData({...formData, whatsapp: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
+                                            <input type="tel" value={formData.whatsapp} onChange={e => setFormData({...formData, whatsapp: e.target.value})} className="w-full px-4 py-2 bg-white text-charcoal placeholder:text-charcoal/40 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
                                         </div>
                                     </div>
 
                                     <div className="grid md:grid-cols-2 gap-6">
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-1">Días y horario laborable del local *</label>
-                                            <input type="text" required value={formData.workingHours} onChange={e => setFormData({...formData, workingHours: e.target.value})} placeholder="Lunes a Sábado 9am - 6pm" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
+                                            <input type="text" required value={formData.workingHours} onChange={e => setFormData({...formData, workingHours: e.target.value})} placeholder="Lunes a Sábado 9am - 6pm" className="w-full px-4 py-2 bg-white text-charcoal placeholder:text-charcoal/40 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-1">Referencias adicionales a la dirección</label>
-                                            <input type="text" value={formData.addressReferences} onChange={e => setFormData({...formData, addressReferences: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
+                                            <input type="text" value={formData.addressReferences} onChange={e => setFormData({...formData, addressReferences: e.target.value})} className="w-full px-4 py-2 bg-white text-charcoal placeholder:text-charcoal/40 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
                                         </div>
                                     </div>
 
@@ -495,15 +495,15 @@ export default function RegistroDistribuidor() {
                                         <div className="grid md:grid-cols-2 gap-6">
                                             <div>
                                                 <label className="block text-sm font-medium text-gray-700 mb-1">Teléfono Móvil (Celular) *</label>
-                                                <input type="tel" required value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
+                                                <input type="tel" required value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="w-full px-4 py-2 bg-white text-charcoal placeholder:text-charcoal/40 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
                                             </div>
                                             <div>
                                                 <label className="block text-sm font-medium text-gray-700 mb-1">Correo electrónico *</label>
-                                                <input type="email" required value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
+                                                <input type="email" required value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full px-4 py-2 bg-white text-charcoal placeholder:text-charcoal/40 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
                                             </div>
                                             <div className="md:col-span-2">
                                                 <label className="block text-sm font-medium text-gray-700 mb-1">Página Web, Facebook, Instagram (Links)</label>
-                                                <input type="text" value={formData.socialMedia} onChange={e => setFormData({...formData, socialMedia: e.target.value})} placeholder="@tucuenta, www.tusitio.com" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
+                                                <input type="text" value={formData.socialMedia} onChange={e => setFormData({...formData, socialMedia: e.target.value})} placeholder="@tucuenta, www.tusitio.com" className="w-full px-4 py-2 bg-white text-charcoal placeholder:text-charcoal/40 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold" />
                                             </div>
                                         </div>
                                     </div>
@@ -651,7 +651,7 @@ export default function RegistroDistribuidor() {
                                                 rows={3}
                                                 value={formData.message}
                                                 onChange={e => setFormData({...formData, message: e.target.value})}
-                                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold resize-none"
+                                                className="w-full px-4 py-2 bg-white text-charcoal placeholder:text-charcoal/40 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold resize-none"
                                             ></textarea>
                                         </div>
 

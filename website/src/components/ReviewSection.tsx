@@ -179,7 +179,7 @@ export default function ReviewSection({ productId, productName }: ReviewSectionP
                                 rows={4}
                                 placeholder={`¿Qué te pareció ${productName}? Comparte tu experiencia...`}
                                 className="w-full rounded-lg p-3 text-sm resize-none transition-colors focus:outline-none"
-                                style={{ border: '1px solid #E0E4ED', background: '#FAFAFE' }}
+                                style={{ border: '1px solid #E0E4ED', background: '#FAFAFE', color: '#1A1A1A' }}
                                 required
                             />
                         </div>

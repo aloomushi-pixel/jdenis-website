@@ -1087,7 +1087,7 @@ function MyAccount() {
                                             <div>
                                                 <label className="block text-sm font-medium text-navy/80 mb-2">Nombre Completo</label>
                                                 <input type="text" value={profileName} onChange={(e) => setProfileName(e.target.value)}
-                                                    className="w-full px-4 py-3 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all" />
+                                                    className="w-full px-4 py-3 bg-white text-charcoal placeholder:text-charcoal/40 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all" />
                                             </div>
                                             <div>
                                                 <label className="block text-sm font-medium text-navy/80 mb-2">Email</label>
@@ -1098,7 +1098,7 @@ function MyAccount() {
                                                 <label className="block text-sm font-medium text-navy/80 mb-2">Teléfono</label>
                                                 <input type="tel" value={profilePhone} onChange={(e) => setProfilePhone(e.target.value)}
                                                     placeholder="55 1234 5678"
-                                                    className="w-full px-4 py-3 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all" />
+                                                    className="w-full px-4 py-3 bg-white text-charcoal placeholder:text-charcoal/40 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all" />
                                             </div>
 
                                             {/* Password change */}
@@ -1113,10 +1113,10 @@ function MyAccount() {
                                                             exit={{ opacity: 0, height: 0 }} className="space-y-3 mt-4 overflow-hidden">
                                                             <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)}
                                                                 placeholder="Nueva contraseña"
-                                                                className="w-full px-4 py-3 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none" />
+                                                                className="w-full px-4 py-3 bg-white text-charcoal placeholder:text-charcoal/40 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none" />
                                                             <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}
                                                                 placeholder="Confirmar contraseña"
-                                                                className="w-full px-4 py-3 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none" />
+                                                                className="w-full px-4 py-3 bg-white text-charcoal placeholder:text-charcoal/40 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none" />
                                                         </motion.div>
                                                     )}
                                                 </AnimatePresence>
@@ -1396,28 +1396,28 @@ function AddressForm({ address, onSave, onCancel }: {
                 <div className="sm:col-span-2">
                     <label className="block text-sm font-medium text-navy/80 mb-1">Etiqueta</label>
                     <input type="text" name="label" value={form.label} onChange={handleChange} placeholder="Ej: Casa, Oficina, Local"
-                        className="w-full px-4 py-3 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none" />
+                        className="w-full px-4 py-3 bg-white text-charcoal placeholder:text-charcoal/40 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none" />
                 </div>
                 <div className="sm:col-span-2">
                     <label className="block text-sm font-medium text-navy/80 mb-1">Dirección Completa</label>
                     <input type="text" name="address" value={form.address} onChange={handleChange}
                         placeholder="Calle, número, colonia"
-                        className="w-full px-4 py-3 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none" />
+                        className="w-full px-4 py-3 bg-white text-charcoal placeholder:text-charcoal/40 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none" />
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-navy/80 mb-1">Ciudad</label>
                     <input type="text" name="city" value={form.city} onChange={handleChange}
-                        className="w-full px-4 py-3 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none" />
+                        className="w-full px-4 py-3 bg-white text-charcoal placeholder:text-charcoal/40 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none" />
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-navy/80 mb-1">Estado</label>
                     <input type="text" name="state" value={form.state} onChange={handleChange}
-                        className="w-full px-4 py-3 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none" />
+                        className="w-full px-4 py-3 bg-white text-charcoal placeholder:text-charcoal/40 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none" />
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-navy/80 mb-1">Código Postal</label>
                     <input type="text" name="zip" value={form.zip} onChange={handleChange}
-                        className="w-full px-4 py-3 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none" />
+                        className="w-full px-4 py-3 bg-white text-charcoal placeholder:text-charcoal/40 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none" />
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-navy/80 mb-1 flex items-center gap-2">
@@ -1431,7 +1431,7 @@ function AddressForm({ address, onSave, onCancel }: {
                     <label className="block text-sm font-medium text-navy/80 mb-1">Referencias</label>
                     <textarea name="references" value={form.references} onChange={handleChange}
                         placeholder="Entre calles, fachada, etc." rows={2}
-                        className="w-full px-4 py-3 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none resize-none" />
+                        className="w-full px-4 py-3 bg-white text-charcoal placeholder:text-charcoal/40 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none resize-none" />
                 </div>
             </div>
             <div className="flex gap-3 mt-5">

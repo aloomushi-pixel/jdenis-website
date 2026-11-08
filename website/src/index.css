@@ -24,6 +24,28 @@
   h4 {
     @apply font-serif text-forest font-normal tracking-[-0.02em];
   }
+
+  /* Garantizar contraste legible en todos los inputs, textareas y selects por defecto */
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]),
+  textarea,
+  select {
+    @apply text-charcoal bg-white placeholder:text-charcoal/40;
+  }
+
+  select option {
+    color: #1A1A1A;
+    background-color: #FFFFFF;
+  }
+
+  input:not(.text-white):not(.text-cream):-webkit-autofill,
+  input:not(.text-white):not(.text-cream):-webkit-autofill:hover,
+  input:not(.text-white):not(.text-cream):-webkit-autofill:focus,
+  textarea:not(.text-white):not(.text-cream):-webkit-autofill,
+  select:not(.text-white):not(.text-cream):-webkit-autofill {
+    -webkit-text-fill-color: #1A1A1A;
+    -webkit-box-shadow: 0 0 0px 1000px #ffffff inset;
+    transition: background-color 5000s ease-in-out 0s;
+  }
 }
 
 @layer components {

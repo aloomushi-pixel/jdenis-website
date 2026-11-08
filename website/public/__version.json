@@ -1,8 +1,8 @@
 {
-  "commitSha": "81ddb9b (81ddb9b0b533a03fcfeb04df4cbd0477ed88e150)",
-  "shortSha": "81ddb9b",
-  "fullSha": "81ddb9b0b533a03fcfeb04df4cbd0477ed88e150",
-  "commitMessage": "fix(ux): resolve mobile iOS rage-clicks on Academy hero and PWA Safari banner (v2.1.8)",
-  "builtAt": "2026-11-06T18:03:32.809Z",
+  "commitSha": "4c504a0 (4c504a029c3ca3b0fef2ea1ec07a8d553633c235)",
+  "shortSha": "4c504a0",
+  "fullSha": "4c504a029c3ca3b0fef2ea1ec07a8d553633c235",
+  "commitMessage": "feat(ux-seo): preserve pre-rendered blog/news meta during hydration and eliminate Academy LCP/rage-click friction (v2.1.10)",
+  "builtAt": "2026-11-08T15:14:11.725Z",
   "environment": "production"
 }

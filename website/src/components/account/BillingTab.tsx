@@ -116,7 +116,7 @@ export default function BillingTab({ userId }: { userId: string | undefined }) {
                         value={data.rfc} 
                         onChange={(e) => setData({ ...data, rfc: e.target.value.toUpperCase() })}
                         placeholder="AAAA000000000"
-                        className="w-full px-4 py-3 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all uppercase" 
+                        className="w-full px-4 py-3 bg-white text-charcoal placeholder:text-charcoal/40 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all uppercase" 
                     />
                 </div>
                 <div>
@@ -126,7 +126,7 @@ export default function BillingTab({ userId }: { userId: string | undefined }) {
                         value={data.business_name} 
                         onChange={(e) => setData({ ...data, business_name: e.target.value })}
                         placeholder="Ej. Mi Empresa S.A. de C.V."
-                        className="w-full px-4 py-3 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all" 
+                        className="w-full px-4 py-3 bg-white text-charcoal placeholder:text-charcoal/40 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all" 
                     />
                 </div>
                 <div>
@@ -137,7 +137,7 @@ export default function BillingTab({ userId }: { userId: string | undefined }) {
                         value={data.postal_code} 
                         onChange={(e) => setData({ ...data, postal_code: e.target.value.replace(/[^0-9]/g, '') })}
                         placeholder="00000"
-                        className="w-full px-4 py-3 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all" 
+                        className="w-full px-4 py-3 bg-white text-charcoal placeholder:text-charcoal/40 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all" 
                     />
                 </div>
                 <div>
@@ -145,7 +145,7 @@ export default function BillingTab({ userId }: { userId: string | undefined }) {
                     <select 
                         value={data.tax_regime} 
                         onChange={(e) => setData({ ...data, tax_regime: e.target.value })}
-                        className="w-full px-4 py-3 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all bg-white" 
+                        className="w-full px-4 py-3 bg-white text-charcoal placeholder:text-charcoal/40 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all bg-white" 
                     >
                         <option value="">Selecciona tu Régimen</option>
                         <option value="601">601 - General de Ley Personas Morales</option>
@@ -169,7 +169,7 @@ export default function BillingTab({ userId }: { userId: string | undefined }) {
                     <select 
                         value={data.cfdi_use} 
                         onChange={(e) => setData({ ...data, cfdi_use: e.target.value })}
-                        className="w-full px-4 py-3 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all bg-white" 
+                        className="w-full px-4 py-3 bg-white text-charcoal placeholder:text-charcoal/40 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all bg-white" 
                     >
                         <option value="">Selecciona el Uso</option>
                         <option value="G01">G01 - Adquisición de mercancías</option>
@@ -186,7 +186,7 @@ export default function BillingTab({ userId }: { userId: string | undefined }) {
                         value={data.email_facturacion} 
                         onChange={(e) => setData({ ...data, email_facturacion: e.target.value })}
                         placeholder="tu@email.com"
-                        className="w-full px-4 py-3 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all" 
+                        className="w-full px-4 py-3 bg-white text-charcoal placeholder:text-charcoal/40 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all" 
                     />
                 </div>
             </div>
