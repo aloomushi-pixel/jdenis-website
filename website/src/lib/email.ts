@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { supabase, sendTransactionalEmail } from './supabase';
 
 export interface EmailCampaign {
     id: string;
@@ -30,17 +30,38 @@ export async function dispatchEmailCampaign(
         throw new Error('Authentication required to send emails.');
     }
 
-    // Step 1: Trigger Edge Function
-    const { data: fnData, error: fnError } = await supabase.functions.invoke('send-email', {
-        body: { subject, htmlContent, recipientType, targetEmail },
-        headers: {
-            Authorization: `Bearer ${session.access_token}`
-        }
+    // Step 1: Trigger Server-Side Email RPC (with Edge Function fallback)
+    let fnData: { success?: boolean; status?: string; message?: string; error?: string } = {
+        success: true,
+        status: 'sent',
+        message: 'Correo enviado exitosamente'
+    };
+    const rpcRes = await sendTransactionalEmail({
+        subject,
+        htmlContent,
+        recipientType,
+        targetEmail
     });
 
-    if (fnError) {
-        console.error('Edge Function Error:', fnError);
-        throw new Error(fnError.message || 'Error occurred while contacting email server.');
+    if (rpcRes?.success) {
+        fnData = {
+            success: true,
+            status: 'sent',
+            message: rpcRes.message || 'Correo enviado exitosamente'
+        };
+    } else {
+        const { data: edgeData, error: fnError } = await supabase.functions.invoke('send-email', {
+            body: { subject, htmlContent, recipientType, targetEmail },
+            headers: {
+                Authorization: `Bearer ${session.access_token}`
+            }
+        });
+
+        if (fnError) {
+            console.error('Email Dispatch Error:', fnError);
+            throw new Error(rpcRes?.error || fnError.message || 'Error occurred while contacting email server.');
+        }
+        fnData = edgeData || fnData;
     }
 
     // Step 2: Log to DB

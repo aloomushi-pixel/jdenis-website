@@ -700,17 +700,28 @@ export interface WebsiteOrder {
     user_id: string | null;
     user_email: string | null;
     total: number;
+    subtotal?: number | null;
+    shipping_cost?: number | null;
+    discount?: number | null;
+    coupon_code?: string | null;
     items: string | WebsiteOrderItem[];
     created_at: string;
+    updated_at?: string | null;
     status: string;
+    order_number?: string | null;
     merchant_order_id?: string | null;
     payment_id?: string | null;
     payment_status?: string | null;
     payment_method?: string | null;
+    tracking_number?: string | null;
+    shipped_at?: string | null;
+    queued_for_date?: string | null;
+    packed_items?: Record<string, boolean> | null;
     buyer_info?: {
         email?: string;
         phone?: string;
         fullName?: string;
+        userId?: string;
     } | null;
     shipping_address?: {
         address?: string;
@@ -1282,27 +1293,116 @@ export interface MercadoPagoCheckoutRequest {
         zip: string;
     };
     total: number;
+    subtotal?: number;
+    discount?: number;
     shipping_cost?: number;
+    coupon_code?: string | null;
+    notes?: string;
+    payment_method?: 'mercadopago' | 'transferencia' | 'efectivo';
 }
 
 export interface MercadoPagoCheckoutResponse {
     checkout_url: string;
     preference_id: string;
     order_id: string;
+    order_number?: string;
+    mode?: 'mercadopago' | 'direct_order';
 }
 
 export async function createMercadoPagoCheckout(
     data: MercadoPagoCheckoutRequest
 ): Promise<MercadoPagoCheckoutResponse> {
-    const response = await supabase.functions.invoke('mercadopago-checkout', {
-        body: data,
+    // 1. Primary server-side checkout pipeline via PostgreSQL SECURITY DEFINER RPC
+    const { data: rpcResult, error: rpcError } = await supabase.rpc('process_website_checkout', {
+        payload: data,
     });
 
-    if (response.error) {
-        throw new Error(response.error.message || 'Error creating checkout');
+    if (!rpcError && rpcResult) {
+        const res = rpcResult as Record<string, unknown>;
+        const resolvedUrl =
+            (typeof res.checkout_url === 'string' && res.checkout_url.trim()) ||
+            (typeof res.init_point === 'string' && res.init_point.trim()) ||
+            '';
+
+        if (resolvedUrl && resolvedUrl !== 'undefined') {
+            return {
+                checkout_url: resolvedUrl,
+                preference_id: String(res.preference_id || res.order_number || ''),
+                order_id: String(res.order_id || ''),
+                order_number: typeof res.order_number === 'string' ? res.order_number : undefined,
+                mode: (res.mode as 'mercadopago' | 'direct_order') || 'direct_order',
+            };
+        }
     }
 
-    return response.data as MercadoPagoCheckoutResponse;
+    // 2. Direct table insert fallback so the order is never lost
+    const now = new Date();
+    const yymmdd = now.toISOString().slice(2, 10).replace(/-/g, '');
+    const rand = Math.random().toString(36).substring(2, 6).toUpperCase();
+    const fallbackOrderNumber = `JD-${yymmdd}-${rand}`;
+    const paymentMethod = data.payment_method || 'mercadopago';
+
+    const { data: insertedOrder, error: insertError } = await supabase
+        .from('website_orders')
+        .insert({
+            user_id: data.buyer.userId || null,
+            user_email: data.buyer.email.trim().toLowerCase(),
+            items: data.items,
+            subtotal: data.subtotal ?? data.total,
+            shipping_cost: data.shipping_cost ?? 0,
+            discount: data.discount ?? 0,
+            coupon_code: data.coupon_code || null,
+            total: data.total,
+            status: 'pending',
+            payment_status: 'pending',
+            payment_method: paymentMethod,
+            merchant_order_id: fallbackOrderNumber,
+            order_number: fallbackOrderNumber,
+            shipping_address: data.shipping,
+            buyer_info: data.buyer,
+            notes: data.notes || null,
+        })
+        .select('id, order_number, merchant_order_id')
+        .single();
+
+    if (insertError || !insertedOrder) {
+        throw new Error(
+            rpcError?.message || insertError?.message || 'No se pudo registrar tu pedido. Intenta nuevamente.'
+        );
+    }
+
+    const orderNum = insertedOrder.order_number || insertedOrder.merchant_order_id || fallbackOrderNumber;
+    return {
+        checkout_url: `/pago-resultado?status=order_created&order_id=${encodeURIComponent(insertedOrder.id)}&external_reference=${encodeURIComponent(orderNum)}&method=${encodeURIComponent(paymentMethod)}`,
+        preference_id: orderNum,
+        order_id: insertedOrder.id,
+        order_number: orderNum,
+        mode: 'direct_order',
+    };
+}
+
+export async function getWebsiteOrderSummary(orderId: string): Promise<WebsiteOrder | null> {
+    if (!orderId) return null;
+    const { data, error } = await supabase.rpc('get_website_order_summary', {
+        p_order_id: orderId,
+    });
+    if (!error && data) {
+        return data as WebsiteOrder;
+    }
+    const { data: fallback } = await supabase
+        .from('website_orders')
+        .select('*')
+        .eq('id', orderId)
+        .maybeSingle();
+    return (fallback as WebsiteOrder) || null;
+}
+
+export async function sendTransactionalEmail(payload: Record<string, unknown>) {
+    const { data, error } = await supabase.rpc('send_transactional_email', { payload });
+    if (error) {
+        console.warn('send_transactional_email RPC warning:', error.message);
+    }
+    return data;
 }
 
 // =============================================

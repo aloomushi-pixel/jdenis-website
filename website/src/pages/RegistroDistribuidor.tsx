@@ -238,10 +238,10 @@ export default function RegistroDistribuidor() {
 
             if (dbError) throw dbError;
 
-            // Trigger email notification via Supabase Edge Function (Optional)
+            // Trigger email notification via Server-Side PostgreSQL RPC
             try {
-                await supabase.functions.invoke('send-email', {
-                    body: {
+                await supabase.rpc('send_transactional_email', {
+                    payload: {
                         type: 'distributor',
                         name: formData.fullName,
                         email: formData.email,

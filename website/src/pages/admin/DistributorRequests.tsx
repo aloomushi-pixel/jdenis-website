@@ -146,15 +146,12 @@ export default function DistributorRequests() {
                     const { data: { session } } = await supabase.auth.getSession();
                     
                     if (session) {
-                        const { error: emailError } = await supabase.functions.invoke('send-email', {
-                            body: {
+                        const { error: emailError } = await supabase.rpc('send_transactional_email', {
+                            payload: {
                                 subject: '¡Bienvenido a la Red de Distribuidores J. Denis!',
                                 htmlContent,
                                 recipientType: 'single_customer',
                                 targetEmail: app.email
-                            },
-                            headers: {
-                                Authorization: `Bearer ${session.access_token}`
                             }
                         });
                         

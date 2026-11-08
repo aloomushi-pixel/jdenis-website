@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useCartStore } from '../store/cartStore';
 import { useAuthStore } from '../store/authStore';
@@ -9,11 +9,13 @@ import { createMercadoPagoCheckout, supabase } from '../lib/supabase';
 import { trackEvent } from '../utils/telemetry';
 
 export default function Checkout() {
+    const navigate = useNavigate();
     const { items, appliedCoupon } = useCartStore();
     const { user } = useAuthStore();
     const promotion = useCartPromotion();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [paymentMethod, setPaymentMethod] = useState<'mercadopago' | 'transferencia' | 'efectivo'>('mercadopago');
     const trackedStartRef = useRef(false);
     const trackedStepsRef = useRef<Set<string>>(new Set());
 
@@ -132,7 +134,7 @@ export default function Checkout() {
             discount: totalDiscountAmount,
             final_total: finalTotal,
             coupon_code: isCouponValid && appliedCoupon ? appliedCoupon.code : null,
-            provider: 'mercadopago',
+            provider: paymentMethod,
         });
 
         try {
@@ -161,13 +163,20 @@ export default function Checkout() {
                     state: formData.state,
                     zip: formData.zip,
                 },
+                subtotal,
                 total: finalTotal,
                 discount: totalDiscountAmount,
                 shipping_cost: shippingCost,
                 coupon_code: isCouponValid && appliedCoupon ? appliedCoupon.code : null,
+                notes: formData.notes,
+                payment_method: paymentMethod,
             };
 
             const result = await createMercadoPagoCheckout(checkoutData);
+
+            if (!result?.checkout_url || result.checkout_url === 'undefined' || result.checkout_url.endsWith('/undefined')) {
+                throw new Error('No se pudo generar la ruta de confirmación del pedido. Por favor intenta nuevamente.');
+            }
 
             try {
                 await supabase.from('abandoned_carts')
@@ -178,7 +187,11 @@ export default function Checkout() {
                 // Non-blocking
             }
 
-            window.location.href = result.checkout_url;
+            if (result.checkout_url.startsWith('/')) {
+                navigate(result.checkout_url);
+            } else {
+                window.location.href = result.checkout_url;
+            }
             return;
 
         } catch (err) {
@@ -372,21 +385,101 @@ export default function Checkout() {
                                     Método de Pago
                                 </h3>
                                 <div className="space-y-4">
-                                    <div className="flex items-center gap-4 p-5 rounded-xl border-2 border-gold bg-gold/5 cursor-default relative overflow-hidden">
-                                        <div className="absolute top-0 right-0 w-24 h-24 bg-gold/10 rounded-full -mr-12 -mt-12 pointer-events-none"></div>
-                                        <span className="w-8 h-8 text-forest shrink-0 bg-white rounded-full flex items-center justify-center shadow-sm">
+                                    {/* Option 1: Mercado Pago / Tarjeta */}
+                                    <button
+                                        type="button"
+                                        onClick={() => setPaymentMethod('mercadopago')}
+                                        className={`w-full text-left flex items-center gap-4 p-5 rounded-xl border-2 transition-all relative overflow-hidden ${
+                                            paymentMethod === 'mercadopago'
+                                                ? 'border-gold bg-gold/5 shadow-sm'
+                                                : 'border-charcoal/15 bg-white hover:border-gold/50'
+                                        }`}
+                                    >
+                                        <span className="w-10 h-10 text-forest shrink-0 bg-white rounded-full flex items-center justify-center shadow-sm border border-charcoal/10">
                                             <svg className="w-5 h-5 text-[#009EE3]" viewBox="0 0 24 24" fill="currentColor">
-                                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-9l6 4.5-6 4.5z" />
+                                                <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
                                             </svg>
                                         </span>
-                                        <div>
-                                            <span className="block font-bold text-navy text-lg">Mercado Pago</span>
+                                        <div className="flex-1">
+                                            <span className="block font-bold text-navy text-base md:text-lg">Tarjeta de Crédito / Débito o Mercado Pago</span>
                                             <p className="text-sm text-charcoal-light mt-0.5">
-                                                Tarjetas, Transferencia (SPEI) y Efectivo (OXXO)
+                                                Pago seguro con tarjeta Visa, Mastercard, American Express o saldo Mercado Pago
                                             </p>
                                         </div>
-                                        <svg className="ml-auto w-6 h-6 text-gold relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                    </div>
+                                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                                            paymentMethod === 'mercadopago' ? 'border-gold bg-gold text-white' : 'border-charcoal/30'
+                                        }`}>
+                                            {paymentMethod === 'mercadopago' && (
+                                                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                                </svg>
+                                            )}
+                                        </div>
+                                    </button>
+
+                                    {/* Option 2: Transferencia SPEI */}
+                                    <button
+                                        type="button"
+                                        onClick={() => setPaymentMethod('transferencia')}
+                                        className={`w-full text-left flex items-center gap-4 p-5 rounded-xl border-2 transition-all relative overflow-hidden ${
+                                            paymentMethod === 'transferencia'
+                                                ? 'border-gold bg-gold/5 shadow-sm'
+                                                : 'border-charcoal/15 bg-white hover:border-gold/50'
+                                        }`}
+                                    >
+                                        <span className="w-10 h-10 text-navy shrink-0 bg-white rounded-full flex items-center justify-center shadow-sm border border-charcoal/10">
+                                            <svg className="w-5 h-5 text-navy" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                            </svg>
+                                        </span>
+                                        <div className="flex-1">
+                                            <span className="block font-bold text-navy text-base md:text-lg">Transferencia Bancaria (SPEI)</span>
+                                            <p className="text-sm text-charcoal-light mt-0.5">
+                                                Recibe tu folio de pedido y datos bancarios para transferencia inmediata sin comisiones
+                                            </p>
+                                        </div>
+                                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                                            paymentMethod === 'transferencia' ? 'border-gold bg-gold text-white' : 'border-charcoal/30'
+                                        }`}>
+                                            {paymentMethod === 'transferencia' && (
+                                                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                                </svg>
+                                            )}
+                                        </div>
+                                    </button>
+
+                                    {/* Option 3: Efectivo OXXO / WhatsApp */}
+                                    <button
+                                        type="button"
+                                        onClick={() => setPaymentMethod('efectivo')}
+                                        className={`w-full text-left flex items-center gap-4 p-5 rounded-xl border-2 transition-all relative overflow-hidden ${
+                                            paymentMethod === 'efectivo'
+                                                ? 'border-gold bg-gold/5 shadow-sm'
+                                                : 'border-charcoal/15 bg-white hover:border-gold/50'
+                                        }`}
+                                    >
+                                        <span className="w-10 h-10 text-emerald-600 shrink-0 bg-white rounded-full flex items-center justify-center shadow-sm border border-charcoal/10">
+                                            <svg className="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                                            </svg>
+                                        </span>
+                                        <div className="flex-1">
+                                            <span className="block font-bold text-navy text-base md:text-lg">Depósito en OXXO / Atención Personalizada</span>
+                                            <p className="text-sm text-charcoal-light mt-0.5">
+                                                Genera tu pedido y recibe tu referencia de depósito o liga de pago directo por WhatsApp y Correo
+                                            </p>
+                                        </div>
+                                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                                            paymentMethod === 'efectivo' ? 'border-gold bg-gold text-white' : 'border-charcoal/30'
+                                        }`}>
+                                            {paymentMethod === 'efectivo' && (
+                                                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                                </svg>
+                                            )}
+                                        </div>
+                                    </button>
                                 </div>
                             </div>
 
@@ -415,8 +508,8 @@ export default function Checkout() {
                                 className="btn btn-primary w-full py-4 text-lg disabled:opacity-50"
                             >
                                 {loading
-                                    ? 'Procesando...'
-                                    : `Pagar con Mercado Pago - $${finalTotal.toLocaleString()} MXN`
+                                    ? 'Registrando tu pedido...'
+                                    : `Confirmar Pedido y Proceder al Pago - $${finalTotal.toLocaleString()} MXN`
                                 }
                             </button>
                         </form>

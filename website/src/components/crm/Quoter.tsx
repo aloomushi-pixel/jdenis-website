@@ -355,8 +355,8 @@ export default function Quoter() {
         const selectedCustomer = customers.find(c => c.id === selectedCustomerId);
         if (selectedCustomer && selectedCustomer.email) {
           showToast('Enviando email de cotización...');
-          const { error: fnError } = await supabase.functions.invoke('send-email', {
-            body: {
+          const { data: rpcEmailData, error: fnError } = await supabase.rpc('send_transactional_email', {
+            payload: {
               type: 'quotation',
               name: selectedCustomer.fullName || 'Distribuidor',
               email: selectedCustomer.email,
@@ -377,8 +377,8 @@ export default function Quoter() {
             }
           });
 
-          if (fnError) {
-            console.error('Error enviando email:', fnError);
+          if (fnError || (rpcEmailData && rpcEmailData.success === false)) {
+            console.error('Error enviando email:', fnError || rpcEmailData);
             showToast('⚠️ Cotización guardada, pero hubo un error al enviar el email');
           } else {
             showToast('✉️ Cotización enviada al distribuidor exitosamente');
