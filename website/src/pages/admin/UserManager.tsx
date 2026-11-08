@@ -83,9 +83,9 @@ export default function UserManager() {
             const newStatus = !currentStatus;
             await adminUpdateUser(userId, { is_active: newStatus });
             
-            // Invoke edge function to sign out / ban
-            await supabase.functions.invoke('admin-manage-users', {
-                body: {
+            // Invoke server-side RPC to sync ban/active status
+            await supabase.rpc('admin_manage_users', {
+                payload: {
                     action: 'ban_user',
                     payload: { target_user_id: userId, is_banned: !newStatus }
                 }
@@ -104,15 +104,15 @@ export default function UserManager() {
         e.preventDefault();
         setInviting(true);
         try {
-            const { data: result, error } = await supabase.functions.invoke('admin-manage-users', {
-                body: {
+            const { data: result, error } = await supabase.rpc('admin_manage_users', {
+                payload: {
                     action: 'invite_user',
                     payload: inviteData
                 }
             });
 
             if (error) throw new Error(error.message || 'Error al invitar usuario');
-            if (result?.error) throw new Error(result.error);
+            if ((result as any)?.error) throw new Error((result as any).error);
 
             alert('Usuario invitado correctamente. Se le ha enviado un correo.');
             setIsModalOpen(false);

@@ -30,7 +30,7 @@ export default function ProductionOrders() {
         if (!form.order_number || !user) return;
         setSaving(true);
         try {
-            await createProductionOrder({ order_number: form.order_number, created_by: user.id });
+            await createProductionOrder({ order_number: form.order_number, tolerance_coefficient: form.tolerance_coefficient, created_by: user.id });
             setShowCreate(false);
             setForm({ order_number: '', tolerance_coefficient: 0.02 });
             fetchOrders();

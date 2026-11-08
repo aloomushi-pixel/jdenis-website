@@ -434,6 +434,7 @@ export async function createProductionOrder(order: {
     order_number: string;
     raw_materials?: unknown[];
     total_raw_input?: number;
+    tolerance_coefficient?: number;
     linked_purchase_order_id?: string;
     created_by: string;
 }) {
@@ -597,6 +598,9 @@ export async function createPackagingRecord(record: {
     sales_order_id?: string;
     production_order_id?: string;
     items?: unknown[];
+    total_packages?: number;
+    packing_list?: string;
+    weight?: number;
     packaged_by?: string;
 }) {
     const { data, error } = await supabase.from('packaging_records').insert(record).select().single();

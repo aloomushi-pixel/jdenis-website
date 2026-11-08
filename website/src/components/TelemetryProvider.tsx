@@ -12,7 +12,7 @@ export default function TelemetryProvider() {
     const location = useLocation();
     const activeTimeRef = useRef<number>(0);
     const hiddenTimeRef = useRef<number>(0);
-    const lastActiveStartRef = useRef<number>(Date.now());
+    const lastActiveStartRef = useRef<number>(0);
     const lastHiddenStartRef = useRef<number | null>(null);
     const maxScrollRef = useRef<number>(0);
     const maxScrollPxRef = useRef<number>(0);

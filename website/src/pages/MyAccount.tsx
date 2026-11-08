@@ -292,10 +292,19 @@ function MyAccount() {
     }, [user]);
 
     useEffect(() => {
-        if (isAuthenticated) {
+        if (isAuthenticated && user) {
             loadData();
-            setProfileName(user?.fullName || '');
+            setProfileName(user.fullName || '');
             setAddresses(loadAddresses());
+            supabase
+                .from('users')
+                .select('full_name, phone')
+                .eq('id', user.id)
+                .maybeSingle()
+                .then(({ data }) => {
+                    if (data?.full_name) setProfileName(data.full_name);
+                    if (data?.phone) setProfilePhone(data.phone);
+                });
         }
     }, [isAuthenticated, loadData, user]);
 
@@ -392,7 +401,25 @@ function MyAccount() {
                 setConfirmPassword('');
             } catch { setProfileMsg('Error al actualizar la contraseña'); }
         } else {
-            setProfileMsg('✅ Perfil guardado');
+            try {
+                if (user?.id) {
+                    const { error: dbErr } = await supabase
+                        .from('users')
+                        .update({
+                            full_name: profileName.trim() || user.fullName || 'Usuario',
+                            phone: profilePhone.trim() || null,
+                            updated_at: new Date().toISOString(),
+                        })
+                        .eq('id', user.id);
+                    if (dbErr) throw dbErr;
+                    await supabase.auth.updateUser({
+                        data: { full_name: profileName.trim(), phone: profilePhone.trim() },
+                    });
+                }
+                setProfileMsg('✅ Perfil guardado');
+            } catch {
+                setProfileMsg('Error al guardar los datos del perfil');
+            }
         }
         setTimeout(() => setProfileMsg(''), 3000);
     };

@@ -35,9 +35,11 @@ export default function Header() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, [location.pathname]);
 
-    useEffect(() => {
-        setMobileMenuOpen(false);
-    }, [location.pathname]);
+    const [prevPath, setPrevPath] = useState(location.pathname);
+    if (prevPath !== location.pathname) {
+        setPrevPath(location.pathname);
+        if (mobileMenuOpen) setMobileMenuOpen(false);
+    }
 
     useEffect(() => {
         if (mobileMenuOpen) {

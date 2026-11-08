@@ -1,8 +1,8 @@
 {
-  "commitSha": "b8a0d58 (b8a0d585e238d10fcd3e281a7a54f0a0dbe78917)",
-  "shortSha": "b8a0d58",
-  "fullSha": "b8a0d585e238d10fcd3e281a7a54f0a0dbe78917",
-  "commitMessage": "fix(ui-contrast): remove conflicting colors.base white text override, restore navy/charcoal/ink/mauve tokens and enforce dark text on all light inputs (v2.1.11)",
-  "builtAt": "2026-11-08T16:14:53.190Z",
+  "commitSha": "67fed5d (67fed5d286619ab5bd8bd0e58563e81223073f1d)",
+  "shortSha": "67fed5d",
+  "fullSha": "67fed5d286619ab5bd8bd0e58563e81223073f1d",
+  "commitMessage": "fix(ui-zindex): elevate Header (z-60), MobileMenu (z-55) and CartDrawer (z-80) above sticky Shop & ProductDetail bars (z-30) (v2.1.13)",
+  "builtAt": "2026-11-08T17:37:46.124Z",
   "environment": "production"
 }

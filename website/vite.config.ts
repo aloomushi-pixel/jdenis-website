@@ -103,4 +103,19 @@ export default defineConfig({
       }
     }
   ],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return undefined;
+          if (id.includes('jspdf') || id.includes('html2canvas')) return 'vendor-pdf';
+          if (id.includes('xlsx')) return 'vendor-xlsx';
+          if (id.includes('recharts') || id.includes('d3-')) return 'vendor-charts';
+          if (id.includes('@supabase')) return 'vendor-supabase';
+          if (id.includes('framer-motion')) return 'vendor-motion';
+          return undefined;
+        },
+      },
+    },
+  },
 });

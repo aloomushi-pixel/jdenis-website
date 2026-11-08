@@ -86,6 +86,21 @@ export default function SolicitarFactura() {
         throw new Error(insertError.message || 'Error al enviar la solicitud');
       }
 
+      if (user?.id) {
+        await supabase
+          .from('users')
+          .update({
+            business_name: formData.businessName,
+            rfc: formData.rfc.toUpperCase(),
+            postal_code: formData.postalCode,
+            tax_regime: formData.taxRegime,
+            cfdi_use: formData.cfdiUse,
+            email_facturacion: formData.email,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', user.id);
+      }
+
       setSuccess(true);
     } catch (err: any) {
       console.error(err);

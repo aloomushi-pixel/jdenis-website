@@ -24,8 +24,8 @@ export default function PackagingRecords() {
     const handleCreate = async () => {
         setSaving(true);
         try {
-            await createPackagingRecord({ packaged_by: user?.id });
-            setShowCreate(false); fetch();
+            await createPackagingRecord({ packaged_by: user?.id, total_packages: form.total_packages, packing_list: form.packing_list, weight: form.weight });
+            setShowCreate(false); setForm({ total_packages: 0, packing_list: '', weight: 0 }); fetch();
         } catch (e) { console.error(e); } finally { setSaving(false); }
     };
 

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Mail, Hash, MapPin, Calendar, CheckCircle2, Link as LinkIcon, Send, RefreshCw } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
+import { supabase, sendTransactionalEmail } from '../../lib/supabase';
 
 type InputMode = 'file' | 'url';
 
@@ -44,6 +44,8 @@ function UploadForm({ req, onProcessed }: { req: RequestRecord, onProcessed: () 
 
       let pdfSource = pdfUrlInput;
       let xmlSource = xmlUrlInput;
+      let pdfPublicUrl = pdfUrlInput;
+      let xmlPublicUrl = xmlUrlInput;
 
       // Upload to supabase storage if it's a file
       if (pdfMode === 'file' && pdfFile) {
@@ -51,6 +53,8 @@ function UploadForm({ req, onProcessed }: { req: RequestRecord, onProcessed: () 
         const { error: uploadErr } = await supabase.storage.from('invoices').upload(filePath, pdfFile, { upsert: true });
         if (uploadErr) throw new Error(`Error subiendo PDF: ${uploadErr.message}`);
         pdfSource = filePath;
+        const { data: pubPdf } = supabase.storage.from('invoices').getPublicUrl(filePath);
+        pdfPublicUrl = pubPdf.publicUrl;
       }
 
       if (xmlMode === 'file' && xmlFile) {
@@ -58,6 +62,8 @@ function UploadForm({ req, onProcessed }: { req: RequestRecord, onProcessed: () 
         const { error: uploadErr } = await supabase.storage.from('invoices').upload(filePath, xmlFile, { upsert: true });
         if (uploadErr) throw new Error(`Error subiendo XML: ${uploadErr.message}`);
         xmlSource = filePath;
+        const { data: pubXml } = supabase.storage.from('invoices').getPublicUrl(filePath);
+        xmlPublicUrl = pubXml.publicUrl;
       }
 
       const { error: updateError } = await supabase
@@ -65,7 +71,8 @@ function UploadForm({ req, onProcessed }: { req: RequestRecord, onProcessed: () 
         .update({
           ruta_pdf: pdfSource,
           ruta_xml: xmlSource,
-          status: 'Completada'
+          status: 'Completada',
+          updated_at: new Date().toISOString(),
         })
         .eq('id', req.id);
 
@@ -73,12 +80,31 @@ function UploadForm({ req, onProcessed }: { req: RequestRecord, onProcessed: () 
         throw new Error(`Error al actualizar estado: ${updateError.message}`);
       }
 
-      window.alert('Factura procesada y guardada correctamente');
+      if (req.email) {
+        await sendTransactionalEmail({
+          to: [req.email],
+          subject: `Tu Factura CFDI J. Denis — Ticket/Pedido ${req.ticket_number}`,
+          html: `
+            <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px;border:1px solid #e5e7eb;border-radius:12px;">
+              <h2 style="color:#0F172A;margin-top:0;">Tu Factura CFDI está lista</h2>
+              <p style="color:#334155;line-height:1.6;">Hola <strong>${req.business_name}</strong> (${req.rfc}),</p>
+              <p style="color:#334155;line-height:1.6;">Hemos emitido tu comprobante fiscal correspondiente al ticket/pedido <strong>${req.ticket_number}</strong>.</p>
+              <div style="margin:24px 0;display:flex;gap:12px;">
+                <a href="${pdfPublicUrl}" style="background:#DC2626;color:#FFFFFF;padding:12px 20px;text-decoration:none;border-radius:8px;font-weight:bold;margin-right:12px;">Descargar PDF</a>
+                <a href="${xmlPublicUrl}" style="background:#1E293B;color:#D4AF37;padding:12px 20px;text-decoration:none;border-radius:8px;font-weight:bold;">Descargar XML</a>
+              </div>
+              <p style="color:#64748B;font-size:13px;">También puedes consultar y descargar tus facturas en cualquier momento desde tu panel en <a href="https://jdenis.store/mi-cuenta">jdenis.store/mi-cuenta</a>.</p>
+            </div>
+          `,
+        });
+      }
+
+      window.alert('Factura procesada, guardada y enviada por correo correctamente.');
       onProcessed();
 
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      setError(err.message || 'Error inesperado.');
+      setError(err instanceof Error ? err.message : 'Error inesperado.');
     } finally {
       setLoading(false);
     }
@@ -217,14 +243,14 @@ export default function FacturacionAdmin() {
   const [requests, setRequests] = useState<RequestRecord[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchRequests = async () => {
+  const fetchRequests = useCallback(async () => {
     setLoading(true);
     const { data, error } = await supabase
       .from('invoice_requests')
       .select('*')
       .eq('status', 'Pendiente')
       .order('created_at', { ascending: true });
-    
+
     if (error) {
       console.error(error);
       window.alert('Error cargando solicitudes pendientes');
@@ -232,11 +258,14 @@ export default function FacturacionAdmin() {
       setRequests(data);
     }
     setLoading(false);
-  };
+  }, []);
 
   useEffect(() => {
-    fetchRequests();
-  }, []);
+    const t = setTimeout(() => {
+      void fetchRequests();
+    }, 0);
+    return () => clearTimeout(t);
+  }, [fetchRequests]);
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
@@ -287,7 +316,7 @@ export default function FacturacionAdmin() {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="mt-4 pt-4 border-t border-gray-50 grid grid-cols-2 gap-4 text-sm bg-gray-50 p-4 rounded-xl">
                     <div>
                       <span className="block text-gray-500 text-xs mb-1 uppercase tracking-wider font-semibold">Régimen Fiscal</span>

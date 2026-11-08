@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Upload, Trash2, Copy, Image as ImageIcon, CheckCircle, RefreshCw } from 'lucide-react';
-
-// URL del servidor de medios en el VPS
-const MEDIA_URL = import.meta.env.VITE_MEDIA_URL || 'https://media.jdenis.store';
+import { Upload, Trash2, Copy, Image as ImageIcon, CheckCircle, RefreshCw, FolderOpen } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
 
 interface MediaFile {
   name: string;
+  path: string;
+  bucket: string;
   url: string;
   size: number;
   createdAt?: string;
@@ -16,7 +16,15 @@ interface MediaManagerProps {
   isModal?: boolean;
 }
 
+const BUCKETS = [
+  { id: 'media-library', label: 'Biblioteca General' },
+  { id: 'blog-images', label: 'Blog y Noticias' },
+  { id: 'academy-images', label: 'Academia' },
+  { id: 'reels', label: 'Reels / Videos' },
+] as const;
+
 export function MediaManager({ onSelect, isModal = false }: MediaManagerProps) {
+  const [activeBucket, setActiveBucket] = useState<string>('media-library');
   const [files, setFiles] = useState<MediaFile[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -27,20 +35,56 @@ export function MediaManager({ onSelect, isModal = false }: MediaManagerProps) {
     try {
       setLoading(true);
       setError(null);
-      
-      const response = await fetch(`${MEDIA_URL}/api/files`);
-      if (!response.ok) {
-        throw new Error('Error al cargar los archivos. Verifica que media.jdenis.store apunte al VPS.');
+
+      const { data: rootItems, error: listErr } = await supabase.storage
+        .from(activeBucket)
+        .list('', { limit: 200, sortBy: { column: 'created_at', order: 'desc' } });
+
+      if (listErr) throw listErr;
+
+      const resolved: MediaFile[] = [];
+
+      for (const item of rootItems || []) {
+        if (item.name === '.emptyFolderPlaceholder') continue;
+        // If item has no id/metadata, it may be a subfolder (e.g. 'courses' in academy-images)
+        if (!item.id) {
+          const { data: subItems } = await supabase.storage
+            .from(activeBucket)
+            .list(item.name, { limit: 100, sortBy: { column: 'created_at', order: 'desc' } });
+          for (const sub of subItems || []) {
+            if (!sub.id || sub.name === '.emptyFolderPlaceholder') continue;
+            const fullPath = `${item.name}/${sub.name}`;
+            const { data: pub } = supabase.storage.from(activeBucket).getPublicUrl(fullPath);
+            resolved.push({
+              name: sub.name,
+              path: fullPath,
+              bucket: activeBucket,
+              url: pub.publicUrl,
+              size: Number((sub.metadata as Record<string, unknown>)?.size || 0),
+              createdAt: sub.created_at,
+            });
+          }
+        } else {
+          const { data: pub } = supabase.storage.from(activeBucket).getPublicUrl(item.name);
+          resolved.push({
+            name: item.name,
+            path: item.name,
+            bucket: activeBucket,
+            url: pub.publicUrl,
+            size: Number((item.metadata as Record<string, unknown>)?.size || 0),
+            createdAt: item.created_at,
+          });
+        }
       }
-      
-      const data = await response.json();
-      setFiles(data.files || []);
-    } catch (err: any) {
-      setError(err.message || 'Error de conexión con el servidor de medios.');
+
+      setFiles(resolved);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error al cargar la biblioteca multimedia.';
+      setError(msg);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [activeBucket]);
 
   useEffect(() => {
     fetchFiles();
@@ -54,64 +98,61 @@ export function MediaManager({ onSelect, isModal = false }: MediaManagerProps) {
       setUploading(true);
       setError(null);
 
-      const formData = new FormData();
       for (let i = 0; i < selectedFiles.length; i++) {
-        formData.append('files', selectedFiles[i]);
+        const file = selectedFiles[i];
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+        const filePath = `${Date.now()}_${safeName}`;
+        const { error: uploadErr } = await supabase.storage
+          .from(activeBucket)
+          .upload(filePath, file, { cacheControl: '3600', upsert: true });
+
+        if (uploadErr) throw uploadErr;
       }
 
-      const response = await fetch(`${MEDIA_URL}/api/upload`, {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) throw new Error('Error al subir los archivos');
-
-      await fetchFiles(); // Refrescar la lista
-    } catch (err: any) {
-      setError(err.message || 'Error al subir los archivos');
+      await fetchFiles();
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error al subir los archivos';
+      setError(msg);
     } finally {
       setUploading(false);
-      // Limpiar el input
       event.target.value = '';
     }
   };
 
-  const handleDelete = async (filename: string, e: React.MouseEvent) => {
+  const handleDelete = async (file: MediaFile, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!window.confirm(`¿Estás seguro de que deseas eliminar ${filename}? Esta acción no se puede deshacer y romperá los enlaces donde se esté utilizando.`)) return;
+    if (!window.confirm(`¿Estás seguro de que deseas eliminar ${file.name}? Esta acción no se puede deshacer.`)) return;
 
     try {
       setError(null);
-      const response = await fetch(`${MEDIA_URL}/api/files/${filename}`, {
-        method: 'DELETE',
-      });
+      const { error: delErr } = await supabase.storage
+        .from(file.bucket)
+        .remove([file.path]);
 
-      if (!response.ok) throw new Error('Error al eliminar el archivo');
+      if (delErr) throw delErr;
 
-      // Actualizar estado local
-      setFiles(files.filter(f => f.name !== filename));
-    } catch (err: any) {
-      setError(err.message || 'Error al eliminar el archivo');
+      setFiles(prev => prev.filter(f => f.path !== file.path));
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error al eliminar el archivo';
+      setError(msg);
     }
   };
 
   const handleCopyUrl = (url: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    const fullUrl = url.startsWith('http') ? url : `${MEDIA_URL}${url}`;
-    navigator.clipboard.writeText(fullUrl);
-    setCopiedUrl(fullUrl);
+    navigator.clipboard.writeText(url);
+    setCopiedUrl(url);
     setTimeout(() => setCopiedUrl(null), 2000);
   };
 
   const handleFileClick = (file: MediaFile) => {
     if (onSelect) {
-      const fullUrl = file.url.startsWith('http') ? file.url : `${MEDIA_URL}${file.url}`;
-      onSelect(fullUrl);
+      onSelect(file.url);
     }
   };
 
   const formatSize = (bytes: number) => {
-    if (bytes === 0) return '0 B';
+    if (!bytes || bytes === 0) return '—';
     const k = 1024;
     const sizes = ['B', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
@@ -120,21 +161,41 @@ export function MediaManager({ onSelect, isModal = false }: MediaManagerProps) {
 
   return (
     <div className={`flex flex-col bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden ${isModal ? 'h-[70vh]' : 'h-[calc(100vh-12rem)]'}`}>
-      <div className="p-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center shrink-0">
-        <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-          <ImageIcon className="w-5 h-5 text-[#0b1f3d]" />
-          Gestor Multimedia VPS
-        </h2>
-        
+      <div className="p-4 border-b border-gray-200 bg-gray-50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 shrink-0">
+        <div className="flex items-center gap-3 flex-wrap">
+          <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+            <ImageIcon className="w-5 h-5 text-[#0b1f3d]" />
+            Gestor Multimedia Cloud
+          </h2>
+          <div className="flex items-center gap-1.5 bg-white p-1 rounded-lg border border-gray-200">
+            {BUCKETS.map(b => (
+              <button
+                key={b.id}
+                type="button"
+                onClick={() => setActiveBucket(b.id)}
+                className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors flex items-center gap-1 ${
+                  activeBucket === b.id
+                    ? 'bg-[#0b1f3d] text-white'
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`}
+              >
+                <FolderOpen className="w-3.5 h-3.5" />
+                {b.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
         <div className="flex items-center gap-3">
-          <button 
+          <button
+            type="button"
             onClick={fetchFiles}
             className="p-2 text-gray-500 hover:text-[#0b1f3d] hover:bg-gray-100 rounded-lg transition-colors"
             title="Refrescar"
           >
             <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
           </button>
-          
+
           <div className="relative">
             <input
               type="file"
@@ -144,7 +205,10 @@ export function MediaManager({ onSelect, isModal = false }: MediaManagerProps) {
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
               disabled={uploading}
             />
-            <button className={`flex items-center gap-2 px-4 py-2 bg-[#0b1f3d] text-white rounded-lg hover:bg-[#1a365d] transition-colors ${uploading ? 'opacity-70 cursor-wait' : ''}`}>
+            <button
+              type="button"
+              className={`flex items-center gap-2 px-4 py-2 bg-[#0b1f3d] text-white rounded-lg hover:bg-[#1a365d] transition-colors text-sm font-medium ${uploading ? 'opacity-70 cursor-wait' : ''}`}
+            >
               <Upload className="w-4 h-4" />
               {uploading ? 'Subiendo...' : 'Subir Archivos'}
             </button>
@@ -167,25 +231,24 @@ export function MediaManager({ onSelect, isModal = false }: MediaManagerProps) {
         ) : files.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-gray-400 border-2 border-dashed border-gray-200 rounded-xl bg-white p-8">
             <ImageIcon className="w-12 h-12 mb-3 text-gray-300" />
-            <p className="text-lg font-medium text-gray-600">No hay archivos multimedia</p>
-            <p className="text-sm mt-1">Sube imágenes o videos para comenzar</p>
+            <p className="text-lg font-medium text-gray-600">No hay archivos en esta carpeta</p>
+            <p className="text-sm mt-1">Sube imágenes, videos o documentos PDF para comenzar</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
             {files.map((file) => {
-              const fullUrl = file.url.startsWith('http') ? file.url : `${MEDIA_URL}${file.url}`;
-              const isImage = file.name.match(/\.(jpeg|jpg|gif|png|webp|svg)$/i);
-              
+              const isImage = /\.(jpeg|jpg|gif|png|webp|svg|avif)$/i.test(file.name);
+
               return (
-                <div 
-                  key={file.name}
+                <div
+                  key={file.path}
                   onClick={() => handleFileClick(file)}
                   className={`group relative bg-white rounded-xl border border-gray-200 overflow-hidden hover:border-[#d4af37] hover:shadow-md transition-all ${onSelect ? 'cursor-pointer' : ''}`}
                 >
                   <div className="aspect-square bg-gray-100 flex items-center justify-center overflow-hidden">
                     {isImage ? (
-                      <img 
-                        src={fullUrl} 
+                      <img
+                        src={file.url}
                         alt={file.name}
                         className="w-full h-full object-cover"
                         loading="lazy"
@@ -197,7 +260,7 @@ export function MediaManager({ onSelect, isModal = false }: MediaManagerProps) {
                       </div>
                     )}
                   </div>
-                  
+
                   <div className="p-2 border-t border-gray-100">
                     <p className="text-xs font-medium text-gray-700 truncate" title={file.name}>
                       {file.name}
@@ -207,21 +270,22 @@ export function MediaManager({ onSelect, isModal = false }: MediaManagerProps) {
                     </p>
                   </div>
 
-                  {/* Actions overlay */}
                   <div className="absolute top-2 right-2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button 
-                      onClick={(e) => handleDelete(file.name, e)}
+                    <button
+                      type="button"
+                      onClick={(e) => handleDelete(file, e)}
                       className="p-1.5 bg-red-500 text-white rounded-md shadow-sm hover:bg-red-600 transition-colors"
                       title="Eliminar"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
-                    <button 
-                      onClick={(e) => handleCopyUrl(fullUrl, e)}
+                    <button
+                      type="button"
+                      onClick={(e) => handleCopyUrl(file.url, e)}
                       className="p-1.5 bg-white text-gray-700 rounded-md shadow-sm hover:bg-gray-50 transition-colors"
                       title="Copiar URL"
                     >
-                      {copiedUrl === fullUrl ? <CheckCircle className="w-3.5 h-3.5 text-green-500" /> : <Copy className="w-3.5 h-3.5" />}
+                      {copiedUrl === file.url ? <CheckCircle className="w-3.5 h-3.5 text-green-500" /> : <Copy className="w-3.5 h-3.5" />}
                     </button>
                   </div>
                 </div>

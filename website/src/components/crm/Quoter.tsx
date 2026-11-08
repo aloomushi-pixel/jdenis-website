@@ -13,6 +13,21 @@ interface CartItem extends DisplayProduct {
   itemDiscount?: number;
 }
 
+const getStandardPrice = (item: CartItem) => {
+  if (item.distributorPrice != null && item.distributorPrice > 0) {
+    return item.distributorPrice;
+  }
+  return item.price;
+};
+
+const getPrice = (item: CartItem) => {
+  const standard = getStandardPrice(item);
+  if (item.itemDiscount && item.itemDiscount > 0) {
+    return standard * (1 - item.itemDiscount / 100);
+  }
+  return standard;
+};
+
 export default function Quoter() {
   const { products: dbProducts, loading: loadingProducts } = useProducts();
   const user = useAuthStore(s => s.user);
@@ -79,21 +94,6 @@ export default function Quoter() {
   const showToast = (msg: string) => {
     setToast(msg);
     setTimeout(() => setToast(null), 3000);
-  };
-
-  const getStandardPrice = (item: CartItem) => {
-    if (item.distributorPrice != null && item.distributorPrice > 0) {
-      return item.distributorPrice;
-    }
-    return item.price;
-  };
-
-  const getPrice = (item: CartItem) => {
-    const standard = getStandardPrice(item);
-    if (item.itemDiscount && item.itemDiscount > 0) {
-      return standard * (1 - item.itemDiscount / 100);
-    }
-    return standard;
   };
 
   const updateItemDiscount = (id: string, discountStr: string) => {
