@@ -42,9 +42,13 @@ export const GENERIC_SYNONYM_MAP: Record<string, string[]> = {
     'limpiador': ['shampoo', 'espuma', 'higiene', 'primer', 'microcepillo'],
     'suero': ['tratamientos', 'hidratante', 'botox', 'queratina', 'reestructurante', 'crecimiento'],
     'serum': ['tratamientos', 'hidratante', 'botox', 'queratina', 'reestructurante'],
+    'activador': ['activador', 'brow henna', 'henna', 'organico', 'cejas', 'pigmento'],
+    'activado4': ['activador', 'brow henna', 'henna', 'organico', 'cejas', 'pigmento'],
     'activador de henna': ['activador', 'brow henna', 'henna', 'organico', 'cejas', 'pigmento'],
     'activador organico para cejas': ['activador', 'brow henna', 'henna', 'cejas', 'tintura'],
     'activador de henna para cejas': ['activador', 'brow henna', 'henna', 'cejas'],
+    'color denis': ['pigmentos', 'brow henna', 'henna', 'tintura', 'castaño', 'cejas'],
+    'diseno de cejas': ['diseño de cejas', 'cejas', 'brow henna', 'laminado', 'pigmentos', 'herramientas'],
     'gel ondulante para pestanas': ['jade', 'rizado', 'lash lifting', 'ondulante', 'pestañas', 'lifting'],
     'gel ondulante': ['jade', 'rizado', 'lash lifting', 'ondulante', 'pestañas'],
     'curva lc pestanas': ['extensiones', 'curva lc', 'lc', 'pestañas', 'blister', 'fibras'],
@@ -76,24 +80,43 @@ export function normalizeSearchText(text: string): string {
         .trim();
 }
 
+const QWERTY_DIGIT_TO_LETTER: Record<string, string> = {
+    '1': 'q', '2': 'w', '3': 'e', '4': 'r', '5': 't',
+    '6': 'y', '7': 'u', '8': 'i', '9': 'o', '0': 'p',
+};
+
 export function expandSearchTerms(rawQuery: string): string[] {
     const normalized = normalizeSearchText(rawQuery);
     if (!normalized) return [];
 
     const expanded = new Set<string>([normalized]);
     const words = normalized.split(/\s+/).filter(w => w.length >= 2);
-    words.forEach(w => expanded.add(w));
 
-    for (const [phrase, synonyms] of Object.entries(GENERIC_SYNONYM_MAP)) {
-        const normPhrase = normalizeSearchText(phrase);
-        if (normalized.includes(normPhrase) || normPhrase.includes(normalized)) {
-            synonyms.forEach(s => expanded.add(normalizeSearchText(s)));
+    for (const w of words) {
+        expanded.add(w);
+        // Handle mobile QWERTY top-row digit typos inside alphabetical words (e.g. "activado4" -> "activador")
+        if (/[a-z]\d|\d[a-z]/.test(w)) {
+            const deDigited = w.replace(/\d/g, d => QWERTY_DIGIT_TO_LETTER[d] || '');
+            if (deDigited.length >= 3) expanded.add(deDigited);
+            const strippedDigits = w.replace(/\d+/g, '');
+            if (strippedDigits.length >= 4) expanded.add(strippedDigits);
+        }
+        // Prefix stem fallback for 6+ char words so trailing-char typos still match
+        if (w.length >= 6) {
+            expanded.add(w.slice(0, -1));
         }
     }
 
-    for (const word of words) {
-        if (GENERIC_SYNONYM_MAP[word]) {
-            GENERIC_SYNONYM_MAP[word].forEach(s => expanded.add(normalizeSearchText(s)));
+    const candidateList = Array.from(expanded);
+    for (const candidate of candidateList) {
+        for (const [phrase, synonyms] of Object.entries(GENERIC_SYNONYM_MAP)) {
+            const normPhrase = normalizeSearchText(phrase);
+            if (candidate.includes(normPhrase) || normPhrase.includes(candidate)) {
+                synonyms.forEach(s => expanded.add(normalizeSearchText(s)));
+            }
+        }
+        if (GENERIC_SYNONYM_MAP[candidate]) {
+            GENERIC_SYNONYM_MAP[candidate].forEach(s => expanded.add(normalizeSearchText(s)));
         }
     }
 

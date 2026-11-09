@@ -1,8 +1,8 @@
 {
-  "commitSha": "67fed5d (67fed5d286619ab5bd8bd0e58563e81223073f1d)",
-  "shortSha": "67fed5d",
-  "fullSha": "67fed5d286619ab5bd8bd0e58563e81223073f1d",
-  "commitMessage": "fix(ui-zindex): elevate Header (z-60), MobileMenu (z-55) and CartDrawer (z-80) above sticky Shop & ProductDetail bars (z-30) (v2.1.13)",
-  "builtAt": "2026-11-08T17:37:46.124Z",
+  "commitSha": "0fa7de5 (0fa7de5ac4aefb4cb85616c05413ae8bae61049b)",
+  "shortSha": "0fa7de5",
+  "fullSha": "0fa7de5ac4aefb4cb85616c05413ae8bae61049b",
+  "commitMessage": "feat(audit-v2.1.14): full ERP/Store schema alignment, cloud media manager, invoice email & 81% bundle reduction",
+  "builtAt": "2026-11-09T01:27:06.191Z",
   "environment": "production"
 }

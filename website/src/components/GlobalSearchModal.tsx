@@ -21,6 +21,7 @@ const CATEGORIES = [
 const QUICK_SUGGESTIONS = [
   'Rubor para cejas',
   'Gel fijador de cejas',
+  'Activador de Henna',
   'Pigmento para cejas',
   'Lash Lifting Cisteamina',
   'Brow Henna',
