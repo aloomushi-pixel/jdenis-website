@@ -913,3 +913,35 @@ export function buildOrganizationSchema() {
         ],
     };
 }
+
+/**
+ * Normalizes any category slug or display name (e.g. "Diseño de Cejas", "Lash Lifting",
+ * "Extensiones", "Pigmentos", "Tintura", "Máscaras") to the canonical Shop filter ID
+ * so category pills, canonical URLs, and breadcrumbs never duplicate query strings.
+ */
+export function normalizeShopCategoryId(rawCategory: string | null | undefined): string {
+    if (!rawCategory) return 'all';
+    const clean = rawCategory
+        .trim()
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
+
+    if (!clean || clean === 'all' || clean === 'todos') return 'all';
+    if (clean === 'cejas' || clean.includes('diseno de cejas') || clean.includes('laminado')) return 'cejas';
+    if (clean === 'lash-lifting' || clean === 'lash lifting') return 'lash-lifting';
+    if (clean === 'brow-henna' || clean === 'brow henna' || clean === 'henna') return 'brow-henna';
+    if (clean === 'pigmentos' || clean === 'tintura' || clean === 'tinturas') return 'pigmentos';
+    if (clean === 'lash-curling' || clean === 'lash curling' || clean.includes('rizado')) return 'lash-curling';
+    if (clean === 'extensiones') return 'extensiones';
+    if (clean === 'adhesivos') return 'adhesivos';
+    if (clean === 'tratamientos' || clean === 'mascaras') return 'tratamientos';
+    if (clean === 'herramientas') return 'herramientas';
+    if (clean === 'accesorios') return 'accesorios';
+    if (clean === 'higiene') return 'higiene';
+    if (clean === 'pestanas-en-tira' || clean.includes('pestanas en tira')) return 'pestanas-en-tira';
+    if (clean === 'microblading') return 'microblading';
+
+    return rawCategory.trim();
+}
+

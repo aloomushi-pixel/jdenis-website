@@ -1,8 +1,8 @@
 {
-  "commitSha": "0fa7de5 (0fa7de5ac4aefb4cb85616c05413ae8bae61049b)",
-  "shortSha": "0fa7de5",
-  "fullSha": "0fa7de5ac4aefb4cb85616c05413ae8bae61049b",
-  "commitMessage": "feat(audit-v2.1.14): full ERP/Store schema alignment, cloud media manager, invoice email & 81% bundle reduction",
-  "builtAt": "2026-11-09T01:27:06.191Z",
+  "commitSha": "323308d (323308d2680e2bb7c69cc3745d7849402168255b)",
+  "shortSha": "323308d",
+  "fullSha": "323308d2680e2bb7c69cc3745d7849402168255b",
+  "commitMessage": "feat(search-v2.1.15): normalize mobile QWERTY digit typos (Activado4 -> Activador) and expand GSC synonyms",
+  "builtAt": "2026-11-10T01:43:02.030Z",
   "environment": "production"
 }

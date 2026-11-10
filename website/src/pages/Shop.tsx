@@ -7,7 +7,7 @@ import { useProducts } from '../hooks/useProducts';
 import { useVariants } from '../hooks/useVariants';
 import { usePageMeta } from '../hooks/usePageMeta';
 import { useSearchStore } from '../store/searchStore';
-import { buildOrganizationSchema, getCategorySEO, matchesProductSearch } from '../utils/seoData';
+import { buildOrganizationSchema, getCategorySEO, matchesProductSearch, normalizeShopCategoryId } from '../utils/seoData';
 import { trackEvent } from '../utils/telemetry';
 
 // Category filter definitions (UI constants with SVG icon paths)
@@ -42,7 +42,7 @@ const sortOptions = [
 
 export default function Shop() {
     const [searchParams, setSearchParams] = useSearchParams();
-    const [activeCategory, setActiveCategory] = useState(searchParams.get('cat') || 'all');
+    const [activeCategory, setActiveCategory] = useState(normalizeShopCategoryId(searchParams.get('cat')));
     const [sortBy, setSortBy] = useState('featured');
     const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
     const { openSearch } = useSearchStore();
@@ -112,7 +112,8 @@ export default function Shop() {
 
     // Active category display name & SEO metadata
     const activeCategoryObj = useMemo(() => {
-        return shopCategories.find(c => c.id === activeCategory || c.name.toLowerCase() === activeCategory.toLowerCase());
+        const normId = normalizeShopCategoryId(activeCategory);
+        return shopCategories.find(c => c.id === normId || c.name.toLowerCase() === activeCategory.toLowerCase());
     }, [activeCategory]);
 
     const activeCategoryName = activeCategoryObj ? activeCategoryObj.name : 'Todos';
@@ -130,8 +131,21 @@ export default function Shop() {
     }, [computedMax]);
 
     useEffect(() => {
-        const cat = searchParams.get('cat');
-        if (cat) setTimeout(() => setActiveCategory(cat), 0);
+        const rawCat = searchParams.get('cat');
+        if (rawCat) {
+            const normalized = normalizeShopCategoryId(rawCat);
+            setTimeout(() => setActiveCategory(normalized), 0);
+            if (rawCat !== normalized && typeof window !== 'undefined') {
+                const nextParams = new URLSearchParams(window.location.search);
+                if (normalized === 'all') {
+                    nextParams.delete('cat');
+                } else {
+                    nextParams.set('cat', normalized);
+                }
+                const qs = nextParams.toString();
+                window.history.replaceState(null, '', qs ? `/tienda?${qs}` : '/tienda');
+            }
+        }
     }, [searchParams]);
 
     const hasActiveFilters = useMemo(() => {
@@ -158,9 +172,27 @@ export default function Shop() {
         let result = source.filter(p => p.stock === undefined || p.stock === null || p.stock >= 1);
 
         if (activeCategory !== 'all') {
-            const cat = shopCategories.find(c => c.id === activeCategory);
+            const normActive = normalizeShopCategoryId(activeCategory);
+            const cat = shopCategories.find(c => c.id === normActive);
             const catName = cat ? cat.name : activeCategory;
-            result = result.filter(p => p.category === catName || p.category.toLowerCase() === activeCategory.toLowerCase());
+            result = result.filter(p => {
+                if (
+                    p.category === catName ||
+                    p.category.toLowerCase() === activeCategory.toLowerCase() ||
+                    normalizeShopCategoryId(p.category) === normActive
+                ) {
+                    return true;
+                }
+                if (Array.isArray(p.relatedCategories)) {
+                    return p.relatedCategories.some(
+                        rc =>
+                            rc.toLowerCase() === catName.toLowerCase() ||
+                            rc.toLowerCase() === activeCategory.toLowerCase() ||
+                            normalizeShopCategoryId(rc) === normActive
+                    );
+                }
+                return false;
+            });
         }
 
         if (searchQuery.trim()) {

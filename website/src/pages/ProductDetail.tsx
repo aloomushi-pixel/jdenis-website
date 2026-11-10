@@ -8,7 +8,7 @@ import { usePageMeta } from '../hooks/usePageMeta';
 import { useProducts, type DisplayProduct } from '../hooks/useProducts';
 import { useVariants } from '../hooks/useVariants';
 import { useCartStore } from '../store/cartStore';
-import { buildOrganizationSchema, getCategorySEO, getProductGenericDescriptor, GSC_PRODUCT_SEO_OVERRIDES } from '../utils/seoData';
+import { buildOrganizationSchema, getCategorySEO, getProductGenericDescriptor, GSC_PRODUCT_SEO_OVERRIDES, normalizeShopCategoryId } from '../utils/seoData';
 import { trackEvent } from '../utils/telemetry';
 
 interface VariantGroup {
@@ -256,7 +256,7 @@ export default function ProductDetail() {
                 itemListElement: [
                     { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://jdenis.store' },
                     { '@type': 'ListItem', position: 2, name: 'Tienda', item: 'https://jdenis.store/tienda' },
-                    { '@type': 'ListItem', position: 3, name: product.category, item: `https://jdenis.store/tienda?cat=${encodeURIComponent(product.category)}` },
+                    { '@type': 'ListItem', position: 3, name: product.category, item: `https://jdenis.store/tienda?cat=${encodeURIComponent(normalizeShopCategoryId(product.category))}` },
                     { '@type': 'ListItem', position: 4, name: product.name, item: `https://jdenis.store/producto/${product.slug || product.id}` },
                 ],
             },
@@ -336,7 +336,7 @@ export default function ProductDetail() {
                     <span className="text-charcoal/20">/</span>
                     <Link to="/tienda" className="hover:text-gold transition-colors">Tienda</Link>
                     <span className="text-charcoal/20">/</span>
-                    <Link to={`/tienda?cat=${encodeURIComponent(product.category)}`} className="hover:text-gold transition-colors">
+                    <Link to={`/tienda?cat=${encodeURIComponent(normalizeShopCategoryId(product.category))}`} className="hover:text-gold transition-colors">
                         {product.category}
                     </Link>
                     <span className="text-charcoal/20">/</span>
