@@ -131,9 +131,11 @@ async function getGoogleSearchConsoleReport() {
 
 async function checkDokployVersion() {
     let localSha = 'unknown';
+    let headCommitIso = null;
     let prebuildSha = null;
     try {
         localSha = execSync('git rev-parse HEAD', { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim();
+        headCommitIso = execSync('git show -s --format=%cI HEAD', { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim();
     } catch {
         // Ignore git error
     }
@@ -176,6 +178,7 @@ async function checkDokployVersion() {
         const remoteSha = json.fullSha || json.commitSha || null;
         const matchesDirectHead = Boolean(remoteSha && (localSha.startsWith(remoteSha) || remoteSha.startsWith(localSha.slice(0, 7))));
         const matchesPrebuildArtifact = Boolean(remoteSha && prebuildSha && (remoteSha === prebuildSha || remoteSha.startsWith(prebuildSha.slice(0, 7))));
+        const matchesBuiltAfterHead = Boolean(json.builtAt && headCommitIso && new Date(json.builtAt).getTime() >= new Date(headCommitIso).getTime() - 60000);
         return {
             reachable: true,
             status: res.status,
@@ -183,7 +186,7 @@ async function checkDokployVersion() {
             remoteSha,
             builtAt: json.builtAt,
             commitMessage: json.commitMessage,
-            matchesHead: matchesDirectHead || matchesPrebuildArtifact,
+            matchesHead: matchesDirectHead || matchesPrebuildArtifact || matchesBuiltAfterHead,
         };
     } catch (err) {
         return {
@@ -201,7 +204,7 @@ async function runDigest() {
     console.log(`📊 J. DENNIS — 3D TELEMETRY, GSC & DOKPLOY ENGINE (Last ${days}d)`);
     console.log('===================================================================\n');
 
-    const [deployStatus, events, orders, quotations, gscReport] = await Promise.all([
+    const [deployStatus, events, orders, quotations, distributorApps, gscReport] = await Promise.all([
         checkDokployVersion(),
         fetchSupabase('analytics_events', `select=*&created_at=gte.${encodeURIComponent(sinceIso)}&order=created_at.desc&limit=2500`).catch(e => {
             console.error('Warn fetching analytics_events:', e.message);
@@ -209,6 +212,7 @@ async function runDigest() {
         }),
         fetchSupabase('website_orders', `select=id,total,status,payment_status,created_at&created_at=gte.${encodeURIComponent(sinceIso)}`).catch(() => []),
         fetchSupabase('quotations', `select=id,total_amount,status,created_at&created_at=gte.${encodeURIComponent(sinceIso)}`).catch(() => []),
+        fetchSupabase('distributor_applications', `select=id,full_name,business_name,city,state,status,created_at&created_at=gte.${encodeURIComponent(sinceIso)}`).catch(() => []),
         getGoogleSearchConsoleReport(),
     ]);
 
@@ -239,6 +243,8 @@ async function runDigest() {
     console.log(`- Checkout Start:     ${byEventName.checkout_start || 0}`);
     console.log(`- Payment Attempt:    ${byEventName.payment_attempt || 0}`);
     console.log(`- Purchase Complete:  ${byEventName.purchase_complete || 0}`);
+    console.log(`- Wholesale Clicks:   ${byEventName.wholesale_inquiry || 0}`);
+    console.log(`- B2B Leads in DB:    ${distributorApps.length}${distributorApps.length > 0 ? ` (${distributorApps.map(d => `${d.full_name} / ${d.business_name} [${d.city}]`).join(', ')})` : ''}`);
     console.log(`- Website Orders DB:  ${orders.length} ($${orders.reduce((a, o) => a + (Number(o.total) || 0), 0).toFixed(2)} MXN)\n`);
 
     const searches = humanEvents.filter(e => e.event_name === 'product_search');

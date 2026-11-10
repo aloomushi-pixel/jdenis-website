@@ -59,12 +59,14 @@ export default function ImageGallery({ images, title, variant = 'academy' }: Ima
                 )}
                 <div className={`grid ${getGridClass()} gap-3`}>
                     {images.map((img, i) => (
-                        <motion.div
+                        <motion.button
                             key={i}
+                            type="button"
+                            aria-label={`Ver ${title || 'imagen'} ${i + 1}`}
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: i * 0.1 }}
-                            className={`group relative overflow-hidden rounded-lg border-2 ${accent.border} ${accent.hoverBorder} transition-all duration-300 cursor-pointer shadow-sm hover:shadow-xl`}
+                            className={`group relative w-full text-left overflow-hidden rounded-lg border-2 ${accent.border} ${accent.hoverBorder} transition-all duration-300 cursor-pointer shadow-sm hover:shadow-xl`}
                             onClick={() => openLightbox(i)}
                         >
                             {/* Image with aspect ratio */}
@@ -81,7 +83,7 @@ export default function ImageGallery({ images, title, variant = 'academy' }: Ima
                             </div>
 
                             {/* Hover Overlay */}
-                            <div className={`absolute inset-0 bg-gradient-to-t ${accent.overlay} to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-4`}>
+                            <div className={`pointer-events-none absolute inset-0 bg-gradient-to-t ${accent.overlay} to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-4`}>
                                 <div className="flex items-center gap-2 text-white text-sm font-medium">
                                     <ZoomIn className="w-4 h-4" />
                                     Ver imagen
@@ -90,11 +92,11 @@ export default function ImageGallery({ images, title, variant = 'academy' }: Ima
 
                             {/* Image number badge */}
                             {images.length > 1 && (
-                                <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-black/50 backdrop-blur-sm text-white text-xs flex items-center justify-center font-medium">
+                                <div className="pointer-events-none absolute top-2 right-2 w-6 h-6 rounded-full bg-black/50 backdrop-blur-sm text-white text-xs flex items-center justify-center font-medium">
                                     {i + 1}
                                 </div>
                             )}
-                        </motion.div>
+                        </motion.button>
                     ))}
                 </div>
             </div>
