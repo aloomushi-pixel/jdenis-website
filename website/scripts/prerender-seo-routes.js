@@ -44,12 +44,16 @@ const PRODUCT_OVERRIDES = {
         description: 'Kit profesional de Laminado y Planchado de Cejas J. Denis con Cisteamina. Rinde hasta 30 servicios, alinea el vello rebelde y nutre sin maltratar. Compra individual o mayoreo directo de fábrica en México.',
     },
     'jade-rizado-pestanas': {
-        title: 'Gel Ondulante y Kit Jade para Rizado de Pestañas Profesional | J. Denis México',
-        description: 'Kit Jade y Gel Ondulante para Rizado Permanente de Pestañas J. Denis. Curvatura definida, segura y de larga duración (6 a 8 semanas). Venta al menudeo y mayoreo directo de fábrica.',
+        title: 'Kit Jade Rizado Permanente de Pestañas J. Denis ($250 MXN) | Gel Ondulante Oficial',
+        description: 'Compra el Kit Jade de Rizado de Pestañas J. Denis ($250 MXN): incluye Gel Ondulante, Neutralizante, Adhesivo y Rulos. Curvatura definida de 6 a 8 semanas. Directo de fábrica en México.',
     },
     'chocolate-pigmento-cejas': {
-        title: 'Pigmento para Cejas Chocolate / Castaño Medio de Larga Duración | J. Denis',
-        description: 'Pigmento profesional para cejas tono Chocolate (Castaño Medio) J. Denis. Efecto sombra/rubor natural en piel y vello sin virar a rojo. Venta individual y mayoreo en México.',
+        title: 'Pigmento para Cejas Color Chocolate / Castaño Medio ($200 MXN) | J. Denis',
+        description: 'Logra cejas color chocolate naturales con el Pigmento Profesional J. Denis ($200 MXN). Efecto sombra/rubor de larga duración en piel y vello sin virar a rojo. Envío a todo México.',
+    },
+    'adhesivo-negro-grupo': {
+        title: 'Adhesivo Negro para Pestañas de Grupo y por Punto ($60 MXN) | J. Denis México',
+        description: 'Adhesivo J. Denis tono negro para pestañas de grupo o por punto ($60 MXN). Fijación duradera, hipoalergénica y acabado efecto delineado. Venta menudeo y mayoreo en México.',
     },
     'tintura-topica-castano-medio': {
         title: 'Tintura Tópica Castaño Medio para Cejas (Efecto Sombra y Henna) | J. Denis',
@@ -516,26 +520,58 @@ export async function prerenderSeoRoutes() {
             if (!post.slug) continue;
             const prefix = post.post_type === 'news' ? 'noticias' : 'blog';
             const canonicalUrl = `${BASE_URL}/${prefix}/${encodeURIComponent(post.slug)}`;
-            const title =
-                post.slug === 'lifting-coreano-vs-clasico'
-                    ? 'Lifting Coreano vs. Lash Lifting Clásico: Diferencias, Cisteamina y Cuál Elegir | J. Denis'
-                    : `${post.title} | Blog Oficial J. Denis México`;
-            const description =
-                post.slug === 'lifting-coreano-vs-clasico'
-                    ? 'Comparativa técnica entre Lifting Coreano con Cisteamina y Lash Lifting Clásico J. Denis: tiempos de pose, salud de la pestaña, pads anatómicos y duración de 6 a 8 semanas.'
-                    : post.excerpt || `${post.title} — Guía técnica y profesional por J. Denis Cosméticos México.`;
+            const isLiftingCoreano = post.slug === 'lifting-coreano-vs-clasico';
+            const title = isLiftingCoreano
+                ? 'Lifting Coreano vs. Lash Lifting Clásico: Tabla Comparativa, Moldes y Cuál Elegir | J. Denis'
+                : `${post.title} | Blog Oficial J. Denis México`;
+            const description = isLiftingCoreano
+                ? '¿Lifting Coreano (rizo abierto J/L con Cisteamina + Shot 1.5) o Lash Lifting Clásico (curva C)? Compara moldes, tiempos de pose, tipo de ojo y duración de 6 a 8 semanas.'
+                : post.excerpt || `${post.title} — Guía técnica y profesional por J. Denis Cosméticos México.`;
 
             const articleSchema = {
                 '@context': 'https://schema.org',
                 '@type': 'Article',
-                headline: post.title,
+                headline: isLiftingCoreano ? title : post.title,
                 description,
                 image: post.featured_image || `${BASE_URL}/hero-products.jpg`,
                 datePublished: post.published_at || new Date().toISOString(),
-                author: { '@type': 'Organization', name: 'J. Denis Cosméticos México' },
-                publisher: { '@type': 'Organization', name: 'J. Denis Cosméticos México', url: BASE_URL },
+                author: { '@type': 'Organization', name: 'Equipo Técnico J. Denis México' },
+                publisher: {
+                    '@type': 'Organization',
+                    name: 'J. Denis Cosméticos México',
+                    url: BASE_URL,
+                    logo: { '@type': 'ImageObject', url: `${BASE_URL}/logo-new.jpeg` },
+                },
                 mainEntityOfPage: canonicalUrl,
             };
+
+            const blogSchemas = isLiftingCoreano
+                ? [
+                      articleSchema,
+                      {
+                          '@context': 'https://schema.org',
+                          '@type': 'FAQPage',
+                          mainEntity: [
+                              {
+                                  '@type': 'Question',
+                                  name: '¿Cuál es la diferencia entre Lifting Coreano y Lash Lifting Clásico?',
+                                  acceptedAnswer: {
+                                      '@type': 'Answer',
+                                      text: 'El Lifting Coreano utiliza moldes planos o semiplanos con Cisteamina Estabilizada y Shot 1.5 para lograr un rizo abierto tipo J o L de acabado natural, mientras que el Lifting Clásico emplea moldes nube o cilíndricos para una curvatura pronunciada tipo C o U.',
+                                  },
+                              },
+                              {
+                                  '@type': 'Question',
+                                  name: '¿Cuánto dura el Lifting Coreano de pestañas con Cisteamina J. Denis?',
+                                  acceptedAnswer: {
+                                      '@type': 'Answer',
+                                      text: 'Tanto el Lifting Coreano como el Lifting Clásico realizados con Cisteamina J. Denis tienen una duración de 6 a 8 semanas en un procedimiento de 45 a 60 minutos sin resecar la fibra capilar.',
+                                  },
+                              },
+                          ],
+                      },
+                  ]
+                : [articleSchema];
 
             const noscriptHtml = `<article><h1>${escapeHtml(post.title)}</h1><p>${escapeHtml(description)}</p></article>`;
             const html = buildRouteHtml(baseHtml, {
@@ -544,7 +580,7 @@ export async function prerenderSeoRoutes() {
                 canonical: canonicalUrl,
                 ogType: 'article',
                 image: post.featured_image || `${BASE_URL}/hero-products.jpg`,
-                jsonLd: [articleSchema],
+                jsonLd: blogSchemas,
                 noscriptHtml,
             });
 

@@ -1,8 +1,8 @@
 {
-  "commitSha": "c6a635c (c6a635ccf92803ca399f92bd108692c9a4b37826)",
-  "shortSha": "c6a635c",
-  "fullSha": "c6a635ccf92803ca399f92bd108692c9a4b37826",
-  "commitMessage": "feat(seo-v2.1.16): normalize Shop category slugs (?cat=) for canonical URLs & enrich Microblading/Tintura/Mascaras filtering",
-  "builtAt": "2026-11-10T05:52:06.809Z",
+  "commitSha": "0e2acf7 (0e2acf781ac2e9cca34987a63b2e700bdf80668a)",
+  "shortSha": "0e2acf7",
+  "fullSha": "0e2acf781ac2e9cca34987a63b2e700bdf80668a",
+  "commitMessage": "fix(ux-v2.1.17): resolve mobile dead_click on ImageGallery lightbox button & track B2B distributor leads in digest engine",
+  "builtAt": "2026-11-11T20:17:07.824Z",
   "environment": "production"
 }

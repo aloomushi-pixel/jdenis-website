@@ -420,9 +420,13 @@ export const GSC_PRODUCT_SEO_OVERRIDES: Record<string, ProductGscSeoOverride> = 
         ],
     },
     'jade-rizado-pestanas': {
-        metaTitle: 'Gel Ondulante y Kit Jade para Rizado de Pestañas Profesional | J. Denis México',
-        metaDescription: 'Kit Jade y Gel Ondulante para Rizado Permanente de Pestañas J. Denis. Curvatura definida, segura y de larga duración (6 a 8 semanas). Venta al menudeo y mayoreo directo de fábrica.',
+        metaTitle: 'Kit Jade Rizado Permanente de Pestañas J. Denis ($250 MXN) | Gel Ondulante Oficial',
+        metaDescription: 'Compra el Kit Jade de Rizado de Pestañas J. Denis ($250 MXN): incluye Gel Ondulante, Neutralizante, Adhesivo y Rulos. Curvatura definida de 6 a 8 semanas. Directo de fábrica en México.',
         extraFaqs: [
+            {
+                question: '¿Qué incluye y cuánto rinde el Kit Jade para Rizado de Pestañas J. Denis?',
+                answer: 'El Kit Jade J. Denis ($250 MXN) incluye Gel Ondulante, Gel Neutralizante, Adhesivo para rulos y rulos anatómicos para realizar múltiples servicios de rizado permanente con duración de 6 a 8 semanas.',
+            },
             {
                 question: '¿Cómo funciona el gel ondulante para pestañas de la línea Jade J. Denis?',
                 answer: 'El gel ondulante Jade J. Denis suaviza temporalmente la estructura de la pestaña natural para darle una curvatura uniforme sobre el rulo o pad, fijándose luego con el gel neutralizante.',
@@ -430,14 +434,29 @@ export const GSC_PRODUCT_SEO_OVERRIDES: Record<string, ProductGscSeoOverride> = 
         ],
     },
     'chocolate-pigmento-cejas': {
-        metaTitle: 'Pigmento para Cejas Chocolate / Castaño Medio de Larga Duración | J. Denis',
-        metaDescription: 'Pigmento profesional para cejas tono Chocolate (Castaño Medio) J. Denis. Efecto sombra/rubor natural en piel y vello sin virar a rojo. Venta individual y mayoreo en México.',
+        metaTitle: 'Pigmento para Cejas Color Chocolate / Castaño Medio ($200 MXN) | J. Denis',
+        metaDescription: 'Logra cejas color chocolate naturales con el Pigmento Profesional J. Denis ($200 MXN). Efecto sombra/rubor de larga duración en piel y vello sin virar a rojo. Envío a todo México.',
         extraFaqs: [
             {
-                question: '¿Para qué fototipo se recomienda el pigmento Chocolate / Castaño Medio J. Denis?',
-                answer: 'El tono Chocolate (Castaño Medio) es el más versátil para fototipos latinos de cabello castaño claro a castaño oscuro, logrando un sombreado cálido y natural.',
+                question: '¿Para qué fototipo se recomienda el pigmento para cejas color Chocolate / Castaño Medio J. Denis?',
+                answer: 'El tono Chocolate (Castaño Medio) es el más versátil para fototipos latinos de cabello castaño claro a castaño oscuro, logrando cejas color chocolate cálidas y naturales sin subtono rojizo.',
             },
         ],
+    },
+    'adhesivo-negro-grupo': {
+        metaTitle: 'Adhesivo Negro para Pestañas de Grupo y por Punto ($60 MXN) | J. Denis México',
+        metaDescription: 'Adhesivo J. Denis tono negro para pestañas de grupo o por punto ($60 MXN). Fijación duradera, hipoalergénica y acabado efecto delineado. Venta menudeo y mayoreo en México.',
+        extraFaqs: [
+            {
+                question: '¿Cuál es la ventaja del Adhesivo Negro para pestañas de grupo J. Denis?',
+                answer: 'Su pigmentación negra se integra de forma invisible en la raíz de las pestañas creando un sutil efecto delineador mientras brinda alta retención para pestañas de grupo o por punto.',
+            },
+        ],
+    },
+    'a035187c-4166-4f16-bfe8-46b06d8f8ddf': {
+        metaTitle: 'Adhesivo Negro para Pestañas de Grupo y por Punto ($60 MXN) | J. Denis México',
+        metaDescription: 'Adhesivo J. Denis tono negro para pestañas de grupo o por punto ($60 MXN). Fijación duradera, hipoalergénica y acabado efecto delineado. Venta menudeo y mayoreo en México.',
+        extraFaqs: [],
     },
     'tintura-topica-castano-medio': {
         metaTitle: 'Tintura Tópica Castaño Medio para Cejas (Efecto Sombra y Henna) | J. Denis',

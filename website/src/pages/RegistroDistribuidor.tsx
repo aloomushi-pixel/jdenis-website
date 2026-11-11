@@ -525,23 +525,31 @@ export default function RegistroDistribuidor() {
                                         <div>
                                             <label className="block text-sm font-bold text-gray-900 mb-3">¿Medio por el cual se enteró de J. Denis?</label>
                                             <div className="flex flex-wrap gap-3">
-                                                {hearSources.map(source => (
-                                                    <label key={source} className={`px-4 py-2 rounded-full border cursor-pointer text-sm transition-colors ${formData.howDidYouHear.includes(source) ? 'bg-gold text-white border-gold font-medium' : 'bg-white text-gray-600 hover:border-gold'}`}>
-                                                        <input type="checkbox" className="hidden" checked={formData.howDidYouHear.includes(source)} onChange={() => handleCheckboxArrayChange('howDidYouHear', source)} />
-                                                        {source}
-                                                    </label>
-                                                ))}
+                                                {hearSources.map(source => {
+                                                    const selected = formData.howDidYouHear.includes(source);
+                                                    return (
+                                                        <button
+                                                            key={source}
+                                                            type="button"
+                                                            aria-pressed={selected}
+                                                            onClick={() => handleCheckboxArrayChange('howDidYouHear', source)}
+                                                            className={`px-4 py-2 rounded-full border cursor-pointer text-sm transition-colors ${selected ? 'bg-forest text-white border-forest font-semibold shadow-sm' : 'bg-white text-gray-700 border-gray-300 hover:border-forest'}`}
+                                                        >
+                                                            {selected ? `✓ ${source}` : source}
+                                                        </button>
+                                                    );
+                                                })}
                                             </div>
                                         </div>
 
                                         <div>
                                             <label className="block text-sm font-bold text-gray-900 mb-3">¿Tienes experiencia en el ramo de belleza? *</label>
                                             <div className="flex gap-6">
-                                                <label className="flex items-center gap-2 cursor-pointer">
+                                                <label className="flex items-center gap-2 cursor-pointer text-charcoal">
                                                     <input type="radio" value="yes" checked={formData.hasExperience === 'yes'} onChange={e => setFormData({...formData, hasExperience: e.target.value})} className="accent-gold w-4 h-4" />
                                                     Sí
                                                 </label>
-                                                <label className="flex items-center gap-2 cursor-pointer">
+                                                <label className="flex items-center gap-2 cursor-pointer text-charcoal">
                                                     <input type="radio" value="no" checked={formData.hasExperience === 'no'} onChange={e => setFormData({...formData, hasExperience: e.target.value})} className="accent-gold w-4 h-4" />
                                                     No, pero me interesa
                                                 </label>
@@ -551,12 +559,20 @@ export default function RegistroDistribuidor() {
                                         <div>
                                             <label className="block text-sm font-bold text-gray-900 mb-2">Intereses principales (comerciales)</label>
                                             <div className="flex flex-wrap gap-3">
-                                                {['Productos', 'Cursos', 'Distribución', 'Todo'].map(interest => (
-                                                    <label key={interest} className={`px-4 py-2 rounded border cursor-pointer text-sm transition-colors ${formData.interests.includes(interest) ? 'bg-forest/10 border-forest text-forest font-medium' : 'bg-white text-gray-600 hover:border-gray-400'}`}>
-                                                        <input type="checkbox" className="hidden" checked={formData.interests.includes(interest)} onChange={() => handleCheckboxArrayChange('interests', interest)} />
-                                                        {interest}
-                                                    </label>
-                                                ))}
+                                                {['Productos', 'Cursos', 'Distribución', 'Todo'].map(interest => {
+                                                    const selected = formData.interests.includes(interest);
+                                                    return (
+                                                        <button
+                                                            key={interest}
+                                                            type="button"
+                                                            aria-pressed={selected}
+                                                            onClick={() => handleCheckboxArrayChange('interests', interest)}
+                                                            className={`px-4 py-2 rounded-lg border cursor-pointer text-sm transition-colors ${selected ? 'bg-forest text-white border-forest font-semibold shadow-sm' : 'bg-white text-gray-700 border-gray-300 hover:border-forest'}`}
+                                                        >
+                                                            {selected ? `✓ ${interest}` : interest}
+                                                        </button>
+                                                    );
+                                                })}
                                             </div>
                                         </div>
                                     </div>

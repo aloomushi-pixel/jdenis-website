@@ -117,14 +117,24 @@ export default function BlogPost() {
         fetchPost();
     }, [slug]);
 
-    // Dynamic meta + JSON-LD for this blog post
+    // Dynamic meta + JSON-LD for this blog post (with GSC high-impression CTR overrides)
+    const isLiftingCoreano = slug === 'lifting-coreano-vs-clasico';
     const resolvedTitle = post?.title || hardcodedPost?.title;
+    const seoTitle = isLiftingCoreano
+        ? 'Lifting Coreano vs. Lash Lifting Clásico: Tabla Comparativa, Moldes y Cuál Elegir | J. Denis'
+        : resolvedTitle
+        ? `${resolvedTitle} | Blog J. Denis México`
+        : 'Artículo | Blog J. Denis México';
+    const seoDescription = isLiftingCoreano
+        ? '¿Lifting Coreano (rizo abierto J/L con Cisteamina + Shot 1.5) o Lash Lifting Clásico (curva C)? Compara moldes, tiempos de pose, tipo de ojo y duración de 6 a 8 semanas.'
+        : post?.excerpt
+        ? post.excerpt.slice(0, 155)
+        : 'Artículo de formación profesional sobre lifting de pestañas, laminado de cejas y certificación DC-3 STPS por J. Denis México.';
+
     usePageMeta({
         enabled: !loading && Boolean(resolvedTitle),
-        title: resolvedTitle ? `${resolvedTitle} | Blog J. Denis` : 'Artículo | Blog J. Denis',
-        description: post?.excerpt
-            ? post.excerpt.slice(0, 155)
-            : 'Artículo de formación profesional sobre lifting de pestañas, laminado de cejas y certificación DC-3 STPS por J. Denis México.',
+        title: seoTitle,
+        description: seoDescription,
         canonical: slug ? `https://jdenis.store/blog/${slug}` : undefined,
         image: post?.featured_image || '/hero-products.jpg',
         type: 'article',
@@ -132,16 +142,16 @@ export default function BlogPost() {
             {
                 '@context': 'https://schema.org',
                 '@type': 'Article',
-                headline: resolvedTitle,
-                description: post?.excerpt || 'Artículo de J. Denis México',
+                headline: isLiftingCoreano ? seoTitle : resolvedTitle,
+                description: seoDescription,
                 image: post?.featured_image || 'https://jdenis.store/hero-products.jpg',
                 url: `https://jdenis.store/blog/${slug}`,
                 datePublished: post?.published_at || new Date().toISOString(),
-                author: { '@type': 'Person', name: 'Gabriela Elizalde' },
+                author: { '@type': 'Organization', name: 'Equipo Técnico J. Denis México' },
                 publisher: {
                     '@type': 'Organization',
                     name: 'J. Denis México',
-                    logo: { '@type': 'ImageObject', url: 'https://jdenis.store/jdenis-logo.png' },
+                    logo: { '@type': 'ImageObject', url: 'https://jdenis.store/logo-new.jpeg' },
                 },
                 inLanguage: 'es-MX',
             },
@@ -154,6 +164,32 @@ export default function BlogPost() {
                     { '@type': 'ListItem', position: 3, name: resolvedTitle, item: `https://jdenis.store/blog/${slug}` },
                 ],
             },
+            ...(isLiftingCoreano
+                ? [
+                      {
+                          '@context': 'https://schema.org',
+                          '@type': 'FAQPage',
+                          mainEntity: [
+                              {
+                                  '@type': 'Question',
+                                  name: '¿Cuál es la diferencia entre Lifting Coreano y Lash Lifting Clásico?',
+                                  acceptedAnswer: {
+                                      '@type': 'Answer',
+                                      text: 'El Lifting Coreano utiliza moldes planos o semiplanos con Cisteamina Estabilizada y Shot 1.5 para lograr un rizo abierto tipo J o L de acabado natural, mientras que el Lifting Clásico emplea moldes nube o cilíndricos para una curvatura pronunciada tipo C o U.',
+                                  },
+                              },
+                              {
+                                  '@type': 'Question',
+                                  name: '¿Cuánto dura el Lifting Coreano de pestañas con Cisteamina J. Denis?',
+                                  acceptedAnswer: {
+                                      '@type': 'Answer',
+                                      text: 'Tanto el Lifting Coreano como el Lifting Clásico realizados con Cisteamina J. Denis tienen una duración de 6 a 8 semanas en un procedimiento de 45 a 60 minutos sin resecar la fibra capilar.',
+                                  },
+                              },
+                          ],
+                      },
+                  ]
+                : []),
         ] : undefined,
     });
 
@@ -947,10 +983,35 @@ function LiftingCoreanoContent() {
                 </p>
             </section>
 
-            <div className="p-6 rounded-xl bg-gradient-to-r from-rose-900/50 to-pink-900/50 border border-rose-500/30 text-center">
-                <p className="text-xl font-bold text-white">
-                    En J. Denis formamos profesionales en ambas técnicas. Domina las dos. 🎓
-                </p>
+            <div className="p-6 rounded-2xl bg-gradient-to-r from-rose-900/50 to-pink-900/50 border border-rose-500/30 space-y-5">
+                <div className="text-center">
+                    <p className="text-xl font-bold text-white mb-2">
+                        Equipa tu cabina con el protocolo original de Lifting Coreano J. Denis
+                    </p>
+                    <p className="text-sm text-gray-300">
+                        Adquiere las fórmulas con Cisteamina Estabilizada, Shot 1.5 Hidratante y moldes anatómicos directo de fábrica con envío a todo México.
+                    </p>
+                </div>
+                <div className="flex flex-wrap justify-center gap-3">
+                    <Link
+                        to="/producto/cisteamina-lash-brows"
+                        className="px-5 py-2.5 bg-rose-500 hover:bg-rose-600 text-white font-semibold text-sm rounded-full transition-colors shadow-md"
+                    >
+                        Ver Cisteamina Lash &amp; Brows →
+                    </Link>
+                    <Link
+                        to="/producto/shot-hidratante-15"
+                        className="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white font-semibold text-sm rounded-full border border-white/20 transition-colors"
+                    >
+                        Ver 1.5 Shot Hidratante →
+                    </Link>
+                    <Link
+                        to="/lash-lifting"
+                        className="px-5 py-2.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-semibold text-sm rounded-full border border-amber-400/30 transition-colors"
+                    >
+                        Catálogo Completo Lash Lifting →
+                    </Link>
+                </div>
             </div>
         </div>
     );
