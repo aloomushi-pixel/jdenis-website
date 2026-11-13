@@ -121,15 +121,15 @@ export default function BlogPost() {
     const isLiftingCoreano = slug === 'lifting-coreano-vs-clasico';
     const resolvedTitle = post?.title || hardcodedPost?.title;
     const seoTitle = isLiftingCoreano
-        ? 'Lifting Coreano vs. Lash Lifting Clásico: Tabla Comparativa, Moldes y Cuál Elegir | J. Denis'
+        ? 'Lifting Coreano vs Clásico: Moldes y Guía | J. Denis'
         : resolvedTitle
-        ? `${resolvedTitle} | Blog J. Denis México`
-        : 'Artículo | Blog J. Denis México';
+        ? `${resolvedTitle} | J. Denis`
+        : 'Artículo Técnico | Blog J. Denis';
     const seoDescription = isLiftingCoreano
-        ? '¿Lifting Coreano (rizo abierto J/L con Cisteamina + Shot 1.5) o Lash Lifting Clásico (curva C)? Compara moldes, tiempos de pose, tipo de ojo y duración de 6 a 8 semanas.'
+        ? '¿Lifting Coreano (rizo J/L con Cisteamina) o Clásico (curva C)? Compara moldes, tiempos de pose, tipo de ojo y duración de 6-8 semanas.'
         : post?.excerpt
         ? post.excerpt.slice(0, 155)
-        : 'Artículo de formación profesional sobre lifting de pestañas, laminado de cejas y certificación DC-3 STPS por J. Denis México.';
+        : 'Guía profesional sobre lifting de pestañas, laminado de cejas y certificación DC-3 STPS por J. Denis México.';
 
     usePageMeta({
         enabled: !loading && Boolean(resolvedTitle),

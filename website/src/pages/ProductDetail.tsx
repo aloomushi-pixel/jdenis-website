@@ -145,11 +145,11 @@ export default function ProductDetail() {
     usePageMeta({
         enabled: !productsLoading && !!product,
         title: product
-            ? gscOverride?.metaTitle || `${product.name} ($${product.price} MXN) | ${genericDescriptor} | J. Denis México`
-            : 'Producto Cosmético Profesional | J. Denis México',
+            ? gscOverride?.metaTitle || `${product.name} ($${product.price}) | J. Denis`
+            : 'Producto Profesional | J. Denis México',
         description: product
-            ? gscOverride?.metaDescription || `${product.name} ($${product.price} MXN): ${(product.description || categorySeo.b2cSummary).slice(0, 110)}. Compra individual o mayoreo directo de fábrica J. Denis con envío a todo México.`
-            : 'Producto cosmético profesional de alta calidad fabricado en México por J. Denis desde 1998.',
+            ? gscOverride?.metaDescription || `${product.name} ($${product.price} MXN): ${(product.description || categorySeo.b2cSummary).slice(0, 88)}. Menudeo y mayoreo J. Denis en México.`
+            : 'Producto cosmético profesional fabricado en México por J. Denis desde 1998.',
         image: product?.image || '/hero-products.jpg',
         type: 'product',
         canonical: product ? `https://jdenis.store/producto/${product.slug || product.id}` : undefined,

@@ -6,6 +6,7 @@ import Header from './components/Header';
 import GlobalSearchModal from './components/GlobalSearchModal';
 import PWAInstallBanner from './components/PWAInstallBanner';
 import TelemetryProvider from './components/TelemetryProvider';
+import UxFeedbackBubble from './components/UxFeedbackBubble';
 
 // Eager public storefront routes for instant LCP & SEO
 import Home from './pages/Home';
@@ -141,6 +142,7 @@ function Layout() {
       {!isAdminOrAccount && <Footer />}
       <CartDrawer />
       <GlobalSearchModal />
+      <UxFeedbackBubble />
     </div>
   );
 }

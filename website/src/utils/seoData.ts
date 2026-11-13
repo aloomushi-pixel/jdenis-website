@@ -68,9 +68,44 @@ export const GENERIC_SYNONYM_MAP: Record<string, string[]> = {
     'lash & brown': ['laminado', 'brow fixative', 'j.eyebrow', 'brown', 'pigmentos', 'brow henna', 'lash lifting'],
     'lash & brol': ['laminado', 'brow fixative', 'j.eyebrow', 'lash lifting', 'brow henna'],
     'lash and brow': ['laminado', 'brow fixative', 'j.eyebrow', 'lash lifting', 'brow henna'],
+    'low fume': ['adhesivos', 'adhesivo', 'hipoalergenico', 'transparente', 'extensiones', 'sensible'],
+    'elite': ['adhesivos', 'adhesivo', 'extensiones', 'profesional', 'secado rapido', 'negro'],
+    'plus lashes': ['mascara', 'rímel', 'microfibras', 'alargadoras', 'tratamientos', 'crecimiento', 'queratina'],
+    'duo': ['adhesivos', 'adhesivo', 'pestañas en tira', 'grupo', 'punto', 'transparente', 'negro'],
+    'pinza para depilar': ['pinza', 'depilar', 'ceja', 'herramientas'],
+    'agua micelar': ['limpiador', 'espuma', 'desmaquillante', 'higiene', 'impurezas'],
     'mayoreo': ['kit', 'profesional', 'paquete', 'distribuidor', 'salon', 'estudio'],
     'fabricante': ['j. denis', 'profesional', 'kit', 'cisteamina', 'henna', 'pigmentos'],
 };
+
+const SEARCH_STOPWORDS = new Set([
+    'de', 'la', 'el', 'en', 'y', 'a', 'los', 'las', 'del', 'al', 'un', 'una', 'unos', 'unas',
+    'con', 'sin', 'por', 'para', 'que', 'mas', 'como', 'uso', 'tipo', 'kit', 'set',
+]);
+
+export function clampSeoTitle(rawTitle: string, maxLen = 60): string {
+    const clean = (rawTitle || '').replace(/\s+/g, ' ').trim();
+    if (clean.length <= maxLen) return clean;
+    // If title has "| J. Denis..." suffix, try shortening suffix to "| J. Denis" first
+    const pipeIdx = clean.lastIndexOf('|');
+    if (pipeIdx > 15) {
+        const left = clean.slice(0, pipeIdx).trim();
+        const withShortBrand = /j\.?\s*denis/i.test(left) ? left : `${left} | J. Denis`;
+        if (withShortBrand.length <= maxLen) return withShortBrand;
+        const maxLeft = Math.max(20, maxLen - 11); // room for " | J. Denis"
+        const cutLeft = left.slice(0, maxLeft).replace(/\s+\S*$/, '').replace(/[,:;—–-]+$/, '').trim();
+        const rebuilt = /j\.?\s*denis/i.test(cutLeft) ? cutLeft : `${cutLeft} | J. Denis`;
+        if (rebuilt.length <= maxLen) return rebuilt;
+    }
+    return clean.slice(0, maxLen).replace(/\s+\S*$/, '').trim();
+}
+
+export function clampSeoDescription(rawDesc: string, maxLen = 160): string {
+    const clean = (rawDesc || '').replace(/\s+/g, ' ').trim();
+    if (clean.length <= maxLen) return clean;
+    const sliced = clean.slice(0, maxLen - 1).replace(/\s+\S*$/, '').replace(/[,:;—–-]+$/, '').trim();
+    return sliced.endsWith('.') ? sliced : `${sliced}.`;
+}
 
 export function normalizeSearchText(text: string): string {
     return text
@@ -90,16 +125,18 @@ export function expandSearchTerms(rawQuery: string): string[] {
     if (!normalized) return [];
 
     const expanded = new Set<string>([normalized]);
-    const words = normalized.split(/\s+/).filter(w => w.length >= 2);
+    const words = normalized
+        .split(/\s+/)
+        .filter(w => w.length >= 2 && !SEARCH_STOPWORDS.has(w));
 
     for (const w of words) {
         expanded.add(w);
         // Handle mobile QWERTY top-row digit typos inside alphabetical words (e.g. "activado4" -> "activador")
         if (/[a-z]\d|\d[a-z]/.test(w)) {
             const deDigited = w.replace(/\d/g, d => QWERTY_DIGIT_TO_LETTER[d] || '');
-            if (deDigited.length >= 3) expanded.add(deDigited);
+            if (deDigited.length >= 3 && !SEARCH_STOPWORDS.has(deDigited)) expanded.add(deDigited);
             const strippedDigits = w.replace(/\d+/g, '');
-            if (strippedDigits.length >= 4) expanded.add(strippedDigits);
+            if (strippedDigits.length >= 4 && !SEARCH_STOPWORDS.has(strippedDigits)) expanded.add(strippedDigits);
         }
         // Prefix stem fallback for 6+ char words so trailing-char typos still match
         if (w.length >= 6) {
@@ -107,16 +144,19 @@ export function expandSearchTerms(rawQuery: string): string[] {
         }
     }
 
-    const candidateList = Array.from(expanded);
-    for (const candidate of candidateList) {
-        for (const [phrase, synonyms] of Object.entries(GENERIC_SYNONYM_MAP)) {
-            const normPhrase = normalizeSearchText(phrase);
-            if (candidate.includes(normPhrase) || normPhrase.includes(candidate)) {
-                synonyms.forEach(s => expanded.add(normalizeSearchText(s)));
-            }
+    // Match full query first against synonym phrases; individual words only match if >= 4 chars
+    if (GENERIC_SYNONYM_MAP[normalized]) {
+        GENERIC_SYNONYM_MAP[normalized].forEach(s => expanded.add(normalizeSearchText(s)));
+    }
+    for (const [phrase, synonyms] of Object.entries(GENERIC_SYNONYM_MAP)) {
+        const normPhrase = normalizeSearchText(phrase);
+        if (normalized.includes(normPhrase) || (normalized.length >= 4 && normPhrase.includes(normalized))) {
+            synonyms.forEach(s => expanded.add(normalizeSearchText(s)));
         }
-        if (GENERIC_SYNONYM_MAP[candidate]) {
-            GENERIC_SYNONYM_MAP[candidate].forEach(s => expanded.add(normalizeSearchText(s)));
+    }
+    for (const w of words) {
+        if (GENERIC_SYNONYM_MAP[w]) {
+            GENERIC_SYNONYM_MAP[w].forEach(s => expanded.add(normalizeSearchText(s)));
         }
     }
 
@@ -148,23 +188,30 @@ export function matchesProductSearch(
         return { matches: true, score: 70 };
     }
 
-    // Multi-word direct match
-    const queryWords = normQuery.split(/\s+/).filter(w => w.length >= 3);
+    // Multi-word direct match (ignoring Spanish stopwords)
+    const queryWords = normQuery.split(/\s+/).filter(w => w.length >= 3 && !SEARCH_STOPWORDS.has(w));
     if (queryWords.length > 1) {
+        const allInNameOrCat = queryWords.every(w => haystackName.includes(w) || haystackCategory.includes(w));
+        if (allInNameOrCat) return { matches: true, score: 80 };
         const allMatch = queryWords.every(
             w => haystackName.includes(w) || haystackCategory.includes(w) || haystackDesc.includes(w)
         );
         if (allMatch) return { matches: true, score: 65 };
+        // If multi-word has primary noun in name (e.g. "pinza" in "pinza para depilar"), prioritize name hit over unrelated desc hits
+        const anyInName = queryWords.some(w => haystackName.includes(w));
+        if (anyInName) return { matches: true, score: 55 };
     }
 
-    // Synonym expansion match
+    // Synonym expansion match (only when query isn't a specific multi-word noun already narrowed)
     const expandedTerms = expandSearchTerms(rawQuery);
     let maxScore = 0;
     for (const term of expandedTerms) {
-        if (term === normQuery) continue;
+        if (term === normQuery || SEARCH_STOPWORDS.has(term)) continue;
         if (haystackName.includes(term)) maxScore = Math.max(maxScore, 50);
         else if (haystackCategory.includes(term)) maxScore = Math.max(maxScore, 45);
-        else if (haystackDesc.includes(term) || haystackBenefits.includes(term)) maxScore = Math.max(maxScore, 30);
+        else if (queryWords.length <= 1 && (haystackDesc.includes(term) || haystackBenefits.includes(term))) {
+            maxScore = Math.max(maxScore, 30);
+        }
     }
 
     return { matches: maxScore > 0, score: maxScore };
@@ -174,8 +221,8 @@ export const CATEGORY_SEO_DATA: Record<string, CategorySEOInfo> = {
     'Todos': {
         category: 'Todos',
         h1Title: 'Catálogo de Cosméticos para Cejas y Pestañas Directo de Fábrica',
-        metaTitle: 'Cosméticos para Cejas y Pestañas Profesional y Mayoreo | J. Denis Fabricante México',
-        metaDescription: 'Fabricante mexicano líder en cosméticos para cejas y pestañas: rubor y pigmento para cejas, brow henna, gel fijador y laminado, lash lifting con cisteamina, adhesivos y venta al mayoreo con envíos a todo México.',
+        metaTitle: 'Tienda Oficial Cejas, Pestañas y Mayoreo | J. Denis México',
+        metaDescription: 'Catálogo oficial J. Denis (+240 productos): laminado de cejas, lash lifting cisteamina, brow henna, pigmentos y adhesivos. Envíos a todo México.',
         genericKeywords: [
             'cosméticos por mayoreo directo de fábrica México',
             'rubor para cejas',
@@ -211,8 +258,8 @@ export const CATEGORY_SEO_DATA: Record<string, CategorySEOInfo> = {
     'Brow Henna': {
         category: 'Brow Henna',
         h1Title: 'Brow Henna, Rubor y Sombra para Cejas de Larga Duración',
-        metaTitle: 'Rubor para Cejas, Sombra y Brow Henna Profesional Mayoreo | J. Denis México',
-        metaDescription: 'Logra el efecto rubor para cejas (sombra empolvada natural) con Brow Henna J. Denis. Pigmentos minerales y veganos de larga duración directo de fábrica en México. Venta individual y mayoreo.',
+        metaTitle: 'Rubor para Cejas, Sombra y Brow Henna Mayoreo | J. Denis',
+        metaDescription: 'Efecto rubor y sombra natural para cejas con Brow Henna J. Denis. Pigmentos veganos de larga duración directo de fábrica. Menudeo y mayoreo MX.',
         genericKeywords: [
             'rubor para cejas',
             'sombra para cejas larga duración',
@@ -243,8 +290,8 @@ export const CATEGORY_SEO_DATA: Record<string, CategorySEOInfo> = {
     'Diseño de Cejas': {
         category: 'Diseño de Cejas',
         h1Title: 'Diseño, Planchado y Gel Fijador de Cejas Profesional',
-        metaTitle: 'Gel Fijador de Cejas, Laminado y Planchado de Cejas Mayoreo | J. Denis',
-        metaDescription: 'Pioneros del Planchado y Laminado de Cejas en México. Gel fijador de cejas, cremas reestructurantes, mapeo y diseño profesional directo de fábrica. Venta al menudeo y mayoreo.',
+        metaTitle: 'Gel Fijador, Laminado y Planchado de Cejas | J. Denis',
+        metaDescription: 'Pioneros del Planchado y Laminado de Cejas en México. Gel fijador, cisteamina y diseño profesional directo de fábrica. Venta menudeo y mayoreo.',
         genericKeywords: [
             'gel fijador de cejas mayoreo',
             'planchado de cejas original México',
@@ -271,8 +318,8 @@ export const CATEGORY_SEO_DATA: Record<string, CategorySEOInfo> = {
     'Pigmentos': {
         category: 'Pigmentos',
         h1Title: 'Pigmentos para Cejas, Pestañas y Delineado Profesional',
-        metaTitle: 'Pigmento para Cejas y Pestañas Profesional Mayoreo | Fabricante J. Denis',
-        metaDescription: 'Pigmentos de alta fijación para cejas y pestañas. Colores estables, cobertura de canas y efecto maquillaje duradero directo de fábrica en México.',
+        metaTitle: 'Pigmentos para Cejas y Pestañas Mayoreo | J. Denis México',
+        metaDescription: 'Pigmentos de alta fijación para cejas y pestañas J. Denis. Colores estables, cobertura de canas y efecto sombra directo de fábrica en México.',
         genericKeywords: [
             'pigmento para cejas',
             'tinte para cejas y pestañas profesional',
@@ -297,8 +344,8 @@ export const CATEGORY_SEO_DATA: Record<string, CategorySEOInfo> = {
     'Lash Lifting': {
         category: 'Lash Lifting',
         h1Title: 'Lash Lifting con Cisteamina y Rizado de Pestañas Profesional',
-        metaTitle: 'Kit Lash Lifting Cisteamina y Rizado de Pestañas Mayoreo | J. Denis México',
-        metaDescription: 'Kits y sobres de Lash Lifting Evolución con Cisteamina directo de fábrica. Eleva y curva las pestañas naturales sin dañarlas. Venta individual y mayoreo en México.',
+        metaTitle: 'Kit Lash Lifting Cisteamina y Rizado Pestañas | J. Denis',
+        metaDescription: 'Kits y sobres de Lash Lifting Evolución con Cisteamina J. Denis. Eleva y curva pestañas sin daño. Venta menudeo y mayoreo directo de fábrica MX.',
         genericKeywords: [
             'lash lifting cisteamina',
             'kit de lash lifting profesional mayoreo',
@@ -323,8 +370,8 @@ export const CATEGORY_SEO_DATA: Record<string, CategorySEOInfo> = {
     'Adhesivos': {
         category: 'Adhesivos',
         h1Title: 'Adhesivos y Pegamentos Profesionales para Pestañas y Lifting',
-        metaTitle: 'Pegamento y Adhesivo para Pestañas y Lash Lifting Mayoreo | J. Denis',
-        metaDescription: 'Adhesivos quirúrgicos e hipoalergénicos de secado rápido para extensiones de pestañas, pestañas en tira y lash lifting. Fabricante nacional con venta al mayoreo.',
+        metaTitle: 'Pegamento y Adhesivo para Pestañas y Lifting | J. Denis',
+        metaDescription: 'Adhesivos hipoalergénicos de secado rápido para extensiones, pestañas en tira y lash lifting. Fabricante nacional J. Denis menudeo y mayoreo.',
         genericKeywords: [
             'pegamento para pestañas profesional',
             'adhesivo lash lifting mayoreo',
@@ -343,8 +390,8 @@ export const CATEGORY_SEO_DATA: Record<string, CategorySEOInfo> = {
     'Tratamientos': {
         category: 'Tratamientos',
         h1Title: 'Sueros, Rímel con Queratina y Tratamientos para Cejas y Pestañas',
-        metaTitle: 'Suero Crecimiento, Rímel Queratina y Tratamientos Cejas y Pestañas | J. Denis',
-        metaDescription: 'Sueros reestructurantes, rímel de queratina, botox capilar y geles hidratantes para fortalecer y engrosar cejas y pestañas. Venta minorista y mayoreo de fábrica.',
+        metaTitle: 'Suero, Botox y Rímel Queratina Cejas y Pestañas | J. Denis',
+        metaDescription: 'Sueros reestructurantes, rímel de queratina y botox capilar J. Denis para fortalecer cejas y pestañas. Venta minorista y mayoreo en México.',
         genericKeywords: [
             'suero para cejas y pestañas',
             'rimel con queratina mayoreo',
@@ -369,8 +416,8 @@ export function getCategorySEO(category: string): CategorySEOInfo {
     return {
         category,
         h1Title: `${category} Profesional para Cejas y Pestañas | Directo de Fábrica`,
-        metaTitle: `${category} Profesional y Mayoreo | J. Denis Cosméticos México`,
-        metaDescription: `Compra ${category} de grado profesional directo de fábrica en México. Calidad garantizada J. Denis para consumidoras, lashistas, estéticas y mayoristas con envío a todo el país.`,
+        metaTitle: clampSeoTitle(`${category} Profesional y Mayoreo | J. Denis México`),
+        metaDescription: clampSeoDescription(`Compra ${category} profesional directo de fábrica J. Denis en México. Calidad para consumidoras, lashistas, estéticas y mayoristas con envío nacional.`),
         genericKeywords: [
             `${category.toLowerCase()} profesional`,
             `${category.toLowerCase()} mayoreo México`,
@@ -406,8 +453,8 @@ export interface ProductGscSeoOverride {
  */
 export const GSC_PRODUCT_SEO_OVERRIDES: Record<string, ProductGscSeoOverride> = {
     'laminado-cejas': {
-        metaTitle: 'Kit Laminado de Cejas J. Denis con Cisteamina (30 Aplicaciones) | Tienda Oficial',
-        metaDescription: 'Kit profesional de Laminado y Planchado de Cejas J. Denis con Cisteamina. Rinde hasta 30 servicios, alinea el vello rebelde y nutre sin maltratar. Compra individual o mayoreo directo de fábrica en México.',
+        metaTitle: 'Kit Laminado de Cejas Cisteamina (30 Aplic.) | J. Denis',
+        metaDescription: 'Kit Laminado y Planchado de Cejas J. Denis con Cisteamina (30 aplicaciones). Alinea cejas rebeldes sin maltratar. Menudeo y mayoreo en México.',
         extraFaqs: [
             {
                 question: '¿Cuántas aplicaciones rinde el Kit de Laminado de Cejas J. Denis?',
@@ -420,8 +467,8 @@ export const GSC_PRODUCT_SEO_OVERRIDES: Record<string, ProductGscSeoOverride> = 
         ],
     },
     'jade-rizado-pestanas': {
-        metaTitle: 'Kit Jade Rizado Permanente de Pestañas J. Denis ($250 MXN) | Gel Ondulante Oficial',
-        metaDescription: 'Compra el Kit Jade de Rizado de Pestañas J. Denis ($250 MXN): incluye Gel Ondulante, Neutralizante, Adhesivo y Rulos. Curvatura definida de 6 a 8 semanas. Directo de fábrica en México.',
+        metaTitle: 'Kit Jade Rizado de Pestañas ($250 MXN) | J. Denis Oficial',
+        metaDescription: 'Compra Kit Jade de Rizado de Pestañas J. Denis ($250 MXN): Gel Ondulante, Neutralizante, Adhesivo y Rulos. Duración 6-8 semanas. Envío México.',
         extraFaqs: [
             {
                 question: '¿Qué incluye y cuánto rinde el Kit Jade para Rizado de Pestañas J. Denis?',
@@ -434,8 +481,8 @@ export const GSC_PRODUCT_SEO_OVERRIDES: Record<string, ProductGscSeoOverride> = 
         ],
     },
     'chocolate-pigmento-cejas': {
-        metaTitle: 'Pigmento para Cejas Color Chocolate / Castaño Medio ($200 MXN) | J. Denis',
-        metaDescription: 'Logra cejas color chocolate naturales con el Pigmento Profesional J. Denis ($200 MXN). Efecto sombra/rubor de larga duración en piel y vello sin virar a rojo. Envío a todo México.',
+        metaTitle: 'Pigmento Cejas Chocolate Castaño Medio ($200) | J. Denis',
+        metaDescription: 'Pigmento para Cejas Chocolate / Castaño Medio J. Denis ($200 MXN). Efecto sombra de larga duración en piel y vello sin virar a rojo. Envíos MX.',
         extraFaqs: [
             {
                 question: '¿Para qué fototipo se recomienda el pigmento para cejas color Chocolate / Castaño Medio J. Denis?',
@@ -444,8 +491,8 @@ export const GSC_PRODUCT_SEO_OVERRIDES: Record<string, ProductGscSeoOverride> = 
         ],
     },
     'adhesivo-negro-grupo': {
-        metaTitle: 'Adhesivo Negro para Pestañas de Grupo y por Punto ($60 MXN) | J. Denis México',
-        metaDescription: 'Adhesivo J. Denis tono negro para pestañas de grupo o por punto ($60 MXN). Fijación duradera, hipoalergénica y acabado efecto delineado. Venta menudeo y mayoreo en México.',
+        metaTitle: 'Adhesivo Negro Pestañas de Grupo ($60 MXN) | J. Denis',
+        metaDescription: 'Adhesivo J. Denis negro para pestañas de grupo o punto ($60 MXN). Fijación hipoalergénica y efecto delineado. Venta menudeo y mayoreo en México.',
         extraFaqs: [
             {
                 question: '¿Cuál es la ventaja del Adhesivo Negro para pestañas de grupo J. Denis?',
@@ -454,13 +501,13 @@ export const GSC_PRODUCT_SEO_OVERRIDES: Record<string, ProductGscSeoOverride> = 
         ],
     },
     'a035187c-4166-4f16-bfe8-46b06d8f8ddf': {
-        metaTitle: 'Adhesivo Negro para Pestañas de Grupo y por Punto ($60 MXN) | J. Denis México',
-        metaDescription: 'Adhesivo J. Denis tono negro para pestañas de grupo o por punto ($60 MXN). Fijación duradera, hipoalergénica y acabado efecto delineado. Venta menudeo y mayoreo en México.',
+        metaTitle: 'Adhesivo Negro Pestañas de Grupo ($60 MXN) | J. Denis',
+        metaDescription: 'Adhesivo J. Denis negro para pestañas de grupo o punto ($60 MXN). Fijación hipoalergénica y efecto delineado. Venta menudeo y mayoreo en México.',
         extraFaqs: [],
     },
     'tintura-topica-castano-medio': {
-        metaTitle: 'Tintura Tópica Castaño Medio para Cejas (Efecto Sombra y Henna) | J. Denis',
-        metaDescription: 'Tintura tópica para cejas tono Castaño Medio J. Denis. Coloración uniforme en piel y vello con acabado maquillaje empolvado de larga duración. Directo de fábrica en México.',
+        metaTitle: 'Tintura Tópica Cejas Castaño Medio Sombra | J. Denis',
+        metaDescription: 'Tintura tópica Castaño Medio J. Denis para cejas. Coloración uniforme en piel y vello con efecto sombra de larga duración. Directo de fábrica MX.',
         extraFaqs: [
             {
                 question: '¿Cuánto dura la Tintura Tópica Castaño Medio en las cejas?',
@@ -469,8 +516,8 @@ export const GSC_PRODUCT_SEO_OVERRIDES: Record<string, ProductGscSeoOverride> = 
         ],
     },
     'activador-henna': {
-        metaTitle: 'Activador de Henna Orgánico para Cejas (Potenciador de Color) | J. Denis México',
-        metaDescription: 'Activador de Henna orgánico para cejas J. Denis. Potencia la fijación, intensidad y duración del pigmento y Brow Henna en piel y vello. Compra directo de fabricante en México.',
+        metaTitle: 'Activador de Henna Orgánico para Cejas | J. Denis México',
+        metaDescription: 'Activador de Henna orgánico J. Denis para cejas. Duplica la fijación e intensidad de Brow Henna y pigmentos en piel y vello. Directo de fábrica.',
         extraFaqs: [
             {
                 question: '¿Para qué sirve el Activador de Henna Orgánico para cejas J. Denis?',
@@ -479,8 +526,8 @@ export const GSC_PRODUCT_SEO_OVERRIDES: Record<string, ProductGscSeoOverride> = 
         ],
     },
     'botox-pestanas': {
-        metaTitle: 'Botox para Pestañas y Cejas con Queratina, Biotina y Pantenol | J. Denis',
-        metaDescription: 'Tratamiento Botox para pestañas y cejas J. Denis. Hidrata, engrosa y repara la fibra capilar después del Lash Lifting o Laminado de Cejas. Venta individual y mayoreo en México.',
+        metaTitle: 'Botox Pestañas y Cejas con Queratina y Biotina | J. Denis',
+        metaDescription: 'Tratamiento Botox J. Denis para pestañas y cejas. Hidrata, engrosa y repara tras Lash Lifting o Laminado. Venta menudeo y mayoreo en México.',
         extraFaqs: [
             {
                 question: '¿Cómo se aplica el Botox para pestañas y cejas en el servicio de Lash Lifting?',
@@ -489,8 +536,8 @@ export const GSC_PRODUCT_SEO_OVERRIDES: Record<string, ProductGscSeoOverride> = 
         ],
     },
     'dark-red-pigmento-cejas': {
-        metaTitle: 'Pigmento para Cejas Dark Red (Pelirrojo / Caoba) Profesional | J. Denis México',
-        metaDescription: 'Pigmento profesional para cejas tono Dark Red (Pelirrojo / Caoba) J. Denis. Coloración de alta retención en piel y vello o para neutralizar subtonos fríos. Directo de fábrica en México.',
+        metaTitle: 'Pigmento Cejas Dark Red (Pelirrojo / Caoba) | J. Denis',
+        metaDescription: 'Pigmento profesional para cejas Dark Red (Pelirrojo / Caoba) J. Denis. Alta retención en piel y vello o modificador cálido. Directo de fábrica.',
         extraFaqs: [
             {
                 question: '¿Para qué sirve el Pigmento para Cejas Dark Red de J. Denis?',
@@ -499,8 +546,8 @@ export const GSC_PRODUCT_SEO_OVERRIDES: Record<string, ProductGscSeoOverride> = 
         ],
     },
     '21403ce0-8bde-4350-973c-8bbd7fbe7b39': {
-        metaTitle: 'Pigmento para Cejas Dark Red (Pelirrojo / Caoba) Profesional | J. Denis México',
-        metaDescription: 'Pigmento profesional para cejas tono Dark Red (Pelirrojo / Caoba) J. Denis. Coloración de alta retención en piel y vello o para neutralizar subtonos fríos. Directo de fábrica en México.',
+        metaTitle: 'Pigmento Cejas Dark Red (Pelirrojo / Caoba) | J. Denis',
+        metaDescription: 'Pigmento profesional para cejas Dark Red (Pelirrojo / Caoba) J. Denis. Alta retención en piel y vello o modificador cálido. Directo de fábrica.',
         extraFaqs: [
             {
                 question: '¿Para qué sirve el Pigmento para Cejas Dark Red de J. Denis?',
@@ -509,8 +556,8 @@ export const GSC_PRODUCT_SEO_OVERRIDES: Record<string, ProductGscSeoOverride> = 
         ],
     },
     'gel-ondulante-blue': {
-        metaTitle: 'Gel Ondulante Blue para Rizado Permanente de Pestañas | J. Denis México',
-        metaDescription: 'Gel Ondulante Blue profesional J. Denis para rizado de pestañas. Fórmula de acción controlada y alta eficacia para salón y lashistas. Venta menudeo y mayoreo directo de fábrica.',
+        metaTitle: 'Gel Ondulante Blue Rizado de Pestañas | J. Denis México',
+        metaDescription: 'Gel Ondulante Blue profesional J. Denis para rizado permanente de pestañas. Acción controlada para lashistas. Menudeo y mayoreo directo fábrica.',
         extraFaqs: [
             {
                 question: '¿Cuál es el tiempo de pose del Gel Ondulante Blue J. Denis?',
@@ -519,13 +566,13 @@ export const GSC_PRODUCT_SEO_OVERRIDES: Record<string, ProductGscSeoOverride> = 
         ],
     },
     '30920cc6-cd8f-4f9c-ab74-4e2264b2d33c': {
-        metaTitle: 'Gel Ondulante Blue para Rizado Permanente de Pestañas | J. Denis México',
-        metaDescription: 'Gel Ondulante Blue profesional J. Denis para rizado de pestañas. Fórmula de acción controlada y alta eficacia para salón y lashistas. Venta menudeo y mayoreo directo de fábrica.',
+        metaTitle: 'Gel Ondulante Blue Rizado de Pestañas | J. Denis México',
+        metaDescription: 'Gel Ondulante Blue profesional J. Denis para rizado permanente de pestañas. Acción controlada para lashistas. Menudeo y mayoreo directo fábrica.',
         extraFaqs: [],
     },
     'light-brown-pigmento-cejas': {
-        metaTitle: 'Pigmento para Cejas Light Brown (Castaño Claro / Rubio Oscuro) | J. Denis',
-        metaDescription: 'Pigmento profesional para cejas Light Brown (Castaño Claro) J. Denis. Efecto sombreado natural ideal para fototipos claros y rubios sin oscurecer en exceso.',
+        metaTitle: 'Pigmento Cejas Light Brown (Castaño Claro) | J. Denis',
+        metaDescription: 'Pigmento profesional para cejas Light Brown (Castaño Claro) J. Denis. Efecto sombra natural ideal para fototipos claros y rubios sin oscurecer.',
         extraFaqs: [
             {
                 question: '¿En qué tonos de cabello luce mejor el pigmento Light Brown J. Denis?',
@@ -534,13 +581,13 @@ export const GSC_PRODUCT_SEO_OVERRIDES: Record<string, ProductGscSeoOverride> = 
         ],
     },
     '094eccd7-5967-48ad-bfc3-a6f07976b37d': {
-        metaTitle: 'Pigmento para Cejas Light Brown (Castaño Claro / Rubio Oscuro) | J. Denis',
-        metaDescription: 'Pigmento profesional para cejas Light Brown (Castaño Claro) J. Denis. Efecto sombreado natural ideal para fototipos claros y rubios sin oscurecer en exceso.',
+        metaTitle: 'Pigmento Cejas Light Brown (Castaño Claro) | J. Denis',
+        metaDescription: 'Pigmento profesional para cejas Light Brown (Castaño Claro) J. Denis. Efecto sombra natural ideal para fototipos claros y rubios sin oscurecer.',
         extraFaqs: [],
     },
     'adhesivo-transparente-grupo': {
-        metaTitle: 'Adhesivo Transparente para Pestañas de Grupo y Punto | J. Denis México',
-        metaDescription: 'Adhesivo transparente hipoalergénico para pestañas en grupo o por punto J. Denis. Fijación segura, acabado invisible y secado rápido. Compra menudeo y mayoreo.',
+        metaTitle: 'Adhesivo Transparente Pestañas Grupo y Punto | J. Denis',
+        metaDescription: 'Adhesivo transparente hipoalergénico para pestañas de grupo o punto J. Denis. Acabado invisible y secado rápido. Venta menudeo y mayoreo México.',
         extraFaqs: [
             {
                 question: '¿Cómo retirar las pestañas aplicadas con Adhesivo Transparente J. Denis?',
@@ -549,23 +596,23 @@ export const GSC_PRODUCT_SEO_OVERRIDES: Record<string, ProductGscSeoOverride> = 
         ],
     },
     '20719896-e95a-42c7-a01a-c57a9983026a': {
-        metaTitle: 'Adhesivo Transparente para Pestañas de Grupo y Punto | J. Denis México',
-        metaDescription: 'Adhesivo transparente hipoalergénico para pestañas en grupo o por punto J. Denis. Fijación segura, acabado invisible y secado rápido. Compra menudeo y mayoreo.',
+        metaTitle: 'Adhesivo Transparente Pestañas Grupo y Punto | J. Denis',
+        metaDescription: 'Adhesivo transparente hipoalergénico para pestañas de grupo o punto J. Denis. Acabado invisible y secado rápido. Venta menudeo y mayoreo México.',
         extraFaqs: [],
     },
     'microbrush-10': {
-        metaTitle: 'Microbrush Aplicadores de Precisión para Pestañas y Cejas (10 pzas) | J. Denis',
-        metaDescription: 'Paquete de 10 aplicadores Microbrush de precisión sin pelusa J. Denis para Lash Lifting, extensión de pestañas, laminado y retiro de adhesivo. Insumos profesionales en México.',
+        metaTitle: 'Microbrush Precisión Pestañas y Cejas (10 pz) | J. Denis',
+        metaDescription: 'Paquete de 10 aplicadores Microbrush sin pelusa J. Denis para Lash Lifting, extensiones, laminado y retiro de adhesivo. Insumos profesionales MX.',
         extraFaqs: [],
     },
     '04356a42-e90f-4f02-aa7a-53a2010194a5': {
-        metaTitle: 'Microbrush Aplicadores de Precisión para Pestañas y Cejas (10 pzas) | J. Denis',
-        metaDescription: 'Paquete de 10 aplicadores Microbrush de precisión sin pelusa J. Denis para Lash Lifting, extensión de pestañas, laminado y retiro de adhesivo. Insumos profesionales en México.',
+        metaTitle: 'Microbrush Precisión Pestañas y Cejas (10 pz) | J. Denis',
+        metaDescription: 'Paquete de 10 aplicadores Microbrush sin pelusa J. Denis para Lash Lifting, extensiones, laminado y retiro de adhesivo. Insumos profesionales MX.',
         extraFaqs: [],
     },
     'godete-cristal': {
-        metaTitle: 'Godete de Cristal Profesional para Henna, Pigmentos y Tintes de Cejas | J. Denis',
-        metaDescription: 'Godete de Cristal macizo profesional J. Denis ($295 MXN) para mezclar Brow Henna, pigmentos de cejas, tintes y monómero sin absorber ni alterar la fórmula. Envío a todo México.',
+        metaTitle: 'Godete de Cristal para Henna y Pigmentos ($295) | J. Denis',
+        metaDescription: 'Godete de Cristal macizo profesional J. Denis ($295 MXN) para mezclar Brow Henna, pigmentos y tintes sin alterar la fórmula. Envío a todo México.',
         extraFaqs: [
             {
                 question: '¿Por qué es indispensable mezclar la Henna y el Pigmento de cejas en un Godete de Cristal?',
@@ -574,8 +621,8 @@ export const GSC_PRODUCT_SEO_OVERRIDES: Record<string, ProductGscSeoOverride> = 
         ],
     },
     'curva-lc-015-combo': {
-        metaTitle: 'Extensiones de Pestañas Curva LC 0.15 Mixta (Efecto Foxy Eye y Lifting) | J. Denis',
-        metaDescription: 'Blíster de Extensiones de Pestañas Curva LC grosor 0.15 Mixta J. Denis ($280 MXN). Base recta de alta retención y elevación tipo delineado ideal para párpado encapotado.',
+        metaTitle: 'Extensiones Pestañas Curva LC 0.15 Foxy Eye | J. Denis',
+        metaDescription: 'Blíster Extensiones de Pestañas Curva LC 0.15 Mixta J. Denis ($280 MXN). Base recta de alta retención ideal para párpado encapotado y Foxy Eye.',
         extraFaqs: [
             {
                 question: '¿Para qué tipo de ojo se recomienda la Curva LC en extensiones de pestañas?',
@@ -584,8 +631,8 @@ export const GSC_PRODUCT_SEO_OVERRIDES: Record<string, ProductGscSeoOverride> = 
         ],
     },
     'curva-lc-010-combo': {
-        metaTitle: 'Extensiones de Pestañas Curva LC 0.10 Mixta Profesional | J. Denis México',
-        metaDescription: 'Blíster de Extensiones de Pestañas Curva LC grosor 0.10 Mixta J. Denis ($280 MXN). Ligereza superior y máxima superficie de contacto con el adhesivo para diseños Foxy Eye.',
+        metaTitle: 'Extensiones Pestañas Curva LC 0.10 Mixta | J. Denis',
+        metaDescription: 'Blíster Extensiones de Pestañas Curva LC 0.10 Mixta J. Denis ($280 MXN). Ligereza superior y máxima retención para diseños Foxy Eye y Cat Eye.',
         extraFaqs: [
             {
                 question: '¿Qué diferencia hay entre Curva LC 0.10 y 0.15 J. Denis?',
@@ -594,8 +641,8 @@ export const GSC_PRODUCT_SEO_OVERRIDES: Record<string, ProductGscSeoOverride> = 
         ],
     },
     'adhesivo-pads-lifting': {
-        metaTitle: 'Adhesivo J. Denis para Pads de Lash Lifting y Rizado de Pestañas | Tienda Oficial',
-        metaDescription: 'Adhesivo profesional hidrosoluble J. Denis para fijar pads de silicón y alinear pestañas en Lash Lifting y Rizado. Secado controlado y fácil retiro con agua.',
+        metaTitle: 'Adhesivo para Pads de Lash Lifting y Rizado | J. Denis',
+        metaDescription: 'Adhesivo hidrosoluble J. Denis para fijar pads de silicón y pestañas en Lash Lifting y Rizado. Secado controlado y fácil retiro con agua.',
         extraFaqs: [
             {
                 question: '¿Cómo se retira el Adhesivo para Pads de Lash Lifting J. Denis?',
@@ -604,7 +651,7 @@ export const GSC_PRODUCT_SEO_OVERRIDES: Record<string, ProductGscSeoOverride> = 
         ],
     },
     'adhesivo-rulos-blue': {
-        metaTitle: 'Adhesivo J. Denis Blue para Rulos y Pads de Rizado de Pestañas ($60 MXN)',
+        metaTitle: 'Adhesivo Blue Rulos y Pads Rizado ($60 MXN) | J. Denis',
         metaDescription: 'Adhesivo para Rulos y Pads línea Blue J. Denis ($60 MXN). Fijación firme y rápida para rizado permanente de pestañas y lash lifting profesional.',
         extraFaqs: [],
     },
@@ -635,8 +682,8 @@ export const CATEGORY_HUB_CONFIGS: Record<CategorySeoHubConfig['slug'], Category
         badge: 'Línea Oficial J. Denis Cejas · Fabricante Mexicano desde 1998',
         h1Title: 'Productos Profesionales para Cejas J. Denis: Planchado, Laminado, Henna y Pigmentos',
         subtitle: 'Creadores del Planchado de Cejas en México. Todo el catálogo oficial J. Denis para diseño, fijación, laminado con cisteamina, rubor de henna y pigmentos de alta retención a precio de tienda y mayoreo.',
-        metaTitle: 'J. Denis Cejas: Planchado, Laminado, Brow Henna y Pigmentos | Tienda Oficial México',
-        metaDescription: 'Catálogo oficial J. Denis Cejas en México: Kits de Planchado y Laminado de Cejas con Cisteamina, Brow Henna, Pigmentos, Gel Fijador y Herramientas. Compra individual o mayoreo directo de fábrica.',
+        metaTitle: 'J. Denis Cejas: Laminado, Planchado, Henna y Pigmentos',
+        metaDescription: 'Catálogo oficial J. Denis Cejas: Kits de Planchado y Laminado con Cisteamina, Brow Henna, Pigmentos y Gel Fijador. Menudeo y mayoreo de fábrica.',
         targetCategories: ['Diseño de Cejas', 'Brow Henna', 'Pigmentos', 'Microblading', 'Tratamientos'],
         searchKeywords: ['ceja', 'planchado', 'laminado', 'henna', 'pigmento'],
         featuredProductSlugs: ['laminado-cejas', 'chocolate-pigmento-cejas', 'activador-henna', 'tintura-topica-castano-medio'],
@@ -686,8 +733,8 @@ export const CATEGORY_HUB_CONFIGS: Record<CategorySeoHubConfig['slug'], Category
         badge: 'Línea Oficial J. Denis Pestañas · Innovación Oftalmológica y Cosmética',
         h1Title: 'Productos para Pestañas J. Denis: Lash Lifting, Rizado Permanente, Extensiones y Adhesivos',
         subtitle: 'Catálogo completo de insumos profesionales para lashistas y cuidado diario: Kits de Lash Lifting con Cisteamina, Gel Ondulante Jade, Blísters de Extensiones, Adhesivos y Tratamientos con Queratina.',
-        metaTitle: 'J. Denis Pestañas: Lash Lifting, Rizado, Extensiones y Adhesivos | Tienda Oficial',
-        metaDescription: 'Insumos profesionales J. Denis para pestañas en México: Kits de Lash Lifting con Cisteamina, Rizado Permanente Jade, Extensiones por blíster, Adhesivos hipoalergénicos y Botox. Menudeo y mayoreo.',
+        metaTitle: 'J. Denis Pestañas: Lash Lifting, Rizado y Adhesivos',
+        metaDescription: 'Insumos profesionales J. Denis para pestañas: Lash Lifting Cisteamina, Rizado Jade, Extensiones, Adhesivos hipoalergénicos y Botox en México.',
         targetCategories: ['Lash Lifting', 'Lash Curling', 'Extensiones', 'Adhesivos', 'Pestañas en Tira', 'Tratamientos'],
         searchKeywords: ['pestaña', 'lash', 'ondulante', 'rizado', 'adhesivo', 'botox'],
         featuredProductSlugs: ['jade-rizado-pestanas', 'gel-ondulante-blue', 'botox-pestanas', 'adhesivo-transparente-grupo'],
@@ -737,8 +784,8 @@ export const CATEGORY_HUB_CONFIGS: Record<CategorySeoHubConfig['slug'], Category
         badge: 'Especialidad Clínica J. Denis · Fórmula con Cisteamina',
         h1Title: 'Laminado de Cejas y Planchado Profesional J. Denis con Cisteamina',
         subtitle: 'Domina la técnica de Brow Lamination y Planchado de Cejas con la marca creadora del procedimiento en México. Fórmulas seguras de 3 pasos que alinean, dan volumen y nutren la ceja.',
-        metaTitle: 'Laminado de Cejas J. Denis con Cisteamina y Kits de Planchado | Tienda Oficial',
-        metaDescription: 'Compra el Kit de Laminado de Cejas y Planchado Profesional J. Denis con Cisteamina (hasta 30 aplicaciones). Alinea cejas rebeldes sin maltratar. Envío a todo México menudeo y mayoreo.',
+        metaTitle: 'Laminado de Cejas Cisteamina y Planchado | J. Denis',
+        metaDescription: 'Kit de Laminado y Planchado de Cejas J. Denis con Cisteamina (30 aplicaciones). Alinea cejas rebeldes sin daño. Menudeo y mayoreo en México.',
         targetCategories: ['Diseño de Cejas', 'Tratamientos', 'Herramientas'],
         searchKeywords: ['laminado', 'planchado', 'ceja', 'fijador', 'reestructurante', 'cisteamina'],
         featuredProductSlugs: ['laminado-cejas', 'botox-pestanas'],
@@ -784,8 +831,8 @@ export const CATEGORY_HUB_CONFIGS: Record<CategorySeoHubConfig['slug'], Category
         badge: 'Sistema Evolución J. Denis · Sin Daño Capilar',
         h1Title: 'Lash Lifting J. Denis con Cisteamina: Kits, Monodosis, Pads y Adhesivos',
         subtitle: 'Elevación panorámica de pestañas naturales desde la raíz. Fórmulas frescas en sobres monodosis y kits profesionales con Cisteamina que cuidan la salud ocular y capilar.',
-        metaTitle: 'Kit Lash Lifting J. Denis con Cisteamina, Pads y Adhesivos | Tienda Oficial México',
-        metaDescription: 'Catálogo oficial de Lash Lifting J. Denis en México: Kits Evolución con Cisteamina, sobres monodosis, pads de silicón anatómicos, adhesivo hidrosoluble y Botox. Venta individual y mayoreo.',
+        metaTitle: 'Kit Lash Lifting Cisteamina, Pads y Adhesivos | J. Denis',
+        metaDescription: 'Catálogo Lash Lifting J. Denis: Kits Evolución con Cisteamina, monodosis, pads anatómicos, adhesivo hidrosoluble y Botox. Menudeo y mayoreo MX.',
         targetCategories: ['Lash Lifting', 'Lash Curling', 'Adhesivos', 'Tratamientos', 'Herramientas'],
         searchKeywords: ['lifting', 'cisteamina', 'ondulante', 'pad', 'botox', 'adhesivo'],
         featuredProductSlugs: ['jade-rizado-pestanas', 'gel-ondulante-blue', 'botox-pestanas', 'microbrush-10'],
@@ -831,8 +878,8 @@ export const CATEGORY_HUB_CONFIGS: Record<CategorySeoHubConfig['slug'], Category
         badge: 'Colorimetría Latina J. Denis · Rubor y Sombra para Cejas',
         h1Title: 'Brow Henna, Rubor para Cejas y Pigmentos Profesionales J. Denis',
         subtitle: 'La gama de tonos diseñada específicamente para fototipos latinos: Rubio, Castaño Claro, Castaño Medio (Chocolate), Castaño Oscuro, Dark Red y Negro sin oxidación rojiza indeseada.',
-        metaTitle: 'Brow Henna, Rubor y Pigmentos para Cejas J. Denis (Todos los Tonos) | México',
-        metaDescription: 'Compra Brow Henna, Rubor/Sombra para Cejas, Tintura Tópica, Activador Orgánico y Pigmentos J. Denis en México. Tonos Chocolate, Castaño Claro, Medio, Oscuro y Negro. Menudeo y mayoreo.',
+        metaTitle: 'Brow Henna, Rubor y Pigmentos para Cejas | J. Denis México',
+        metaDescription: 'Compra Brow Henna, Rubor para Cejas, Tintura Tópica, Activador Orgánico y Pigmentos J. Denis. Tonos Chocolate, Castaño y Negro. Menudeo y mayoreo.',
         targetCategories: ['Brow Henna', 'Pigmentos', 'Diseño de Cejas'],
         searchKeywords: ['henna', 'pigmento', 'tintura', 'castaño', 'chocolate', 'activador', 'rubor'],
         featuredProductSlugs: ['chocolate-pigmento-cejas', 'light-brown-pigmento-cejas', 'dark-red-pigmento-cejas', 'tintura-topica-castano-medio', 'activador-henna'],

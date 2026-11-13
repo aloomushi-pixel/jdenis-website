@@ -1,8 +1,8 @@
 {
-  "commitSha": "0e2acf7 (0e2acf781ac2e9cca34987a63b2e700bdf80668a)",
-  "shortSha": "0e2acf7",
-  "fullSha": "0e2acf781ac2e9cca34987a63b2e700bdf80668a",
-  "commitMessage": "fix(ux-v2.1.17): resolve mobile dead_click on ImageGallery lightbox button & track B2B distributor leads in digest engine",
-  "builtAt": "2026-11-11T20:17:07.824Z",
+  "commitSha": "93ebe7c (93ebe7c798a2754fe3ed7ed37d2aebfabf0eff40)",
+  "shortSha": "93ebe7c",
+  "fullSha": "93ebe7c798a2754fe3ed7ed37d2aebfabf0eff40",
+  "commitMessage": "feat(seo-cro-v2.1.18): boost Page-1 CTR on lifting-coreano, jade-rizado & adhesivo-grupo + fix B2B survey rage_click",
+  "builtAt": "2026-11-13T20:55:53.303Z",
   "environment": "production"
 }

@@ -22,10 +22,46 @@ export default function TelemetryProvider() {
     const clicksRef = useRef<ClickPoint[]>([]);
     const lastModifiedFieldRef = useRef<{ formId: string; fieldName: string; path: string } | null>(null);
     const formSubmittedRef = useRef<boolean>(false);
+    const reportedJsErrorsRef = useRef<Set<string>>(new Set());
+    const reportedTouchTargetsRef = useRef<Set<string>>(new Set());
+    const auditedSeoPathsRef = useRef<Set<string>>(new Set());
 
-    // 1. Initialize Core Web Vitals & PWA session tracking on mount
+    // 1. Initialize Core Web Vitals, Silent JS Exception Monitors & PWA session tracking on mount
     useEffect(() => {
         initCoreWebVitalsTelemetry();
+
+        const handleError = (ev: ErrorEvent) => {
+            const msg = String(ev.message || 'Unknown JS Error').slice(0, 180);
+            if (/ResizeObserver loop|Script error\.?$/i.test(msg)) return;
+            if (reportedJsErrorsRef.current.has(msg) || reportedJsErrorsRef.current.size >= 8) return;
+            reportedJsErrorsRef.current.add(msg);
+            trackEvent({
+                event_name: 'js_exception',
+                event_category: 'ux_friction',
+                metadata: {
+                    message: msg,
+                    filename: ev.filename ? ev.filename.slice(-120) : null,
+                    lineno: ev.lineno || null,
+                    colno: ev.colno || null,
+                },
+            });
+        };
+
+        const handleRejection = (ev: PromiseRejectionEvent) => {
+            const rawReason = ev.reason instanceof Error ? ev.reason.message : String(ev.reason || 'Unhandled Rejection');
+            const msg = rawReason.slice(0, 180);
+            if (/AbortError|Failed to fetch|NetworkError/i.test(msg)) return;
+            if (reportedJsErrorsRef.current.has(msg) || reportedJsErrorsRef.current.size >= 8) return;
+            reportedJsErrorsRef.current.add(msg);
+            trackEvent({
+                event_name: 'unhandled_rejection',
+                event_category: 'ux_friction',
+                metadata: { message: msg },
+            });
+        };
+
+        window.addEventListener('error', handleError);
+        window.addEventListener('unhandledrejection', handleRejection);
 
         if (isPWAStandalone()) {
             const pwaSessionTracked = sessionStorage.getItem('jdennis_pwa_session_tracked');
@@ -41,6 +77,11 @@ export default function TelemetryProvider() {
                 });
             }
         }
+
+        return () => {
+            window.removeEventListener('error', handleError);
+            window.removeEventListener('unhandledrejection', handleRejection);
+        };
     }, []);
 
     // 2. Track page_view and page_leave (active time + max scroll) on route change
@@ -107,7 +148,34 @@ export default function TelemetryProvider() {
                     title: document.title,
                 },
             });
-        }, 120);
+
+            // Silent SEO & Hydration Parity Monitor (Prompt Maestro v4.0) on public routes
+            if (
+                !location.pathname.startsWith('/admin') &&
+                !location.pathname.startsWith('/mi-cuenta') &&
+                !auditedSeoPathsRef.current.has(location.pathname)
+            ) {
+                auditedSeoPathsRef.current.add(location.pathname);
+                const titleLen = (document.title || '').length;
+                const descEl = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
+                const descLen = (descEl?.content || '').length;
+                const rootEl = document.getElementById('root');
+                const rootEmpty = !rootEl || rootEl.children.length === 0;
+                if (titleLen > 64 || descLen > 165 || rootEmpty) {
+                    trackEvent({
+                        event_name: 'seo_hydration_audit',
+                        event_category: 'seo_geo',
+                        path: newFullPath,
+                        metadata: {
+                            title_len: titleLen,
+                            desc_len: descLen,
+                            root_empty: rootEmpty,
+                            title_sample: (document.title || '').slice(0, 80),
+                        },
+                    });
+                }
+            }
+        }, 280);
 
         return () => clearTimeout(timer);
     }, [location.pathname, location.search]);
@@ -270,7 +338,33 @@ export default function TelemetryProvider() {
                 }
             }
 
-            // B) Rage Click Detection: 3+ clicks in < 800ms within 40px radius
+            // A2) Mobile Touch Ergonomics Monitor (< 44x44 px check on mobile buttons, v4.0)
+            if (window.innerWidth < 768 && interactiveEl && interactiveEl.tagName.toLowerCase() === 'button') {
+                const rect = interactiveEl.getBoundingClientRect();
+                if (rect.width > 0 && rect.height > 0 && (rect.width < 38 || rect.height < 38)) {
+                    const key = `${window.location.pathname}::${id || text.slice(0, 30)}`;
+                    if (!reportedTouchTargetsRef.current.has(key) && reportedTouchTargetsRef.current.size < 10) {
+                        reportedTouchTargetsRef.current.add(key);
+                        trackEvent({
+                            event_name: 'touch_target_violation',
+                            event_category: 'ux_friction',
+                            element_tag: 'button',
+                            element_id: id,
+                            element_text: text,
+                            metadata: {
+                                width_px: Math.round(rect.width),
+                                height_px: Math.round(rect.height),
+                                standard_min_px: 44,
+                            },
+                        });
+                    }
+                }
+            }
+
+            // B) Rage Click Detection: 3+ clicks in < 800ms within 40px radius (skip intentional quantity steppers)
+            if (el.closest('[data-qty-stepper="true"]')) {
+                return;
+            }
             const recentClicks = clicksRef.current.filter((c) => now - c.t < 800);
             recentClicks.push({ x, y, t: now });
             clicksRef.current = recentClicks;

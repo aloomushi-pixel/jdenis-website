@@ -3,6 +3,7 @@
  * y JSON-LD structured data.
  */
 import { useEffect } from 'react';
+import { clampSeoDescription, clampSeoTitle } from '../utils/seoData';
 
 interface PageMetaOptions {
     title: string;
@@ -32,8 +33,10 @@ export function usePageMeta({
     useEffect(() => {
         if (!enabled) return;
 
-        // Title
-        const fullTitle = /J\.?\s*Denis/i.test(title) ? title : `${title} | ${SITE_NAME}`;
+        // Title (strict v4.0 <= 60c) & Description (<= 160c)
+        const rawFullTitle = /J\.?\s*Denis/i.test(title) ? title : `${title} | ${SITE_NAME}`;
+        const fullTitle = clampSeoTitle(rawFullTitle, 60);
+        const safeDescription = clampSeoDescription(description, 160);
         document.title = fullTitle;
 
         // Helper to set/update meta tags
@@ -61,7 +64,7 @@ export function usePageMeta({
         };
 
         // Basic meta
-        setMeta('meta[name="description"]', description);
+        setMeta('meta[name="description"]', safeDescription);
         if (noindex) {
             setMeta('meta[name="robots"]', 'noindex, nofollow');
         } else {
@@ -74,14 +77,14 @@ export function usePageMeta({
 
         // Open Graph
         setMeta('meta[property="og:title"]', fullTitle);
-        setMeta('meta[property="og:description"]', description);
+        setMeta('meta[property="og:description"]', safeDescription);
         setMeta('meta[property="og:type"]', type);
         setMeta('meta[property="og:url"]', canonicalUrl);
         setMeta('meta[property="og:image"]', image.startsWith('http') ? image : `${BASE_URL}${image}`);
 
         // Twitter Card
         setMeta('meta[name="twitter:title"]', fullTitle);
-        setMeta('meta[name="twitter:description"]', description);
+        setMeta('meta[name="twitter:description"]', safeDescription);
         setMeta('meta[name="twitter:image"]', image.startsWith('http') ? image : `${BASE_URL}${image}`);
 
         // JSON-LD

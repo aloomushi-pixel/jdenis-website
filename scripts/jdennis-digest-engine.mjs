@@ -266,14 +266,17 @@ async function runDigest() {
     const quoteSaved = humanEvents.filter(e => e.event_name === 'quote_flow_saved');
     const quoteErrors = humanEvents.filter(e => e.event_name === 'quote_save_error');
     const apiLatency = humanEvents.filter(e => e.event_name === 'api_latency_or_error');
-    const uxFriction = humanEvents.filter(e => ['rage_click', 'dead_click', 'form_abandon', 'payment_error'].includes(e.event_name));
+    const uxFriction = humanEvents.filter(e =>
+        ['rage_click', 'dead_click', 'form_abandon', 'payment_error', 'js_exception', 'unhandled_rejection', 'touch_target_violation', 'seo_hydration_audit'].includes(e.event_name)
+    );
+    const uxFeedback = humanEvents.filter(e => e.event_name === 'ux_feedback');
 
-    console.log('## 5. DIMENSION C: INTERNAL OPERATIONS (QUOTER & ERP)');
-    console.log(`- Quotations in DB:   ${quotations.length} ($${quotations.reduce((a, q) => a + (Number(q.total_amount) || 0), 0).toFixed(2)} MXN)`);
-    console.log(`- Quote Flows Saved:  ${quoteSaved.length}`);
-    console.log(`- Quote Save Errors:  ${quoteErrors.length}`);
-    console.log(`- API Latency/Errors: ${apiLatency.length}`);
-    console.log(`- UX Friction Events: ${uxFriction.length}\n`);
+    console.log('## 5. DIMENSION C & CONSCIOUS UX MONITORS v4.0');
+    console.log(`- Quotations in DB:     ${quotations.length} ($${quotations.reduce((a, q) => a + (Number(q.total_amount) || 0), 0).toFixed(2)} MXN)`);
+    console.log(`- Quote Flows Saved:    ${quoteSaved.length} (Errors: ${quoteErrors.length})`);
+    console.log(`- API Latency/Errors:   ${apiLatency.length}`);
+    console.log(`- UX Friction Events:   ${uxFriction.length} (rage=${byEventName.rage_click || 0}, dead=${byEventName.dead_click || 0}, js_err=${(byEventName.js_exception || 0) + (byEventName.unhandled_rejection || 0)}, touch<44px=${byEventName.touch_target_violation || 0}, seo_audit=${byEventName.seo_hydration_audit || 0})`);
+    console.log(`- Live UX Feedback:     ${uxFeedback.length}\n`);
 
     console.log('## 6. GOOGLE SEARCH CONSOLE API (jdenis.store — Last 28d)');
     if (!gscReport.connected) {

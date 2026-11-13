@@ -1,0 +1,7 @@
+{
+  "project": "J. Denis Cosméticos (https://jdenis.store)",
+  "algorithm": "SHA-256",
+  "sha256": "8a7d1797f0064ca3187fac4d75f92c692d28f74e5341c1ba1f954f2861b7661e",
+  "sealed_at": "2026-11-13T20:57:22.547Z",
+  "rules_file": ".agents/rules/reglas_autonomas_proyecto.md"
+}

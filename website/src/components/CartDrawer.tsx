@@ -127,28 +127,33 @@ export default function CartDrawer() {
                                                         </div>
                                                     );
                                                 })()}
-                                                <div className="flex items-center gap-3 mt-2">
+                                                <div className="flex items-center gap-2 mt-2" data-qty-stepper="true">
                                                     <button
+                                                        type="button"
+                                                        data-qty-stepper="true"
                                                         onClick={() => updateQuantity(item.id, item.quantity - 1)}
                                                         aria-label="Reducir cantidad"
-                                                        className="w-8 h-8 rounded-full bg-white text-mauve hover:bg-rose/20 flex items-center justify-center transition-colors shadow-sm"
+                                                        className="w-11 h-11 rounded-full bg-white border border-rose/25 text-mauve hover:bg-rose/20 active:scale-95 flex items-center justify-center transition-all shadow-sm text-lg font-medium"
                                                     >
                                                         −
                                                     </button>
-                                                    <span className="text-ink font-medium">{item.quantity}</span>
+                                                    <span className="min-w-[28px] text-center text-ink font-semibold">{item.quantity}</span>
                                                     <button
+                                                        type="button"
+                                                        data-qty-stepper="true"
                                                         onClick={() => updateQuantity(item.id, item.quantity + 1)}
                                                         aria-label="Aumentar cantidad"
-                                                        className="w-8 h-8 rounded-full bg-white text-mauve hover:bg-rose/20 flex items-center justify-center transition-colors shadow-sm"
+                                                        className="w-11 h-11 rounded-full bg-white border border-rose/25 text-mauve hover:bg-rose/20 active:scale-95 flex items-center justify-center transition-all shadow-sm text-lg font-medium"
                                                     >
                                                         +
                                                     </button>
                                                 </div>
                                             </div>
                                             <button
+                                                type="button"
                                                 onClick={() => removeItem(item.id)}
                                                 aria-label={`Eliminar ${item.name} del carrito`}
-                                                className="text-charcoal/40 hover:text-red-600 transition-colors absolute top-5 right-0 p-1"
+                                                className="w-11 h-11 flex items-center justify-center text-charcoal/40 hover:text-red-600 transition-colors absolute top-3 right-0 rounded-full hover:bg-red-50"
                                                 title="Eliminar producto"
                                             >
                                                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" /></svg>

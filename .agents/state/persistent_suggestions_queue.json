@@ -1,0 +1,21 @@
+{
+  "project": "J. Denis Cosméticos",
+  "domain": "https://jdenis.store",
+  "standard": "v4.0",
+  "updated_at": "2026-11-13T20:58:00.000Z",
+  "processed_feedback_event_ids": [],
+  "items": [
+    {
+      "id": "JDENIS-N3-001",
+      "created_at": "2026-11-03T02:38:14.000Z",
+      "source_role": "ADVISOR",
+      "governance_group": "GRUPO_A",
+      "level": "NIVEL_3",
+      "status": "EN_ANALISIS_MAYOR",
+      "title": "Conexión de Feed Orgánico Gratuito en Google Merchant Center (0 gasto CPC)",
+      "target_layer": "public/google-merchant-feed.xml · Google Merchant Center",
+      "technical_proposal": "El feed XML con 240 SKUs activos ya se autogenera en cada build (https://jdenis.store/google-merchant-feed.xml). Requiere autorización/alta en cuenta oficial Google Merchant Center de J. Denis para activar fichas orgánicas gratuitas de Google Shopping sin activar campañas pagadas.",
+      "user_decision": null
+    }
+  ]
+}
