@@ -1,8 +1,8 @@
 {
-  "commitSha": "61ed411 (61ed411c7f41e193544e517803fb572c3c34fd67)",
-  "shortSha": "61ed411",
-  "fullSha": "61ed411c7f41e193544e517803fb572c3c34fd67",
-  "commitMessage": "fix(catalog): populate verified 1024x1024 official CDN images & galleries for 100% of active products and variants",
-  "builtAt": "2026-11-14T03:09:04.817Z",
+  "commitSha": "dc02e93 (dc02e93735a456c72b3c6779edea7b06c1ec995b)",
+  "shortSha": "dc02e93",
+  "fullSha": "dc02e93735a456c72b3c6779edea7b06c1ec995b",
+  "commitMessage": "fix(pwa): prevent immutable caching of sw.js and switch Supabase catalog cache to NetworkFirst",
+  "builtAt": "2026-11-14T06:03:22.902Z",
   "environment": "production"
 }

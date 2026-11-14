@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import type { Product } from '../store/cartStore';
 import { useCartStore } from '../store/cartStore';
+import { getCardExcerpt } from '../utils/formatDescription';
 
 interface ProductCardProps {
     product: Product;
@@ -122,8 +123,8 @@ export default function ProductCard({ product, index = 0, variantCount = 0 }: Pr
                             {product.name}
                         </h3>
                         {product.description && (
-                            <p className="text-xs text-gray-500 line-clamp-3 mb-3 leading-relaxed">
-                                {product.description}
+                            <p className="text-xs text-gray-500 line-clamp-2 mb-3 leading-relaxed">
+                                {getCardExcerpt(product.name, product.description)}
                             </p>
                         )}
                     </div>

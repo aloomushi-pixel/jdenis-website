@@ -26,6 +26,7 @@ export interface Product {
     image: string;
     category: string;
     description?: string;
+    descriptionHtml?: string;
     stock?: number;
     hasVariants?: boolean;
     variantsCount?: number;
