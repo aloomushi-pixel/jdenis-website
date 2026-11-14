@@ -1,8 +1,8 @@
 {
-  "commitSha": "549b490 (549b4902199077898365d2afb3a815ee73cc4531)",
-  "shortSha": "549b490",
-  "fullSha": "549b4902199077898365d2afb3a815ee73cc4531",
-  "commitMessage": "feat(v4.0): SEO <=60c/<=160c, search stopwords/synonyms, >=44px UX monitors & 2-loop SHA-256 governance",
-  "builtAt": "2026-11-14T00:52:19.849Z",
+  "commitSha": "0b46252 (0b46252ebf42ef5246fc568f4b4068582253757b)",
+  "shortSha": "0b46252",
+  "fullSha": "0b46252ebf42ef5246fc568f4b4068582253757b",
+  "commitMessage": "feat(catalog): migrate to normalized J. Denis catalog v2 (215 products, 524 variants, 10 categories)",
+  "builtAt": "2026-11-14T02:58:26.295Z",
   "environment": "production"
 }
