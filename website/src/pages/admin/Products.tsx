@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import type { Product } from '../../lib/supabase';
-import { supabase, updateProductStock } from '../../lib/supabase';
+import type { CatalogProductRow, Product } from '../../lib/supabase';
+import { normalizeProductRow, supabase, updateProductStock } from '../../lib/supabase';
+import { invalidateProductsCache } from '../../hooks/useProducts';
 
 export default function AdminProducts() {
     const [products, setProducts] = useState<Product[]>([]);
@@ -22,10 +23,11 @@ export default function AdminProducts() {
             const { data, error } = await supabase
                 .from('products')
                 .select('*')
-                .order('sort_order', { ascending: true });
+                .order('sort_order', { ascending: true })
+                .order('product_id', { ascending: true });
 
             if (error) throw error;
-            setProducts(data || []);
+            setProducts(((data || []) as CatalogProductRow[]).map(normalizeProductRow));
         } catch (error) {
             console.error('Error fetching products:', error);
         } finally {
@@ -51,9 +53,10 @@ export default function AdminProducts() {
             const { error } = await supabase
                 .from('products')
                 .update({ is_active: !product.is_active })
-                .eq('id', product.id);
+                .eq('product_id', Number(product.id));
 
             if (error) throw error;
+            invalidateProductsCache();
             await fetchProducts();
         } catch (error) {
             console.error('Error toggling product:', error);
@@ -123,8 +126,15 @@ export default function AdminProducts() {
                                                 />
                                             )}
                                             <div>
-                                                <p className="font-medium text-gray-900 text-sm">{product.name}</p>
-                                                <p className="text-xs text-gray-400">{product.slug}</p>
+                                                <div className="flex items-center gap-2">
+                                                    <p className="font-medium text-gray-900 text-sm">{product.name}</p>
+                                                    {(product.variants_count ?? 1) > 1 && (
+                                                        <span className="px-1.5 py-0.5 bg-indigo-50 text-indigo-600 rounded text-[10px] font-semibold">
+                                                            {product.variants_count} var.
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <p className="text-xs text-gray-400">#{product.id} · {product.slug}</p>
                                             </div>
                                         </div>
                                     </td>

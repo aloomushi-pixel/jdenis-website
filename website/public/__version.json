@@ -1,8 +1,8 @@
 {
-  "commitSha": "93ebe7c (93ebe7c798a2754fe3ed7ed37d2aebfabf0eff40)",
-  "shortSha": "93ebe7c",
-  "fullSha": "93ebe7c798a2754fe3ed7ed37d2aebfabf0eff40",
-  "commitMessage": "feat(seo-cro-v2.1.18): boost Page-1 CTR on lifting-coreano, jade-rizado & adhesivo-grupo + fix B2B survey rage_click",
-  "builtAt": "2026-11-13T20:55:53.303Z",
+  "commitSha": "549b490 (549b4902199077898365d2afb3a815ee73cc4531)",
+  "shortSha": "549b490",
+  "fullSha": "549b4902199077898365d2afb3a815ee73cc4531",
+  "commitMessage": "feat(v4.0): SEO <=60c/<=160c, search stopwords/synonyms, >=44px UX monitors & 2-loop SHA-256 governance",
+  "builtAt": "2026-11-14T00:52:19.849Z",
   "environment": "production"
 }

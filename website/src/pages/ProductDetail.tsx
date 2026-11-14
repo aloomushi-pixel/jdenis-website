@@ -7,41 +7,78 @@ import VariantSelector from '../components/VariantSelector';
 import { usePageMeta } from '../hooks/usePageMeta';
 import { useProducts, type DisplayProduct } from '../hooks/useProducts';
 import { useVariants } from '../hooks/useVariants';
+import { useAuthStore } from '../store/authStore';
 import { useCartStore } from '../store/cartStore';
 import { buildOrganizationSchema, getCategorySEO, getProductGenericDescriptor, GSC_PRODUCT_SEO_OVERRIDES, normalizeShopCategoryId } from '../utils/seoData';
 import { trackEvent } from '../utils/telemetry';
-
-interface VariantGroup {
-    parentId: string;
-    parentName: string;
-    attributeNames: string[];
-    variants: { productId: string; attributes: Record<string, string> }[];
-}
 
 type DetailTab = 'benefits' | 'includes' | 'specs' | 'wholesale' | 'reviews';
 
 export default function ProductDetail() {
     const { id } = useParams<{ id: string }>();
     const { addItem, openCart } = useCartStore();
+    const userRole = useAuthStore(state => state.user?.role);
     const { products, loading: productsLoading } = useProducts();
+    const { getVariantsForProduct, findVariantBySlug, loading: variantsLoading } = useVariants();
     const [activeTab, setActiveTab] = useState<DetailTab>('benefits');
-    const [currentProductId, setCurrentProductId] = useState(id || '');
-    const { groups: dbGroups } = useVariants();
+    const [selectedVariantId, setSelectedVariantId] = useState<string>('');
+    const [selectedImageUrl, setSelectedImageUrl] = useState<string>('');
     const lastTrackedProductIdRef = useRef<string>('');
 
-    useEffect(() => {
-        if (id) setCurrentProductId(id);
-    }, [id]);
+    // Match parent product directly by id/slug, OR resolve legacy Tiendanube variant slug to its parent
+    const matchedLegacyVariant = useMemo(() => {
+        if (!id) return undefined;
+        const directMatch = products.some(p => p.id === id || p.slug === id);
+        if (directMatch) return undefined;
+        return findVariantBySlug(id);
+    }, [products, id, findVariantBySlug]);
 
-    // Match by id OR slug so both /producto/:id and /producto/:slug resolve cleanly
     const product: DisplayProduct | undefined = useMemo(() => {
-        return (
-            products.find(p => p.id === currentProductId || p.slug === currentProductId) ||
-            products.find(p => p.id === id || p.slug === id)
-        );
-    }, [products, currentProductId, id]);
+        if (!id) return undefined;
+        const direct = products.find(p => p.id === id || p.slug === id);
+        if (direct) return direct;
+        if (matchedLegacyVariant) {
+            return products.find(p => p.id === matchedLegacyVariant.productId);
+        }
+        return undefined;
+    }, [products, id, matchedLegacyVariant]);
 
-    // Normalize browser URL to semantic slug when accessed via raw UUID
+    const productVariants = useMemo(() => {
+        if (!product) return [];
+        return getVariantsForProduct(product.id);
+    }, [product, getVariantsForProduct]);
+
+    // Default selected variant when product or variants load
+    useEffect(() => {
+        if (!product) return;
+        if (productVariants.length === 0) {
+            setSelectedVariantId('');
+            return;
+        }
+        // Keep current selection if it already belongs to this product
+        if (selectedVariantId && productVariants.some(v => v.id === selectedVariantId)) {
+            return;
+        }
+        if (matchedLegacyVariant && matchedLegacyVariant.productId === product.id) {
+            setSelectedVariantId(matchedLegacyVariant.id);
+            return;
+        }
+        const firstInStock = productVariants.find(v => v.stock > 0);
+        setSelectedVariantId((firstInStock || productVariants[0]).id);
+    }, [product, productVariants, matchedLegacyVariant, selectedVariantId]);
+
+    const selectedVariant = useMemo(() => {
+        if (productVariants.length === 0) return undefined;
+        return productVariants.find(v => v.id === selectedVariantId) || productVariants[0];
+    }, [productVariants, selectedVariantId]);
+
+    // Sync hero image when product or selected variant changes
+    useEffect(() => {
+        if (!product) return;
+        setSelectedImageUrl(selectedVariant?.imageUrl || product.image);
+    }, [product, selectedVariant?.id, selectedVariant?.imageUrl]);
+
+    // Normalize browser URL to semantic parent slug when accessed via raw ID or legacy variant slug
     useEffect(() => {
         if (!product?.slug || typeof window === 'undefined') return;
         const expectedPath = `/producto/${product.slug}`;
@@ -64,58 +101,16 @@ export default function ProductDetail() {
         });
     }, [product]);
 
-    const dbGroup = product ? dbGroups.find(g => g.variants.some(v => v.product_id === product.id)) : undefined;
-
-    const variantGroup: VariantGroup | undefined = dbGroup ? {
-        parentId: dbGroup.id,
-        parentName: dbGroup.name,
-        attributeNames: dbGroup.attribute_names,
-        variants: dbGroup.variants.map(v => ({
-            productId: v.product_id,
-            attributes: v.attributes
-        }))
-    } : undefined;
-
-    const { groupedProducts, variantCounts } = useMemo(() => {
-        const counts = new Map<string, number>();
-        const groupFirstIds = new Map<string, string>();
-        const productToGroup = new Map<string, typeof dbGroups[number]>();
-
-        dbGroups.forEach(group => {
-            if (group.variants && group.variants.length > 0) {
-                const firstVar = group.variants[0];
-                groupFirstIds.set(group.id, firstVar.product_id);
-                counts.set(firstVar.product_id, group.variants.length);
-                group.variants.forEach(v => productToGroup.set(v.product_id, group));
-            }
-        });
-
-        const grouped = products.filter(p => {
-            const group = productToGroup.get(p.id);
-            if (!group) return true;
-            return groupFirstIds.get(group.id) === p.id;
-        }).map(p => {
-            const group = productToGroup.get(p.id);
-            if (group && groupFirstIds.get(group.id) === p.id) {
-                return { ...p, name: group.name };
-            }
-            return p;
-        });
-
-        return { groupedProducts: grouped, variantCounts: counts };
-    }, [products, dbGroups]);
-
     const relatedProducts = useMemo(() => {
         if (!product) return [];
-        return groupedProducts
+        return products
             .filter(p =>
-                p.category === product?.category &&
-                p.id !== product?.id &&
-                (!dbGroup || !dbGroup.variants.some(v => v.product_id === p.id)) &&
+                p.category === product.category &&
+                p.id !== product.id &&
                 (p.stock === undefined || p.stock > 0)
             )
             .slice(0, 8);
-    }, [groupedProducts, product, dbGroup]);
+    }, [products, product]);
 
     const [isAdding, setIsAdding] = useState(false);
 
@@ -275,7 +270,7 @@ export default function ProductDetail() {
         ] : undefined,
     });
 
-    if (productsLoading) {
+    if (productsLoading || (!product && variantsLoading)) {
         return (
             <div className="min-h-screen bg-cream flex items-center justify-center">
                 <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gold"></div>
@@ -297,30 +292,74 @@ export default function ProductDetail() {
         );
     }
 
-    const isOutOfStock = product?.stock === 0;
+    const isDistributor = (userRole || '').toUpperCase() === 'DISTRIBUIDOR' && Boolean(product.distributorPrice && product.distributorPrice > 0);
+    const effectivePrice = isDistributor
+        ? product.price
+        : (selectedVariant ? selectedVariant.price : product.price);
+    const effectiveOriginalPrice = isDistributor
+        ? product.originalPrice
+        : (selectedVariant ? selectedVariant.originalPrice : product.originalPrice);
+    const effectiveStock = selectedVariant ? selectedVariant.stock : (product.stock ?? 0);
+    const isOutOfStock = effectiveStock <= 0;
+    const isOnSale = Boolean(effectiveOriginalPrice && effectiveOriginalPrice > effectivePrice);
+
+    const galleryImages = Array.from(
+        new Set(
+            [
+                selectedVariant?.imageUrl,
+                product.image,
+                ...(product.gallery || []),
+            ].filter((u): u is string => Boolean(u && u.trim()))
+        )
+    );
+    const heroImage = selectedImageUrl || selectedVariant?.imageUrl || product.image;
 
     const handleAddToCart = () => {
         if (!product || isOutOfStock) return;
         setIsAdding(true);
-        addItem(product);
+
+        if (selectedVariant && productVariants.length > 1) {
+            const label =
+                selectedVariant.title && selectedVariant.title !== 'Única'
+                    ? `${product.name} (${selectedVariant.title})`
+                    : product.name;
+            addItem({
+                ...product,
+                id: `${product.id}-v${selectedVariant.id}`,
+                name: label,
+                price: effectivePrice,
+                originalPrice: effectiveOriginalPrice,
+                image: selectedVariant.imageUrl || product.image,
+                stock: selectedVariant.stock,
+            });
+        } else {
+            addItem({
+                ...product,
+                price: effectivePrice,
+                originalPrice: effectiveOriginalPrice,
+                stock: effectiveStock,
+            });
+        }
+
         setTimeout(() => {
             setIsAdding(false);
             openCart();
         }, 400);
     };
 
-    const handleVariantChange = (newProductId: string) => {
-        const nextProd = products.find(p => p.id === newProductId);
-        const variantEntry = variantGroup?.variants.find(v => v.productId === newProductId);
+    const handleVariantChange = (nextVariantId: string) => {
+        const nextVar = productVariants.find(v => v.id === nextVariantId);
         trackEvent('shade_or_variant_select', 'ecommerce', {
             previous_product_id: product.id,
-            selected_product_id: newProductId,
-            selected_name: nextProd?.name || newProductId,
-            attributes: variantEntry?.attributes || {},
+            selected_product_id: `${product.id}-v${nextVariantId}`,
+            selected_name: nextVar ? `${product.name} (${nextVar.title})` : product.name,
+            attributes: nextVar?.attributes || {},
             category: product.category,
         });
-        setCurrentProductId(newProductId);
-        window.history.replaceState(null, '', `/producto/${nextProd?.slug || newProductId}`);
+        setSelectedVariantId(nextVariantId);
+        if (nextVar?.imageUrl) {
+            setSelectedImageUrl(nextVar.imageUrl);
+        }
     };
 
     const hasBenefits = Boolean(product.benefits && product.benefits.length > 0);
@@ -353,7 +392,7 @@ export default function ProductDetail() {
                     >
                         <div className="aspect-square overflow-hidden bg-white shadow-lg rounded-2xl border border-kraft/10">
                             <img
-                                src={product.image}
+                                src={heroImage}
                                 alt={`${product.name} — ${genericDescriptor} | J. Denis México`}
                                 width={600}
                                 height={600}
@@ -368,6 +407,30 @@ export default function ProductDetail() {
                         >
                             {product.category}
                         </span>
+                        {galleryImages.length > 1 && (
+                            <div className="flex gap-2.5 mt-3 overflow-x-auto pb-1 scrollbar-hide">
+                                {galleryImages.map((imgUrl, idx) => (
+                                    <button
+                                        key={`${imgUrl}-${idx}`}
+                                        type="button"
+                                        onClick={() => setSelectedImageUrl(imgUrl)}
+                                        aria-label={`Ver imagen ${idx + 1} de ${product.name}`}
+                                        className={`w-16 h-16 rounded-xl overflow-hidden border-2 flex-shrink-0 bg-white transition-all ${
+                                            heroImage === imgUrl
+                                                ? 'border-forest shadow-md scale-[1.03]'
+                                                : 'border-kraft/20 opacity-75 hover:opacity-100 hover:border-gold'
+                                        }`}
+                                    >
+                                        <img
+                                            src={imgUrl}
+                                            alt={`${product.name} vista ${idx + 1}`}
+                                            className="w-full h-full object-contain p-1"
+                                            loading="lazy"
+                                        />
+                                    </button>
+                                ))}
+                            </div>
+                        )}
                     </motion.div>
 
                     {/* Info */}
@@ -384,24 +447,33 @@ export default function ProductDetail() {
                         </h1>
 
                         {/* Variant Selector */}
-                        {variantGroup && (
+                        {productVariants.length > 1 && (
                             <VariantSelector
-                                group={variantGroup}
-                                currentProductId={product.id}
+                                variants={productVariants}
+                                selectedVariantId={selectedVariant?.id || ''}
                                 onVariantChange={handleVariantChange}
-                                allProducts={products}
                             />
                         )}
 
-                        <div className="flex flex-wrap items-baseline gap-4 mb-6">
+                        <div className="flex flex-wrap items-baseline gap-3 mb-6">
+                            {isOnSale && effectiveOriginalPrice && (
+                                <span className="text-lg sm:text-xl text-red-500/75 line-through font-semibold">
+                                    ${effectiveOriginalPrice.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                </span>
+                            )}
                             <p className="text-2xl sm:text-3xl font-bold text-black">
-                                {product.price > 0 ? (
-                                    <>${product.price.toLocaleString()} <span className="text-base font-normal text-charcoal/40">MXN</span></>
+                                {effectivePrice > 0 ? (
+                                    <>${effectivePrice.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} <span className="text-base font-normal text-charcoal/40">MXN</span></>
                                 ) : (
                                     <span className="text-charcoal/50 italic font-normal text-xl">Cotizar</span>
                                 )}
                             </p>
-                            {product.distributorPrice && product.distributorPrice < product.price && (
+                            {isOnSale && effectiveOriginalPrice && (
+                                <span className="px-2.5 py-0.5 rounded-full bg-red-500 text-white text-xs font-bold uppercase tracking-wider">
+                                    -{Math.round(((effectiveOriginalPrice - effectivePrice) / effectiveOriginalPrice) * 100)}% OFF
+                                </span>
+                            )}
+                            {product.distributorPrice && product.distributorPrice < effectivePrice && (
                                 <Link
                                     to="/registro-distribuidor"
                                     className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold/15 border border-gold/30 text-forest text-xs font-semibold hover:bg-gold/25 transition-colors"
@@ -419,8 +491,9 @@ export default function ProductDetail() {
                                 </svg>
                                 <span className="text-xs font-semibold uppercase tracking-[0.15em]" style={{ color: '#2d5016' }}>Descripción y Aplicación</span>
                             </div>
-                            <p className="leading-relaxed text-sm sm:text-base" style={{ color: '#333333' }}>
-                                {product.description ||
+                            <p className="leading-relaxed text-sm sm:text-base whitespace-pre-line" style={{ color: '#333333' }}>
+                                {selectedVariant?.description ||
+                                    product.description ||
                                     'Producto cosmético profesional de alta calidad diseñado para especialistas en belleza y uso personal. Fórmulas desarrolladas en México por J. Denis con más de 25 años de experiencia.'}
                             </p>
                         </div>
@@ -684,7 +757,7 @@ export default function ProductDetail() {
                                             <ProductCard
                                                 product={p}
                                                 index={index}
-                                                variantCount={variantCounts.get(p.id) || 0}
+                                                variantCount={p.variantsCount || getVariantsForProduct(p.id).length || 1}
                                             />
                                         </div>
                                     ))}
@@ -707,10 +780,12 @@ export default function ProductDetail() {
             <div className="fixed bottom-0 inset-x-0 z-30 lg:hidden bg-white/95 backdrop-blur-md border-t border-kraft/20 px-4 py-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
                 <div className="max-w-lg mx-auto flex items-center justify-between gap-3">
                     <div className="min-w-0">
-                        <p className="text-[11px] font-medium text-charcoal/60 truncate">{product.name}</p>
+                        <p className="text-[11px] font-medium text-charcoal/60 truncate">
+                            {product.name}{selectedVariant && productVariants.length > 1 && selectedVariant.title !== 'Única' ? ` · ${selectedVariant.title}` : ''}
+                        </p>
                         <div className="flex items-baseline gap-1.5">
                             <span className="font-serif text-lg font-bold text-forest">
-                                ${product.price.toLocaleString()} MXN
+                                ${effectivePrice.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} MXN
                             </span>
                             <span className="text-[10px] font-semibold text-gold uppercase tracking-wider">
                                 Mayoreo disp.
@@ -719,10 +794,10 @@ export default function ProductDetail() {
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
                         <a
-                            href={`https://wa.me/525527271067?text=${encodeURIComponent(`Hola J. Denis! Quiero información o cotizar mayoreo de: ${product.name} ($${product.price} MXN)`)}`}
+                            href={`https://wa.me/525527271067?text=${encodeURIComponent(`Hola J. Denis! Quiero información o cotizar mayoreo de: ${product.name}${selectedVariant && productVariants.length > 1 ? ` (${selectedVariant.title})` : ''} ($${effectivePrice} MXN)`)}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            onClick={() => trackEvent('whatsapp_click', 'ecommerce', { source: 'product_sticky_mobile', product_id: product.slug || product.id, product_name: product.name, price: product.price })}
+                            onClick={() => trackEvent('whatsapp_click', 'ecommerce', { source: 'product_sticky_mobile', product_id: product.slug || product.id, product_name: product.name, price: effectivePrice })}
                             aria-label="Cotizar por WhatsApp"
                             className="p-2.5 rounded-xl border border-forest/30 text-forest hover:bg-forest/5 transition-colors"
                         >

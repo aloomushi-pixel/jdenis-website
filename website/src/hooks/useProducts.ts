@@ -1,23 +1,24 @@
 import { useState, useEffect, useCallback } from 'react';
-import { supabase, type Product as SupabaseProduct } from '../lib/supabase';
+import {
+    supabase,
+    normalizeProductRow,
+    type CatalogProductRow,
+    type Product as SupabaseProduct,
+} from '../lib/supabase';
 import { useAuthStore } from '../store/authStore';
 
 // Re-export Supabase Product type for consumers
 export type { SupabaseProduct };
 
-// Generate random ID fallback if crypto is unavailable or incomplete
-function generateId() {
-    if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
-    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-}
-
 /**
- * Lightweight adapter: maps a Supabase product row to the shape
+ * Adapter: maps a normalized Supabase product row to the shape
  * expected by the cart store and all UI components.
  */
 export interface DisplayProduct {
     id: string;
+    productId?: number;
     name: string;
+    brand?: string;
     price: number;
     originalPrice?: number;
     distributorPrice?: number;
@@ -25,7 +26,15 @@ export interface DisplayProduct {
     image: string;
     category: string;
     description?: string;
+    descriptionHtml?: string;
     stock?: number;
+    hasVariants?: boolean;
+    variantsCount?: number;
+    variantAttributes?: string;
+    freeShipping?: boolean;
+    tags?: string;
+    seoTitle?: string;
+    seoDescription?: string;
     benefits?: string[];
     includes?: string[];
     performance?: string;
@@ -37,53 +46,43 @@ export interface DisplayProduct {
     slug?: string;
 }
 
-/** Map a Supabase row → DisplayProduct used by every UI component */
+/** Map a normalized Supabase Product → DisplayProduct used by every UI component */
 export function toDisplayProduct(p: SupabaseProduct, userRole: string | undefined = undefined): DisplayProduct {
     const normalizedRole = (userRole || '').toUpperCase();
     const isDistributor = normalizedRole === 'DISTRIBUIDOR';
-    const isClient = normalizedRole === 'CLIENTE';
-    const isAdmin = normalizedRole === 'ADMIN';
-    const hasAccessToPromos = isClient || isAdmin || isDistributor;
 
-    const publicPrice = p.original_price ?? p.compare_at_price ?? p.price;
-
+    // In Catalog v2, base_price_mxn is regular retail and promo_price_mxn is public sale price
     let finalPrice = p.price;
     let finalOriginalPrice = p.original_price ?? p.compare_at_price ?? undefined;
     let finalPromotion = p.promotion ?? undefined;
 
-    if (isAdmin) {
-        // Admins see raw data
-        finalPrice = p.price;
-        finalOriginalPrice = p.original_price ?? p.compare_at_price ?? undefined;
-        finalPromotion = p.promotion ?? undefined;
-    } else if (isDistributor && p.distributor_price != null && p.distributor_price > 0) {
-        // Distributors get distributor price as active price, strike out normal retail
+    if (isDistributor && p.distributor_price != null && p.distributor_price > 0) {
         finalPrice = p.distributor_price;
-        finalOriginalPrice = p.price;
+        finalOriginalPrice = p.base_price_mxn || p.price;
         finalPromotion = 'Precio Distribuidor';
-    } else if (hasAccessToPromos) {
-        // Regular clients see configured promos
-        finalPrice = p.price;
-        finalOriginalPrice = p.original_price ?? p.compare_at_price ?? undefined;
-        finalPromotion = p.promotion ?? undefined;
-    } else {
-        // Public sees disabled promos
-        finalPrice = publicPrice;
-        finalOriginalPrice = undefined;
-        finalPromotion = undefined;
     }
 
     return {
         id: p.id,
+        productId: p.product_id,
         name: p.name,
+        brand: p.brand || 'J. Denis',
         price: finalPrice,
         originalPrice: finalOriginalPrice,
         distributorPrice: p.distributor_price ?? undefined,
         promotion: finalPromotion,
-        image: p.image_url ?? '/placeholder.webp',
+        image: p.image_url || '/placeholder.webp',
         category: p.category,
         description: p.description ?? undefined,
-        stock: p.stock ?? undefined,
+        descriptionHtml: p.description_html ?? undefined,
+        stock: p.stock ?? p.total_stock ?? 0,
+        hasVariants: p.has_variants,
+        variantsCount: p.variants_count ?? 1,
+        variantAttributes: p.variant_attributes ?? undefined,
+        freeShipping: p.free_shipping ?? false,
+        tags: p.tags ?? undefined,
+        seoTitle: p.seo_title ?? undefined,
+        seoDescription: p.seo_description ?? undefined,
         benefits: p.benefits ?? undefined,
         includes: p.includes ?? undefined,
         performance: p.performance ?? undefined,
@@ -96,8 +95,8 @@ export function toDisplayProduct(p: SupabaseProduct, userRole: string | undefine
     };
 }
 
-const PRODUCTS_CACHE_KEY = 'jdennis_products_raw_cache_v1';
-const PRODUCTS_CACHE_TTL_MS = 2 * 60 * 1000; // 2 minutes fresh, stale-while-revalidate after
+const PRODUCTS_CACHE_KEY = 'jdennis_products_raw_cache_v2';
+const PRODUCTS_CACHE_TTL_MS = 2 * 60 * 1000;
 
 let memoryRawProducts: SupabaseProduct[] | null = null;
 let memoryFetchedAt = 0;
@@ -133,13 +132,21 @@ function updateCachedProducts(rows: SupabaseProduct[]) {
     }
 }
 
-function invalidateProductsCache() {
+export function invalidateProductsCache() {
+    memoryRawProducts = null;
     memoryFetchedAt = 0;
+    if (typeof window !== 'undefined') {
+        try {
+            sessionStorage.removeItem(PRODUCTS_CACHE_KEY);
+        } catch {
+            // ignore
+        }
+    }
 }
 
 /**
- * Pure Supabase hook — fetches all active products with shared in-memory/sessionStorage
- * cache + request deduplication, and provides save helpers for the admin editor.
+ * Pure Supabase hook — fetches all active parent products (Catalog v2)
+ * with shared in-memory/sessionStorage cache + admin CRUD helpers.
  */
 export function useProducts() {
     const userRole = useAuthStore(state => state.user?.role);
@@ -157,14 +164,14 @@ export function useProducts() {
         const cached = getInitialCachedProducts();
         const isFresh = cached && Date.now() - memoryFetchedAt < PRODUCTS_CACHE_TTL_MS;
 
-        if (cached) {
+        if (cached && !forceRefresh) {
             setProducts(cached.map(p => toDisplayProduct(p, userRole)));
             setLoading(false);
             setSynced(true);
-            if (isFresh && !forceRefresh) {
+            if (isFresh) {
                 return;
             }
-        } else {
+        } else if (!cached) {
             setLoading(true);
         }
 
@@ -176,10 +183,11 @@ export function useProducts() {
                         .select('*')
                         .eq('is_active', true)
                         .order('sort_order', { ascending: true })
+                        .order('product_id', { ascending: true })
                 )
                     .then(({ data, error: fetchError }) => {
                         if (fetchError) throw fetchError;
-                        const rows = (data || []) as SupabaseProduct[];
+                        const rows = ((data || []) as CatalogProductRow[]).map(normalizeProductRow);
                         updateCachedProducts(rows);
                         return rows;
                     })
@@ -206,19 +214,20 @@ export function useProducts() {
     }, [fetchProducts]);
 
     /**
-     * Persist a single field change for a product to Supabase.
-     * Maps camelCase field names to snake_case DB columns.
+     * Persist a single field change for a product to Supabase (Catalog v2 columns).
      */
     const saveProduct = useCallback(async (productId: string, field: string, value: unknown): Promise<boolean> => {
-        // Map UI field names → Supabase column names
+        const numId = Number(productId);
+        if (!Number.isFinite(numId)) return false;
+
         const fieldMap: Record<string, string> = {
             name: 'name',
-            price: 'price',
-            originalPrice: 'original_price',
-            distributorPrice: 'distributor_price',
-            promotion: 'promotion',
+            price: 'base_price_mxn',
+            originalPrice: 'base_price_mxn',
+            distributorPrice: 'distributor_price_mxn',
+            promotion: 'promotion_label',
             isFeatured: 'is_featured',
-            stock: 'stock',
+            stock: 'total_stock',
             category: 'category',
             description: 'description',
             image: 'image_url',
@@ -226,7 +235,7 @@ export function useProducts() {
             includes: 'includes',
             performance: 'performance',
             specifications: 'specifications',
-            gallery: 'gallery',
+            gallery: 'gallery_images',
             video: 'video',
             relatedCategories: 'related_categories',
         };
@@ -240,15 +249,20 @@ export function useProducts() {
         setSaveStatus(prev => ({ ...prev, [productId]: 'saving' }));
 
         try {
+            const payload: Record<string, unknown> = { [dbField]: value, updated_at: new Date().toISOString() };
+            if (field === 'price') {
+                // When setting direct price in inline editor, clear conflicting promo if >= new base
+                payload.promo_price_mxn = null;
+            }
+
             const { error: updateError } = await supabase
                 .from('products')
-                .update({ [dbField]: value, updated_at: new Date().toISOString() })
-                .eq('id', productId);
+                .update(payload)
+                .eq('product_id', numId);
 
             if (updateError) throw updateError;
 
             invalidateProductsCache();
-            // Update local state
             setProducts(prev => prev.map(p =>
                 p.id === productId ? { ...p, [field]: value } : p
             ));
@@ -272,26 +286,36 @@ export function useProducts() {
      * Update multiple fields at once (Submit form edit)
      */
     const updateProduct = useCallback(async (productId: string, updates: Partial<DisplayProduct>): Promise<boolean> => {
+        const numId = Number(productId);
+        if (!Number.isFinite(numId)) return false;
+
         setSaveStatus(prev => ({ ...prev, [productId]: 'saving' }));
 
         try {
             const dbUpdates: Record<string, unknown> = { updated_at: new Date().toISOString() };
 
-            // Map keys
             if (updates.name !== undefined) dbUpdates.name = updates.name;
-            if (updates.price !== undefined) dbUpdates.price = updates.price;
-            if (updates.originalPrice !== undefined) dbUpdates.original_price = updates.originalPrice;
-            if (updates.distributorPrice !== undefined) dbUpdates.distributor_price = updates.distributorPrice;
-            if (updates.promotion !== undefined) dbUpdates.promotion = updates.promotion;
+            if (updates.originalPrice != null && updates.price != null && updates.price < updates.originalPrice) {
+                dbUpdates.base_price_mxn = updates.originalPrice;
+                dbUpdates.promo_price_mxn = updates.price;
+            } else if (updates.price !== undefined) {
+                dbUpdates.base_price_mxn = updates.price;
+                dbUpdates.promo_price_mxn = null;
+            }
+            if (updates.distributorPrice !== undefined) dbUpdates.distributor_price_mxn = updates.distributorPrice || null;
+            if (updates.promotion !== undefined) dbUpdates.promotion_label = updates.promotion || null;
             if (updates.image !== undefined) dbUpdates.image_url = updates.image;
             if (updates.category !== undefined) dbUpdates.category = updates.category;
-            if (updates.description !== undefined) dbUpdates.description = updates.description;
-            if (updates.stock !== undefined) dbUpdates.stock = updates.stock;
+            if (updates.description !== undefined) {
+                dbUpdates.description = updates.description;
+                dbUpdates.description_html = `<p>${updates.description}</p>`;
+            }
+            if (updates.stock !== undefined) dbUpdates.total_stock = updates.stock;
             if (updates.benefits !== undefined) dbUpdates.benefits = updates.benefits;
             if (updates.includes !== undefined) dbUpdates.includes = updates.includes;
             if (updates.performance !== undefined) dbUpdates.performance = updates.performance;
             if (updates.specifications !== undefined) dbUpdates.specifications = updates.specifications;
-            if (updates.gallery !== undefined) dbUpdates.gallery = updates.gallery;
+            if (updates.gallery !== undefined) dbUpdates.gallery_images = updates.gallery;
             if (updates.video !== undefined) dbUpdates.video = updates.video;
             if (updates.relatedCategories !== undefined) dbUpdates.related_categories = updates.relatedCategories;
             if (updates.isFeatured !== undefined) dbUpdates.is_featured = updates.isFeatured;
@@ -300,12 +324,11 @@ export function useProducts() {
             const { error: updateError } = await supabase
                 .from('products')
                 .update(dbUpdates)
-                .eq('id', productId);
+                .eq('product_id', numId);
 
             if (updateError) throw updateError;
 
             invalidateProductsCache();
-            // Update local state
             setProducts(prev => prev.map(p => p.id === productId ? { ...p, ...updates } : p));
             setSaveStatus(prev => ({ ...prev, [productId]: 'saved' }));
             setTimeout(() => setSaveStatus(prev => {
@@ -323,44 +346,71 @@ export function useProducts() {
     }, []);
 
     /**
-     * Create a new product.
+     * Create a new parent product + default variant in Catalog v2.
      */
     const createProduct = useCallback(async (newProduct: Omit<DisplayProduct, 'id'>): Promise<boolean> => {
         try {
-            const id = generateId();
-            const slug = newProduct.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+            const baseSlug = (newProduct.slug || newProduct.name)
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/(^-|-$)+/g, '');
+            const slug = `${baseSlug}-${Date.now().toString(36).slice(-4)}`;
+
+            const hasSale = newProduct.originalPrice != null && newProduct.price < newProduct.originalPrice;
+            const basePrice = hasSale ? newProduct.originalPrice! : newProduct.price;
+            const promoPrice = hasSale ? newProduct.price : null;
 
             const dbInsert = {
-                id,
-                name: newProduct.name,
-                price: newProduct.price,
-                original_price: newProduct.originalPrice,
-                distributor_price: newProduct.distributorPrice,
-                promotion: newProduct.promotion,
-                image_url: newProduct.image,
-                category: newProduct.category,
-                description: newProduct.description,
-                stock: newProduct.stock,
-                benefits: newProduct.benefits,
-                includes: newProduct.includes,
-                performance: newProduct.performance,
-                specifications: newProduct.specifications,
-                gallery: newProduct.gallery,
-                video: newProduct.video,
-                related_categories: newProduct.relatedCategories,
-                is_featured: newProduct.isFeatured ?? false,
                 slug,
-                is_active: true
+                name: newProduct.name,
+                brand: 'J. Denis',
+                category: newProduct.category,
+                description: newProduct.description || newProduct.name,
+                description_html: `<p>${newProduct.description || newProduct.name}</p>`,
+                image_url: newProduct.image || null,
+                gallery_images: newProduct.gallery || (newProduct.image ? [newProduct.image] : []),
+                has_variants: false,
+                variants_count: 1,
+                base_price_mxn: basePrice,
+                promo_price_mxn: promoPrice,
+                distributor_price_mxn: newProduct.distributorPrice || null,
+                promotion_label: newProduct.promotion || null,
+                total_stock: newProduct.stock ?? 0,
+                benefits: newProduct.benefits || [],
+                includes: newProduct.includes || [],
+                performance: newProduct.performance || null,
+                specifications: newProduct.specifications || [],
+                video: newProduct.video || null,
+                related_categories: newProduct.relatedCategories || [],
+                is_featured: newProduct.isFeatured ?? false,
+                is_active: true,
             };
 
-            const { error: insertError } = await supabase
+            const { data: created, error: insertError } = await supabase
                 .from('products')
-                .insert([dbInsert]);
+                .insert([dbInsert])
+                .select('product_id, slug, name')
+                .single();
 
             if (insertError) throw insertError;
 
+            if (created) {
+                await supabase.from('product_variants').insert([{
+                    product_id: created.product_id,
+                    product_slug: created.slug,
+                    original_tiendanube_slug: created.slug,
+                    variant_title: 'Única',
+                    price_mxn: basePrice,
+                    promo_price_mxn: promoPrice,
+                    stock: newProduct.stock ?? 0,
+                    image_url: newProduct.image || null,
+                    is_active: true,
+                }]);
+            }
+
             invalidateProductsCache();
-            // Refetch or add directly
             await fetchProducts(true);
             return true;
         } catch (err) {
@@ -373,17 +423,18 @@ export function useProducts() {
      * Soft delete a product
      */
     const deleteProduct = useCallback(async (productId: string): Promise<boolean> => {
+        const numId = Number(productId);
+        if (!Number.isFinite(numId)) return false;
         try {
             setSaveStatus(prev => ({ ...prev, [productId]: 'saving' }));
             const { error: deleteError } = await supabase
                 .from('products')
                 .update({ is_active: false })
-                .eq('id', productId);
+                .eq('product_id', numId);
 
             if (deleteError) throw deleteError;
 
             invalidateProductsCache();
-            // Update local state by removing it
             setProducts(prev => prev.filter(p => p.id !== productId));
             return true;
         } catch (err) {

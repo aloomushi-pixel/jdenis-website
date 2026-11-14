@@ -5,7 +5,6 @@ import ProductCard from '../components/ProductCard';
 import ProductSkeleton from '../components/ProductSkeleton';
 import { usePageMeta } from '../hooks/usePageMeta';
 import { useProducts } from '../hooks/useProducts';
-import { useVariants } from '../hooks/useVariants';
 import {
     buildOrganizationSchema,
     CATEGORY_HUB_CONFIGS,
@@ -27,42 +26,16 @@ const ALL_HUBS: Array<{ slug: CategorySeoHubConfig['slug']; label: string; path:
 export default function CategorySeoHub({ hubSlug }: CategorySeoHubProps) {
     const config = CATEGORY_HUB_CONFIGS[hubSlug];
     const { products, loading } = useProducts();
-    const { groups } = useVariants();
     const [activeFilterCategory, setActiveFilterCategory] = useState<string>('all');
     const [searchFilter, setSearchFilter] = useState<string>('');
 
     const { groupedProducts, variantCounts } = useMemo(() => {
         const counts = new Map<string, number>();
-        const groupFirstProductIds = new Map<string, string>();
-        const productToGroup = new Map<string, (typeof groups)[number]>();
-
-        groups.forEach((group) => {
-            if (group.variants && group.variants.length > 0) {
-                const firstVariant = group.variants[0];
-                groupFirstProductIds.set(group.id, firstVariant.product_id);
-                counts.set(firstVariant.product_id, group.variants.length);
-                group.variants.forEach((v) => {
-                    productToGroup.set(v.product_id, group);
-                });
-            }
+        products.forEach((p) => {
+            counts.set(p.id, p.variantsCount || 1);
         });
-
-        const grouped = products
-            .filter((p) => {
-                const group = productToGroup.get(p.id);
-                if (!group) return true;
-                return groupFirstProductIds.get(group.id) === p.id;
-            })
-            .map((p) => {
-                const group = productToGroup.get(p.id);
-                if (group && groupFirstProductIds.get(group.id) === p.id) {
-                    return { ...p, name: group.name };
-                }
-                return p;
-            });
-
-        return { groupedProducts: grouped, variantCounts: counts };
-    }, [products, groups]);
+        return { groupedProducts: products, variantCounts: counts };
+    }, [products]);
 
     const hubProducts = useMemo(() => {
         const targetCatsLower = config.targetCategories.map((c) => c.toLowerCase());

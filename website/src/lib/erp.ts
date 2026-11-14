@@ -755,27 +755,33 @@ export async function getQuotationItems(quotationId: string) {
     if (!itemsData || itemsData.length === 0) return [];
 
     // Fetch product details to enrich the quotation items
-    const resourceIds = itemsData.map((item: any) => item.resource_id);
-    const { data: productsData, error: productsError } = await supabase
-        .from('products')
-        .select('id, name, image_url, price')
-        .in('id', resourceIds);
+    const numericIds = itemsData
+        .map((item: any) => Number(String(item.resource_id).split('-v')[0]))
+        .filter((n: number) => Number.isFinite(n));
+    const { data: productsData, error: productsError } = numericIds.length > 0
+        ? await supabase
+            .from('products')
+            .select('product_id, name, image_url, base_price_mxn, promo_price_mxn')
+            .in('product_id', numericIds)
+        : { data: [], error: null };
 
     if (productsError) {
         console.error("Error fetching products for quotation items:", productsError);
         return itemsData as QuotationItem[];
     }
 
-    const productsMap = new Map((productsData || []).map((p: any) => [p.id, p]));
+    const productsMap = new Map((productsData || []).map((p: any) => [String(p.product_id), p]));
 
     // Merge product data into quotation items for the UI
     const mergedItems = itemsData.map((item: any) => {
-        const product = productsMap.get(item.resource_id) as any;
+        const key = String(item.resource_id).split('-v')[0];
+        const product = productsMap.get(key) as any;
+        const prodPrice = product?.promo_price_mxn ?? product?.base_price_mxn ?? 0;
         return {
             ...item,
             name: product?.name || 'Producto Desconocido',
             image: product?.image_url || null,
-            price: item.unit_price || product?.price || 0,
+            price: item.unit_price || prodPrice,
         };
     });
 

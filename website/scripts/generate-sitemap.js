@@ -78,34 +78,50 @@ async function generateSitemapAndFeeds() {
     addUrl(sitemapLines, '/aviso-de-privacidad', today, '0.5', 'yearly');
     addUrl(sitemapLines, '/politica-de-devoluciones', today, '0.6', 'yearly');
 
-    // Category Landing Views (B2C + B2B Wholesale SEO)
+    // Category Landing Views (Catalog v2 — 10 official categories)
     const categoryIds = [
-        'brow-henna',
-        'cejas',
-        'pigmentos',
         'lash-lifting',
-        'lash-curling',
-        'extensiones',
-        'adhesivos',
-        'tratamientos',
-        'herramientas',
-        'accesorios',
-        'higiene',
-        'pestanas-en-tira',
-        'microblading',
+        'diseno-de-cejas-y-microblading',
+        'pigmentos-y-brow-henna',
+        'extensiones-y-pestanas',
+        'lash-curling-y-botox',
+        'adhesivos-higiene-y-preparadores',
+        'mascaras-y-tratamientos',
+        'herramientas-pinzas-y-equipo',
+        'accesorios-y-consumibles',
+        'paquetes-buen-fin',
     ];
     for (const catId of categoryIds) {
         addUrl(sitemapLines, `/tienda?cat=${catId}`, today, '0.88', 'daily');
     }
 
-    // Active Products (using canonical semantic slug + full Merchant Feed)
-    const { data: products, error: pError } = await supabase
+    // Active Products (Catalog v2 schema)
+    const { data: rawProducts, error: pError } = await supabase
         .from('products')
-        .select('id, slug, sku, name, description, price, category, image_url, stock, updated_at')
+        .select('product_id, slug, name, description, base_price_mxn, promo_price_mxn, category, image_url, total_stock, updated_at')
         .eq('is_active', true)
         .order('name', { ascending: true });
 
-    if (!pError && products) {
+    const products = (rawProducts || []).map((r) => {
+        const base = Number(r.base_price_mxn ?? 0);
+        const promo = r.promo_price_mxn != null && Number(r.promo_price_mxn) > 0 && Number(r.promo_price_mxn) < base
+            ? Number(r.promo_price_mxn)
+            : null;
+        return {
+            id: String(r.product_id),
+            slug: r.slug,
+            sku: `JD-${String(r.slug || r.product_id).toUpperCase().slice(0, 32)}`,
+            name: r.name,
+            description: r.description,
+            price: promo ?? base,
+            category: r.category,
+            image_url: r.image_url,
+            stock: r.total_stock ?? 0,
+            updated_at: r.updated_at,
+        };
+    });
+
+    if (!pError && products.length > 0) {
         const seenSlugs = new Set();
         products.forEach((p) => {
             const key = p.slug || p.id;

@@ -49,26 +49,42 @@ export default function ProductEditor() {
     // Supabase integration via useProducts hook
     // ═══════════════════════════════════════════
     const { products, loading: supabaseLoading, error: supabaseError, saveProduct, saveStatus, synced, createProduct, updateProduct, deleteProduct } = useProducts();
-    const { groups: rawDbGroups, loading: variantsLoading, createGroup, deleteGroup, addVariant, removeVariant } = useVariants();
+    const { groups: rawDbGroups, getVariantsForProduct, loading: variantsLoading, createGroup, deleteGroup, addVariant, removeVariant } = useVariants();
 
     // Map DB variant groups (snake_case) to camelCase for rendering
     interface MappedVariantGroup {
         parentId: string;
         parentName: string;
         attributeNames: string[];
-        variants: { productId: string; attributes: Record<string, string> }[];
+        variants: {
+            productId: string;
+            title: string;
+            sku: string | null;
+            price: number;
+            promoPrice: number | null;
+            stock: number;
+            attributes: Record<string, string>;
+        }[];
     }
     const dbVariantGroups: MappedVariantGroup[] = useMemo(() =>
-        rawDbGroups.map(g => ({
-            parentId: g.id,
-            parentName: g.name,
-            attributeNames: g.attribute_names,
-            variants: g.variants.map(v => ({
-                productId: v.product_id,
-                attributes: v.attributes
-            }))
-        })),
-        [rawDbGroups]
+        rawDbGroups.map(g => {
+            const parentProd = products.find(p => p.id === g.id);
+            return {
+                parentId: g.id,
+                parentName: parentProd?.name || g.name,
+                attributeNames: g.attribute_names,
+                variants: g.variants.map(v => ({
+                    productId: v.id,
+                    title: v.variant_title || v.id,
+                    sku: v.sku ?? null,
+                    price: v.price_mxn ?? 0,
+                    promoPrice: v.promo_price_mxn ?? null,
+                    stock: v.stock ?? 0,
+                    attributes: v.attributes
+                }))
+            };
+        }),
+        [rawDbGroups, products]
     );
 
     // ═══════════════════════════════════════════
@@ -854,7 +870,7 @@ export default function ProductEditor() {
                                         </tr>
                                     )}
                                     {filteredProducts.map((product, index) => {
-                                        const vc = dbVariantGroups.find(g => g.variants.some(v => v.productId === product.id))?.variants?.length || 0;
+                                        const vc = getVariantsForProduct(product.id).length || product.variantsCount || 1;
                                         const isEdited = !!edits[product.id];
                                         const rowSaveStatus = saveStatus[product.id];
                                         return (
@@ -1198,11 +1214,11 @@ export default function ProductEditor() {
                                                 {/* Inline Variant Detail — appears right below this product */}
                                                 {
                                                     expandedVariantGroup === product.id && (() => {
-                                                        const group = dbVariantGroups.find(g => g.variants.some(v => v.productId === product.id));
+                                                        const group = dbVariantGroups.find(g => g.parentId === product.id);
                                                         if (!group) return null;
                                                         return (
                                                             <tr>
-                                                                <td colSpan={12} className="p-0">
+                                                                <td colSpan={13} className="p-0">
                                                                     <motion.div
                                                                         initial={{ opacity: 0, height: 0 }}
                                                                         animate={{ opacity: 1, height: 'auto' }}
@@ -1226,46 +1242,41 @@ export default function ProductEditor() {
                                                                             <table className="w-full text-sm">
                                                                                 <thead>
                                                                                     <tr className="border-b border-indigo-200">
-                                                                                        <th className="text-left px-3 py-2 text-xs font-semibold text-indigo-600">ID</th>
-                                                                                        <th className="text-left px-3 py-2 text-xs font-semibold text-indigo-600">Nombre</th>
+                                                                                        <th className="text-left px-3 py-2 text-xs font-semibold text-indigo-600">ID Var</th>
+                                                                                        <th className="text-left px-3 py-2 text-xs font-semibold text-indigo-600">SKU</th>
+                                                                                        <th className="text-left px-3 py-2 text-xs font-semibold text-indigo-600">Variante</th>
                                                                                         {group.attributeNames.map(attr => (
                                                                                             <th key={attr} className="text-left px-3 py-2 text-xs font-semibold text-indigo-600">{attr}</th>
                                                                                         ))}
-                                                                                        <th className="text-right px-3 py-2 text-xs font-semibold text-indigo-600">P. Cliente</th>
-                                                                                        <th className="text-right px-3 py-2 text-xs font-semibold text-indigo-600">P. Distribuidor</th>
-                                                                                        <th className="text-left px-3 py-2 text-xs font-semibold text-indigo-600">Promoción</th>
+                                                                                        <th className="text-right px-3 py-2 text-xs font-semibold text-indigo-600">Precio Base</th>
+                                                                                        <th className="text-right px-3 py-2 text-xs font-semibold text-indigo-600">Promo</th>
+                                                                                        <th className="text-center px-3 py-2 text-xs font-semibold text-indigo-600">Stock</th>
                                                                                     </tr>
                                                                                 </thead>
                                                                                 <tbody className="divide-y divide-indigo-100">
-                                                                                    {group.variants.map(v => {
-                                                                                        const vProduct = products.find(p => p.id === v.productId);
-                                                                                        if (!vProduct) return null;
-                                                                                        const editedVProduct = getProduct(vProduct);
-                                                                                        return (
-                                                                                            <tr key={v.productId} className="hover:bg-indigo-100/50">
-                                                                                                <td className="px-3 py-2 text-xs font-mono text-gray-500">{v.productId}</td>
-                                                                                                <td className="px-3 py-2">
-                                                                                                    {renderEditableCell(editedVProduct, 'name', 'text', 'text-sm text-gray-900')}
+                                                                                    {group.variants.map(v => (
+                                                                                        <tr key={v.productId} className="hover:bg-indigo-100/50">
+                                                                                            <td className="px-3 py-2 text-xs font-mono text-gray-500">#{v.productId}</td>
+                                                                                            <td className="px-3 py-2 text-xs font-mono text-gray-600">{v.sku || '—'}</td>
+                                                                                            <td className="px-3 py-2 text-sm font-medium text-gray-900">{v.title}</td>
+                                                                                            {group.attributeNames.map(attr => (
+                                                                                                <td key={attr} className="px-3 py-2">
+                                                                                                    <span className="px-2 py-0.5 bg-white border border-indigo-200 rounded text-xs">
+                                                                                                        {v.attributes[attr] || '—'}
+                                                                                                    </span>
                                                                                                 </td>
-                                                                                                {group.attributeNames.map(attr => (
-                                                                                                    <td key={attr} className="px-3 py-2">
-                                                                                                        <span className="px-2 py-0.5 bg-white border border-indigo-200 rounded text-xs">
-                                                                                                            {v.attributes[attr] || '—'}
-                                                                                                        </span>
-                                                                                                    </td>
-                                                                                                ))}
-                                                                                                <td className="px-3 py-2 text-right">
-                                                                                                    {renderEditableCell(editedVProduct, 'price', 'currency', 'text-sm font-semibold text-blue-800')}
-                                                                                                </td>
-                                                                                                <td className="px-3 py-2 text-right">
-                                                                                                    {renderEditableCell(editedVProduct, 'distributorPrice', 'currency', 'text-sm font-semibold text-purple-800')}
-                                                                                                </td>
-                                                                                                <td className="px-3 py-2">
-                                                                                                    {renderEditableCell(editedVProduct, 'promotion', 'text', 'text-xs text-green-700')}
-                                                                                                </td>
-                                                                                            </tr>
-                                                                                        );
-                                                                                    })}
+                                                                                            ))}
+                                                                                            <td className="px-3 py-2 text-right font-semibold text-blue-800">
+                                                                                                ${v.price.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+                                                                                            </td>
+                                                                                            <td className="px-3 py-2 text-right font-semibold text-red-600">
+                                                                                                {v.promoPrice != null ? `$${v.promoPrice.toLocaleString('es-MX', { minimumFractionDigits: 2 })}` : '—'}
+                                                                                            </td>
+                                                                                            <td className="px-3 py-2 text-center font-medium text-gray-700">
+                                                                                                {v.stock}
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                    ))}
                                                                                 </tbody>
                                                                             </table>
                                                                         </div>

@@ -1,5 +1,4 @@
-// Auto-generated TypeScript types from Supabase schema
-// Generated via Supabase MCP on 2026-02-05
+// TypeScript types matching normalized Supabase schema (Catalog v2)
 
 export type Json =
     | string
@@ -14,56 +13,143 @@ export type Database = {
         Tables: {
             products: {
                 Row: {
-                    id: string
+                    product_id: number
                     slug: string
                     name: string
-                    description: string | null
-                    price: number
-                    compare_at_price: number | null
-                    image_url: string | null
+                    brand: string
                     category: string
-                    sku: string | null
-                    stock: number | null
-                    is_active: boolean | null
-                    is_featured: boolean | null
-                    sort_order: number | null
-                    created_at: string | null
-                    updated_at: string | null
+                    raw_categories: string | null
+                    description: string
+                    description_html: string
+                    image_url: string | null
+                    gallery_images: string[]
+                    has_variants: boolean
+                    variant_attributes: string | null
+                    variants_count: number
+                    base_price_mxn: number
+                    promo_price_mxn: number | null
+                    distributor_price_mxn: number | null
+                    promotion_label: string | null
+                    total_stock: number
+                    is_active: boolean
+                    is_featured: boolean
+                    sort_order: number
+                    free_shipping: boolean
+                    tags: string | null
+                    seo_title: string | null
+                    seo_description: string | null
+                    benefits: string[]
+                    includes: string[]
+                    performance: string | null
+                    specifications: string[]
+                    video: string | null
+                    related_categories: string[]
+                    jdenis_store_status: string | null
+                    source_url: string | null
+                    audit_notes: string | null
+                    created_at: string
+                    updated_at: string
                 }
                 Insert: {
-                    id?: string
+                    product_id?: number
                     slug: string
                     name: string
-                    description?: string | null
-                    price?: number
-                    compare_at_price?: number | null
-                    image_url?: string | null
+                    brand?: string
                     category: string
-                    sku?: string | null
-                    stock?: number | null
-                    is_active?: boolean | null
-                    is_featured?: boolean | null
-                    sort_order?: number | null
-                    created_at?: string | null
-                    updated_at?: string | null
-                }
-                Update: {
-                    id?: string
-                    slug?: string
-                    name?: string
-                    description?: string | null
-                    price?: number
-                    compare_at_price?: number | null
+                    raw_categories?: string | null
+                    description?: string
+                    description_html?: string
                     image_url?: string | null
-                    category?: string
-                    sku?: string | null
-                    stock?: number | null
-                    is_active?: boolean | null
-                    is_featured?: boolean | null
-                    sort_order?: number | null
-                    created_at?: string | null
-                    updated_at?: string | null
+                    gallery_images?: string[]
+                    has_variants?: boolean
+                    variant_attributes?: string | null
+                    variants_count?: number
+                    base_price_mxn?: number
+                    promo_price_mxn?: number | null
+                    distributor_price_mxn?: number | null
+                    promotion_label?: string | null
+                    total_stock?: number
+                    is_active?: boolean
+                    is_featured?: boolean
+                    sort_order?: number
+                    free_shipping?: boolean
+                    tags?: string | null
+                    seo_title?: string | null
+                    seo_description?: string | null
+                    benefits?: string[]
+                    includes?: string[]
+                    performance?: string | null
+                    specifications?: string[]
+                    video?: string | null
+                    related_categories?: string[]
+                    jdenis_store_status?: string | null
+                    source_url?: string | null
+                    audit_notes?: string | null
+                    created_at?: string
+                    updated_at?: string
                 }
+                Update: Partial<Database['public']['Tables']['products']['Insert']>
+            }
+            product_variants: {
+                Row: {
+                    variant_id: number
+                    product_id: number
+                    product_slug: string
+                    original_tiendanube_slug: string
+                    sku: string | null
+                    barcode: string | null
+                    variant_title: string
+                    option_1_name: string | null
+                    option_1_value: string | null
+                    option_2_name: string | null
+                    option_2_value: string | null
+                    option_3_name: string | null
+                    option_3_value: string | null
+                    price_mxn: number
+                    promo_price_mxn: number | null
+                    cost_mxn: number | null
+                    stock: number
+                    weight_kg: number
+                    height_cm: number
+                    width_cm: number
+                    depth_cm: number
+                    image_url: string | null
+                    variant_description: string | null
+                    is_active: boolean
+                    source_url: string | null
+                    created_at: string
+                    updated_at: string
+                }
+                Insert: {
+                    variant_id?: number
+                    product_id: number
+                    product_slug: string
+                    original_tiendanube_slug?: string
+                    sku?: string | null
+                    barcode?: string | null
+                    variant_title: string
+                    option_1_name?: string | null
+                    option_1_value?: string | null
+                    option_2_name?: string | null
+                    option_2_value?: string | null
+                    option_3_name?: string | null
+                    option_3_value?: string | null
+                    price_mxn?: number
+                    promo_price_mxn?: number | null
+                    cost_mxn?: number | null
+                    stock?: number
+                    weight_kg?: number
+                    height_cm?: number
+                    width_cm?: number
+                    depth_cm?: number
+                    image_url?: string | null
+                    variant_description?: string | null
+                    is_active?: boolean
+                    source_url?: string | null
+                    created_at?: string
+                    updated_at?: string
+                }
+                Update: Partial<Database['public']['Tables']['product_variants']['Insert']>
             }
             product_categories: {
                 Row: {
@@ -86,16 +172,7 @@ export type Database = {
                     is_active?: boolean | null
                     created_at?: string | null
                 }
-                Update: {
-                    id?: string
-                    slug?: string
-                    name?: string
-                    icon?: string | null
-                    description?: string | null
-                    sort_order?: number | null
-                    is_active?: boolean | null
-                    created_at?: string | null
-                }
+                Update: Partial<Database['public']['Tables']['product_categories']['Insert']>
             }
             orders_b2b: {
                 Row: {
@@ -132,23 +209,7 @@ export type Database = {
                     created_at?: string | null
                     updated_at?: string | null
                 }
-                Update: {
-                    id?: string
-                    order_number?: string
-                    user_id?: string
-                    status?: string
-                    subtotal?: number
-                    tax?: number | null
-                    shipping?: number | null
-                    total?: number
-                    shipping_address?: Json | null
-                    billing_address?: Json | null
-                    payment_method?: string | null
-                    payment_reference?: string | null
-                    notes?: string | null
-                    created_at?: string | null
-                    updated_at?: string | null
-                }
+                Update: Partial<Database['public']['Tables']['orders_b2b']['Insert']>
             }
             order_items: {
                 Row: {
@@ -169,15 +230,7 @@ export type Database = {
                     unit_price: number
                     total: number
                 }
-                Update: {
-                    id?: string
-                    order_id?: string
-                    product_id?: string
-                    product_name?: string
-                    quantity?: number
-                    unit_price?: number
-                    total?: number
-                }
+                Update: Partial<Database['public']['Tables']['order_items']['Insert']>
             }
             carts: {
                 Row: {
@@ -194,13 +247,7 @@ export type Database = {
                     created_at?: string | null
                     updated_at?: string | null
                 }
-                Update: {
-                    id?: string
-                    user_id?: string | null
-                    session_id?: string | null
-                    created_at?: string | null
-                    updated_at?: string | null
-                }
+                Update: Partial<Database['public']['Tables']['carts']['Insert']>
             }
             cart_items: {
                 Row: {
@@ -217,13 +264,7 @@ export type Database = {
                     quantity?: number
                     added_at?: string | null
                 }
-                Update: {
-                    id?: string
-                    cart_id?: string
-                    product_id?: string
-                    quantity?: number
-                    added_at?: string | null
-                }
+                Update: Partial<Database['public']['Tables']['cart_items']['Insert']>
             }
         }
     }

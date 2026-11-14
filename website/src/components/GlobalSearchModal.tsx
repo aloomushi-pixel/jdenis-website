@@ -9,13 +9,13 @@ import { trackEvent } from '../utils/telemetry';
 
 const CATEGORIES = [
   { id: 'todo', name: 'Todos los productos', icon: <ShoppingBag className="w-4 h-4" /> },
-  { id: 'Brow Henna', name: 'Brow Henna / Rubor Cejas', icon: <Sparkles className="w-4 h-4" /> },
-  { id: 'Diseño de Cejas', name: 'Diseño y Gel de Cejas', icon: <Sparkles className="w-4 h-4" /> },
   { id: 'Lash Lifting', name: 'Lash Lifting', icon: <Eye className="w-4 h-4" /> },
-  { id: 'Pigmentos', name: 'Pigmentos y Tintes', icon: <Package className="w-4 h-4" /> },
-  { id: 'Adhesivos', name: 'Adhesivos', icon: <Droplet className="w-4 h-4" /> },
-  { id: 'Tratamientos', name: 'Tratamientos y Sueros', icon: <Sparkles className="w-4 h-4" /> },
-  { id: 'Herramientas', name: 'Herramientas', icon: <Scissors className="w-4 h-4" /> },
+  { id: 'Diseño de Cejas y Microblading', name: 'Diseño de Cejas y Microblading', icon: <Sparkles className="w-4 h-4" /> },
+  { id: 'Pigmentos y Brow Henna', name: 'Pigmentos y Brow Henna', icon: <Package className="w-4 h-4" /> },
+  { id: 'Extensiones y Pestañas', name: 'Extensiones y Pestañas', icon: <Sparkles className="w-4 h-4" /> },
+  { id: 'Adhesivos, Higiene y Preparadores', name: 'Adhesivos e Higiene', icon: <Droplet className="w-4 h-4" /> },
+  { id: 'Máscaras y Tratamientos', name: 'Máscaras y Tratamientos', icon: <Sparkles className="w-4 h-4" /> },
+  { id: 'Herramientas, Pinzas y Equipo', name: 'Herramientas y Pinzas', icon: <Scissors className="w-4 h-4" /> },
 ];
 
 const QUICK_SUGGESTIONS = [

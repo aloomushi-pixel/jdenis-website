@@ -413,6 +413,9 @@ export function getCategorySEO(category: string): CategorySEOInfo {
     if (CATEGORY_SEO_DATA[category]) {
         return CATEGORY_SEO_DATA[category];
     }
+    if (category === 'Pigmentos y Brow Henna') return { ...CATEGORY_SEO_DATA['Brow Henna'], category };
+    if (category === 'Diseño de Cejas y Microblading') return { ...CATEGORY_SEO_DATA['Diseño de Cejas'], category };
+    if (category === 'Máscaras y Tratamientos' && CATEGORY_SEO_DATA['Tratamientos']) return { ...CATEGORY_SEO_DATA['Tratamientos'], category };
     return {
         category,
         h1Title: `${category} Profesional para Cejas y Pestañas | Directo de Fábrica`,
@@ -684,7 +687,7 @@ export const CATEGORY_HUB_CONFIGS: Record<CategorySeoHubConfig['slug'], Category
         subtitle: 'Creadores del Planchado de Cejas en México. Todo el catálogo oficial J. Denis para diseño, fijación, laminado con cisteamina, rubor de henna y pigmentos de alta retención a precio de tienda y mayoreo.',
         metaTitle: 'J. Denis Cejas: Laminado, Planchado, Henna y Pigmentos',
         metaDescription: 'Catálogo oficial J. Denis Cejas: Kits de Planchado y Laminado con Cisteamina, Brow Henna, Pigmentos y Gel Fijador. Menudeo y mayoreo de fábrica.',
-        targetCategories: ['Diseño de Cejas', 'Brow Henna', 'Pigmentos', 'Microblading', 'Tratamientos'],
+        targetCategories: ['Diseño de Cejas y Microblading', 'Pigmentos y Brow Henna', 'Máscaras y Tratamientos', 'Diseño de Cejas', 'Brow Henna', 'Pigmentos'],
         searchKeywords: ['ceja', 'planchado', 'laminado', 'henna', 'pigmento'],
         featuredProductSlugs: ['laminado-cejas', 'chocolate-pigmento-cejas', 'activador-henna', 'tintura-topica-castano-medio'],
         technicalGuideTitle: '¿Por qué los especialistas en México eligen la línea de Cejas J. Denis?',
@@ -735,7 +738,7 @@ export const CATEGORY_HUB_CONFIGS: Record<CategorySeoHubConfig['slug'], Category
         subtitle: 'Catálogo completo de insumos profesionales para lashistas y cuidado diario: Kits de Lash Lifting con Cisteamina, Gel Ondulante Jade, Blísters de Extensiones, Adhesivos y Tratamientos con Queratina.',
         metaTitle: 'J. Denis Pestañas: Lash Lifting, Rizado y Adhesivos',
         metaDescription: 'Insumos profesionales J. Denis para pestañas: Lash Lifting Cisteamina, Rizado Jade, Extensiones, Adhesivos hipoalergénicos y Botox en México.',
-        targetCategories: ['Lash Lifting', 'Lash Curling', 'Extensiones', 'Adhesivos', 'Pestañas en Tira', 'Tratamientos'],
+        targetCategories: ['Lash Lifting', 'Lash Curling y Botox', 'Extensiones y Pestañas', 'Adhesivos, Higiene y Preparadores', 'Máscaras y Tratamientos'],
         searchKeywords: ['pestaña', 'lash', 'ondulante', 'rizado', 'adhesivo', 'botox'],
         featuredProductSlugs: ['jade-rizado-pestanas', 'gel-ondulante-blue', 'botox-pestanas', 'adhesivo-transparente-grupo'],
         technicalGuideTitle: 'Tecnología Mexicana para Elevación, Rizado y Extensión de Pestañas',
@@ -786,7 +789,7 @@ export const CATEGORY_HUB_CONFIGS: Record<CategorySeoHubConfig['slug'], Category
         subtitle: 'Domina la técnica de Brow Lamination y Planchado de Cejas con la marca creadora del procedimiento en México. Fórmulas seguras de 3 pasos que alinean, dan volumen y nutren la ceja.',
         metaTitle: 'Laminado de Cejas Cisteamina y Planchado | J. Denis',
         metaDescription: 'Kit de Laminado y Planchado de Cejas J. Denis con Cisteamina (30 aplicaciones). Alinea cejas rebeldes sin daño. Menudeo y mayoreo en México.',
-        targetCategories: ['Diseño de Cejas', 'Tratamientos', 'Herramientas'],
+        targetCategories: ['Diseño de Cejas y Microblading', 'Máscaras y Tratamientos', 'Herramientas, Pinzas y Equipo'],
         searchKeywords: ['laminado', 'planchado', 'ceja', 'fijador', 'reestructurante', 'cisteamina'],
         featuredProductSlugs: ['laminado-cejas', 'botox-pestanas'],
         technicalGuideTitle: 'Protocolo Oficial de Laminado de Cejas J. Denis (Paso a Paso)',
@@ -833,7 +836,7 @@ export const CATEGORY_HUB_CONFIGS: Record<CategorySeoHubConfig['slug'], Category
         subtitle: 'Elevación panorámica de pestañas naturales desde la raíz. Fórmulas frescas en sobres monodosis y kits profesionales con Cisteamina que cuidan la salud ocular y capilar.',
         metaTitle: 'Kit Lash Lifting Cisteamina, Pads y Adhesivos | J. Denis',
         metaDescription: 'Catálogo Lash Lifting J. Denis: Kits Evolución con Cisteamina, monodosis, pads anatómicos, adhesivo hidrosoluble y Botox. Menudeo y mayoreo MX.',
-        targetCategories: ['Lash Lifting', 'Lash Curling', 'Adhesivos', 'Tratamientos', 'Herramientas'],
+        targetCategories: ['Lash Lifting', 'Lash Curling y Botox', 'Adhesivos, Higiene y Preparadores', 'Máscaras y Tratamientos', 'Herramientas, Pinzas y Equipo'],
         searchKeywords: ['lifting', 'cisteamina', 'ondulante', 'pad', 'botox', 'adhesivo'],
         featuredProductSlugs: ['jade-rizado-pestanas', 'gel-ondulante-blue', 'botox-pestanas', 'microbrush-10'],
         technicalGuideTitle: 'Ventajas del Sistema Lash Lifting Evolución con Cisteamina J. Denis',
@@ -880,7 +883,7 @@ export const CATEGORY_HUB_CONFIGS: Record<CategorySeoHubConfig['slug'], Category
         subtitle: 'La gama de tonos diseñada específicamente para fototipos latinos: Rubio, Castaño Claro, Castaño Medio (Chocolate), Castaño Oscuro, Dark Red y Negro sin oxidación rojiza indeseada.',
         metaTitle: 'Brow Henna, Rubor y Pigmentos para Cejas | J. Denis México',
         metaDescription: 'Compra Brow Henna, Rubor para Cejas, Tintura Tópica, Activador Orgánico y Pigmentos J. Denis. Tonos Chocolate, Castaño y Negro. Menudeo y mayoreo.',
-        targetCategories: ['Brow Henna', 'Pigmentos', 'Diseño de Cejas'],
+        targetCategories: ['Pigmentos y Brow Henna', 'Diseño de Cejas y Microblading', 'Brow Henna', 'Pigmentos'],
         searchKeywords: ['henna', 'pigmento', 'tintura', 'castaño', 'chocolate', 'activador', 'rubor'],
         featuredProductSlugs: ['chocolate-pigmento-cejas', 'light-brown-pigmento-cejas', 'dark-red-pigmento-cejas', 'tintura-topica-castano-medio', 'activador-henna'],
         technicalGuideTitle: 'Guía de Colorimetría: Brow Henna vs. Pigmentos y Tinturas J. Denis',
@@ -994,19 +997,83 @@ export function normalizeShopCategoryId(rawCategory: string | null | undefined):
         .replace(/[\u0300-\u036f]/g, '');
 
     if (!clean || clean === 'all' || clean === 'todos') return 'all';
-    if (clean === 'cejas' || clean.includes('diseno de cejas') || clean.includes('laminado')) return 'cejas';
     if (clean === 'lash-lifting' || clean === 'lash lifting') return 'lash-lifting';
-    if (clean === 'brow-henna' || clean === 'brow henna' || clean === 'henna') return 'brow-henna';
-    if (clean === 'pigmentos' || clean === 'tintura' || clean === 'tinturas') return 'pigmentos';
-    if (clean === 'lash-curling' || clean === 'lash curling' || clean.includes('rizado')) return 'lash-curling';
-    if (clean === 'extensiones') return 'extensiones';
-    if (clean === 'adhesivos') return 'adhesivos';
-    if (clean === 'tratamientos' || clean === 'mascaras') return 'tratamientos';
-    if (clean === 'herramientas') return 'herramientas';
-    if (clean === 'accesorios') return 'accesorios';
-    if (clean === 'higiene') return 'higiene';
-    if (clean === 'pestanas-en-tira' || clean.includes('pestanas en tira')) return 'pestanas-en-tira';
-    if (clean === 'microblading') return 'microblading';
+    if (
+        clean === 'diseno-de-cejas-y-microblading' ||
+        clean === 'cejas' ||
+        clean === 'microblading' ||
+        clean.includes('diseno de cejas') ||
+        clean.includes('laminado')
+    ) {
+        return 'diseno-de-cejas-y-microblading';
+    }
+    if (
+        clean === 'pigmentos-y-brow-henna' ||
+        clean === 'brow-henna' ||
+        clean === 'brow henna' ||
+        clean === 'henna' ||
+        clean === 'pigmentos' ||
+        clean === 'tintura' ||
+        clean === 'tinturas' ||
+        clean.includes('pigmentos y brow henna')
+    ) {
+        return 'pigmentos-y-brow-henna';
+    }
+    if (
+        clean === 'extensiones-y-pestanas' ||
+        clean === 'extensiones' ||
+        clean === 'pestanas-en-tira' ||
+        clean.includes('extensiones y pestanas') ||
+        clean.includes('pestanas en tira')
+    ) {
+        return 'extensiones-y-pestanas';
+    }
+    if (
+        clean === 'lash-curling-y-botox' ||
+        clean === 'lash-curling' ||
+        clean === 'lash curling' ||
+        clean.includes('lash curling') ||
+        clean.includes('rizado')
+    ) {
+        return 'lash-curling-y-botox';
+    }
+    if (
+        clean === 'adhesivos-higiene-y-preparadores' ||
+        clean === 'adhesivos' ||
+        clean === 'higiene' ||
+        clean.includes('adhesivos, higiene')
+    ) {
+        return 'adhesivos-higiene-y-preparadores';
+    }
+    if (
+        clean === 'mascaras-y-tratamientos' ||
+        clean === 'tratamientos' ||
+        clean === 'mascaras' ||
+        clean.includes('mascaras y tratamientos')
+    ) {
+        return 'mascaras-y-tratamientos';
+    }
+    if (
+        clean === 'herramientas-pinzas-y-equipo' ||
+        clean === 'herramientas' ||
+        clean.includes('herramientas, pinzas')
+    ) {
+        return 'herramientas-pinzas-y-equipo';
+    }
+    if (
+        clean === 'accesorios-y-consumibles' ||
+        clean === 'accesorios' ||
+        clean.includes('accesorios y consumibles')
+    ) {
+        return 'accesorios-y-consumibles';
+    }
+    if (
+        clean === 'paquetes-buen-fin' ||
+        clean.includes('paquetes buen fin') ||
+        clean.includes('buen fin')
+    ) {
+        return 'paquetes-buen-fin';
+    }
 
     return rawCategory.trim();
 }

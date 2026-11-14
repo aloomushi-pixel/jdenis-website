@@ -298,13 +298,35 @@ export async function prerenderSeoRoutes() {
     const rootHtml = baseHtml.replace('</head>', `${rootCanonicalTag}  <meta name="prerender-status" data-prerendered-root="true" content="active" />\n</head>`);
     fs.writeFileSync(indexHtmlPath, rootHtml, 'utf8');
 
-    // Fetch active products upfront so both static category hubs and product pages can include them
-    const { data: products, error: prodErr } = await supabase
+    // Fetch active products upfront so both static category hubs and product pages can include them (Catalog v2)
+    const { data: rawProducts, error: prodErr } = await supabase
         .from('products')
-        .select('id, slug, sku, name, description, price, distributor_price, category, image_url, stock')
+        .select('product_id, slug, name, description, base_price_mxn, promo_price_mxn, distributor_price_mxn, category, image_url, total_stock, seo_title, seo_description')
         .eq('is_active', true);
 
-    const activeProducts = !prodErr && products ? products : [];
+    const activeProducts = !prodErr && rawProducts
+        ? rawProducts.map((r) => {
+              const base = Number(r.base_price_mxn ?? 0);
+              const promo =
+                  r.promo_price_mxn != null && Number(r.promo_price_mxn) > 0 && Number(r.promo_price_mxn) < base
+                      ? Number(r.promo_price_mxn)
+                      : null;
+              return {
+                  id: String(r.product_id),
+                  slug: r.slug,
+                  sku: `JD-${String(r.slug || r.product_id).toUpperCase().slice(0, 32)}`,
+                  name: r.name,
+                  description: r.description,
+                  price: promo ?? base,
+                  distributor_price: r.distributor_price_mxn,
+                  category: r.category,
+                  image_url: r.image_url,
+                  stock: r.total_stock ?? 0,
+                  seo_title: r.seo_title,
+                  seo_description: r.seo_description,
+              };
+          })
+        : [];
 
     // 1. Prerender Static & Category Hub Routes (with ItemList & crawlable product links)
     for (const item of STATIC_ROUTES) {

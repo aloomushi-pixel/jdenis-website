@@ -8,18 +8,103 @@ export const supabaseAnonKey = import.meta.env?.VITE_SUPABASE_ANON_KEY || 'eyJhb
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// Type definitions for e-commerce entities
-export interface Product {
-    id: string;
+// Raw row from public.products (Catalog v2)
+export interface CatalogProductRow {
+    product_id: number;
     slug: string;
     name: string;
+    brand: string;
+    category: string;
+    raw_categories: string | null;
+    description: string;
+    description_html: string;
+    image_url: string | null;
+    gallery_images: string[] | null;
+    has_variants: boolean;
+    variant_attributes: string | null;
+    variants_count: number;
+    base_price_mxn: number;
+    promo_price_mxn: number | null;
+    distributor_price_mxn: number | null;
+    promotion_label: string | null;
+    total_stock: number;
+    is_active: boolean;
+    is_featured: boolean;
+    sort_order: number;
+    free_shipping: boolean;
+    tags: string | null;
+    seo_title: string | null;
+    seo_description: string | null;
+    benefits: string[] | null;
+    includes: string[] | null;
+    performance: string | null;
+    specifications: string[] | null;
+    video: string | null;
+    related_categories: string[] | null;
+    jdenis_store_status: string | null;
+    source_url: string | null;
+    audit_notes: string | null;
+    created_at: string | null;
+    updated_at: string | null;
+}
+
+// Raw row from public.product_variants (Catalog v2)
+export interface CatalogVariantRow {
+    variant_id: number;
+    product_id: number;
+    product_slug: string;
+    original_tiendanube_slug: string;
+    sku: string | null;
+    barcode: string | null;
+    variant_title: string;
+    option_1_name: string | null;
+    option_1_value: string | null;
+    option_2_name: string | null;
+    option_2_value: string | null;
+    option_3_name: string | null;
+    option_3_value: string | null;
+    price_mxn: number;
+    promo_price_mxn: number | null;
+    cost_mxn: number | null;
+    stock: number;
+    weight_kg: number;
+    height_cm: number;
+    width_cm: number;
+    depth_cm: number;
+    image_url: string | null;
+    variant_description: string | null;
+    is_active: boolean;
+    source_url: string | null;
+    created_at: string | null;
+    updated_at: string | null;
+}
+
+// Normalized Product entity used across storefront & admin
+export interface Product {
+    id: string;
+    product_id: number;
+    slug: string;
+    name: string;
+    brand?: string;
     description: string | null;
+    description_html?: string | null;
     price: number;
+    base_price_mxn: number;
+    promo_price_mxn: number | null;
     compare_at_price: number | null;
     image_url: string | null;
     category: string;
+    raw_categories?: string | null;
     sku: string | null;
     stock: number | null;
+    total_stock: number;
+    has_variants: boolean;
+    variant_attributes: string | null;
+    variants_count: number;
+    free_shipping?: boolean;
+    tags?: string | null;
+    seo_title?: string | null;
+    seo_description?: string | null;
     is_active: boolean | null;
     is_featured: boolean | null;
     sort_order: number | null;
@@ -36,6 +121,73 @@ export interface Product {
     original_price: number | null;
     distributor_price: number | null;
     promotion: string | null;
+}
+
+export function normalizeProductRow(row: CatalogProductRow): Product {
+    const base = Number(row.base_price_mxn ?? 0);
+    const promo =
+        row.promo_price_mxn != null && Number(row.promo_price_mxn) > 0 && Number(row.promo_price_mxn) < base
+            ? Number(row.promo_price_mxn)
+            : null;
+    const effectivePrice = promo ?? base;
+    const originalPrice = promo != null ? base : null;
+    const distPrice =
+        row.distributor_price_mxn != null && Number(row.distributor_price_mxn) > 0
+            ? Number(row.distributor_price_mxn)
+            : null;
+
+    return {
+        id: String(row.product_id),
+        product_id: row.product_id,
+        slug: row.slug,
+        name: row.name,
+        brand: row.brand,
+        description: row.description,
+        description_html: row.description_html,
+        price: effectivePrice,
+        base_price_mxn: base,
+        promo_price_mxn: promo,
+        compare_at_price: originalPrice,
+        original_price: originalPrice,
+        distributor_price: distPrice,
+        promotion: row.promotion_label,
+        image_url: row.image_url,
+        category: row.category,
+        raw_categories: row.raw_categories,
+        sku: `JD-${String(row.product_id).padStart(3, '0')}`,
+        stock: row.total_stock ?? 0,
+        total_stock: row.total_stock ?? 0,
+        has_variants: Boolean(row.has_variants),
+        variant_attributes: row.variant_attributes,
+        variants_count: row.variants_count ?? 1,
+        free_shipping: Boolean(row.free_shipping),
+        tags: row.tags,
+        seo_title: row.seo_title,
+        seo_description: row.seo_description,
+        is_active: row.is_active,
+        is_featured: row.is_featured,
+        sort_order: row.sort_order,
+        created_at: row.created_at,
+        updated_at: row.updated_at,
+        benefits: safeParseArray(row.benefits),
+        includes: safeParseArray(row.includes),
+        performance: row.performance,
+        specifications: safeParseArray(row.specifications),
+        gallery: safeParseArray(row.gallery_images),
+        video: row.video,
+        related_categories: safeParseArray(row.related_categories),
+    };
+}
+
+export function extractVariantAttributes(v: CatalogVariantRow): Record<string, string> {
+    const attrs: Record<string, string> = {};
+    if (v.option_1_name && v.option_1_value) attrs[v.option_1_name] = v.option_1_value;
+    if (v.option_2_name && v.option_2_value) attrs[v.option_2_name] = v.option_2_value;
+    if (v.option_3_name && v.option_3_value) attrs[v.option_3_name] = v.option_3_value;
+    if (Object.keys(attrs).length === 0 && v.variant_title) {
+        attrs['Opción'] = v.variant_title;
+    }
+    return attrs;
 }
 
 export interface ProductCategory {
@@ -101,12 +253,13 @@ export interface CartItem {
 // PRODUCT FUNCTIONS
 // =============================================
 
-export async function getProducts(category?: string) {
+export async function getProducts(category?: string): Promise<Product[]> {
     let query = supabase
         .from('products')
         .select('*')
         .eq('is_active', true)
-        .order('sort_order', { ascending: true });
+        .order('sort_order', { ascending: true })
+        .order('product_id', { ascending: true });
 
     if (category && category !== 'all') {
         query = query.ilike('category', `%${category}%`);
@@ -114,10 +267,10 @@ export async function getProducts(category?: string) {
 
     const { data, error } = await query;
     if (error) throw error;
-    return data;
+    return ((data || []) as CatalogProductRow[]).map(normalizeProductRow);
 }
 
-export async function getProductBySlug(slug: string) {
+export async function getProductBySlug(slug: string): Promise<Product> {
     const { data, error } = await supabase
         .from('products')
         .select('*')
@@ -126,35 +279,24 @@ export async function getProductBySlug(slug: string) {
         .single();
 
     if (error) throw error;
-    if (data) {
-        data.benefits = safeParseArray(data.benefits);
-        data.includes = safeParseArray(data.includes);
-        data.specifications = safeParseArray(data.specifications);
-        data.gallery = safeParseArray(data.gallery);
-        data.related_categories = safeParseArray(data.related_categories);
-    }
-    return data;
+    return normalizeProductRow(data as CatalogProductRow);
 }
 
-export async function getProductById(id: string) {
+export async function getProductById(id: string | number): Promise<Product> {
+    const numId = Number(id);
+    const col = Number.isFinite(numId) && String(numId) === String(id).trim() ? 'product_id' : 'slug';
+    const val = col === 'product_id' ? numId : String(id);
     const { data, error } = await supabase
         .from('products')
         .select('*')
-        .eq('id', id)
+        .eq(col, val)
         .single();
 
     if (error) throw error;
-    if (data) {
-        data.benefits = safeParseArray(data.benefits);
-        data.includes = safeParseArray(data.includes);
-        data.specifications = safeParseArray(data.specifications);
-        data.gallery = safeParseArray(data.gallery);
-        data.related_categories = safeParseArray(data.related_categories);
-    }
-    return data;
+    return normalizeProductRow(data as CatalogProductRow);
 }
 
-export async function getFeaturedProducts(limit: number = 12) {
+export async function getFeaturedProducts(limit: number = 12): Promise<Product[]> {
     const { data, error } = await supabase
         .from('products')
         .select('*')
@@ -164,98 +306,89 @@ export async function getFeaturedProducts(limit: number = 12) {
         .limit(limit);
 
     if (error) throw error;
-    return data;
-}
+    const featured = ((data || []) as CatalogProductRow[]).map(normalizeProductRow);
+    if (featured.length >= limit) return featured;
 
-/**
- * Returns a de-duplicated list of products for the shop grid.
- * For each variant group, only the parent (first) product is shown.
- */
-export async function getDisplayProducts(category?: string): Promise<Product[]> {
-    // 1. Get all active products
-    let query = supabase
+    const existingIds = new Set(featured.map(p => p.product_id));
+    const { data: fallbackData } = await supabase
         .from('products')
         .select('*')
         .eq('is_active', true)
-        .order('sort_order', { ascending: true });
+        .gt('total_stock', 0)
+        .not('image_url', 'is', null)
+        .order('sort_order', { ascending: true })
+        .order('product_id', { ascending: true })
+        .limit(limit * 2);
 
-    if (category && category !== 'all') {
-        query = query.ilike('category', `%${category}%`);
-    }
+    const extras = ((fallbackData || []) as CatalogProductRow[])
+        .filter(r => !existingIds.has(r.product_id))
+        .map(normalizeProductRow)
+        .slice(0, limit - featured.length);
 
-    const { data: products, error: productsError } = await query;
-    if (productsError) throw productsError;
-    if (!products || products.length === 0) return [];
-
-    // 2. Get variant groups + their variants to identify hidden products
-    const { data: variantGroups, error: vgError } = await supabase
-        .from('variant_groups')
-        .select('id, name');
-    if (vgError) throw vgError;
-
-    const { data: variants, error: pvError } = await supabase
-        .from('product_variants')
-        .select('group_id, product_id');
-    if (pvError) throw pvError;
-
-    // 3. Build set of hidden product IDs (non-parent variants)
-    const hiddenIds = new Set<string>();
-    if (variantGroups && variants) {
-        for (const group of variantGroups) {
-            const groupVariants = variants.filter(v => v.group_id === group.id);
-            if (groupVariants.length > 0) {
-                // First variant's product_id is the parent — hide all others
-                const parentId = groupVariants[0].product_id;
-                for (const v of groupVariants) {
-                    if (v.product_id !== parentId) {
-                        hiddenIds.add(v.product_id);
-                    }
-                }
-            }
-        }
-    }
-
-    return products.filter(p => !hiddenIds.has(p.id));
+    return [...featured, ...extras];
 }
 
 /**
- * Returns the variant group a product belongs to, with all variants and their products.
+ * Returns active parent products for the shop grid (already normalized 1 row = 1 parent product).
+ */
+export async function getDisplayProducts(category?: string): Promise<Product[]> {
+    return getProducts(category);
+}
+
+/**
+ * Returns all active variants for a given parent product_id.
+ */
+export async function getCatalogVariantsForProduct(productId: number | string): Promise<CatalogVariantRow[]> {
+    const numId = Number(productId);
+    if (!Number.isFinite(numId)) return [];
+    const { data, error } = await supabase
+        .from('product_variants')
+        .select('*')
+        .eq('product_id', numId)
+        .eq('is_active', true)
+        .order('variant_id', { ascending: true });
+    if (error) throw error;
+    return (data || []) as CatalogVariantRow[];
+}
+
+/**
+ * Returns the variant group structure for a parent product.
  */
 export async function getVariantGroupForProduct(productId: string): Promise<{
     group: { id: string; name: string; attribute_names: string[] };
     variants: { product_id: string; attributes: Record<string, string> }[];
 } | null> {
-    // Find variant entry for this product
-    const { data: variantEntry, error: veError } = await supabase
-        .from('product_variants')
-        .select('group_id')
-        .eq('product_id', productId)
-        .limit(1)
+    const numId = Number(productId);
+    if (!Number.isFinite(numId)) return null;
+
+    const { data: parent, error: pError } = await supabase
+        .from('products')
+        .select('product_id, name, has_variants, variant_attributes')
+        .eq('product_id', numId)
         .maybeSingle();
 
-    if (veError) throw veError;
-    if (!variantEntry) return null;
+    if (pError) throw pError;
+    if (!parent) return null;
 
-    // Fetch the group
-    const { data: group, error: gError } = await supabase
-        .from('variant_groups')
-        .select('*')
-        .eq('id', variantEntry.group_id)
-        .single();
+    const variants = await getCatalogVariantsForProduct(numId);
+    if (variants.length <= 1 && !parent.has_variants) return null;
 
-    if (gError) throw gError;
-
-    // Fetch all variants for the group
-    const { data: variants, error: vError } = await supabase
-        .from('product_variants')
-        .select('product_id, attributes')
-        .eq('group_id', variantEntry.group_id);
-
-    if (vError) throw vError;
+    const attrSet = new Set<string>();
+    for (const v of variants) {
+        if (v.option_1_name) attrSet.add(v.option_1_name);
+        if (v.option_2_name) attrSet.add(v.option_2_name);
+        if (v.option_3_name) attrSet.add(v.option_3_name);
+    }
+    const attributeNames = attrSet.size > 0
+        ? Array.from(attrSet)
+        : (parent.variant_attributes ? parent.variant_attributes.split('/').map((s: string) => s.trim()).filter(Boolean) : ['Opción']);
 
     return {
-        group: { id: group.id, name: group.name, attribute_names: group.attribute_names },
-        variants: variants || [],
+        group: { id: String(parent.product_id), name: parent.name, attribute_names: attributeNames },
+        variants: variants.map(v => ({
+            product_id: String(v.variant_id),
+            attributes: extractVariantAttributes(v),
+        })),
     };
 }
 
@@ -265,26 +398,28 @@ export async function getVariantGroupForProduct(productId: string): Promise<{
 export async function getRelatedProducts(currentProductId: string, categories: string[], limit: number = 4): Promise<Product[]> {
     if (!categories || categories.length === 0) return [];
 
-    // Use OR filter for related_categories overlap
     let query = supabase
         .from('products')
         .select('*')
         .eq('is_active', true)
-        .neq('id', currentProductId)
         .limit(limit);
 
-    // Filter to same top-level category for simplicity
+    const numId = Number(currentProductId);
+    if (Number.isFinite(numId)) {
+        query = query.neq('product_id', numId);
+    }
+
     if (categories.length > 0) {
         query = query.ilike('category', `%${categories[0]}%`);
     }
 
     const { data, error } = await query;
     if (error) throw error;
-    return data || [];
+    return ((data || []) as CatalogProductRow[]).map(normalizeProductRow);
 }
 
 /**
- * Returns all variant groups with their variants.
+ * Returns all variant groups built from parent products + product_variants.
  */
 export async function getAllVariantGroups(): Promise<{
     id: string;
@@ -292,30 +427,47 @@ export async function getAllVariantGroups(): Promise<{
     attribute_names: string[];
     variants: { product_id: string; attributes: Record<string, string> }[];
 }[]> {
-    const { data: groups, error: gError } = await supabase
-        .from('variant_groups')
-        .select('*');
-    if (gError) throw gError;
+    const { data: parents, error: pError } = await supabase
+        .from('products')
+        .select('product_id, name, has_variants, variant_attributes')
+        .eq('has_variants', true)
+        .order('product_id', { ascending: true });
+    if (pError) throw pError;
 
     const { data: variants, error: vError } = await supabase
         .from('product_variants')
-        .select('group_id, product_id, attributes');
+        .select('*')
+        .eq('is_active', true)
+        .order('variant_id', { ascending: true });
     if (vError) throw vError;
 
-    return (groups || []).map(g => ({
-        id: g.id,
-        name: g.name,
-        attribute_names: g.attribute_names,
-        variants: (variants || []).filter(v => v.group_id === g.id),
-    }));
+    const typedVars = (variants || []) as CatalogVariantRow[];
+    return (parents || []).map((g: any) => {
+        const gVars = typedVars.filter(v => v.product_id === g.product_id);
+        const attrSet = new Set<string>();
+        for (const v of gVars) {
+            if (v.option_1_name) attrSet.add(v.option_1_name);
+            if (v.option_2_name) attrSet.add(v.option_2_name);
+            if (v.option_3_name) attrSet.add(v.option_3_name);
+        }
+        return {
+            id: String(g.product_id),
+            name: g.name,
+            attribute_names: attrSet.size > 0 ? Array.from(attrSet) : ['Opción'],
+            variants: gVars.map(v => ({
+                product_id: String(v.variant_id),
+                attributes: extractVariantAttributes(v),
+            })),
+        };
+    });
 }
 
 /**
- * Returns the count of variants for a product's group, or 0 if standalone.
+ * Returns the count of variants for a product, or 0 if standalone.
  */
 export async function getVariantCountForProduct(productId: string): Promise<number> {
-    const group = await getVariantGroupForProduct(productId);
-    return group ? group.variants.length : 0;
+    const variants = await getCatalogVariantsForProduct(productId);
+    return variants.length > 1 ? variants.length : 0;
 }
 
 /**
@@ -328,7 +480,7 @@ export async function getUniqueCategories(): Promise<string[]> {
         .eq('is_active', true);
 
     if (error) throw error;
-    const cats = new Set((data || []).map(p => p.category));
+    const cats = new Set((data || []).map((p: any) => p.category));
     return Array.from(cats).sort();
 }
 
@@ -366,61 +518,100 @@ export async function getCategoryBySlug(slug: string) {
 export async function getLowStockProducts(threshold: number = 10) {
     const { data, error } = await supabase
         .from('products')
-        .select('id, name, slug, stock, sku')
-        .lt('stock', threshold)
+        .select('product_id, name, slug, total_stock')
+        .lt('total_stock', threshold)
         .eq('is_active', true)
-        .order('stock', { ascending: true });
+        .order('total_stock', { ascending: true });
 
     if (error) throw error;
-    return data;
+    return (data || []).map((r: any) => ({
+        id: String(r.product_id),
+        name: r.name,
+        slug: r.slug,
+        stock: r.total_stock,
+        sku: `JD-${String(r.product_id).padStart(3, '0')}`,
+    }));
 }
 
-export async function updateProductStock(productId: string, newStock: number) {
+export async function updateProductStock(productId: string | number, newStock: number) {
+    const numId = Number(productId);
     const { data, error } = await supabase
         .from('products')
-        .update({ stock: newStock, updated_at: new Date().toISOString() })
-        .eq('id', productId)
+        .update({ total_stock: newStock, updated_at: new Date().toISOString() })
+        .eq('product_id', numId)
         .select()
         .single();
 
     if (error) throw error;
-    return data;
+    return normalizeProductRow(data as CatalogProductRow);
 }
 
-export async function decrementStock(productId: string, quantity: number) {
-    // First get current stock
+export async function decrementStock(productId: string | number, quantity: number) {
+    const strId = String(productId);
+    // Support variant compound IDs like "12-v45" as well as parent product IDs
+    if (strId.includes('-v')) {
+        const [pIdStr, vIdStr] = strId.split('-v');
+        const vId = Number(vIdStr);
+        const pId = Number(pIdStr);
+        if (Number.isFinite(vId)) {
+            const { data: vRow } = await supabase.from('product_variants').select('stock').eq('variant_id', vId).maybeSingle();
+            if (vRow) {
+                await supabase
+                    .from('product_variants')
+                    .update({ stock: Math.max(0, (vRow.stock || 0) - quantity), updated_at: new Date().toISOString() })
+                    .eq('variant_id', vId);
+            }
+        }
+        if (Number.isFinite(pId)) {
+            const { data: pRow } = await supabase.from('products').select('total_stock').eq('product_id', pId).maybeSingle();
+            if (pRow) {
+                const { data } = await supabase
+                    .from('products')
+                    .update({ total_stock: Math.max(0, (pRow.total_stock || 0) - quantity), updated_at: new Date().toISOString() })
+                    .eq('product_id', pId)
+                    .select()
+                    .single();
+                return data ? normalizeProductRow(data as CatalogProductRow) : null;
+            }
+        }
+    }
+
+    const numId = Number(productId);
     const { data: product, error: fetchError } = await supabase
         .from('products')
-        .select('stock')
-        .eq('id', productId)
+        .select('total_stock')
+        .eq('product_id', numId)
         .single();
 
     if (fetchError) throw fetchError;
 
-    const currentStock = product?.stock || 0;
+    const currentStock = product?.total_stock || 0;
     const newStock = Math.max(0, currentStock - quantity);
 
     const { data, error } = await supabase
         .from('products')
-        .update({ stock: newStock, updated_at: new Date().toISOString() })
-        .eq('id', productId)
+        .update({ total_stock: newStock, updated_at: new Date().toISOString() })
+        .eq('product_id', numId)
         .select()
         .single();
 
     if (error) throw error;
-    return data;
+    return normalizeProductRow(data as CatalogProductRow);
 }
 
 export async function getInventoryValue() {
     const { data, error } = await supabase
         .from('products')
-        .select('price, stock')
+        .select('base_price_mxn, promo_price_mxn, total_stock')
         .eq('is_active', true);
 
     if (error) throw error;
 
-    const totalValue = data?.reduce((sum, product) => {
-        return sum + (product.price * (product.stock || 0));
+    const totalValue = data?.reduce((sum, p: any) => {
+        const price = p.promo_price_mxn != null && p.promo_price_mxn > 0 && p.promo_price_mxn < p.base_price_mxn
+            ? Number(p.promo_price_mxn)
+            : Number(p.base_price_mxn || 0);
+        return sum + (price * (p.total_stock || 0));
     }, 0) || 0;
 
     return { totalValue, productCount: data?.length || 0 };
@@ -1421,35 +1612,49 @@ export interface ProductVariantGroup {
 }
 
 export async function getProductVariantGroups(): Promise<ProductVariantGroup[]> {
-    const { data, error } = await supabase
-        .from('product_variants')
-        .select('*')
-        .order('parent_name', { ascending: true });
-    if (error) throw error;
-    return (data || []) as ProductVariantGroup[];
+    const groups = await getAllVariantGroups();
+    return groups.map(g => ({
+        id: g.id,
+        parent_id: g.id,
+        parent_name: g.name,
+        attribute_names: g.attribute_names,
+        variants: g.variants.map(v => ({ productId: v.product_id, attributes: v.attributes })),
+        is_active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+    }));
 }
 
 export async function createProductVariantGroup(
     groupData: Omit<ProductVariantGroup, 'id' | 'created_at' | 'updated_at'>
 ): Promise<ProductVariantGroup> {
-    const { data, error } = await supabase.from('product_variants').insert([groupData]).select().single();
-    if (error) throw error;
-    return data as ProductVariantGroup;
+    return {
+        ...groupData,
+        id: groupData.parent_id,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+    };
 }
 
 export async function updateProductVariantGroup(
     id: string, updates: Partial<ProductVariantGroup>
 ): Promise<ProductVariantGroup> {
-    const { data, error } = await supabase
-        .from('product_variants')
-        .update({ ...updates, updated_at: new Date().toISOString() })
-        .eq('id', id).select().single();
-    if (error) throw error;
-    return data as ProductVariantGroup;
+    return {
+        id,
+        parent_id: id,
+        parent_name: updates.parent_name || '',
+        attribute_names: updates.attribute_names || [],
+        variants: updates.variants || [],
+        is_active: updates.is_active ?? true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+    };
 }
 
 export async function deleteProductVariantGroup(id: string) {
-    const { error } = await supabase.from('product_variants').delete().eq('id', id);
+    const numId = Number(id);
+    if (!Number.isFinite(numId)) return;
+    const { error } = await supabase.from('product_variants').delete().eq('product_id', numId);
     if (error) throw error;
 }
 
@@ -1536,24 +1741,29 @@ export interface ProductOverride {
     is_active: boolean | null;
 }
 
-/**
- * Fetches all product overrides from Supabase.
- * These are merged with local products.ts data to provide the final product list.
- */
 export async function getAllProductOverrides(): Promise<ProductOverride[]> {
     const { data, error } = await supabase
         .from('products')
-        .select('slug, name, price, compare_at_price, is_featured, stock, category, is_active')
+        .select('slug, name, base_price_mxn, promo_price_mxn, is_featured, total_stock, category, is_active')
         .order('name', { ascending: true });
 
     if (error) throw error;
-    return (data || []) as ProductOverride[];
+    return (data || []).map((r: any) => ({
+        slug: r.slug,
+        name: r.name,
+        price: r.promo_price_mxn != null && r.promo_price_mxn > 0 && r.promo_price_mxn < r.base_price_mxn
+            ? Number(r.promo_price_mxn)
+            : Number(r.base_price_mxn),
+        compare_at_price: r.promo_price_mxn != null && r.promo_price_mxn > 0 && r.promo_price_mxn < r.base_price_mxn
+            ? Number(r.base_price_mxn)
+            : null,
+        is_featured: r.is_featured,
+        stock: r.total_stock,
+        category: r.category,
+        is_active: r.is_active,
+    }));
 }
 
-/**
- * Updates a product's editable fields in Supabase by slug.
- * Used by ProductEditor to persist changes.
- */
 export async function updateProductCatalog(
     slug: string,
     updates: Partial<{
@@ -1565,15 +1775,42 @@ export async function updateProductCatalog(
         category: string;
     }>
 ): Promise<ProductOverride> {
+    const dbUpdates: Record<string, unknown> = { updated_at: new Date().toISOString() };
+    if (updates.name !== undefined) dbUpdates.name = updates.name;
+    if (updates.category !== undefined) dbUpdates.category = updates.category;
+    if (updates.is_featured !== undefined) dbUpdates.is_featured = updates.is_featured;
+    if (updates.stock !== undefined) dbUpdates.total_stock = updates.stock;
+    if (updates.compare_at_price != null && updates.price != null && updates.price < updates.compare_at_price) {
+        dbUpdates.base_price_mxn = updates.compare_at_price;
+        dbUpdates.promo_price_mxn = updates.price;
+    } else if (updates.price !== undefined) {
+        dbUpdates.base_price_mxn = updates.price;
+        dbUpdates.promo_price_mxn = null;
+    }
+
     const { data, error } = await supabase
         .from('products')
-        .update({ ...updates, updated_at: new Date().toISOString() })
+        .update(dbUpdates)
         .eq('slug', slug)
-        .select('slug, name, price, compare_at_price, is_featured, stock, category, is_active')
+        .select('slug, name, base_price_mxn, promo_price_mxn, is_featured, total_stock, category, is_active')
         .single();
 
     if (error) throw error;
-    return data as ProductOverride;
+    const r = data as any;
+    return {
+        slug: r.slug,
+        name: r.name,
+        price: r.promo_price_mxn != null && r.promo_price_mxn > 0 && r.promo_price_mxn < r.base_price_mxn
+            ? Number(r.promo_price_mxn)
+            : Number(r.base_price_mxn),
+        compare_at_price: r.promo_price_mxn != null && r.promo_price_mxn > 0 && r.promo_price_mxn < r.base_price_mxn
+            ? Number(r.base_price_mxn)
+            : null,
+        is_featured: r.is_featured,
+        stock: r.total_stock,
+        category: r.category,
+        is_active: r.is_active,
+    };
 }
 
 // =============================================
@@ -1975,8 +2212,8 @@ export async function getRecentOrdersCount() {
 export async function getLowStockCount() {
     const { data } = await supabase
         .from('products')
-        .select('id', { count: 'exact' })
-        .lt('stock', 10)
+        .select('product_id', { count: 'exact' })
+        .lt('total_stock', 10)
         .eq('is_active', true);
     return data?.length || 0;
 }

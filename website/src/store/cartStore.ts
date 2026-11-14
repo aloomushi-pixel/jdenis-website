@@ -27,6 +27,8 @@ export interface Product {
     category: string;
     description?: string;
     stock?: number;
+    hasVariants?: boolean;
+    variantsCount?: number;
     benefits?: string[];
     includes?: string[];
     performance?: string;
