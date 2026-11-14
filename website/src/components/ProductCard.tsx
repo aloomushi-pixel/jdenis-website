@@ -56,6 +56,12 @@ export default function ProductCard({ product, index = 0, variantCount = 0 }: Pr
                         height={400}
                         loading="lazy"
                         decoding="async"
+                        referrerPolicy="no-referrer"
+                        onError={(e) => {
+                            if (!e.currentTarget.src.endsWith('/placeholder.webp')) {
+                                e.currentTarget.src = '/placeholder.webp';
+                            }
+                        }}
                         className="w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
                     />
 

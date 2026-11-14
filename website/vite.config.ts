@@ -43,6 +43,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['logo-new.jpeg', 'hero-products.jpg', 'robots.txt', 'llms.txt'],
       workbox: {
+        skipWaiting: true,
+        clientsClaim: true,
+        cleanupOutdatedCaches: true,
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5 MiB
         navigateFallbackDenylist: [/^\/__version\.json$/, /^\/sitemap\.xml$/, /^\/sitemap-productos\.xml$/, /^\/google-merchant-feed\.xml$/, /^\/robots\.txt$/, /^\/llms\.txt$/],
         runtimeCaching: [
@@ -51,13 +54,14 @@ export default defineConfig({
             handler: 'NetworkOnly',
           },
           {
-            urlPattern: /^https:\/\/zdciwzeokkrwcxvsgusc\.supabase\.co\/rest\/v1\/products/,
-            handler: 'StaleWhileRevalidate',
+            urlPattern: /^https:\/\/zdciwzeokkrwcxvsgusc\.supabase\.co\/rest\/v1\/(products|product_variants|categories)/,
+            handler: 'NetworkFirst',
             options: {
-              cacheName: 'supabase-products-cache',
+              cacheName: 'supabase-catalog-live-v3',
+              networkTimeoutSeconds: 4,
               expiration: {
                 maxEntries: 100,
-                maxAgeSeconds: 60 * 30, // 30 minutes
+                maxAgeSeconds: 60 * 5, // 5 minutes offline fallback only
               },
             },
           },

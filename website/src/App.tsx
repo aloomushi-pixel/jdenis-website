@@ -16,6 +16,8 @@ import CategorySeoHub from './pages/CategorySeoHub';
 import Checkout from './pages/Checkout';
 import PaymentResult from './pages/PaymentResult';
 import { useAuthStore } from './store/authStore';
+import { invalidateProductsCache } from './hooks/useProducts';
+import { invalidateVariantsCache } from './hooks/useVariants';
 
 // Lazy-loaded secondary public routes
 const About = lazy(() => import('./pages/About'));
@@ -155,6 +157,27 @@ function App() {
   useEffect(() => {
     checkSession();
   }, [checkSession]);
+
+  // Purge legacy stale Workbox Supabase cache & check Service Worker updates
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if ('caches' in window) {
+      caches.delete('supabase-products-cache').then((deleted) => {
+        if (deleted) {
+          invalidateProductsCache();
+          invalidateVariantsCache();
+          window.dispatchEvent(new Event('jdenis:catalog-cache-purged'));
+        }
+      }).catch(() => {});
+    }
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then((regs) => {
+        regs.forEach((reg) => {
+          reg.update().catch(() => {});
+        });
+      }).catch(() => {});
+    }
+  }, []);
 
   // Show PWA banner after engagement (4s for logged-in users, 25s for visitors) — max once per week
   useEffect(() => {

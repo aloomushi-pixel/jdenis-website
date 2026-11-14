@@ -1,8 +1,8 @@
 {
-  "commitSha": "0b46252 (0b46252ebf42ef5246fc568f4b4068582253757b)",
-  "shortSha": "0b46252",
-  "fullSha": "0b46252ebf42ef5246fc568f4b4068582253757b",
-  "commitMessage": "feat(catalog): migrate to normalized J. Denis catalog v2 (215 products, 524 variants, 10 categories)",
-  "builtAt": "2026-11-14T02:58:26.295Z",
+  "commitSha": "61ed411 (61ed411c7f41e193544e517803fb572c3c34fd67)",
+  "shortSha": "61ed411",
+  "fullSha": "61ed411c7f41e193544e517803fb572c3c34fd67",
+  "commitMessage": "fix(catalog): populate verified 1024x1024 official CDN images & galleries for 100% of active products and variants",
+  "builtAt": "2026-11-14T03:09:04.817Z",
   "environment": "production"
 }

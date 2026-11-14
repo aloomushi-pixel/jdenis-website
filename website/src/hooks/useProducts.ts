@@ -95,8 +95,16 @@ export function toDisplayProduct(p: SupabaseProduct, userRole: string | undefine
     };
 }
 
-const PRODUCTS_CACHE_KEY = 'jdennis_products_raw_cache_v2';
-const PRODUCTS_CACHE_TTL_MS = 2 * 60 * 1000;
+const PRODUCTS_CACHE_KEY = 'jdennis_products_raw_cache_v3';
+const PRODUCTS_CACHE_TTL_MS = 60 * 1000;
+
+if (typeof window !== 'undefined') {
+    try {
+        sessionStorage.removeItem('jdennis_products_raw_cache_v2');
+    } catch {
+        // ignore
+    }
+}
 
 let memoryRawProducts: SupabaseProduct[] | null = null;
 let memoryFetchedAt = 0;
@@ -211,6 +219,11 @@ export function useProducts() {
 
     useEffect(() => {
         fetchProducts();
+        const onCachePurged = () => {
+            fetchProducts(true);
+        };
+        window.addEventListener('jdenis:catalog-cache-purged', onCachePurged);
+        return () => window.removeEventListener('jdenis:catalog-cache-purged', onCachePurged);
     }, [fetchProducts]);
 
     /**

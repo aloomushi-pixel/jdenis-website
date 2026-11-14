@@ -80,8 +80,16 @@ function normalizeVariant(row: CatalogVariantRow): NormalizedVariant {
     };
 }
 
-const VARIANTS_CACHE_KEY = 'jdennis_variants_cache_v2';
-const VARIANTS_CACHE_TTL_MS = 2 * 60 * 1000;
+const VARIANTS_CACHE_KEY = 'jdennis_variants_cache_v3';
+const VARIANTS_CACHE_TTL_MS = 60 * 1000;
+
+if (typeof window !== 'undefined') {
+    try {
+        sessionStorage.removeItem('jdennis_variants_cache_v2');
+    } catch {
+        // ignore
+    }
+}
 
 let memoryVariants: NormalizedVariant[] | null = null;
 let memoryVariantsAt = 0;
