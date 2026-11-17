@@ -38,12 +38,14 @@ export default function ReviewModeration() {
         setActionLoading(reviewId);
         try {
             await moderateReview(reviewId, status);
-            // Update local state
-            setReviews(prev => prev.map(r =>
-                r.id === reviewId ? { ...r, status } : r
-            ));
-        } catch (err) {
+            setReviews(prev =>
+                filter === 'all'
+                    ? prev.map(r => (r.id === reviewId ? { ...r, status } : r))
+                    : prev.filter(r => r.id !== reviewId)
+            );
+        } catch (err: any) {
             console.error('Error moderating review:', err);
+            alert(err?.message || 'Error al moderar reseña');
         } finally {
             setActionLoading(null);
         }

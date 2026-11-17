@@ -234,8 +234,6 @@ export async function getUsersPaginated(
     let query = supabase
         .from('users')
         .select('*', { count: 'exact' })
-        .not('email', 'ilike', '%test%') // Exclude test accounts
-        .not('role', 'in', '("FABRICA","ALMACEN_MATERIA_PRIMA","TRANSPORTISTA")') // Ocultar roles no habilitados
         .order('created_at', { ascending: false });
 
     if (filterRole) {
@@ -338,13 +336,16 @@ export async function deleteResource(id: string) {
 export async function getResourceMovements(resourceId?: string, limit = 50) {
     let query = supabase
         .from('resource_movements')
-        .select('*, resources(id, title, format), users:performed_by(id, email, fullName)')
+        .select('*, resources(id, title, format), users:performed_by(id, email, full_name)')
         .order('created_at', { ascending: false })
         .limit(limit);
     if (resourceId) query = query.eq('resource_id', resourceId);
     const { data, error } = await query;
     if (error) throw error;
-    return data as ResourceMovement[];
+    return (data || []).map((row: any) => ({
+        ...row,
+        users: row.users ? { ...row.users, fullName: row.users.full_name || row.users.email } : undefined,
+    })) as ResourceMovement[];
 }
 
 export async function createResourceMovement(movement: {
@@ -498,12 +499,15 @@ export async function updatePurchaseOrderStatus(id: string, status: string) {
 export async function getSalesOrders(status?: string) {
     let query = supabase
         .from('sales_orders')
-        .select('*, users:client_id(id, email, fullName)')
+        .select('*, users:client_id(id, email, full_name)')
         .order('created_at', { ascending: false });
     if (status) query = query.eq('status', status);
     const { data, error } = await query;
     if (error) throw error;
-    return data as SalesOrder[];
+    return (data || []).map((row: any) => ({
+        ...row,
+        users: row.users ? { ...row.users, fullName: row.users.full_name || row.users.email } : undefined,
+    })) as SalesOrder[];
 }
 
 export async function createSalesOrder(order: {
@@ -551,12 +555,15 @@ export async function updateSalesOrderStatus(id: string, status: string, changed
 export async function getTransportAssignments(driverId?: string) {
     let query = supabase
         .from('transport_assignments')
-        .select('*, sales_orders(id, order_number, status), users:driver_id(id, email, fullName)')
+        .select('*, sales_orders(id, order_number, status), users:driver_id(id, email, full_name)')
         .order('scheduled_date', { ascending: false });
     if (driverId) query = query.eq('driver_id', driverId);
     const { data, error } = await query;
     if (error) throw error;
-    return data as TransportAssignment[];
+    return (data || []).map((row: any) => ({
+        ...row,
+        users: row.users ? { ...row.users, fullName: row.users.full_name || row.users.email } : undefined,
+    })) as TransportAssignment[];
 }
 
 export async function updateTransportAssignment(id: string, updates: Partial<TransportAssignment>) {
@@ -623,14 +630,17 @@ export async function updatePackagingStatus(id: string, status: string, extra?: 
 export async function getEventLog(limit = 50, filters?: { event_type?: string; module?: string }) {
     let query = supabase
         .from('event_log')
-        .select('*, users:performed_by(id, email, fullName)')
+        .select('*, users:performed_by(id, email, full_name)')
         .order('created_at', { ascending: false })
         .limit(limit);
     if (filters?.event_type) query = query.eq('event_type', filters.event_type);
     if (filters?.module) query = query.eq('module', filters.module);
     const { data, error } = await query;
     if (error) throw error;
-    return data as EventLogEntry[];
+    return (data || []).map((row: any) => ({
+        ...row,
+        users: row.users ? { ...row.users, fullName: row.users.full_name || row.users.email } : undefined,
+    })) as EventLogEntry[];
 }
 
 export async function logEvent(entry: {
@@ -698,7 +708,7 @@ export async function getQuotations(filters?: { customerId?: string; status?: Qu
     const { data, error } = await query;
     if (error) {
         console.error('Error fetching quotations:', error);
-        return [];
+        throw error;
     }
     return data as Quotation[];
 }
@@ -754,16 +764,31 @@ export async function getQuotationItems(quotationId: string) {
     if (itemsError) throw itemsError;
     if (!itemsData || itemsData.length === 0) return [];
 
-    // Fetch product details to enrich the quotation items
+    // Fetch product & variant details to enrich the quotation items
     const numericIds = itemsData
         .map((item: any) => Number(String(item.resource_id).split('-v')[0]))
         .filter((n: number) => Number.isFinite(n));
-    const { data: productsData, error: productsError } = numericIds.length > 0
-        ? await supabase
-            .from('products')
-            .select('product_id, name, image_url, base_price_mxn, promo_price_mxn')
-            .in('product_id', numericIds)
-        : { data: [], error: null };
+    const variantIds = itemsData
+        .map((item: any) => {
+            const parts = String(item.resource_id).split('-v');
+            return parts.length > 1 ? Number(parts[1]) : NaN;
+        })
+        .filter((n: number) => Number.isFinite(n));
+
+    const [{ data: productsData, error: productsError }, { data: variantsData }] = await Promise.all([
+        numericIds.length > 0
+            ? supabase
+                .from('products')
+                .select('product_id, name, image_url, base_price_mxn, promo_price_mxn')
+                .in('product_id', numericIds)
+            : Promise.resolve({ data: [], error: null }),
+        variantIds.length > 0
+            ? supabase
+                .from('product_variants')
+                .select('variant_id, variant_title, image_url, price_mxn, promo_price_mxn')
+                .in('variant_id', variantIds)
+            : Promise.resolve({ data: [], error: null }),
+    ]);
 
     if (productsError) {
         console.error("Error fetching products for quotation items:", productsError);
@@ -771,16 +796,26 @@ export async function getQuotationItems(quotationId: string) {
     }
 
     const productsMap = new Map((productsData || []).map((p: any) => [String(p.product_id), p]));
+    const variantsMap = new Map((variantsData || []).map((v: any) => [String(v.variant_id), v]));
 
-    // Merge product data into quotation items for the UI
+    // Merge product + variant data into quotation items for the UI
     const mergedItems = itemsData.map((item: any) => {
-        const key = String(item.resource_id).split('-v')[0];
+        const parts = String(item.resource_id).split('-v');
+        const key = parts[0];
+        const varId = parts[1];
         const product = productsMap.get(key) as any;
-        const prodPrice = product?.promo_price_mxn ?? product?.base_price_mxn ?? 0;
+        const variant = varId ? (variantsMap.get(varId) as any) : null;
+        const prodPrice = variant
+            ? (variant.promo_price_mxn ?? variant.price_mxn ?? 0)
+            : (product?.promo_price_mxn ?? product?.base_price_mxn ?? 0);
+        const baseName = product?.name || 'Producto Desconocido';
+        const fullName = variant?.variant_title && variant.variant_title !== 'Única'
+            ? `${baseName} (${variant.variant_title})`
+            : baseName;
         return {
             ...item,
-            name: product?.name || 'Producto Desconocido',
-            image: product?.image_url || null,
+            name: fullName,
+            image: variant?.image_url || product?.image_url || null,
             price: item.unit_price || prodPrice,
         };
     });

@@ -726,48 +726,49 @@ export interface SalesMetrics {
 export async function getSalesMetrics(): Promise<SalesMetrics> {
     const { data, error } = await supabase
         .from('website_orders')
-        .select('total');
+        .select('total, status, payment_status')
+        .not('status', 'in', '("cancelled","failed")');
 
     if (error) throw error;
 
-    const totalOrders = data?.length || 0;
-    const totalRevenue = data?.reduce((sum, order) => sum + order.total, 0) || 0;
+    const validOrders = (data || []).filter((o: any) => o.payment_status !== 'rejected');
+    const totalOrders = validOrders.length;
+    const totalRevenue = validOrders.reduce((sum: number, order: any) => sum + Number(order.total || 0), 0);
     const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
 
     return { totalOrders, totalRevenue, averageOrderValue };
 }
 
 export async function getTopSellingProducts(limit: number = 5) {
-    // Get order items with quantities
-    const { data, error } = await supabase
-        .from('order_items')
-        .select(`
-            product_id,
-            product_name,
-            quantity,
-            total
-        `);
+    const { data: orders, error } = await supabase
+        .from('website_orders')
+        .select('items, status, payment_status')
+        .not('status', 'in', '("cancelled","failed")');
 
     if (error) throw error;
 
-    // Aggregate by product
-    const productSales = data?.reduce((acc, item) => {
-        const key = item.product_id;
-        if (!acc[key]) {
-            acc[key] = {
-                product_id: item.product_id,
-                product_name: item.product_name,
-                units_sold: 0,
-                revenue: 0
-            };
+    const productSales: Record<string, { product_id: string; product_name: string; units_sold: number; revenue: number }> = {};
+    for (const order of orders || []) {
+        if ((order as any).payment_status === 'rejected') continue;
+        const items = Array.isArray((order as any).items) ? (order as any).items : [];
+        for (const item of items) {
+            const key = String(item.id || item.product_id || item.name || 'item');
+            const qty = Number(item.quantity || 1);
+            const unitPrice = Number(item.price || item.unit_price || 0);
+            if (!productSales[key]) {
+                productSales[key] = {
+                    product_id: key,
+                    product_name: String(item.name || item.product_name || 'Producto'),
+                    units_sold: 0,
+                    revenue: 0,
+                };
+            }
+            productSales[key].units_sold += qty;
+            productSales[key].revenue += Number(item.total ?? unitPrice * qty);
         }
-        acc[key].units_sold += item.quantity;
-        acc[key].revenue += item.total;
-        return acc;
-    }, {} as Record<string, { product_id: string; product_name: string; units_sold: number; revenue: number }>);
+    }
 
-    // Sort and return top N
-    return Object.values(productSales || {})
+    return Object.values(productSales)
         .sort((a, b) => b.units_sold - a.units_sold)
         .slice(0, limit);
 }
@@ -999,10 +1000,24 @@ export async function getWebsiteOrders(status?: string): Promise<WebsiteOrder[]>
     return data as WebsiteOrder[];
 }
 
-export async function updateWebsiteOrderStatus(orderId: string, status: string): Promise<WebsiteOrder> {
+export async function updateWebsiteOrderStatus(
+    orderId: string,
+    status: string,
+    extra?: { tracking_number?: string }
+): Promise<WebsiteOrder> {
+    const updates: Record<string, unknown> = {
+        status,
+        updated_at: new Date().toISOString(),
+    };
+    if (extra?.tracking_number !== undefined) {
+        updates.tracking_number = extra.tracking_number;
+    }
+    if (status === 'shipped') {
+        updates.shipped_at = new Date().toISOString();
+    }
     const { data, error } = await supabase
         .from('website_orders')
-        .update({ status })
+        .update(updates)
         .eq('id', orderId)
         .select()
         .single();
@@ -1183,7 +1198,7 @@ export async function updateCourse(id: string, updates: Partial<AcademyCourse>):
 }
 
 export async function deleteCourse(id: string) {
-    const { error } = await supabase.from('academy_courses').update({ active: false, updated_at: new Date().toISOString() }).eq('id', id);
+    const { error } = await supabase.from('academy_courses').delete().eq('id', id);
     if (error) throw error;
 }
 
@@ -1225,7 +1240,7 @@ export async function updateEvent(id: string, updates: Partial<AcademyEvent>): P
 }
 
 export async function deleteEvent(id: string) {
-    const { error } = await supabase.from('academy_events').update({ active: false, updated_at: new Date().toISOString() }).eq('id', id);
+    const { error } = await supabase.from('academy_events').delete().eq('id', id);
     if (error) throw error;
 }
 
@@ -1280,7 +1295,11 @@ export function safeParseArray(val: any) {
 }
 
 export async function getBlogPosts(publishedOnly = true): Promise<BlogPost[]> {
-    let query = supabase.from('blog_posts').select('*').order('published_at', { ascending: false, nullsFirst: false });
+    let query = supabase
+        .from('blog_posts')
+        .select('*')
+        .or('post_type.eq.article,post_type.is.null')
+        .order('published_at', { ascending: false, nullsFirst: false });
     if (publishedOnly) query = query.eq('published', true);
     const { data, error } = await query;
     if (error) throw error;
@@ -1302,7 +1321,8 @@ export async function getBlogPost(slug: string): Promise<BlogPost> {
 }
 
 export async function createBlogPost(postData: Omit<BlogPost, 'id' | 'created_at' | 'updated_at'>): Promise<BlogPost> {
-    const { data, error } = await supabase.from('blog_posts').insert([postData]).select().single();
+    const payload = { ...postData, post_type: postData.post_type || 'article' };
+    const { data, error } = await supabase.from('blog_posts').insert([payload]).select().single();
     if (error) throw error;
     return data as BlogPost;
 }
@@ -1742,13 +1762,13 @@ export async function getCartPromoConfigs(): Promise<CartPromoConfig[]> {
     return (data || []) as CartPromoConfig[];
 }
 
-/** Fetch only the first active config (used by the storefront hook) */
+/** Fetch only the latest active config (used by the storefront hook) */
 export async function getActiveCartPromoConfig(): Promise<CartPromoConfig | null> {
     const { data, error } = await supabase
         .from('cart_promo_config')
         .select('*')
         .eq('is_active', true)
-        .order('created_at', { ascending: true })
+        .order('updated_at', { ascending: false })
         .limit(1)
         .maybeSingle();
     if (error) throw error;
@@ -1758,6 +1778,9 @@ export async function getActiveCartPromoConfig(): Promise<CartPromoConfig | null
 export async function createCartPromoConfig(
     cfg: Omit<CartPromoConfig, 'id' | 'created_at' | 'updated_at'>
 ): Promise<CartPromoConfig> {
+    if (cfg.is_active) {
+        await supabase.from('cart_promo_config').update({ is_active: false }).eq('is_active', true);
+    }
     const { data, error } = await supabase.from('cart_promo_config').insert([cfg]).select().single();
     if (error) throw error;
     return data as CartPromoConfig;
@@ -1766,6 +1789,9 @@ export async function createCartPromoConfig(
 export async function updateCartPromoConfig(
     id: string, updates: Partial<CartPromoConfig>
 ): Promise<CartPromoConfig> {
+    if (updates.is_active === true) {
+        await supabase.from('cart_promo_config').update({ is_active: false }).neq('id', id);
+    }
     const { data, error } = await supabase
         .from('cart_promo_config')
         .update({ ...updates, updated_at: new Date().toISOString() })
@@ -1870,6 +1896,34 @@ export async function updateProductCatalog(
 // WAREHOUSE QUEUE FUNCTIONS (Almacén PF)
 // =============================================
 
+function hydrateWarehouseOrderItems(rows: any[]): (OrderB2B & { order_items: OrderItem[] })[] {
+    return (rows || []).map((order: any) => {
+        let lineItems: OrderItem[] = Array.isArray(order.order_items) ? order.order_items : [];
+        if (lineItems.length === 0 && Array.isArray(order.items)) {
+            lineItems = order.items.map((it: any, idx: number) => {
+                const qty = Number(it.quantity || 1);
+                const unitPrice = Number(it.price || it.unit_price || 0);
+                return {
+                    id: String(it.id || it.product_id || `${order.id}-${idx}`),
+                    order_id: order.id,
+                    product_id: String(it.id || it.product_id || ''),
+                    product_name: String(it.variant ? `${it.name || it.product_name} (${it.variant})` : (it.name || it.product_name || 'Producto')),
+                    quantity: qty,
+                    unit_price: unitPrice,
+                    total: Number(it.total ?? unitPrice * qty),
+                    created_at: order.created_at,
+                } as OrderItem;
+            });
+        }
+        return {
+            ...order,
+            shipping: Number(order.shipping ?? order.shipping_cost ?? 0),
+            tax: Number(order.tax ?? 0),
+            order_items: lineItems,
+        };
+    });
+}
+
 export async function getShippingQueue(date: string) {
     const { data, error } = await supabase
         .from('website_orders')
@@ -1877,27 +1931,29 @@ export async function getShippingQueue(date: string) {
             *,
             order_items:order_items(id, product_id, product_name, quantity, unit_price, total)
         `)
-        .eq('queued_for_date', date)
-        .in('status', ['confirmed', 'processing', 'pending'])
+        .or(`queued_for_date.eq.${date},queued_for_date.is.null`)
+        .in('status', ['completed', 'confirmed', 'processing', 'pending'])
         .order('created_at', { ascending: true });
 
     if (error) throw error;
-    return data as (OrderB2B & { order_items: OrderItem[] })[];
+    return hydrateWarehouseOrderItems(data || []);
 }
 
 export async function getCompletedShipments(date: string) {
+    const startIso = `${date}T00:00:00.000Z`;
+    const endIso = `${date}T23:59:59.999Z`;
     const { data, error } = await supabase
         .from('website_orders')
         .select(`
             *,
             order_items:order_items(id, product_id, product_name, quantity, unit_price, total)
         `)
-        .eq('queued_for_date', date)
         .eq('status', 'shipped')
+        .or(`queued_for_date.eq.${date},and(shipped_at.gte.${startIso},shipped_at.lte.${endIso})`)
         .order('shipped_at', { ascending: false });
 
     if (error) throw error;
-    return data as (OrderB2B & { order_items: OrderItem[] })[];
+    return hydrateWarehouseOrderItems(data || []);
 }
 
 export async function updatePackedItems(orderId: string, packedItems: Record<string, boolean>) {
@@ -2080,11 +2136,11 @@ export async function updateCoupon(
     return data as Coupon;
 }
 
-/** Admin: soft-delete a coupon (sets is_active to false) */
+/** Admin: delete a coupon */
 export async function deleteCoupon(id: string): Promise<void> {
     const { error } = await supabase
         .from('coupons')
-        .update({ is_active: false })
+        .delete()
         .eq('id', id);
 
     if (error) throw error;
@@ -2205,10 +2261,10 @@ export async function getActivePromotions(): Promise<ActivePromotion[]> {
 /** Fetch deliveries assigned to a specific driver */
 export async function getTransportistaDeliveries(userId: string) {
     const { data, error } = await supabase
-        .from('deliveries')
-        .select('*')
+        .from('transport_assignments')
+        .select('*, sales_orders(id, order_number, status)')
         .eq('driver_id', userId)
-        .order('created_at', { ascending: false })
+        .order('scheduled_date', { ascending: false })
         .limit(50);
     if (error) { console.error('Error fetching deliveries:', error); return []; }
     return data || [];
@@ -2216,37 +2272,39 @@ export async function getTransportistaDeliveries(userId: string) {
 
 /** Get counts for warehouse queue summary */
 export async function getWarehouseStats() {
-    const { data: pending } = await supabase
-        .from('sales_orders')
-        .select('id', { count: 'exact' })
-        .in('status', ['PENDING', 'PROCESSING', 'PENDIENTE', 'CONFIRMADA', 'EN_PRODUCCION']);
-
-    const { data: dispatched } = await supabase
-        .from('sales_orders')
-        .select('id', { count: 'exact' })
-        .in('status', ['DISPATCHED', 'ENVIADA', 'ENTREGADA']);
+    const [{ count: pendingCount }, { count: dispatchedCount }] = await Promise.all([
+        supabase
+            .from('sales_orders')
+            .select('id', { count: 'exact', head: true })
+            .in('status', ['PENDING', 'PROCESSING', 'PENDIENTE', 'CONFIRMADA', 'EN_PRODUCCION']),
+        supabase
+            .from('sales_orders')
+            .select('id', { count: 'exact', head: true })
+            .in('status', ['DISPATCHED', 'ENVIADA', 'ENTREGADA']),
+    ]);
 
     return {
-        pendingOrders: pending?.length || 0,
-        dispatchedOrders: dispatched?.length || 0,
+        pendingOrders: pendingCount || 0,
+        dispatchedOrders: dispatchedCount || 0,
     };
 }
 
 /** Get production batch summary */
 export async function getProductionStats() {
-    const { data: inProgress } = await supabase
-        .from('production_orders')
-        .select('id', { count: 'exact' })
-        .in('status', ['IN_PROGRESS', 'EN_PROCESO', 'PENDIENTE']);
-
-    const { data: completed } = await supabase
-        .from('production_orders')
-        .select('id', { count: 'exact' })
-        .in('status', ['COMPLETED', 'COMPLETADA']);
+    const [{ count: inProgressCount }, { count: completedCount }] = await Promise.all([
+        supabase
+            .from('production_orders')
+            .select('id', { count: 'exact', head: true })
+            .in('status', ['IN_PROGRESS', 'EN_PROCESO', 'PENDIENTE']),
+        supabase
+            .from('production_orders')
+            .select('id', { count: 'exact', head: true })
+            .in('status', ['COMPLETED', 'COMPLETADA']),
+    ]);
 
     return {
-        inProgress: inProgress?.length || 0,
-        completed: completed?.length || 0,
+        inProgress: inProgressCount || 0,
+        completed: completedCount || 0,
     };
 }
 
@@ -2254,30 +2312,31 @@ export async function getProductionStats() {
 export async function getRecentOrdersCount() {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    const { data } = await supabase
+    const { count } = await supabase
         .from('website_orders')
-        .select('id', { count: 'exact' })
+        .select('id', { count: 'exact', head: true })
+        .not('status', 'in', '("cancelled","failed")')
         .gte('created_at', thirtyDaysAgo.toISOString());
-    return data?.length || 0;
+    return count || 0;
 }
 
 /** Get low stock products count */
 export async function getLowStockCount() {
-    const { data } = await supabase
+    const { count } = await supabase
         .from('products')
-        .select('product_id', { count: 'exact' })
+        .select('product_id', { count: 'exact', head: true })
         .lt('total_stock', 10)
         .eq('is_active', true);
-    return data?.length || 0;
+    return count || 0;
 }
 
 /** Get distributor applications count */
 export async function getPendingDistributorCount() {
-    const { data } = await supabase
+    const { count } = await supabase
         .from('distributor_applications')
-        .select('id', { count: 'exact' })
+        .select('id', { count: 'exact', head: true })
         .eq('status', 'pending');
-    return data?.length || 0;
+    return count || 0;
 }
 
 /** Get vehicle status summary */

@@ -6,10 +6,10 @@ import { supabase } from '../../lib/supabase';
 const ROLES: { value: UserRole; label: string; color: string; badge: string }[] = [
     { value: 'ADMIN', label: 'Administrador', color: 'text-red-700', badge: 'bg-red-100 text-red-700 border-red-200' },
     { value: 'EJECUTIVO', label: 'Ejecutivo', color: 'text-purple-700', badge: 'bg-purple-100 text-purple-700 border-purple-200' },
-    // { value: 'FABRICA', label: 'Fábrica', color: 'text-amber-700', badge: 'bg-amber-100 text-amber-700 border-amber-200' },
-    // { value: 'ALMACEN_MATERIA_PRIMA', label: 'Almacén MP', color: 'text-blue-700', badge: 'bg-blue-100 text-blue-700 border-blue-200' },
+    { value: 'FABRICA', label: 'Fábrica', color: 'text-amber-700', badge: 'bg-amber-100 text-amber-700 border-amber-200' },
+    { value: 'ALMACEN_MATERIA_PRIMA', label: 'Almacén MP', color: 'text-blue-700', badge: 'bg-blue-100 text-blue-700 border-blue-200' },
     { value: 'ALMACEN_PRODUCTO_FINAL', label: 'Almacén PF', color: 'text-cyan-700', badge: 'bg-cyan-100 text-cyan-700 border-cyan-200' },
-    // { value: 'TRANSPORTISTA', label: 'Transportista', color: 'text-green-700', badge: 'bg-green-100 text-green-700 border-green-200' },
+    { value: 'TRANSPORTISTA', label: 'Transportista', color: 'text-green-700', badge: 'bg-green-100 text-green-700 border-green-200' },
     { value: 'CLIENTE', label: 'Cliente', color: 'text-gray-700', badge: 'bg-gray-100 text-gray-700 border-gray-200' },
     { value: 'DISTRIBUIDOR', label: 'Distribuidor', color: 'text-gold-dark', badge: 'bg-gold/20 text-gold-dark border-gold/30' },
 ];
@@ -104,17 +104,27 @@ export default function UserManager() {
         e.preventDefault();
         setInviting(true);
         try {
-            const { data: result, error } = await supabase.rpc('admin_manage_users', {
-                payload: {
+            // Try Edge Function first so auth.users record + invite link is created
+            const { data: fnData, error: fnErr } = await supabase.functions.invoke('admin-manage-users', {
+                body: {
                     action: 'invite_user',
-                    payload: inviteData
-                }
+                    payload: inviteData,
+                },
             });
 
-            if (error) throw new Error(error.message || 'Error al invitar usuario');
-            if ((result as any)?.error) throw new Error((result as any).error);
+            if (fnErr || (fnData as any)?.error) {
+                // Fallback to server-side RPC
+                const { data: result, error } = await supabase.rpc('admin_manage_users', {
+                    payload: {
+                        action: 'invite_user',
+                        payload: inviteData
+                    }
+                });
+                if (error) throw new Error(error.message || 'Error al invitar usuario');
+                if ((result as any)?.error) throw new Error((result as any).error);
+            }
 
-            alert('Usuario invitado correctamente. Se le ha enviado un correo.');
+            alert('Usuario invitado correctamente. Se le ha enviado un correo con instrucciones de acceso.');
             setIsModalOpen(false);
             setInviteData({ email: '', fullName: '', role: 'CLIENTE' });
             fetchUsers();

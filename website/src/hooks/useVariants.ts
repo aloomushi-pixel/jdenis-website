@@ -143,6 +143,7 @@ export function invalidateVariantsCache() {
 export function useVariants() {
     const initial = getInitialCachedVariants();
     const [variants, setVariants] = useState<NormalizedVariant[]>(() => initial || []);
+    const [parentMeta, setParentMeta] = useState<Record<string, { hasVariants: boolean; variantAttributes: string | null }>>({});
     const [loading, setLoading] = useState<boolean>(() => !initial);
     const [error, setError] = useState<string | null>(null);
 
@@ -179,7 +180,20 @@ export function useVariants() {
                     });
             }
 
-            const mapped = await inFlightVariantsPromise;
+            const [mapped, { data: parents }] = await Promise.all([
+                inFlightVariantsPromise,
+                supabase.from('products').select('product_id, has_variants, variant_attributes').eq('has_variants', true),
+            ]);
+            if (parents) {
+                const map: Record<string, { hasVariants: boolean; variantAttributes: string | null }> = {};
+                for (const p of parents as any[]) {
+                    map[String(p.product_id)] = {
+                        hasVariants: Boolean(p.has_variants),
+                        variantAttributes: p.variant_attributes || null,
+                    };
+                }
+                setParentMeta(map);
+            }
             setVariants(mapped);
             setError(null);
         } catch (err: unknown) {
@@ -226,10 +240,14 @@ export function useVariants() {
     const groups: VariantGroupWithVariants[] = useMemo(() => {
         const list: VariantGroupWithVariants[] = [];
         for (const [prodId, prodVars] of variantsByProduct.entries()) {
-            if (prodVars.length <= 1) continue;
+            const meta = parentMeta[prodId];
+            if (prodVars.length <= 1 && !meta?.hasVariants) continue;
             const attrSet = new Set<string>();
             for (const pv of prodVars) {
                 Object.keys(pv.attributes).forEach(k => attrSet.add(k));
+            }
+            if (attrSet.size === 0 && meta?.variantAttributes) {
+                meta.variantAttributes.split('/').map(s => s.trim()).filter(Boolean).forEach(k => attrSet.add(k));
             }
             list.push({
                 id: prodId,
@@ -250,16 +268,38 @@ export function useVariants() {
             });
         }
         return list;
-    }, [variantsByProduct]);
+    }, [variantsByProduct, parentMeta]);
+
+    const syncParentAggregates = async (parentId: number, forceHasVariants?: boolean) => {
+        const { data: allVars } = await supabase
+            .from('product_variants')
+            .select('stock')
+            .eq('product_id', parentId)
+            .eq('is_active', true);
+        if (allVars) {
+            const totalStock = allVars.reduce((acc, r) => acc + (Number(r.stock) || 0), 0);
+            await supabase
+                .from('products')
+                .update({
+                    has_variants: forceHasVariants !== undefined ? forceHasVariants : allVars.length > 1,
+                    variants_count: Math.max(1, allVars.length),
+                    total_stock: totalStock,
+                    updated_at: new Date().toISOString(),
+                })
+                .eq('product_id', parentId);
+        }
+    };
 
     const createGroup = async (name: string, attributeNames: string[]) => {
         // In Catalog v2, groups correspond directly to parent products
         const numId = Number(name);
         if (Number.isFinite(numId)) {
+            const attrStr = attributeNames.join(' / ');
             await supabase
                 .from('products')
-                .update({ has_variants: true, variant_attributes: attributeNames.join(' / ') })
+                .update({ has_variants: true, variant_attributes: attrStr, updated_at: new Date().toISOString() })
                 .eq('product_id', numId);
+            setParentMeta(prev => ({ ...prev, [String(numId)]: { hasVariants: true, variantAttributes: attrStr } }));
             invalidateVariantsCache();
             await fetchGroups(true);
         }
@@ -269,11 +309,29 @@ export function useVariants() {
     const deleteGroup = async (id: string) => {
         const numId = Number(id);
         if (!Number.isFinite(numId)) return;
-        const { error } = await supabase
-            .from('products')
-            .update({ has_variants: false })
-            .eq('product_id', numId);
-        if (error) throw error;
+        const { data: prodVars } = await supabase
+            .from('product_variants')
+            .select('variant_id')
+            .eq('product_id', numId)
+            .eq('is_active', true)
+            .order('variant_id', { ascending: true });
+        if (prodVars && prodVars.length > 1) {
+            const [keep, ...extra] = prodVars;
+            await supabase
+                .from('product_variants')
+                .update({ is_active: false, updated_at: new Date().toISOString() })
+                .in('variant_id', extra.map((v: any) => v.variant_id));
+            await supabase
+                .from('product_variants')
+                .update({ variant_title: 'Única', option_1_name: null, option_1_value: null, option_2_name: null, option_2_value: null, updated_at: new Date().toISOString() })
+                .eq('variant_id', (keep as any).variant_id);
+        }
+        await syncParentAggregates(numId, false);
+        setParentMeta(prev => {
+            const next = { ...prev };
+            delete next[String(numId)];
+            return next;
+        });
         invalidateVariantsCache();
         await fetchGroups(true);
     };
@@ -347,11 +405,34 @@ export function useVariants() {
     const removeVariant = async (variantId: string) => {
         const numId = Number(variantId);
         if (!Number.isFinite(numId)) return;
+        const target = variants.find(v => v.id === String(numId));
         const { error } = await supabase
             .from('product_variants')
-            .update({ is_active: false })
+            .update({ is_active: false, updated_at: new Date().toISOString() })
             .eq('variant_id', numId);
         if (error) throw error;
+        if (target) {
+            await syncParentAggregates(Number(target.productId));
+        }
+        invalidateVariantsCache();
+        await fetchGroups(true);
+    };
+
+    const updateVariant = async (
+        variantId: string,
+        updates: { price_mxn?: number; promo_price_mxn?: number | null; stock?: number; sku?: string | null }
+    ) => {
+        const numId = Number(variantId);
+        if (!Number.isFinite(numId)) return;
+        const target = variants.find(v => v.id === String(numId));
+        const { error } = await supabase
+            .from('product_variants')
+            .update({ ...updates, updated_at: new Date().toISOString() })
+            .eq('variant_id', numId);
+        if (error) throw error;
+        if (target && updates.stock !== undefined) {
+            await syncParentAggregates(Number(target.productId));
+        }
         invalidateVariantsCache();
         await fetchGroups(true);
     };
@@ -369,5 +450,6 @@ export function useVariants() {
         deleteGroup,
         addVariant,
         removeVariant,
+        updateVariant,
     };
 }

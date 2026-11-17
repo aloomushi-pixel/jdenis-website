@@ -17,6 +17,7 @@ interface MediaManagerProps {
 }
 
 const BUCKETS = [
+  { id: 'product-images', label: 'Productos' },
   { id: 'media-library', label: 'Biblioteca General' },
   { id: 'blog-images', label: 'Blog y Noticias' },
   { id: 'academy-images', label: 'Academia' },
@@ -238,6 +239,7 @@ export function MediaManager({ onSelect, isModal = false }: MediaManagerProps) {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
             {files.map((file) => {
               const isImage = /\.(jpeg|jpg|gif|png|webp|svg|avif)$/i.test(file.name);
+              const isVideo = /\.(mp4|mov|webm)$/i.test(file.name);
 
               return (
                 <div
@@ -252,6 +254,14 @@ export function MediaManager({ onSelect, isModal = false }: MediaManagerProps) {
                         alt={file.name}
                         className="w-full h-full object-cover"
                         loading="lazy"
+                      />
+                    ) : isVideo ? (
+                      <video
+                        src={file.url}
+                        muted
+                        playsInline
+                        preload="metadata"
+                        className="w-full h-full object-cover"
                       />
                     ) : (
                       <div className="flex flex-col items-center text-gray-400">
@@ -270,7 +280,7 @@ export function MediaManager({ onSelect, isModal = false }: MediaManagerProps) {
                     </p>
                   </div>
 
-                  <div className="absolute top-2 right-2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="absolute top-2 right-2 flex flex-col gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                     <button
                       type="button"
                       onClick={(e) => handleDelete(file, e)}

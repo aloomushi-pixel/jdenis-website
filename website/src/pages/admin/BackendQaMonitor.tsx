@@ -153,8 +153,10 @@ export default function BackendQaMonitor() {
 
             {loading ? (
                 <div className="p-12 text-center text-gray-400 text-sm">Cargando reportes administrativos...</div>
-            ) : latest ? (
+            ) : (
                 <>
+                    {latest ? (
+                        <>
                     {/* Latest Summary */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
@@ -227,6 +229,12 @@ export default function BackendQaMonitor() {
                             </div>
                         )}
                     </div>
+                        </>
+                    ) : (
+                        <div className="bg-white p-8 rounded-2xl border border-gray-200 text-center text-sm text-gray-500">
+                            Aún no hay cortes registrados. Haz clic en <strong>Ejecutar Auditoría Ahora</strong> para generar el primer reporte.
+                        </div>
+                    )}
 
                     {/* Admin UX Notes */}
                     {uxNotes.length > 0 && (
@@ -298,7 +306,7 @@ export default function BackendQaMonitor() {
                         </div>
                     </div>
                 </>
-            ) : null}
+            )}
         </div>
     );
 }

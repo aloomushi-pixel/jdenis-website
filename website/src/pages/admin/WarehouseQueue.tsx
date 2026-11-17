@@ -6,6 +6,7 @@ import {
     getCompletedShipments,
     updatePackedItems,
     updateOrderTracking,
+    sendTransactionalEmail,
 } from '../../lib/supabase';
 
 type QueueOrder = OrderB2B & { order_items: OrderItem[] };
@@ -13,7 +14,16 @@ type QueueOrder = OrderB2B & { order_items: OrderItem[] };
 const CUTOFF_HOUR = 17; // 5 PM
 
 function getTodayDate(): string {
-    return new Date().toISOString().split('T')[0];
+    const parts = new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'America/Mexico_City',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+    }).formatToParts(new Date());
+    const y = parts.find(p => p.type === 'year')?.value;
+    const m = parts.find(p => p.type === 'month')?.value;
+    const d = parts.find(p => p.type === 'day')?.value;
+    return y && m && d ? `${y}-${m}-${d}` : new Date().toISOString().split('T')[0];
 }
 
 function isPastCutoff(): boolean {
@@ -80,7 +90,7 @@ function ShippingEmailPreview({
   </td></tr>
   <tr><td style="background:#1a1a2e;padding:20px 24px;text-align:center;">
     <p style="color:#999;font-size:12px;margin:0;">¿Necesitas ayuda? Contáctanos por WhatsApp</p>
-    <p style="color:#d4af37;font-size:13px;margin:4px 0 0;">📱 55 1234 5678 · ✉️ contacto@jdenis.com</p>
+    <p style="color:#d4af37;font-size:13px;margin:4px 0 0;">📱 WhatsApp Ventas J. Denis · 🌐 https://jdenis.store</p>
   </td></tr>
 </table>
 </body>
@@ -177,12 +187,32 @@ function OrderCard({
         if (!trackingNumber.trim()) return;
         setCompleting(true);
         try {
-            await updateOrderTracking(order.id, trackingNumber.trim());
+            const cleanTracking = trackingNumber.trim();
+            await updateOrderTracking(order.id, cleanTracking);
+            const orderAny = order as any;
+            const buyerEmail =
+                orderAny.user_email ||
+                (typeof orderAny.buyer_info === 'object' ? orderAny.buyer_info?.email : null);
+            if (buyerEmail) {
+                await sendTransactionalEmail({
+                    to: [buyerEmail],
+                    subject: `¡Tu pedido #${order.order_number || order.id.slice(0, 8)} ha sido enviado! — J. Denis`,
+                    html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px;border:1px solid #e5e7eb;border-radius:12px;">
+                        <h2 style="color:#1a1a2e;margin-top:0;">¡Tu pedido va en camino! 📦</h2>
+                        <p>Hola, tu pedido <strong>#${order.order_number || order.id.slice(0, 8)}</strong> en <strong>J. Denis</strong> ha sido despachado.</p>
+                        <div style="background:#f8f6f0;padding:16px;border-radius:8px;margin:16px 0;text-align:center;">
+                            <span style="font-size:12px;color:#666;text-transform:uppercase;">Número de Guía</span>
+                            <p style="font-size:22px;font-weight:bold;color:#1a1a2e;margin:4px 0 0;">${cleanTracking}</p>
+                        </div>
+                        <p style="font-size:13px;color:#555;">Puedes consultar el detalle en <a href="https://jdenis.store/mi-cuenta">jdenis.store/mi-cuenta</a>.</p>
+                    </div>`,
+                });
+            }
             setCompleted(true);
-            // Show email preview briefly, then refresh
             setShowEmail(true);
-        } catch (e) {
+        } catch (e: any) {
             console.error('Error completing order:', e);
+            alert(e?.message || 'Error al registrar el número de guía');
         } finally {
             setCompleting(false);
         }

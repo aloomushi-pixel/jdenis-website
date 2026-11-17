@@ -5,6 +5,7 @@ import { getWebsiteOrders, updateWebsiteOrderStatus } from '../../lib/supabase';
 
 const STATUS_OPTIONS = [
     { value: 'pending', label: 'Pendiente', color: 'bg-yellow-100 text-yellow-700' },
+    { value: 'confirmed', label: 'Confirmado', color: 'bg-cyan-100 text-cyan-700' },
     { value: 'completed', label: 'Pagado', color: 'bg-blue-100 text-blue-700' },
     { value: 'processing', label: 'En Proceso', color: 'bg-purple-100 text-purple-700' },
     { value: 'shipped', label: 'Enviado', color: 'bg-indigo-100 text-indigo-700' },
@@ -277,10 +278,16 @@ export default function AdminOrders() {
     const handleStatusChange = async (orderId: string, newStatus: string) => {
         setUpdatingId(orderId);
         try {
-            await updateWebsiteOrderStatus(orderId, newStatus);
+            let tracking: string | undefined;
+            if (newStatus === 'shipped') {
+                const input = window.prompt('Ingresa el número de guía de rastreo (opcional):');
+                if (input && input.trim()) tracking = input.trim();
+            }
+            await updateWebsiteOrderStatus(orderId, newStatus, tracking ? { tracking_number: tracking } : undefined);
             await fetchOrders();
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error updating order status:', error);
+            alert(error?.message || 'Error al actualizar el estado del pedido');
         } finally {
             setUpdatingId(null);
         }

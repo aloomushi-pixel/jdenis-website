@@ -115,7 +115,7 @@ export default function ProductEditor() {
                 ...prev,
                 [mediaModalTarget.productId!]: { ...prev[mediaModalTarget.productId!], image: url }
             }));
-            setHasChanges(true);
+            void saveProduct(mediaModalTarget.productId, 'image', url);
             setEditingCell(null);
         } else if (mediaModalTarget.type === 'gallery') {
             setNewGalleryUrl(url);
@@ -124,7 +124,7 @@ export default function ProductEditor() {
                 ...prev,
                 [mediaModalTarget.productId!]: { ...prev[mediaModalTarget.productId!], video: url }
             }));
-            setHasChanges(true);
+            void saveProduct(mediaModalTarget.productId, 'video', url);
             setEditingCell(null);
         }
         setMediaModalOpen(false);
@@ -980,7 +980,7 @@ export default function ProductEditor() {
                                                                 ...prev,
                                                                 [product.id]: { ...prev[product.id], image: url },
                                                             }));
-                                                            setHasChanges(true);
+                                                            void saveProduct(product.id, 'image', url);
                                                         };
 
                                                         const addGalleryImage = () => {
@@ -990,7 +990,7 @@ export default function ProductEditor() {
                                                                 ...prev,
                                                                 [product.id]: { ...prev[product.id], gallery: updated },
                                                             }));
-                                                            setHasChanges(true);
+                                                            void saveProduct(product.id, 'gallery', updated);
                                                             setNewGalleryUrl('');
                                                         };
 
@@ -1000,7 +1000,7 @@ export default function ProductEditor() {
                                                                 ...prev,
                                                                 [product.id]: { ...prev[product.id], gallery: updated },
                                                             }));
-                                                            setHasChanges(true);
+                                                            void saveProduct(product.id, 'gallery', updated);
                                                         };
 
                                                         return (

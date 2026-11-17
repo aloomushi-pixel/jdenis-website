@@ -73,7 +73,7 @@ export default function EventLog() {
                                         <span className={`px-2 py-0.5 rounded text-xs font-medium ${MODULE_COLORS[event.module] || 'bg-gray-100 text-gray-600'}`}>{event.module}</span>
                                     </div>
                                     <div className="flex items-center gap-3 text-xs text-gray-400">
-                                        <span>{(((event as unknown) as Record<string, unknown>).users as Record<string, string> | undefined)?.fullName || (((event as unknown) as Record<string, unknown>).users as Record<string, string> | undefined)?.email || event.performed_by.slice(0, 8)}</span>
+                                        <span>{(((event as unknown) as Record<string, unknown>).users as Record<string, string> | undefined)?.fullName || (((event as unknown) as Record<string, unknown>).users as Record<string, string> | undefined)?.email || (event.performed_by || 'sistema').slice(0, 8)}</span>
                                         <span>•</span>
                                         <span>{new Date(event.created_at).toLocaleString('es-MX')}</span>
                                         {event.entity_type && <><span>•</span><span>{event.entity_type}</span></>}

@@ -132,7 +132,9 @@ export default function TelemetryCommandCenter() {
                 setEvents(eventsRes.value.data as AnalyticsEventRow[]);
             }
             if (webOrdersRes.status === 'fulfilled' && webOrdersRes.value.data) {
-                const ords = webOrdersRes.value.data;
+                const ords = webOrdersRes.value.data.filter(
+                    (o: any) => !['cancelled', 'failed'].includes(String(o.status || '')) && o.payment_status !== 'rejected'
+                );
                 setOrdersCount(ords.length);
                 setOrdersRevenue(ords.reduce((acc, o) => acc + (Number(o.total) || 0), 0));
             }
@@ -190,12 +192,13 @@ export default function TelemetryCommandCenter() {
         const paymentAttemptEvents = humanEvents.filter(e => e.event_name === 'payment_attempt');
         const paymentAttemptSessions = new Set(paymentAttemptEvents.map(e => e.session_id)).size;
 
-        const purchaseOrLeadEvents = humanEvents.filter(e =>
-            e.event_name === 'purchase_complete' ||
-            e.event_name === 'whatsapp_click' ||
-            e.event_name === 'wholesale_inquiry'
-        );
-        const purchaseOrLeadSessions = new Set(purchaseOrLeadEvents.map(e => e.session_id)).size + ordersCount;
+        const purePurchaseSessions = new Set(humanEvents.filter(e => e.event_name === 'purchase_complete').map(e => e.session_id)).size;
+        const leadOnlySessions = new Set(
+            humanEvents
+                .filter(e => e.event_name === 'whatsapp_click' || e.event_name === 'wholesale_inquiry')
+                .map(e => e.session_id)
+        ).size;
+        const purchaseOrLeadSessions = Math.max(purePurchaseSessions, ordersCount) + leadOnlySessions;
 
         const conversionRate = shopOrHomeSessions > 0
             ? Math.min(100, Number(((purchaseOrLeadSessions / shopOrHomeSessions) * 100).toFixed(2)))

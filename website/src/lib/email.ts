@@ -43,10 +43,10 @@ export async function dispatchEmailCampaign(
         targetEmail
     });
 
-    if (rpcRes?.success) {
+    if (rpcRes?.success || rpcRes?.status === 'queued' || rpcRes?.status === 'simulated') {
         fnData = {
             success: true,
-            status: 'sent',
+            status: rpcRes.status === 'simulated' ? 'simulated' : 'sent',
             message: rpcRes.message || 'Correo enviado exitosamente'
         };
     } else {

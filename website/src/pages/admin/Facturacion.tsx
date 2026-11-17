@@ -47,9 +47,10 @@ function UploadForm({ req, onProcessed }: { req: RequestRecord, onProcessed: () 
       let pdfPublicUrl = pdfUrlInput;
       let xmlPublicUrl = xmlUrlInput;
 
+      const safeTicket = (req.ticket_number || 'CFDI').replace(/[^a-zA-Z0-9_-]/g, '_');
       // Upload to supabase storage if it's a file
       if (pdfMode === 'file' && pdfFile) {
-        const filePath = `temp/${req.id}/${pdfFile.name}`;
+        const filePath = `cfdi/${req.id}/CFDI_${safeTicket}.pdf`;
         const { error: uploadErr } = await supabase.storage.from('invoices').upload(filePath, pdfFile, { upsert: true });
         if (uploadErr) throw new Error(`Error subiendo PDF: ${uploadErr.message}`);
         pdfSource = filePath;
@@ -58,7 +59,7 @@ function UploadForm({ req, onProcessed }: { req: RequestRecord, onProcessed: () 
       }
 
       if (xmlMode === 'file' && xmlFile) {
-        const filePath = `temp/${req.id}/${xmlFile.name}`;
+        const filePath = `cfdi/${req.id}/CFDI_${safeTicket}.xml`;
         const { error: uploadErr } = await supabase.storage.from('invoices').upload(filePath, xmlFile, { upsert: true });
         if (uploadErr) throw new Error(`Error subiendo XML: ${uploadErr.message}`);
         xmlSource = filePath;
@@ -242,23 +243,37 @@ function UploadForm({ req, onProcessed }: { req: RequestRecord, onProcessed: () 
 export default function FacturacionAdmin() {
   const [requests, setRequests] = useState<RequestRecord[]>([]);
   const [loading, setLoading] = useState(true);
+  const [statusFilter, setStatusFilter] = useState<'Pendiente' | 'Completada' | 'Rechazada'>('Pendiente');
 
   const fetchRequests = useCallback(async () => {
     setLoading(true);
     const { data, error } = await supabase
       .from('invoice_requests')
       .select('*')
-      .eq('status', 'Pendiente')
-      .order('created_at', { ascending: true });
+      .eq('status', statusFilter)
+      .order('created_at', { ascending: statusFilter === 'Pendiente' });
 
     if (error) {
       console.error(error);
-      window.alert('Error cargando solicitudes pendientes');
+      window.alert('Error cargando solicitudes de facturación');
     } else if (data) {
       setRequests(data);
     }
     setLoading(false);
-  }, []);
+  }, [statusFilter]);
+
+  const handleReject = async (reqId: string) => {
+    if (!window.confirm('¿Marcar esta solicitud de factura como Rechazada?')) return;
+    const { error } = await supabase
+      .from('invoice_requests')
+      .update({ status: 'Rechazada', updated_at: new Date().toISOString() })
+      .eq('id', reqId);
+    if (error) {
+      window.alert('Error al rechazar solicitud: ' + error.message);
+    } else {
+      void fetchRequests();
+    }
+  };
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -269,14 +284,26 @@ export default function FacturacionAdmin() {
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
-      <div className="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Panel de Facturación</h1>
-          <p className="text-gray-500 mt-1">Gestión de solicitudes pendientes de clientes</p>
+          <p className="text-gray-500 mt-1">Gestión de solicitudes CFDI de clientes</p>
         </div>
-        <div className="bg-orange-100 text-orange-700 font-semibold px-4 py-2 rounded-full flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
-          {requests.length} Pendiente{requests.length !== 1 ? 's' : ''}
+        <div className="flex flex-wrap items-center gap-2">
+          {(['Pendiente', 'Completada', 'Rechazada'] as const).map((st) => (
+            <button
+              key={st}
+              type="button"
+              onClick={() => setStatusFilter(st)}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold border transition-colors ${
+                statusFilter === st
+                  ? 'bg-indigo-600 text-white border-indigo-600'
+                  : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'
+              }`}
+            >
+              {st}s ({statusFilter === st ? requests.length : 'ver'})
+            </button>
+          ))}
         </div>
       </div>
 
@@ -315,6 +342,15 @@ export default function FacturacionAdmin() {
                         </span>
                       </div>
                     </div>
+                    {statusFilter === 'Pendiente' && (
+                      <button
+                        type="button"
+                        onClick={() => handleReject(req.id)}
+                        className="px-3 py-1.5 rounded-lg border border-red-200 text-red-600 text-xs font-semibold hover:bg-red-50 transition-colors"
+                      >
+                        Rechazar Solicitud
+                      </button>
+                    )}
                   </div>
 
                   <div className="mt-4 pt-4 border-t border-gray-50 grid grid-cols-2 gap-4 text-sm bg-gray-50 p-4 rounded-xl">

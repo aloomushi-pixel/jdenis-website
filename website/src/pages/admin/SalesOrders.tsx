@@ -1,9 +1,10 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FileText, Calculator, ChevronDown, Clock, CheckCircle, XCircle, Send, Search, Filter } from 'lucide-react';
 import Quoter from '../../components/crm/Quoter';
 import { getQuotations, getQuotationItems, updateQuotationStatus, type Quotation, type QuotationItem } from '../../lib/erp';
-import { supabase } from '../../lib/supabase';
+import { supabase, sendTransactionalEmail } from '../../lib/supabase';
+import { useAuthStore } from '../../store/authStore';
 import { trackEvent, withOperationalTelemetry } from '../../utils/telemetry';
 
 type Tab = 'quoter' | 'manage';
@@ -25,6 +26,7 @@ function fmtMoney(n: number) {
 }
 
 export default function SalesOrders() {
+  const { user } = useAuthStore();
   const [activeTab, setActiveTab] = useState<Tab>('quoter');
   const [quotations, setQuotations] = useState<Quotation[]>([]);
   const [loading, setLoading] = useState(false);
@@ -70,9 +72,43 @@ export default function SalesOrders() {
     const startMs = Date.now();
     setUpdatingId(id);
     try {
+      const targetQuote = quotations.find(q => q.id === id);
       await withOperationalTelemetry('update_quotation_status', () =>
         updateQuotationStatus(id, status as Quotation['status'])
       );
+
+      if (status === 'SENT' && targetQuote?.customer_id) {
+        const { data: cust } = await supabase
+          .from('users')
+          .select('email, full_name')
+          .eq('id', targetQuote.customer_id)
+          .maybeSingle();
+        if (cust?.email) {
+          await sendTransactionalEmail({
+            type: 'quotation',
+            name: cust.full_name || 'Cliente',
+            toEmail: cust.email,
+            quotationData: {
+              total: Number(targetQuote.total_amount || 0).toFixed(2),
+              notes: targetQuote.notes || '',
+            },
+          });
+        }
+      } else if (status === 'CONVERTED' && targetQuote) {
+        await supabase.from('sales_orders').insert({
+          id: crypto.randomUUID(),
+          order_number: `SO-${id.slice(0, 8).toUpperCase()}`,
+          quotation_id: id,
+          client_id: targetQuote.customer_id || null,
+          customer_id: targetQuote.customer_id || null,
+          status: 'CONFIRMADA',
+          total_amount: Number(targetQuote.total_amount || 0),
+          total: Number(targetQuote.total_amount || 0),
+          notes: targetQuote.notes || null,
+          created_by: user?.id || 'admin',
+        });
+      }
+
       const durationMs = Date.now() - startMs;
       setQuotations(prev => prev.map(q => q.id === id ? { ...q, status: status as Quotation['status'] } : q));
       trackEvent(
@@ -85,29 +121,35 @@ export default function SalesOrders() {
         },
         durationMs
       );
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
+      alert(e?.message || 'Error al actualizar el estado de la cotización');
     } finally {
       setUpdatingId(null);
     }
   };
 
-  // Enrich quotations with customer names in a single batch query
+  // Enrich quotations with customer names in a single batch query (without infinite loops on missing IDs)
   const [customerNames, setCustomerNames] = useState<Record<string, string>>({});
+  const fetchedCustomerIdsRef = useRef<Set<string>>(new Set());
   useEffect(() => {
-    const ids = quotations.map(q => q.customer_id).filter(id => id && !customerNames[id]);
+    const ids = quotations
+      .map(q => q.customer_id)
+      .filter(id => id && !fetchedCustomerIdsRef.current.has(id));
     if (ids.length === 0) return;
     const unique = [...new Set(ids)];
-    supabase.from('users').select('id, fullName, email').in('id', unique).then(({ data }) => {
+    unique.forEach(id => fetchedCustomerIdsRef.current.add(id));
+    supabase.from('users').select('id, full_name, email').in('id', unique).then(({ data }) => {
+      const map: Record<string, string> = {};
+      unique.forEach(id => { map[id] = `Cliente #${id.slice(0, 8)}`; });
       if (data) {
-        const map: Record<string, string> = {};
-        data.forEach((u: { id: string; fullName?: string; email?: string }) => {
-          map[u.id] = u.fullName || u.email || u.id;
+        data.forEach((u: { id: string; full_name?: string; email?: string }) => {
+          map[u.id] = u.full_name || u.email || u.id;
         });
-        setCustomerNames(prev => ({ ...prev, ...map }));
       }
+      setCustomerNames(prev => ({ ...prev, ...map }));
     });
-  }, [quotations, customerNames]);
+  }, [quotations]);
 
   const filtered = quotations.filter(q => {
     if (searchTerm) {
@@ -247,10 +289,14 @@ export default function SalesOrders() {
                                   <strong>Notas:</strong> {q.notes}
                                 </div>
                               )}
-                              {items.length === 0 ? (
+                              {itemsCache[q.id] === undefined ? (
                                 <div className="text-sm text-gray-400 text-center py-4">
                                   <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-indigo-400 mx-auto mb-2" />
                                   Cargando productos...
+                                </div>
+                              ) : items.length === 0 ? (
+                                <div className="text-sm text-gray-400 text-center py-4">
+                                  Esta cotización no contiene partidas registradas.
                                 </div>
                               ) : (
                                 <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">

@@ -81,6 +81,42 @@ export default function DistributorRequests() {
             if (!app) throw new Error("Solicitud no encontrada");
 
             if (newStatus === 'approved') {
+                const { data: existingUser } = await supabase
+                    .from('users')
+                    .select('id, email')
+                    .ilike('email', app.email.trim())
+                    .maybeSingle();
+
+                if (existingUser) {
+                    const { error: promoErr } = await supabase.rpc('update_user_role_admin', {
+                        target_user_id: existingUser.id,
+                        new_role: 'DISTRIBUIDOR'
+                    });
+                    if (promoErr) throw promoErr;
+                    const { error: updErr } = await supabase
+                        .from('distributor_applications')
+                        .update({ status: newStatus })
+                        .eq('id', id);
+                    if (updErr) throw updErr;
+                    const upgradeHtml = getDistributorWelcomeTemplate(
+                        app.full_name,
+                        app.email,
+                        'Usa tu contraseña actual (tu cuenta fue promovida a Distribuidor)'
+                    );
+                    await supabase.rpc('send_transactional_email', {
+                        payload: {
+                            to: [app.email],
+                            targetEmail: app.email,
+                            subject: '¡Tu cuenta J. Denis ha sido promovida a Distribuidor Oficial!',
+                            htmlContent: upgradeHtml,
+                            html: upgradeHtml,
+                        }
+                    });
+                    alert(`La cuenta existente (${app.email}) fue promovida exitosamente a DISTRIBUIDOR.`);
+                    fetchApplications();
+                    return;
+                }
+
                 // Generar contraseña aleatoria segura
                 const tempPassword = `JD-${Math.random().toString(36).slice(-6)}-${Math.floor(Math.random() * 1000)}`;
 

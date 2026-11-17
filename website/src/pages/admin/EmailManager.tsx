@@ -31,11 +31,13 @@ export default function EmailManager() {
 
     useEffect(() => {
         if (activeTab === 'contact' && customerUsers.length === 0) {
-            getUsers('CLIENTE').then(setCustomerUsers).catch(console.error);
+            Promise.all([getUsers('CLIENTE'), getUsers('DISTRIBUIDOR')])
+                .then(([clients, dists]) => setCustomerUsers([...clients, ...dists]))
+                .catch(console.error);
         } else if (activeTab === 'history') {
             fetchCampaignHistory().then(setHistory).catch(console.error);
         }
-    }, [activeTab]);
+    }, [activeTab, customerUsers.length]);
 
     const handleSendNewsletter = async () => {
         if (!confirm('¿Estás seguro de enviar esta campaña a TODOS los suscriptores (miles de correos)?')) return;
@@ -283,16 +285,18 @@ export default function EmailManager() {
                                     <div className="w-2.5 h-2.5 rounded-full bg-emerald-400"></div>
                                 </div>
                                 {/* Iframe Sandbox Container */}
-                                <div className="bg-white w-full h-[calc(100%-24px)] rounded-xl mt-6 overflow-y-auto overflow-x-hidden p-0 shadow-lg">
-                                    <div
-                                        dangerouslySetInnerHTML={{
-                                            __html: activeTab === 'newsletter'
+                                <div className="bg-white w-full h-[calc(100%-24px)] rounded-xl mt-6 overflow-hidden p-0 shadow-lg">
+                                    <iframe
+                                        title="Previsualización de correo"
+                                        sandbox=""
+                                        srcDoc={
+                                            activeTab === 'newsletter'
                                                 ? (nlTemplate === 'product_launch' ? getProductLaunchTemplate(nlTitle, nlHeadline, nlBody, nlImageUrl, nlButtonText, nlButtonUrl) :
                                                    nlTemplate === 'promo_sale' ? getPromoTemplate(nlTitle, nlHeadline, nlBody, nlImageUrl, nlButtonText, nlButtonUrl) :
                                                    getNewsletterTemplate(nlTitle, nlHeadline, nlBody, nlImageUrl, nlButtonText, nlButtonUrl))
                                                 : getCustomerSupportTemplate(contactName, contactBody)
-                                        }}
-                                        className="w-full transform origin-top"
+                                        }
+                                        className="w-full h-[560px] border-0"
                                     />
                                 </div>
                             </div>

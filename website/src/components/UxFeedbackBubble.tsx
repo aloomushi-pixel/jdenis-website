@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
-import { trackEvent } from '../utils/telemetry';
+import { trackEvent, flushQueue } from '../utils/telemetry';
 
 export default function UxFeedbackBubble() {
     const location = useLocation();
@@ -19,7 +19,7 @@ export default function UxFeedbackBubble() {
         return null;
     }
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const trimmed = message.trim();
         if (!trimmed) return;
@@ -37,6 +37,7 @@ export default function UxFeedbackBubble() {
                 user_email: user?.email || null,
             },
         });
+        await flushQueue();
 
         setSent(true);
         setMessage('');

@@ -92,7 +92,10 @@ export default function CouponManager() {
     function openEdit(coupon: Coupon) {
         setEditingId(coupon.id);
         const expDate = coupon.expiration_date
-            ? new Date(coupon.expiration_date).toISOString().slice(0, 16)
+            ? (() => {
+                  const d = new Date(coupon.expiration_date);
+                  return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+              })()
             : '';
         setForm({
             code: coupon.code,

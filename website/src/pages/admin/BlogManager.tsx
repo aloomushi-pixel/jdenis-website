@@ -302,7 +302,7 @@ function PostFormModal({ initialData, postType, onClose, onSuccess }: {
         }
     };
 
-    const ImageInputGroup = () => (
+    const imageInputSection = (
         <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Imagen destacada (Sube un archivo o pega URL)</label>
             <div className="flex gap-2 relative">
@@ -423,7 +423,7 @@ function PostFormModal({ initialData, postType, onClose, onSuccess }: {
                                     placeholder="Ej: Nuevo Producto, Nuevo Lanzamiento"
                                 />
                             </div>
-                            <ImageInputGroup />
+                            {imageInputSection}
                         </div>
                     ) : (
                         <>
@@ -448,7 +448,7 @@ function PostFormModal({ initialData, postType, onClose, onSuccess }: {
                                         className="w-full px-3 py-2 border rounded-lg"
                                     />
                                 </div>
-                                <ImageInputGroup />
+                                {imageInputSection}
                             </div>
                         </>
                     )}

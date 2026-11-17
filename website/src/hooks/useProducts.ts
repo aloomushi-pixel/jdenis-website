@@ -265,10 +265,29 @@ export function useProducts() {
         setSaveStatus(prev => ({ ...prev, [productId]: 'saving' }));
 
         try {
-            const payload: Record<string, unknown> = { [dbField]: value, updated_at: new Date().toISOString() };
+            const nowIso = new Date().toISOString();
+            const currentProd = products.find(p => p.id === productId);
+            const payload: Record<string, unknown> = { [dbField]: value, updated_at: nowIso };
+
             if (field === 'price') {
-                // When setting direct price in inline editor, clear conflicting promo if >= new base
-                payload.promo_price_mxn = null;
+                const newPrice = Number(value) || 0;
+                if (currentProd?.originalPrice != null && newPrice > 0 && newPrice < currentProd.originalPrice) {
+                    payload.base_price_mxn = currentProd.originalPrice;
+                    payload.promo_price_mxn = newPrice;
+                } else {
+                    payload.base_price_mxn = newPrice;
+                    payload.promo_price_mxn = null;
+                }
+            } else if (field === 'originalPrice') {
+                const newOrig = value != null && value !== '' ? Number(value) : null;
+                const curPrice = currentProd?.price ?? 0;
+                if (newOrig != null && newOrig > curPrice) {
+                    payload.base_price_mxn = newOrig;
+                    payload.promo_price_mxn = curPrice;
+                } else {
+                    payload.base_price_mxn = curPrice;
+                    payload.promo_price_mxn = null;
+                }
             }
 
             const { error: updateError } = await supabase
@@ -277,6 +296,14 @@ export function useProducts() {
                 .eq('product_id', numId);
 
             if (updateError) throw updateError;
+
+            if (field === 'stock' && !currentProd?.hasVariants) {
+                await supabase
+                    .from('product_variants')
+                    .update({ stock: Number(value) || 0, updated_at: nowIso })
+                    .eq('product_id', numId)
+                    .eq('is_active', true);
+            }
 
             invalidateProductsCache();
             setProducts(prev => prev.map(p =>
@@ -296,7 +323,7 @@ export function useProducts() {
             setSaveStatus(prev => ({ ...prev, [productId]: 'error' }));
             return false;
         }
-    }, []);
+    }, [products]);
 
     /**
      * Update multiple fields at once (Submit form edit)
@@ -343,6 +370,17 @@ export function useProducts() {
                 .eq('product_id', numId);
 
             if (updateError) throw updateError;
+
+            if (updates.stock !== undefined) {
+                const currentProd = products.find(p => p.id === productId);
+                if (!currentProd?.hasVariants) {
+                    await supabase
+                        .from('product_variants')
+                        .update({ stock: Number(updates.stock) || 0, updated_at: new Date().toISOString() })
+                        .eq('product_id', numId)
+                        .eq('is_active', true);
+                }
+            }
 
             invalidateProductsCache();
             setProducts(prev => prev.map(p => p.id === productId ? { ...p, ...updates } : p));

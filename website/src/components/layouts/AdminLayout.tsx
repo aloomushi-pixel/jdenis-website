@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { useState } from 'react';
 import { Link, Navigate, Outlet, useLocation } from 'react-router-dom';
 import { 
-    LayoutDashboard, Users, Mail, TrendingUp, Package, Truck, ClipboardList, Star, GraduationCap, PenTool, Image, Film, Handshake, Receipt, Tag, ShoppingCart, ShieldCheck, Home, LogOut, Menu
+    LayoutDashboard, Users, Mail, TrendingUp, Package, Truck, ClipboardList, Star, GraduationCap, PenTool, Image, Film, Handshake, Receipt, Tag, ShoppingCart, ShieldCheck, Boxes, Factory, ShoppingBag, Activity, Home, LogOut, Menu
 } from 'lucide-react';
 import type { UserRole } from '../../lib/erp';
 import { useAuthStore } from '../../store/authStore';
@@ -18,22 +18,27 @@ type MenuItem = {
 
 const menuItems: MenuItem[] = [
     { path: '/admin', label: 'Dashboard', icon: <LayoutDashboard className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO', 'FABRICA', 'ALMACEN_MATERIA_PRIMA', 'ALMACEN_PRODUCTO_FINAL', 'TRANSPORTISTA'] },
-    { path: '/admin/users', label: 'Usuarios', icon: <Users className="w-5 h-5" />, roles: ['ADMIN'] },
-    { path: '/admin/emails', label: 'Emails (Marketing)', icon: <Mail className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO'] },
-    { path: '/admin/sales', label: 'Ventas', icon: <TrendingUp className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO'] },
-    { path: '/admin/packaging', label: 'Embalaje', icon: <Package className="w-5 h-5" />, roles: ['FABRICA', 'ALMACEN_MATERIA_PRIMA', 'ALMACEN_PRODUCTO_FINAL'] },
-    { path: '/admin/warehouse-queue', label: 'Cola de Envíos', icon: <Truck className="w-5 h-5" />, roles: ['FABRICA', 'ALMACEN_MATERIA_PRIMA', 'ALMACEN_PRODUCTO_FINAL'] },
-    { path: '/admin/orders', label: 'Pedidos Tienda', icon: <ClipboardList className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO', 'FABRICA'] },
-    { path: '/admin/reviews', label: 'Reseñas', icon: <Star className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO'] },
-    { path: '/admin/academy', label: 'Academia', icon: <GraduationCap className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO'] },
-    { path: '/admin/blog', label: 'Blog', icon: <PenTool className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO'] },
-    { path: '/admin/media', label: 'Multimedia', icon: <Image className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO'] },
-    { path: '/admin/reels', label: 'Reels', icon: <Film className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO'] },
+    { path: '/admin/orders', label: 'Pedidos Tienda', icon: <ClipboardList className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO', 'FABRICA', 'ALMACEN_PRODUCTO_FINAL'] },
+    { path: '/admin/warehouse-queue', label: 'Cola de Envíos', icon: <Truck className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO', 'FABRICA', 'ALMACEN_MATERIA_PRIMA', 'ALMACEN_PRODUCTO_FINAL'] },
+    { path: '/admin/catalog', label: 'Editor Catálogo', icon: <Package className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO'] },
+    { path: '/admin/sales', label: 'Ventas B2B / Cotizador', icon: <TrendingUp className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO'] },
     { path: '/admin/distributors', label: 'Solicitudes Dist.', icon: <Handshake className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO'] },
     { path: '/admin/facturacion', label: 'Facturación', icon: <Receipt className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO'] },
-    { path: '/admin/catalog', label: 'Editor Catálogo', icon: <Package className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO'] },
-    { path: '/admin/cart-promos', label: 'Promos Carrito', icon: <ShoppingCart className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO'] },
     { path: '/admin/coupons', label: 'Cupones', icon: <Tag className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO'] },
+    { path: '/admin/cart-promos', label: 'Promos Carrito', icon: <ShoppingCart className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO'] },
+    { path: '/admin/reviews', label: 'Reseñas', icon: <Star className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO'] },
+    { path: '/admin/academy', label: 'Academia', icon: <GraduationCap className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO'] },
+    { path: '/admin/blog', label: 'Blog & Noticias', icon: <PenTool className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO'] },
+    { path: '/admin/reels', label: 'Reels / TikTok', icon: <Film className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO'] },
+    { path: '/admin/media', label: 'Multimedia', icon: <Image className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO'] },
+    { path: '/admin/emails', label: 'Emails (Marketing)', icon: <Mail className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO'] },
+    { path: '/admin/users', label: 'Usuarios', icon: <Users className="w-5 h-5" />, roles: ['ADMIN'] },
+    { path: '/admin/resources', label: 'Inventario / Insumos', icon: <Boxes className="w-5 h-5" />, roles: ['ADMIN', 'FABRICA', 'ALMACEN_MATERIA_PRIMA', 'ALMACEN_PRODUCTO_FINAL'] },
+    { path: '/admin/purchases', label: 'Compras MP', icon: <ShoppingBag className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO', 'ALMACEN_MATERIA_PRIMA'] },
+    { path: '/admin/production', label: 'Producción', icon: <Factory className="w-5 h-5" />, roles: ['ADMIN', 'FABRICA'] },
+    { path: '/admin/packaging', label: 'Embalaje', icon: <Package className="w-5 h-5" />, roles: ['ADMIN', 'FABRICA', 'ALMACEN_MATERIA_PRIMA', 'ALMACEN_PRODUCTO_FINAL'] },
+    { path: '/admin/transport', label: 'Logística / Rutas', icon: <Truck className="w-5 h-5" />, roles: ['ADMIN', 'TRANSPORTISTA', 'ALMACEN_PRODUCTO_FINAL'] },
+    { path: '/admin/event-log', label: 'Bitácora ERP', icon: <Activity className="w-5 h-5" />, roles: ['ADMIN'] },
     { path: '/admin/qa-guardian', label: 'Guardián QA & UX', icon: <ShieldCheck className="w-5 h-5" />, roles: ['ADMIN'] },
 ];
 
@@ -63,6 +68,12 @@ export default function AdminLayout() {
     const userRole = user?.role as UserRole;
     if (!isAuthenticated || !ERP_ROLES.includes(userRole)) {
         return <Navigate to="/login" replace />;
+    }
+
+    // Enforce per-route role authorization so non-admin ERP roles cannot access restricted routes directly
+    const matchedRoute = menuItems.find(item => item.path === location.pathname);
+    if (matchedRoute && userRole !== 'ADMIN' && !matchedRoute.roles.includes(userRole)) {
+        return <Navigate to="/admin" replace />;
     }
 
     const isSuperAdminEmail = user?.email === 'denis.elizalde@gmail.com';

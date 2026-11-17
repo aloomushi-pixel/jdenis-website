@@ -20,9 +20,18 @@ export default function ResourceManager() {
 
     useEffect(() => {
         (async () => {
-            const cats = await getResourceCategories();
-            setCategories(cats);
-            if (cats.length > 0) setActiveCategory(cats[0].slug);
+            try {
+                const cats = await getResourceCategories();
+                setCategories(cats);
+                if (cats.length > 0) {
+                    setActiveCategory(cats[0].slug);
+                } else {
+                    setLoading(false);
+                }
+            } catch (e) {
+                console.error('Error loading resource categories:', e);
+                setLoading(false);
+            }
         })();
     }, []);
 

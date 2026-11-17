@@ -47,19 +47,26 @@ export const useAuthStore = create<AuthState>()(
                     set({ loading: true });
                     const { data: { session } } = await supabase.auth.getSession();
                     if (session?.user) {
-                        // Fetch the role from the public database table instead of user metadata
+                        // Fetch role and active status from the public database table
                         const { data: publicUser } = await supabase
                             .from('users')
-                            .select('role')
+                            .select('role, is_active, full_name')
                             .eq('id', session.user.id)
                             .maybeSingle();
 
+                        if (publicUser && publicUser.is_active === false) {
+                            await supabase.auth.signOut();
+                            set({ user: null, isAuthenticated: false });
+                            return;
+                        }
+
+                        const displayName = publicUser?.full_name || session.user.user_metadata?.full_name || session.user.email?.split('@')[0];
                         set({
                             user: {
                                 id: session.user.id,
                                 email: session.user.email!,
-                                fullName: session.user.user_metadata?.full_name || session.user.email?.split('@')[0],
-                                name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0],
+                                fullName: displayName,
+                                name: displayName,
                                 role: publicUser?.role || session.user.user_metadata?.role || 'CLIENTE',
                                 avatar_url: session.user.user_metadata?.avatar_url
                             },
@@ -86,20 +93,27 @@ export const useAuthStore = create<AuthState>()(
                     if (error) throw error;
                     if (!data.user) throw new Error('No user returned');
 
-                    // Fetch the role from the public database table instead of user metadata
+                    // Fetch role and active status from the public database table
                     const { data: publicUser } = await supabase
                         .from('users')
-                        .select('role')
+                        .select('role, is_active, full_name')
                         .eq('id', data.user.id)
                         .maybeSingle();
 
+                    if (publicUser && publicUser.is_active === false) {
+                        await supabase.auth.signOut();
+                        set({ user: null, isAuthenticated: false });
+                        throw new Error('Tu cuenta se encuentra suspendida. Contacta al administrador.');
+                    }
+
+                    const displayName = publicUser?.full_name || data.user.user_metadata?.full_name || email.split('@')[0];
                     set({
                         user: {
                             id: data.user.id,
                             email: data.user.email!,
-                            fullName: data.user.user_metadata.full_name || email.split('@')[0],
-                            name: data.user.user_metadata.full_name || email.split('@')[0],
-                            role: publicUser?.role || data.user.user_metadata.role || 'CLIENTE',
+                            fullName: displayName,
+                            name: displayName,
+                            role: publicUser?.role || data.user.user_metadata?.role || 'CLIENTE',
                         },
                         isAuthenticated: true,
                     });

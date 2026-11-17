@@ -63,10 +63,10 @@ export default function Quoter() {
   useEffect(() => {
     async function loadCustomers() {
       try {
-        const distributors = await withOperationalTelemetry('get_distributors_for_quoter', () =>
-          getUsers('DISTRIBUIDOR')
+        const [distributors, clients] = await withOperationalTelemetry('get_distributors_for_quoter', () =>
+          Promise.all([getUsers('DISTRIBUIDOR'), getUsers('CLIENTE')])
         );
-        setCustomers(distributors);
+        setCustomers([...distributors, ...clients]);
       } catch (err) {
         console.error('Error loading distributors:', err);
       }
@@ -163,13 +163,26 @@ export default function Quoter() {
 
   const getBase64ImageFromUrl = async (imageUrl: string): Promise<string | null> => {
     try {
-      const res = await fetch(imageUrl);
-      const blob = await res.blob();
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result as string);
-        reader.onerror = reject;
-        reader.readAsDataURL(blob);
+      return await new Promise<string | null>((resolve) => {
+        const img = new window.Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+          try {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.naturalWidth || 256;
+            canvas.height = img.naturalHeight || 256;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) return resolve(null);
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            resolve(canvas.toDataURL('image/jpeg', 0.85));
+          } catch {
+            resolve(null);
+          }
+        };
+        img.onerror = () => resolve(null);
+        img.src = imageUrl;
       });
     } catch {
       return null;
@@ -392,6 +405,7 @@ export default function Quoter() {
 
       setCart([]);
       setSelectedCustomerId('');
+      setDiscountValue(0);
 
     } catch (error) {
       const durationMs = Date.now() - flowStart;

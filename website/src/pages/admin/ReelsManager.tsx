@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { Plus, Trash2, Loader, ExternalLink } from 'lucide-react';
-import { getReels, createReel, deleteReel, uploadReelVideo, type SocialReel } from '../../lib/supabase';
+import { getReels, createReel, updateReel, deleteReel, uploadReelVideo, type SocialReel } from '../../lib/supabase';
 
 const PLATFORM_OPTIONS = [
     { value: 'youtube', label: 'YouTube Shorts', icon: <svg className="w-4 h-4 inline" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg> },
@@ -37,20 +37,25 @@ export default function ReelsManager() {
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
+        if (!url.trim() && !videoFile) {
+            alert('Sube un archivo .mp4 o proporciona la URL del Reel.');
+            return;
+        }
         setSaving(true);
         try {
             let video_url = null;
             if (videoFile) {
                 video_url = await uploadReelVideo(videoFile);
             }
+            const nextOrder = reels.reduce((max, r) => Math.max(max, Number(r.sort_order) || 0), 0) + 1;
 
             await createReel({
                 title,
-                url,
+                url: url.trim() || video_url || '',
                 video_url,
                 platform,
                 thumbnail_url: null,
-                sort_order: reels.length + 1,
+                sort_order: nextOrder,
                 active: true,
             });
             setTitle('');
@@ -64,6 +69,16 @@ export default function ReelsManager() {
             alert('Error al guardar el reel');
         } finally {
             setSaving(false);
+        }
+    }
+
+    async function handleToggleActive(reel: SocialReel) {
+        try {
+            await updateReel(reel.id, { active: !reel.active });
+            await loadReels();
+        } catch (err) {
+            console.error('Error updating reel:', err);
+            alert('Error al actualizar estado del reel');
         }
     }
 
@@ -151,7 +166,7 @@ export default function ReelsManager() {
                                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
                             >
                                 {PLATFORM_OPTIONS.map(opt => (
-                                    <option key={opt.value} value={opt.value}>{opt.icon} {opt.label}</option>
+                                    <option key={opt.value} value={opt.value}>{opt.label}</option>
                                 ))}
                             </select>
                         </div>
@@ -236,7 +251,18 @@ export default function ReelsManager() {
                                                 </span>
                                             )}
                                         </td>
-                                        <td className="px-6 py-4 text-right">
+                                        <td className="px-6 py-4 text-right space-x-2">
+                                            <button
+                                                type="button"
+                                                onClick={() => handleToggleActive(reel)}
+                                                className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-lg transition-colors text-xs font-semibold ${
+                                                    reel.active
+                                                        ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                                                        : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                                                }`}
+                                            >
+                                                {reel.active ? 'Activo' : 'Oculto'}
+                                            </button>
                                             <button
                                                 onClick={() => handleDelete(reel.id)}
                                                 className="inline-flex items-center gap-1 px-3 py-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors text-sm"

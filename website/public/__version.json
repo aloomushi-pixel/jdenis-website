@@ -1,8 +1,8 @@
 {
-  "commitSha": "871605a (871605a2ba66d63894dc144547ff476e67ea10ba)",
-  "shortSha": "871605a",
-  "fullSha": "871605a2ba66d63894dc144547ff476e67ea10ba",
-  "commitMessage": "fix(reels,ui): remove frontend UX/QA UI (backend-only) and migrate 5 faststart TikTok MP4 reels with autoplay",
-  "builtAt": "2026-11-17T21:13:47.307Z",
+  "commitSha": "fb18b79 (fb18b79c2d749559547942838ec6a6f8719dc451)",
+  "shortSha": "fb18b79",
+  "fullSha": "fb18b79c2d749559547942838ec6a6f8719dc451",
+  "commitMessage": "feat(admin): isolate Mejora UX bubble and QA Guardian strictly inside /admin for ADMIN role only",
+  "builtAt": "2026-11-17T21:55:11.747Z",
   "environment": "production"
 }
