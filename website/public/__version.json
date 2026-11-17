@@ -1,8 +1,8 @@
 {
-  "commitSha": "9e92ba5 (9e92ba50f818a6d6901926d66e8ea8593a06986e)",
-  "shortSha": "9e92ba5",
-  "fullSha": "9e92ba50f818a6d6901926d66e8ea8593a06986e",
-  "commitMessage": "feat(catalog): clean & structure 184 product descriptions and render rich editorial copy",
-  "builtAt": "2026-11-17T19:44:25.522Z",
+  "commitSha": "0232995 (02329956bcea27cd97692f42d60ad8a1e595132e)",
+  "shortSha": "0232995",
+  "fullSha": "02329956bcea27cd97692f42d60ad8a1e595132e",
+  "commitMessage": "feat(catalog): ensure 100% stock availability across all 215 products and 524 variants",
+  "builtAt": "2026-11-17T20:21:24.414Z",
   "environment": "production"
 }

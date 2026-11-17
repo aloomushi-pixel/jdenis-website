@@ -145,8 +145,18 @@
     <priority>0.88</priority>
   </url>
   <url>
+    <loc>https://jdenis.store/producto/3-mascaras-acondicionadoras</loc>
+    <lastmod>2026-11-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://acdn-us.mitiendanube.com/stores/694/809/products/e7f07b81-96a0-4f53-ac3b-90451ab5e678-502e4fdb27570a255017779416383466-1024-1024.webp</image:loc>
+      <image:title>3 Máscaras Acondicionadoras — Paquetes Buen Fin J. Denis México</image:title>
+    </image:image>
+  </url>
+  <url>
     <loc>https://jdenis.store/producto/curva-b-0-15-dimensional-2d-10mm</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -166,7 +176,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/curva-b-0-15-dimensional-4d-10-mm</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -176,12 +186,22 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/curva-b-0-15-dimensional-5d-10-mm</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
       <image:loc>https://acdn-us.mitiendanube.com/stores/694/809/products/bxhy08641-bb534b96ba037547c016340716631262-1024-1024.webp</image:loc>
       <image:title>Abanicos Prearmados 5D — Extensiones y Pestañas J. Denis México</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://jdenis.store/producto/acelerador</loc>
+    <lastmod>2026-11-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://jdenis.store/hero-products.jpg</image:loc>
+      <image:title>Acelerador de secado — Adhesivos, Higiene y Preparadores J. Denis México</image:title>
     </image:image>
   </url>
   <url>
@@ -216,7 +236,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/adhesivo-negro-pestanas-en-grupo</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -256,7 +276,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/adhesivo-individual-para-pads-lifting</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -276,7 +296,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/adhesivo-transparente-pestanas-en-tira-ihi1</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -286,7 +306,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/adhesivo-para-rulos-blue</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -316,7 +336,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/after-care</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -326,7 +346,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/aguami</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -336,7 +356,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/airpump</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -345,8 +365,18 @@
     </image:image>
   </url>
   <url>
+    <loc>https://jdenis.store/producto/alaciado-en-iones</loc>
+    <lastmod>2026-11-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://jdenis.store/hero-products.jpg</image:loc>
+      <image:title>Alaciado en iones — Accesorios y Consumibles J. Denis México</image:title>
+    </image:image>
+  </url>
+  <url>
     <loc>https://jdenis.store/producto/almohada-con-estante-organizador</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -356,7 +386,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/anillodiez</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -366,7 +396,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/anillo-copa-volumen-10-pzas</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -375,8 +405,18 @@
     </image:image>
   </url>
   <url>
+    <loc>https://jdenis.store/producto/anillo-de-cristal</loc>
+    <lastmod>2026-11-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://jdenis.store/hero-products.jpg</image:loc>
+      <image:title>Anillo de cristal — Extensiones y Pestañas J. Denis México</image:title>
+    </image:image>
+  </url>
+  <url>
     <loc>https://jdenis.store/producto/arco-para-diseno-de-cejas</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -386,7 +426,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/base-para-pestanas</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -395,8 +435,18 @@
     </image:image>
   </url>
   <url>
+    <loc>https://jdenis.store/producto/beauty-razor-perfilador</loc>
+    <lastmod>2026-11-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://jdenis.store/hero-products.jpg</image:loc>
+      <image:title>Beauty Razor Perfilador — Diseño de Cejas y Microblading J. Denis México</image:title>
+    </image:image>
+  </url>
+  <url>
     <loc>https://jdenis.store/producto/blue-lash-lifting-tvd65</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -406,7 +456,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/botox-para-cejas-y-pestanas</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -416,7 +466,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/brocha-para-limpieza</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -426,7 +476,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/brow-fixative-gel-8nvbz</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -445,6 +495,16 @@
     </image:image>
   </url>
   <url>
+    <loc>https://jdenis.store/producto/brow-henna-pro</loc>
+    <lastmod>2026-11-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://acdn-us.mitiendanube.com/stores/694/809/products/brow-henna-061-fbdb257619cce9e95d16669249148944-1024-1024.webp</image:loc>
+      <image:title>Brow Henna Pro — Paquetes Buen Fin J. Denis México</image:title>
+    </image:image>
+  </url>
+  <url>
     <loc>https://jdenis.store/producto/bubblevol</loc>
     <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
@@ -456,7 +516,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/cepillo-con-guarda</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -466,7 +526,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/cepind</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -486,7 +546,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/cinta-adhesiva-nichiban-colores-9i6zq</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -496,7 +556,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/cinta-adhesiva</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -506,7 +566,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/cinta-microfoam</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -526,7 +586,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/sobresaliste</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -536,7 +596,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/clips3</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -546,7 +606,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/ratiosilver</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -556,7 +616,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/contenedor-mini-para-base</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -566,7 +626,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/contenedor-para-anillo-con-50-piezas</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -576,7 +636,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/crema-fijadora-lifting</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -586,7 +646,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/crema-lash-lifting</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -596,7 +656,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/cristal-para-adhesivo-4-5-cm</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -625,6 +685,16 @@
     </image:image>
   </url>
   <url>
+    <loc>https://jdenis.store/producto/delojoneg</loc>
+    <lastmod>2026-11-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://jdenis.store/hero-products.jpg</image:loc>
+      <image:title>Delineador de Párpados Negro — Máscaras y Tratamientos J. Denis México</image:title>
+    </image:image>
+  </url>
+  <url>
     <loc>https://jdenis.store/producto/delineador-pencil</loc>
     <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
@@ -636,7 +706,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/desinfectante-para-pinzas-y-pads</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -646,7 +716,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/desmaquillante</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -655,8 +725,18 @@
     </image:image>
   </url>
   <url>
+    <loc>https://jdenis.store/producto/esenciales</loc>
+    <lastmod>2026-11-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://acdn-us.mitiendanube.com/stores/694/809/products/rizado-jade-11-ac3bb9dfd4f533b09316671818885563-1024-1024.webp</image:loc>
+      <image:title>Esenciales — Paquetes Buen Fin J. Denis México</image:title>
+    </image:image>
+  </url>
+  <url>
     <loc>https://jdenis.store/producto/espcos</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -666,7 +746,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/espatula-plastica-lifting</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -676,7 +756,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/espejo-auxiliar-g</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -686,7 +766,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/espejo-para-pestanas</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -696,7 +776,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/exhibidor-de-tiras</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -706,7 +786,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/curva-l-0-10-combo</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -756,7 +836,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/funda-para-pinza</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -776,7 +856,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/gel-fijador-para-diseno-de-cejas</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -786,7 +866,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/gel-neutralizante-blue</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -796,7 +876,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/gel-ondulante-blue</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -806,7 +886,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/ind5</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -826,7 +906,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/glue-shaker</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -836,7 +916,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/godete-de-cristal</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -865,8 +945,18 @@
     </image:image>
   </url>
   <url>
+    <loc>https://jdenis.store/producto/hilo-entintado</loc>
+    <lastmod>2026-11-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://acdn-us.mitiendanube.com/stores/694/809/products/hilop-af76615ccdae8821d517946707651058-1024-1024.webp</image:loc>
+      <image:title>Hilo entintado — Pigmentos y Brow Henna J. Denis México</image:title>
+    </image:image>
+  </url>
+  <url>
     <loc>https://jdenis.store/producto/criholder</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -876,7 +966,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/shot15</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -886,7 +976,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/eyemajic</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -905,6 +995,16 @@
     </image:image>
   </url>
   <url>
+    <loc>https://jdenis.store/producto/jdenis-blue-pro</loc>
+    <lastmod>2026-11-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://acdn-us.mitiendanube.com/stores/694/809/products/kit-blue2026-1-904625d82324e8063517870888968985-1024-1024.webp</image:loc>
+      <image:title>JDenis Blue Pro — Paquetes Buen Fin J. Denis México</image:title>
+    </image:image>
+  </url>
+  <url>
     <loc>https://jdenis.store/producto/extensiones-en-grupo-pro</loc>
     <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
@@ -916,7 +1016,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/chocolate-pigmento-para-cejas</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -926,7 +1026,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/laminado-cisteaminaest</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -945,8 +1045,18 @@
     </image:image>
   </url>
   <url>
+    <loc>https://jdenis.store/producto/laminado-por-3</loc>
+    <lastmod>2026-11-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://acdn-us.mitiendanube.com/stores/694/809/products/df146fae-e6b6-4719-87d4-994423fc89e1-f1a150cde370b71d5317725809180645-1024-1024.webp</image:loc>
+      <image:title>Laminado por 3 — Paquetes Buen Fin J. Denis México</image:title>
+    </image:image>
+  </url>
+  <url>
     <loc>https://jdenis.store/producto/lampara-media-luna-cex</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -956,7 +1066,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/lapiz-de-cera</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -966,7 +1076,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/lash-lifting</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -986,7 +1096,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/primerjd</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -996,7 +1106,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/lashribbon</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1016,7 +1126,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/herramienta-para-lifting-2-en-1</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1026,7 +1136,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/lifting-tool-espatula-elevadora</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1036,7 +1146,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/limpiador-de-impurezas-blue</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1046,7 +1156,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/limpiador-de-impurezas-piel-normal-y-seca</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1056,7 +1166,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/locion-limpiadora-lifting</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1066,7 +1176,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/locion-vitaminada</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1076,7 +1186,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/lente-con-5-aumentos-ro1</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1086,7 +1196,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/maniqui-practica-de-extensiones</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1106,7 +1216,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/mascara-para-pestanas-con-microfibras-alargadoras</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1116,7 +1226,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/mascara-para-pestanas-con-vitamina-e-y-queratina</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1145,6 +1255,26 @@
     </image:image>
   </url>
   <url>
+    <loc>https://jdenis.store/producto/mascara-para-pestanas-extra-volumen</loc>
+    <lastmod>2026-11-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://acdn-us.mitiendanube.com/stores/694/809/products/sin-titulo-4-031-a92210f480fc4de0a316678800359583-1024-1024.webp</image:loc>
+      <image:title>Máscara para pestañas Extra Volumen — Máscaras y Tratamientos J. Denis México</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://jdenis.store/producto/masplus</loc>
+    <lastmod>2026-11-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://jdenis.store/hero-products.jpg</image:loc>
+      <image:title>Máscara Plus Lashes — Máscaras y Tratamientos J. Denis México</image:title>
+    </image:image>
+  </url>
+  <url>
     <loc>https://jdenis.store/producto/medidor-de-formaldehido</loc>
     <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
@@ -1156,7 +1286,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/medidor-de-humedad</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1166,7 +1296,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/mezclador-de-henna</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1176,7 +1306,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/mica</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1186,7 +1316,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/microbrush-10-pzas</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1196,7 +1326,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/mini-cepillo-para-lash-lifting</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1216,7 +1346,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/modelos-de-curvas</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1236,7 +1366,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/pad-2-en-1</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1246,7 +1376,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/pad-anime</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1256,17 +1386,17 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/pad-aro</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
-      <image:loc>https://acdn-us.mitiendanube.com/stores/694/809/products/pad-aro_mesa-de-trabajo-1-13dc7f4b4e199b032d17187377615332-1024-1024.webp</image:loc>
+      <image:loc>https://acdn-us.mitiendanube.com/stores/694/809/products/pad-aro-03-e9bc8d153bff9846f917187377634864-1024-1024.webp</image:loc>
       <image:title>Pad Aro — Lash Lifting J. Denis México</image:title>
     </image:image>
   </url>
   <url>
     <loc>https://jdenis.store/producto/pad-colors-6p</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1276,27 +1406,27 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/pad-colors-8p</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
-      <image:loc>https://acdn-us.mitiendanube.com/stores/694/809/products/color8_mesa-de-trabajo-1-082794b81eb64ce0f317187370015350-1024-1024.webp</image:loc>
+      <image:loc>https://acdn-us.mitiendanube.com/stores/694/809/products/color8-04-aa3373c836ddf6788e17187370032833-1024-1024.webp</image:loc>
       <image:title>Pad Colors 8p — Lash Lifting J. Denis México</image:title>
     </image:image>
   </url>
   <url>
     <loc>https://jdenis.store/producto/pad-corrector-reversion</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
-      <image:loc>https://acdn-us.mitiendanube.com/stores/694/809/products/whatsapp-image-2025-03-06-at-10-07-30-235150602538ea791e17412782121236-1024-1024.webp</image:loc>
+      <image:loc>https://acdn-us.mitiendanube.com/stores/694/809/products/captura-de-pantalla-2025-03-03-a-las-8-41-47a-m-ad97fc9b90f36e3ccd17410130304807-1024-1024.webp</image:loc>
       <image:title>Pad Corrector (Reversión) — Lash Lifting J. Denis México</image:title>
     </image:image>
   </url>
   <url>
     <loc>https://jdenis.store/producto/pad-curva-c</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1306,7 +1436,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/pad-elevacion-l</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1316,7 +1446,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/pad-elevacion-l-copia-i9fde</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1326,17 +1456,17 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/pad-ld-simetricos</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
-      <image:loc>https://acdn-us.mitiendanube.com/stores/694/809/products/blando-03-6a258200c8e749571317410134826386-1024-1024.webp</image:loc>
+      <image:loc>https://acdn-us.mitiendanube.com/stores/694/809/products/blando-01-5745f19262a7eede7d17410134827689-1024-1024.webp</image:loc>
       <image:title>Pad LD Simetricos — Lash Lifting J. Denis México</image:title>
     </image:image>
   </url>
   <url>
     <loc>https://jdenis.store/producto/pad-mariposa</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1345,8 +1475,18 @@
     </image:image>
   </url>
   <url>
+    <loc>https://jdenis.store/producto/pad-molde-l</loc>
+    <lastmod>2026-11-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://jdenis.store/hero-products.jpg</image:loc>
+      <image:title>Pad Molde L — Lash Lifting J. Denis México</image:title>
+    </image:image>
+  </url>
+  <url>
     <loc>https://jdenis.store/producto/pad-nube</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1356,7 +1496,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/pad-oso</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1366,7 +1506,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/pad-flat-yytjx</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1376,7 +1516,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/pad-rosa-sin-canales</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1386,7 +1526,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/pad-rosas-con-micro-canales</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1396,17 +1536,17 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/pad-superior-e-inferior</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
-      <image:loc>https://acdn-us.mitiendanube.com/stores/694/809/products/verdes-03-a758a450feb27d7f7617187363942632-1024-1024.webp</image:loc>
+      <image:loc>https://acdn-us.mitiendanube.com/stores/694/809/products/verdes-05-76d8134fcb2bde33f517187363969888-1024-1024.webp</image:loc>
       <image:title>Pad Superior e Inferior — Lash Lifting J. Denis México</image:title>
     </image:image>
   </url>
   <url>
     <loc>https://jdenis.store/producto/pano-limpiador-de-boquilla</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1416,7 +1556,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/papel-termico</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1425,8 +1565,18 @@
     </image:image>
   </url>
   <url>
+    <loc>https://jdenis.store/producto/parches-hidrogel-50-pzs</loc>
+    <lastmod>2026-11-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://jdenis.store/hero-products.jpg</image:loc>
+      <image:title>Parches Hidrogel 50 pzs — Accesorios y Consumibles J. Denis México</image:title>
+    </image:image>
+  </url>
+  <url>
     <loc>https://jdenis.store/producto/peinelifting</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1446,7 +1596,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/perfilador-doble-paquete-3-pza</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1456,7 +1606,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/perfilador-pocket-para-ceja</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1476,7 +1626,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/pestana-decorada-de-tira</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1496,7 +1646,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/pestana-individual</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1536,7 +1686,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/pestana-c-en-colores</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1546,7 +1696,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/pestanas-en-grupo-o-racimo</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1556,7 +1706,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/pestana-super-volume-pestanatecnologica</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1576,7 +1726,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/pigmento-para-pestanas</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1586,7 +1736,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/pincel-de-silicon-1ycks</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1596,12 +1746,32 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/pinza-abanicos-sin-punta</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
       <image:loc>https://acdn-us.mitiendanube.com/stores/694/809/products/sin-punta-11-01f6336c5e77686f5b16275044778948-1024-1024.webp</image:loc>
       <image:title>Pinza Abanicos sin Punta — Herramientas, Pinzas y Equipo J. Denis México</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://jdenis.store/producto/pinza-ele-dorada</loc>
+    <lastmod>2026-11-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://jdenis.store/hero-products.jpg</image:loc>
+      <image:title>Pinza Ele Dorada — Herramientas, Pinzas y Equipo J. Denis México</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://jdenis.store/producto/pinza-ele-larga</loc>
+    <lastmod>2026-11-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://jdenis.store/hero-products.jpg</image:loc>
+      <image:title>Pinza Ele larga — Herramientas, Pinzas y Equipo J. Denis México</image:title>
     </image:image>
   </url>
   <url>
@@ -1626,7 +1796,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/keraplata</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1636,7 +1806,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/pinza-para-colocar</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1646,7 +1816,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/pinza-para-depilar</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1656,7 +1826,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/pinza-para-pestanas-de-tira</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1705,8 +1875,18 @@
     </image:image>
   </url>
   <url>
+    <loc>https://jdenis.store/producto/pinza-punta-mini</loc>
+    <lastmod>2026-11-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://jdenis.store/hero-products.jpg</image:loc>
+      <image:title>Pinza punta Mini — Herramientas, Pinzas y Equipo J. Denis México</image:title>
+    </image:image>
+  </url>
+  <url>
     <loc>https://jdenis.store/producto/pinza-punta-para-extensiones</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1715,8 +1895,28 @@
     </image:image>
   </url>
   <url>
+    <loc>https://jdenis.store/producto/pinza-punta-roja</loc>
+    <lastmod>2026-11-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://jdenis.store/hero-products.jpg</image:loc>
+      <image:title>Pinza Punta Roja — Herramientas, Pinzas y Equipo J. Denis México</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://jdenis.store/producto/pinzas-para-extension-set</loc>
+    <lastmod>2026-11-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://jdenis.store/hero-products.jpg</image:loc>
+      <image:title>Pinzas para Extension Set — Herramientas, Pinzas y Equipo J. Denis México</image:title>
+    </image:image>
+  </url>
+  <url>
     <loc>https://jdenis.store/producto/plantilla_henna</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1736,7 +1936,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/glue-less-powder</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1755,8 +1955,18 @@
     </image:image>
   </url>
   <url>
+    <loc>https://jdenis.store/producto/collagen</loc>
+    <lastmod>2026-11-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://jdenis.store/hero-products.jpg</image:loc>
+      <image:title>Protector con colágeno — Extensiones y Pestañas J. Denis México</image:title>
+    </image:image>
+  </url>
+  <url>
     <loc>https://jdenis.store/producto/protector-para-parpado-20-pares</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1766,7 +1976,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/sticker-reutilizable-parpado</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1776,7 +1986,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/pulsera-base-con-medidas</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1785,8 +1995,18 @@
     </image:image>
   </url>
   <url>
+    <loc>https://jdenis.store/producto/pulsera-con-iman-para-pinzas</loc>
+    <lastmod>2026-11-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://jdenis.store/hero-products.jpg</image:loc>
+      <image:title>Pulsera con imán para pinzas — Herramientas, Pinzas y Equipo J. Denis México</image:title>
+    </image:image>
+  </url>
+  <url>
     <loc>https://jdenis.store/producto/quitapestanas-liquido-pestanas-en-grupo</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1796,7 +2016,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/reactor-para-pigmento</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1806,7 +2026,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/reestructurante-lifting</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1816,7 +2036,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/reestructurante-pigmento-para-cejas-y-pestanas</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1826,7 +2046,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/regla-metalica</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1836,7 +2056,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/regla-curva-plastica-para-diseno</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1845,8 +2065,38 @@
     </image:image>
   </url>
   <url>
+    <loc>https://jdenis.store/producto/regla-t-para-diseno-de-cejas</loc>
+    <lastmod>2026-11-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://jdenis.store/hero-products.jpg</image:loc>
+      <image:title>Regla T para diseño de cejas — Diseño de Cejas y Microblading J. Denis México</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://jdenis.store/producto/removedor-de-adhesivo</loc>
+    <lastmod>2026-11-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://jdenis.store/hero-products.jpg</image:loc>
+      <image:title>Removedor de Adhesivo — Adhesivos, Higiene y Preparadores J. Denis México</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://jdenis.store/producto/removedor-de-gotero-liquido</loc>
+    <lastmod>2026-11-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://jdenis.store/hero-products.jpg</image:loc>
+      <image:title>REMOVEDOR DE GOTERO LÍQUIDO — Adhesivos, Higiene y Preparadores J. Denis México</image:title>
+    </image:image>
+  </url>
+  <url>
     <loc>https://jdenis.store/producto/removedor-clear-gel</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1856,7 +2106,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/repuesto-de-maniqui-para-microblading</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1865,8 +2115,18 @@
     </image:image>
   </url>
   <url>
+    <loc>https://jdenis.store/producto/rizado-facil-con-clip</loc>
+    <lastmod>2026-11-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://jdenis.store/hero-products.jpg</image:loc>
+      <image:title>Rizado Facil con Clip — Lash Curling y Botox J. Denis México</image:title>
+    </image:image>
+  </url>
+  <url>
     <loc>https://jdenis.store/producto/rollo-plastico-osmotico</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1876,7 +2136,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/rulos-adhesivos-curva-ch</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1886,7 +2146,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/ruloch</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1896,7 +2156,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/seis-caretas-faciales</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1916,7 +2176,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/serum-alargador-xl-1hkmb</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1926,7 +2186,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/set-5-pinceles</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1936,7 +2196,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/set-6-pinzas-y-tijera</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1956,7 +2216,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/soporte-de-pestanas-de-silicon</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1966,7 +2226,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/plant6</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1986,7 +2246,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/tintura-topica-negro</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -1996,7 +2256,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/tonificante-desinfectante</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -2006,7 +2266,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/tratamiento-alargador-para-cejas-y-pestanas</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -2016,7 +2276,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/tratamiento-capilar-ph4</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -2026,7 +2286,7 @@
   </url>
   <url>
     <loc>https://jdenis.store/producto/vernier</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>

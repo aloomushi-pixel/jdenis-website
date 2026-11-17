@@ -5,6 +5,26 @@
     <link>https://jdenis.store</link>
     <description>Catálogo oficial de productos profesionales J. Denis para cejas, pestañas, laminado, lash lifting con cisteamina, brow henna y pigmentos en México.</description>
     <item>
+      <g:id>JD-3-MASCARAS-ACONDICIONADORAS</g:id>
+      <g:title>3 Máscaras Acondicionadoras - Paquetes Buen Fin Profesional J. Denis</g:title>
+      <g:description>por $ 100 pesos.</g:description>
+      <g:link>https://jdenis.store/producto/3-mascaras-acondicionadoras</g:link>
+      <g:image_link>https://acdn-us.mitiendanube.com/stores/694/809/products/e7f07b81-96a0-4f53-ac3b-90451ab5e678-502e4fdb27570a255017779416383466-1024-1024.webp</g:image_link>
+      <g:condition>new</g:condition>
+      <g:availability>in_stock</g:availability>
+      <g:price>100.00 MXN</g:price>
+      <g:brand>J. Denis Cosméticos</g:brand>
+      <g:mpn>JD-3-MASCARAS-ACONDICIONADORAS</g:mpn>
+      <g:identifier_exists>no</g:identifier_exists>
+      <g:google_product_category>Health &amp; Beauty &gt; Personal Care &gt; Cosmetics</g:google_product_category>
+      <g:product_type>Cosméticos &gt; Paquetes Buen Fin</g:product_type>
+      <g:shipping>
+        <g:country>MX</g:country>
+        <g:service>Envío Asegurado Nacional</g:service>
+        <g:price>200.00 MXN</g:price>
+      </g:shipping>
+    </item>
+    <item>
       <g:id>JD-CURVA-B-0-15-DIMENSIONAL-2D-10MM</g:id>
       <g:title>Abanicos Prearmados 2D - Extensiones y Pestañas Profesional J. Denis</g:title>
       <g:description>Abanicos prearmados dimensionales 2D en microfilamentos PBT hipoalergénicos (grosor 0.15) con apariencia Mink y cruelty-free. Ideales para efectos naturales y volumen ligero con aplicación rápida.</g:description>
@@ -78,6 +98,34 @@
       <g:identifier_exists>no</g:identifier_exists>
       <g:google_product_category>Health &amp; Beauty &gt; Personal Care &gt; Cosmetics</g:google_product_category>
       <g:product_type>Cosméticos &gt; Extensiones y Pestañas</g:product_type>
+      <g:shipping>
+        <g:country>MX</g:country>
+        <g:service>Envío Asegurado Nacional</g:service>
+        <g:price>200.00 MXN</g:price>
+      </g:shipping>
+    </item>
+    <item>
+      <g:id>JD-ACELERADOR</g:id>
+      <g:title>Acelerador de secado - Adhesivos, Higiene y Preparadores Profesional J. Denis</g:title>
+      <g:description>Acelerador de uso profesional.
+
+Este producto permite que al aplicar la extensión el adhesivo seque al instante, te ahorras 1 a 2 segundos que es lo que suele tardar un adhesivo en secar, ya no tienes que utilizar bombilla secadora o mini ventilador durante el proceso de aplicación.
+
+Este producto acelera el secado del adhesivo para una más rápida aplicación y duración, es una herramienta básica y necesaria para una Lashista Master.
+
+Aplica directamente en las pestañas naturales de tu clienta, en aplicacion de primera vez o retoque, despues inicia con la aplicacion de extensiones de pestañas, el adhesivo secara al instante.
+
+Tenemos que esperar 24 horas a que cure el adhesivo.</g:description>
+      <g:link>https://jdenis.store/producto/acelerador</g:link>
+      <g:image_link>https://jdenis.store/hero-products.jpg</g:image_link>
+      <g:condition>new</g:condition>
+      <g:availability>in_stock</g:availability>
+      <g:price>300.00 MXN</g:price>
+      <g:brand>J. Denis Cosméticos</g:brand>
+      <g:mpn>JD-ACELERADOR</g:mpn>
+      <g:identifier_exists>no</g:identifier_exists>
+      <g:google_product_category>Health &amp; Beauty &gt; Personal Care &gt; Cosmetics</g:google_product_category>
+      <g:product_type>Cosméticos &gt; Adhesivos, Higiene y Preparadores</g:product_type>
       <g:shipping>
         <g:country>MX</g:country>
         <g:service>Envío Asegurado Nacional</g:service>
@@ -765,6 +813,34 @@ Se envía una pieza.</g:description>
       </g:shipping>
     </item>
     <item>
+      <g:id>JD-ALACIADO-EN-IONES</g:id>
+      <g:title>Alaciado en iones - Accesorios y Consumibles Profesional J. Denis</g:title>
+      <g:description>Alaciado y Moldeado Permanente en Crema.
+
+Creado para alaciar y moldear hasta el cabello mas rizado, crespo y rebelde.
+
+Su formula enriquecida con Keratina, protege, hidrata y reestructura el cabello formando una película que protege el cabello durante el proceso de alaciado.
+
+En 2 pasos obtendras un alaciado permanente simplemente espectacular.
+
+Incluye un tratamiento especial que balancea el pH de tu cabello.</g:description>
+      <g:link>https://jdenis.store/producto/alaciado-en-iones</g:link>
+      <g:image_link>https://jdenis.store/hero-products.jpg</g:image_link>
+      <g:condition>new</g:condition>
+      <g:availability>in_stock</g:availability>
+      <g:price>350.00 MXN</g:price>
+      <g:brand>J. Denis Cosméticos</g:brand>
+      <g:mpn>JD-ALACIADO-EN-IONES</g:mpn>
+      <g:identifier_exists>no</g:identifier_exists>
+      <g:google_product_category>Health &amp; Beauty &gt; Personal Care &gt; Cosmetics</g:google_product_category>
+      <g:product_type>Cosméticos &gt; Accesorios y Consumibles</g:product_type>
+      <g:shipping>
+        <g:country>MX</g:country>
+        <g:service>Envío Asegurado Nacional</g:service>
+        <g:price>200.00 MXN</g:price>
+      </g:shipping>
+    </item>
+    <item>
       <g:id>JD-ALMOHADA-CON-ESTANTE-ORGANIZADOR</g:id>
       <g:title>Almohada con Estante Organizador - Diseño de Cejas y Microblading Profesional J. Denis</g:title>
       <g:description>Juego de almohada y estante para colocación de extensión de pestañas: este juego incluye una almohada ergonómica curvada aterciopelada para el soporte del cuello y alivio al dolor, ayudando a estirar y relajar la columna cervical. También hay un estante que ayuda como soporte a la almohada para tener todo a mano. Tamaño del producto: aproximadamente 50 * 20 * 12 cm / 19.69 * 7.84 * 4.72 pulgadas.
@@ -845,6 +921,30 @@ Paquete de 10 piezas.</g:description>
       </g:shipping>
     </item>
     <item>
+      <g:id>JD-ANILLO-DE-CRISTAL</g:id>
+      <g:title>Anillo de cristal - Extensiones y Pestañas Profesional J. Denis</g:title>
+      <g:description>Se utiliza para sostener el adhesivo durante la aplicación.
+
+Mantiene la temperatura ideal del adhesivo.
+
+Al estar montado sobre el dedo facilita la colocacion de las extension.</g:description>
+      <g:link>https://jdenis.store/producto/anillo-de-cristal</g:link>
+      <g:image_link>https://jdenis.store/hero-products.jpg</g:image_link>
+      <g:condition>new</g:condition>
+      <g:availability>in_stock</g:availability>
+      <g:price>200.00 MXN</g:price>
+      <g:brand>J. Denis Cosméticos</g:brand>
+      <g:mpn>JD-ANILLO-DE-CRISTAL</g:mpn>
+      <g:identifier_exists>no</g:identifier_exists>
+      <g:google_product_category>Health &amp; Beauty &gt; Personal Care &gt; Cosmetics</g:google_product_category>
+      <g:product_type>Cosméticos &gt; Extensiones y Pestañas</g:product_type>
+      <g:shipping>
+        <g:country>MX</g:country>
+        <g:service>Envío Asegurado Nacional</g:service>
+        <g:price>200.00 MXN</g:price>
+      </g:shipping>
+    </item>
+    <item>
       <g:id>JD-ARCO-PARA-DISENO-DE-CEJAS</g:id>
       <g:title>Arco para diseño de cejas - Pigmentos y Brow Henna Profesional J. Denis</g:title>
       <g:description>Contiene:.
@@ -888,6 +988,26 @@ Practico y útil para colocar extensiones de pestañas con volumen.</g:descripti
       <g:identifier_exists>no</g:identifier_exists>
       <g:google_product_category>Health &amp; Beauty &gt; Personal Care &gt; Cosmetics</g:google_product_category>
       <g:product_type>Cosméticos &gt; Extensiones y Pestañas</g:product_type>
+      <g:shipping>
+        <g:country>MX</g:country>
+        <g:service>Envío Asegurado Nacional</g:service>
+        <g:price>200.00 MXN</g:price>
+      </g:shipping>
+    </item>
+    <item>
+      <g:id>JD-BEAUTY-RAZOR-PERFILADOR</g:id>
+      <g:title>Beauty Razor Perfilador - Diseño de Cejas y Microblading Profesional J. Denis</g:title>
+      <g:description>Set de 3 perfiladores premium para Diseño de ceja.</g:description>
+      <g:link>https://jdenis.store/producto/beauty-razor-perfilador</g:link>
+      <g:image_link>https://jdenis.store/hero-products.jpg</g:image_link>
+      <g:condition>new</g:condition>
+      <g:availability>in_stock</g:availability>
+      <g:price>120.00 MXN</g:price>
+      <g:brand>J. Denis Cosméticos</g:brand>
+      <g:mpn>JD-BEAUTY-RAZOR-PERFILADOR</g:mpn>
+      <g:identifier_exists>no</g:identifier_exists>
+      <g:google_product_category>Health &amp; Beauty &gt; Personal Care &gt; Cosmetics</g:google_product_category>
+      <g:product_type>Cosméticos &gt; Diseño de Cejas y Microblading</g:product_type>
       <g:shipping>
         <g:country>MX</g:country>
         <g:service>Envío Asegurado Nacional</g:service>
@@ -1119,6 +1239,38 @@ Tres perfiladores para delinear la ceja.</g:description>
       <g:identifier_exists>no</g:identifier_exists>
       <g:google_product_category>Health &amp; Beauty &gt; Personal Care &gt; Cosmetics</g:google_product_category>
       <g:product_type>Cosméticos &gt; Pigmentos y Brow Henna</g:product_type>
+      <g:shipping>
+        <g:country>MX</g:country>
+        <g:service>Envío Asegurado Nacional</g:service>
+        <g:price>200.00 MXN</g:price>
+      </g:shipping>
+    </item>
+    <item>
+      <g:id>JD-BROW-HENNA-PRO</g:id>
+      <g:title>Brow Henna Pro - Paquetes Buen Fin Profesional J. Denis</g:title>
+      <g:description>Set Brow Henna Pro.
+
+Incluye:
+
+1 Brow Henna
+
+1 Diseño de cejas
+
+1 Arco para diseñar
+
+1 Lash Shampoo
+
+todo por $ 1400 pesos</g:description>
+      <g:link>https://jdenis.store/producto/brow-henna-pro</g:link>
+      <g:image_link>https://acdn-us.mitiendanube.com/stores/694/809/products/brow-henna-061-fbdb257619cce9e95d16669249148944-1024-1024.webp</g:image_link>
+      <g:condition>new</g:condition>
+      <g:availability>in_stock</g:availability>
+      <g:price>1400.00 MXN</g:price>
+      <g:brand>J. Denis Cosméticos</g:brand>
+      <g:mpn>JD-BROW-HENNA-PRO</g:mpn>
+      <g:identifier_exists>no</g:identifier_exists>
+      <g:google_product_category>Health &amp; Beauty &gt; Personal Care &gt; Cosmetics</g:google_product_category>
+      <g:product_type>Cosméticos &gt; Paquetes Buen Fin</g:product_type>
       <g:shipping>
         <g:country>MX</g:country>
         <g:service>Envío Asegurado Nacional</g:service>
@@ -1663,6 +1815,30 @@ Tono café medio.</g:description>
       </g:shipping>
     </item>
     <item>
+      <g:id>JD-DELOJONEG</g:id>
+      <g:title>Delineador de Párpados Negro - Máscaras y Tratamientos Profesional J. Denis</g:title>
+      <g:description>Delineador líquido de párpados.
+
+Waterproof
+
+Color negro.</g:description>
+      <g:link>https://jdenis.store/producto/delojoneg</g:link>
+      <g:image_link>https://jdenis.store/hero-products.jpg</g:image_link>
+      <g:condition>new</g:condition>
+      <g:availability>in_stock</g:availability>
+      <g:price>50.00 MXN</g:price>
+      <g:brand>J. Denis Cosméticos</g:brand>
+      <g:mpn>JD-DELOJONEG</g:mpn>
+      <g:identifier_exists>no</g:identifier_exists>
+      <g:google_product_category>Health &amp; Beauty &gt; Personal Care &gt; Cosmetics</g:google_product_category>
+      <g:product_type>Cosméticos &gt; Máscaras y Tratamientos</g:product_type>
+      <g:shipping>
+        <g:country>MX</g:country>
+        <g:service>Envío Asegurado Nacional</g:service>
+        <g:price>200.00 MXN</g:price>
+      </g:shipping>
+    </item>
+    <item>
       <g:id>JD-DELINEADOR-PENCIL</g:id>
       <g:title>Delineador Pencil - Accesorios y Consumibles Profesional J. Denis</g:title>
       <g:description>Define y Diseña tu ceja de forma fácil con este lápiz en varios tonos
@@ -1777,6 +1953,42 @@ Práctico, sencillo y perfecto para tu rutina de limpieza.</g:description>
       <g:identifier_exists>no</g:identifier_exists>
       <g:google_product_category>Health &amp; Beauty &gt; Personal Care &gt; Cosmetics</g:google_product_category>
       <g:product_type>Cosméticos &gt; Adhesivos, Higiene y Preparadores</g:product_type>
+      <g:shipping>
+        <g:country>MX</g:country>
+        <g:service>Envío Asegurado Nacional</g:service>
+        <g:price>200.00 MXN</g:price>
+      </g:shipping>
+    </item>
+    <item>
+      <g:id>JD-ESENCIALES</g:id>
+      <g:title>Esenciales - Paquetes Buen Fin Profesional J. Denis</g:title>
+      <g:description>Buen Fin.
+
+Set Esenciales
+
+Incluye:
+
+1 Rizado Jade
+
+1 Diseño de cejas
+
+1 Juego de pads para Lifting
+
+1 Adhesivo libre de latex
+
+1 Lash Shampoo
+
+todo por $ 600 pesos</g:description>
+      <g:link>https://jdenis.store/producto/esenciales</g:link>
+      <g:image_link>https://acdn-us.mitiendanube.com/stores/694/809/products/rizado-jade-11-ac3bb9dfd4f533b09316671818885563-1024-1024.webp</g:image_link>
+      <g:condition>new</g:condition>
+      <g:availability>in_stock</g:availability>
+      <g:price>600.00 MXN</g:price>
+      <g:brand>J. Denis Cosméticos</g:brand>
+      <g:mpn>JD-ESENCIALES</g:mpn>
+      <g:identifier_exists>no</g:identifier_exists>
+      <g:google_product_category>Health &amp; Beauty &gt; Personal Care &gt; Cosmetics</g:google_product_category>
+      <g:product_type>Cosméticos &gt; Paquetes Buen Fin</g:product_type>
       <g:shipping>
         <g:country>MX</g:country>
         <g:service>Envío Asegurado Nacional</g:service>
@@ -2374,6 +2586,34 @@ Disponible: Tono Castaño Obscuro, Castaño Medio y Negro.</g:description>
       </g:shipping>
     </item>
     <item>
+      <g:id>JD-HILO-ENTINTADO</g:id>
+      <g:title>Hilo entintado - Pigmentos y Brow Henna Profesional J. Denis</g:title>
+      <g:description>Caja de Hilo pre entintado disponible en colores negro y blanco para diseño de cejas.
+
+Facilita la forma de las cejas con esta herramienta de trazo de cejas de alta calidad.
+
+Crea cejas perfectamente simétricas midiendo y dibujando la forma que necesitas antes de realizar microblading.
+
+Este hilo pre entintado de cejas es perfecto para usar en todas las formas de rostros ya sean redondas, cuadradas, ovalado o en forma de corazón.
+
+Trazos limpios y rápidos 10 metros.</g:description>
+      <g:link>https://jdenis.store/producto/hilo-entintado</g:link>
+      <g:image_link>https://acdn-us.mitiendanube.com/stores/694/809/products/hilop-af76615ccdae8821d517946707651058-1024-1024.webp</g:image_link>
+      <g:condition>new</g:condition>
+      <g:availability>in_stock</g:availability>
+      <g:price>60.00 MXN</g:price>
+      <g:brand>J. Denis Cosméticos</g:brand>
+      <g:mpn>JD-HILO-ENTINTADO</g:mpn>
+      <g:identifier_exists>no</g:identifier_exists>
+      <g:google_product_category>Health &amp; Beauty &gt; Personal Care &gt; Cosmetics</g:google_product_category>
+      <g:product_type>Cosméticos &gt; Pigmentos y Brow Henna</g:product_type>
+      <g:shipping>
+        <g:country>MX</g:country>
+        <g:service>Envío Asegurado Nacional</g:service>
+        <g:price>200.00 MXN</g:price>
+      </g:shipping>
+    </item>
+    <item>
       <g:id>JD-CRIHOLDER</g:id>
       <g:title>Holder Cristal - Extensiones y Pestañas Profesional J. Denis</g:title>
       <g:description>Cristal para adhesivo y tiras de pestañas.</g:description>
@@ -2549,6 +2789,40 @@ Ventajas:
       <g:identifier_exists>no</g:identifier_exists>
       <g:google_product_category>Health &amp; Beauty &gt; Personal Care &gt; Cosmetics</g:google_product_category>
       <g:product_type>Cosméticos &gt; Lash Curling y Botox</g:product_type>
+      <g:shipping>
+        <g:country>MX</g:country>
+        <g:service>Envío Asegurado Nacional</g:service>
+        <g:price>200.00 MXN</g:price>
+      </g:shipping>
+    </item>
+    <item>
+      <g:id>JD-JDENIS-BLUE-PRO</g:id>
+      <g:title>JDenis Blue Pro - Paquetes Buen Fin Profesional J. Denis</g:title>
+      <g:description>Buen Fin.
+
+Set JDenis Blue Pro
+
+Incluye:
+
+1 Rizado Blue
+
+1 Lifting tool plastica
+
+1 Adhesivo libre de latex TRANSPARENTE
+
+1 Lash Shampoo
+
+todo por $ 550 pesos</g:description>
+      <g:link>https://jdenis.store/producto/jdenis-blue-pro</g:link>
+      <g:image_link>https://acdn-us.mitiendanube.com/stores/694/809/products/kit-blue2026-1-904625d82324e8063517870888968985-1024-1024.webp</g:image_link>
+      <g:condition>new</g:condition>
+      <g:availability>in_stock</g:availability>
+      <g:price>550.00 MXN</g:price>
+      <g:brand>J. Denis Cosméticos</g:brand>
+      <g:mpn>JD-JDENIS-BLUE-PRO</g:mpn>
+      <g:identifier_exists>no</g:identifier_exists>
+      <g:google_product_category>Health &amp; Beauty &gt; Personal Care &gt; Cosmetics</g:google_product_category>
+      <g:product_type>Cosméticos &gt; Paquetes Buen Fin</g:product_type>
       <g:shipping>
         <g:country>MX</g:country>
         <g:service>Envío Asegurado Nacional</g:service>
@@ -2739,6 +3013,30 @@ Planchado de cejas: Diseño de cejas+Papel térmico.</g:description>
       <g:identifier_exists>no</g:identifier_exists>
       <g:google_product_category>Health &amp; Beauty &gt; Personal Care &gt; Cosmetics</g:google_product_category>
       <g:product_type>Cosméticos &gt; Diseño de Cejas y Microblading</g:product_type>
+      <g:shipping>
+        <g:country>MX</g:country>
+        <g:service>Envío Asegurado Nacional</g:service>
+        <g:price>200.00 MXN</g:price>
+      </g:shipping>
+    </item>
+    <item>
+      <g:id>JD-LAMINADO-POR-3</g:id>
+      <g:title>Laminado por 3 - Paquetes Buen Fin Profesional J. Denis</g:title>
+      <g:description>Buen Fin.
+
+3 Kits de Laminado de cejas (Diseño de cejas)
+
+por $ 500 pesos</g:description>
+      <g:link>https://jdenis.store/producto/laminado-por-3</g:link>
+      <g:image_link>https://acdn-us.mitiendanube.com/stores/694/809/products/df146fae-e6b6-4719-87d4-994423fc89e1-f1a150cde370b71d5317725809180645-1024-1024.webp</g:image_link>
+      <g:condition>new</g:condition>
+      <g:availability>in_stock</g:availability>
+      <g:price>500.00 MXN</g:price>
+      <g:brand>J. Denis Cosméticos</g:brand>
+      <g:mpn>JD-LAMINADO-POR-3</g:mpn>
+      <g:identifier_exists>no</g:identifier_exists>
+      <g:google_product_category>Health &amp; Beauty &gt; Personal Care &gt; Cosmetics</g:google_product_category>
+      <g:product_type>Cosméticos &gt; Paquetes Buen Fin</g:product_type>
       <g:shipping>
         <g:country>MX</g:country>
         <g:service>Envío Asegurado Nacional</g:service>
@@ -3490,6 +3788,46 @@ Especialmente recomendada después de tratamientos como Lash Lifting, ya que ayu
       </g:shipping>
     </item>
     <item>
+      <g:id>JD-MASCARA-PARA-PESTANAS-EXTRA-VOLU</g:id>
+      <g:title>Máscara para pestañas Extra Volumen - Máscaras y Tratamientos Profesional J. Denis</g:title>
+      <g:description>Mascara para pestañas que genera alargamiento extremo.</g:description>
+      <g:link>https://jdenis.store/producto/mascara-para-pestanas-extra-volumen</g:link>
+      <g:image_link>https://acdn-us.mitiendanube.com/stores/694/809/products/sin-titulo-4-031-a92210f480fc4de0a316678800359583-1024-1024.webp</g:image_link>
+      <g:condition>new</g:condition>
+      <g:availability>in_stock</g:availability>
+      <g:price>40.00 MXN</g:price>
+      <g:brand>J. Denis Cosméticos</g:brand>
+      <g:mpn>JD-MASCARA-PARA-PESTANAS-EXTRA-VOLU</g:mpn>
+      <g:identifier_exists>no</g:identifier_exists>
+      <g:google_product_category>Health &amp; Beauty &gt; Personal Care &gt; Cosmetics</g:google_product_category>
+      <g:product_type>Cosméticos &gt; Máscaras y Tratamientos</g:product_type>
+      <g:shipping>
+        <g:country>MX</g:country>
+        <g:service>Envío Asegurado Nacional</g:service>
+        <g:price>200.00 MXN</g:price>
+      </g:shipping>
+    </item>
+    <item>
+      <g:id>JD-MASPLUS</g:id>
+      <g:title>Máscara Plus Lashes - Máscaras y Tratamientos Profesional J. Denis</g:title>
+      <g:description>Máscara fortalecedora y acondicionadora Plus Lashes para el cuidado y definición de pestañas.</g:description>
+      <g:link>https://jdenis.store/producto/masplus</g:link>
+      <g:image_link>https://jdenis.store/hero-products.jpg</g:image_link>
+      <g:condition>new</g:condition>
+      <g:availability>in_stock</g:availability>
+      <g:price>230.00 MXN</g:price>
+      <g:brand>J. Denis Cosméticos</g:brand>
+      <g:mpn>JD-MASPLUS</g:mpn>
+      <g:identifier_exists>no</g:identifier_exists>
+      <g:google_product_category>Health &amp; Beauty &gt; Personal Care &gt; Cosmetics</g:google_product_category>
+      <g:product_type>Cosméticos &gt; Máscaras y Tratamientos</g:product_type>
+      <g:shipping>
+        <g:country>MX</g:country>
+        <g:service>Envío Asegurado Nacional</g:service>
+        <g:price>200.00 MXN</g:price>
+      </g:shipping>
+    </item>
+    <item>
       <g:id>JD-MEDIDOR-DE-FORMALDEHIDO</g:id>
       <g:title>Medidor de Formaldehído - Herramientas, Pinzas y Equipo Profesional J. Denis</g:title>
       <g:description>¿Te preocupa la calidad del aire en tu estudio de pestañas?
@@ -3852,7 +4190,7 @@ El set incluye 5 pares de Pads
 • 1 par tamaño L
 • 1 par tamaño LL</g:description>
       <g:link>https://jdenis.store/producto/pad-aro</g:link>
-      <g:image_link>https://acdn-us.mitiendanube.com/stores/694/809/products/pad-aro_mesa-de-trabajo-1-13dc7f4b4e199b032d17187377615332-1024-1024.webp</g:image_link>
+      <g:image_link>https://acdn-us.mitiendanube.com/stores/694/809/products/pad-aro-03-e9bc8d153bff9846f917187377634864-1024-1024.webp</g:image_link>
       <g:condition>new</g:condition>
       <g:availability>in_stock</g:availability>
       <g:price>100.00 MXN</g:price>
@@ -3918,7 +4256,7 @@ Estos pads logran un efecto de elevacion en las pestañas.
 
 El set incluye 5 pares de pads para párpado superior y 3 pares de pads para párpado inferior.</g:description>
       <g:link>https://jdenis.store/producto/pad-colors-8p</g:link>
-      <g:image_link>https://acdn-us.mitiendanube.com/stores/694/809/products/color8_mesa-de-trabajo-1-082794b81eb64ce0f317187370015350-1024-1024.webp</g:image_link>
+      <g:image_link>https://acdn-us.mitiendanube.com/stores/694/809/products/color8-04-aa3373c836ddf6788e17187370032833-1024-1024.webp</g:image_link>
       <g:condition>new</g:condition>
       <g:availability>in_stock</g:availability>
       <g:price>150.00 MXN</g:price>
@@ -3954,7 +4292,7 @@ Disponible en color rosa combinado con amarillo, ¡un toque de estilo para tus h
 
 Nota: Se envia 1 Par</g:description>
       <g:link>https://jdenis.store/producto/pad-corrector-reversion</g:link>
-      <g:image_link>https://acdn-us.mitiendanube.com/stores/694/809/products/whatsapp-image-2025-03-06-at-10-07-30-235150602538ea791e17412782121236-1024-1024.webp</g:image_link>
+      <g:image_link>https://acdn-us.mitiendanube.com/stores/694/809/products/captura-de-pantalla-2025-03-03-a-las-8-41-47a-m-ad97fc9b90f36e3ccd17410130304807-1024-1024.webp</g:image_link>
       <g:condition>new</g:condition>
       <g:availability>in_stock</g:availability>
       <g:price>150.00 MXN</g:price>
@@ -4064,7 +4402,7 @@ Se adhieren bien a la piel, por lo que no es necesario pegarlos al párpado.
 
 Nota: Se envia 4 Pares</g:description>
       <g:link>https://jdenis.store/producto/pad-ld-simetricos</g:link>
-      <g:image_link>https://acdn-us.mitiendanube.com/stores/694/809/products/blando-03-6a258200c8e749571317410134826386-1024-1024.webp</g:image_link>
+      <g:image_link>https://acdn-us.mitiendanube.com/stores/694/809/products/blando-01-5745f19262a7eede7d17410134827689-1024-1024.webp</g:image_link>
       <g:condition>new</g:condition>
       <g:availability>in_stock</g:availability>
       <g:price>200.00 MXN</g:price>
@@ -4108,6 +4446,36 @@ Contenido: 1 par de Pads Mariposa.</g:description>
       <g:price>150.00 MXN</g:price>
       <g:brand>J. Denis Cosméticos</g:brand>
       <g:mpn>JD-PAD-MARIPOSA</g:mpn>
+      <g:identifier_exists>no</g:identifier_exists>
+      <g:google_product_category>Health &amp; Beauty &gt; Personal Care &gt; Cosmetics</g:google_product_category>
+      <g:product_type>Cosméticos &gt; Lash Lifting</g:product_type>
+      <g:shipping>
+        <g:country>MX</g:country>
+        <g:service>Envío Asegurado Nacional</g:service>
+        <g:price>200.00 MXN</g:price>
+      </g:shipping>
+    </item>
+    <item>
+      <g:id>JD-PAD-MOLDE-L</g:id>
+      <g:title>Pad Molde L - Lash Lifting Profesional J. Denis</g:title>
+      <g:description>Moldes de silicona en L.
+
+El molde L, ayuda a levantar desde la raíz dejando una curva ligera, alarga hasta las pestañas mas cortas.
+
+- 2 pares de moldes S
+
+- 2 pares de moldes M
+
+- 2 pares de moldes L
+
+Gracias a su efecto es el mejor, para personas que llevan gafas.</g:description>
+      <g:link>https://jdenis.store/producto/pad-molde-l</g:link>
+      <g:image_link>https://jdenis.store/hero-products.jpg</g:image_link>
+      <g:condition>new</g:condition>
+      <g:availability>in_stock</g:availability>
+      <g:price>100.00 MXN</g:price>
+      <g:brand>J. Denis Cosméticos</g:brand>
+      <g:mpn>JD-PAD-MOLDE-L</g:mpn>
       <g:identifier_exists>no</g:identifier_exists>
       <g:google_product_category>Health &amp; Beauty &gt; Personal Care &gt; Cosmetics</g:google_product_category>
       <g:product_type>Cosméticos &gt; Lash Lifting</g:product_type>
@@ -4294,7 +4662,7 @@ Estos pads logran un efecto de elevacion en las pestañas.
 
 El set incluye 4 pares de pads para párpado superior y 3 pares de pads para párpado inferior.</g:description>
       <g:link>https://jdenis.store/producto/pad-superior-e-inferior</g:link>
-      <g:image_link>https://acdn-us.mitiendanube.com/stores/694/809/products/verdes-03-a758a450feb27d7f7617187363942632-1024-1024.webp</g:image_link>
+      <g:image_link>https://acdn-us.mitiendanube.com/stores/694/809/products/verdes-05-76d8134fcb2bde33f517187363969888-1024-1024.webp</g:image_link>
       <g:condition>new</g:condition>
       <g:availability>in_stock</g:availability>
       <g:price>150.00 MXN</g:price>
@@ -4361,6 +4729,28 @@ Hasta 50 aplicaciones por paquete</g:description>
       <g:identifier_exists>no</g:identifier_exists>
       <g:google_product_category>Health &amp; Beauty &gt; Personal Care &gt; Cosmetics</g:google_product_category>
       <g:product_type>Cosméticos &gt; Diseño de Cejas y Microblading</g:product_type>
+      <g:shipping>
+        <g:country>MX</g:country>
+        <g:service>Envío Asegurado Nacional</g:service>
+        <g:price>200.00 MXN</g:price>
+      </g:shipping>
+    </item>
+    <item>
+      <g:id>JD-PARCHES-HIDROGEL-50-PZS</g:id>
+      <g:title>Parches Hidrogel 50 pzs - Accesorios y Consumibles Profesional J. Denis</g:title>
+      <g:description>50 Pares Parches Hidrogel Para Extensiones de pestañas o Lash Lifting
+
+Util para bloquear las pestañas inferiores a la par humecta la parte inferior de los ojos.</g:description>
+      <g:link>https://jdenis.store/producto/parches-hidrogel-50-pzs</g:link>
+      <g:image_link>https://jdenis.store/hero-products.jpg</g:image_link>
+      <g:condition>new</g:condition>
+      <g:availability>in_stock</g:availability>
+      <g:price>250.00 MXN</g:price>
+      <g:brand>J. Denis Cosméticos</g:brand>
+      <g:mpn>JD-PARCHES-HIDROGEL-50-PZS</g:mpn>
+      <g:identifier_exists>no</g:identifier_exists>
+      <g:google_product_category>Health &amp; Beauty &gt; Personal Care &gt; Cosmetics</g:google_product_category>
+      <g:product_type>Cosméticos &gt; Accesorios y Consumibles</g:product_type>
       <g:shipping>
         <g:country>MX</g:country>
         <g:service>Envío Asegurado Nacional</g:service>
@@ -4918,6 +5308,59 @@ Color: Plata.</g:description>
       </g:shipping>
     </item>
     <item>
+      <g:id>JD-PINZA-ELE-DORADA</g:id>
+      <g:title>Pinza Ele Dorada - Herramientas, Pinzas y Equipo Profesional J. Denis</g:title>
+      <g:description>Pinza especial para colocar abanicos o extensiones dimensionales
+
+Punta pequeña para tener un fácil acceso en la colocación
+
+Alta precisión y agarre.
+
+• Acero inoxidable
+• Longitud: 116 mm
+
+Color: Dorado.</g:description>
+      <g:link>https://jdenis.store/producto/pinza-ele-dorada</g:link>
+      <g:image_link>https://jdenis.store/hero-products.jpg</g:image_link>
+      <g:condition>new</g:condition>
+      <g:availability>in_stock</g:availability>
+      <g:price>150.00 MXN</g:price>
+      <g:brand>J. Denis Cosméticos</g:brand>
+      <g:mpn>JD-PINZA-ELE-DORADA</g:mpn>
+      <g:identifier_exists>no</g:identifier_exists>
+      <g:google_product_category>Health &amp; Beauty &gt; Personal Care &gt; Cosmetics</g:google_product_category>
+      <g:product_type>Cosméticos &gt; Herramientas, Pinzas y Equipo</g:product_type>
+      <g:shipping>
+        <g:country>MX</g:country>
+        <g:service>Envío Asegurado Nacional</g:service>
+        <g:price>200.00 MXN</g:price>
+      </g:shipping>
+    </item>
+    <item>
+      <g:id>JD-PINZA-ELE-LARGA</g:id>
+      <g:title>Pinza Ele larga - Herramientas, Pinzas y Equipo Profesional J. Denis</g:title>
+      <g:description>Pinza en Ele larga.
+
+Longitud: 150 mm.
+
+Color: Negro con dorado.</g:description>
+      <g:link>https://jdenis.store/producto/pinza-ele-larga</g:link>
+      <g:image_link>https://jdenis.store/hero-products.jpg</g:image_link>
+      <g:condition>new</g:condition>
+      <g:availability>in_stock</g:availability>
+      <g:price>150.00 MXN</g:price>
+      <g:brand>J. Denis Cosméticos</g:brand>
+      <g:mpn>JD-PINZA-ELE-LARGA</g:mpn>
+      <g:identifier_exists>no</g:identifier_exists>
+      <g:google_product_category>Health &amp; Beauty &gt; Personal Care &gt; Cosmetics</g:google_product_category>
+      <g:product_type>Cosméticos &gt; Herramientas, Pinzas y Equipo</g:product_type>
+      <g:shipping>
+        <g:country>MX</g:country>
+        <g:service>Envío Asegurado Nacional</g:service>
+        <g:price>200.00 MXN</g:price>
+      </g:shipping>
+    </item>
+    <item>
       <g:id>JD-PINZA-ELE-PARA-EXTENSIONES</g:id>
       <g:title>Pinza Ele para extensiones - Herramientas, Pinzas y Equipo Profesional J. Denis</g:title>
       <g:description>Pinza especial para colocar abanicos o extensiones dimensionales.
@@ -5175,6 +5618,30 @@ Color: Plata, Dorado, Negro con dorado.</g:description>
       </g:shipping>
     </item>
     <item>
+      <g:id>JD-PINZA-PUNTA-MINI</g:id>
+      <g:title>Pinza punta Mini - Herramientas, Pinzas y Equipo Profesional J. Denis</g:title>
+      <g:description>Pinza Plateada punta Mini.
+
+Longitud: 78 mm.
+
+Color. plateada.</g:description>
+      <g:link>https://jdenis.store/producto/pinza-punta-mini</g:link>
+      <g:image_link>https://jdenis.store/hero-products.jpg</g:image_link>
+      <g:condition>new</g:condition>
+      <g:availability>in_stock</g:availability>
+      <g:price>50.00 MXN</g:price>
+      <g:brand>J. Denis Cosméticos</g:brand>
+      <g:mpn>JD-PINZA-PUNTA-MINI</g:mpn>
+      <g:identifier_exists>no</g:identifier_exists>
+      <g:google_product_category>Health &amp; Beauty &gt; Personal Care &gt; Cosmetics</g:google_product_category>
+      <g:product_type>Cosméticos &gt; Herramientas, Pinzas y Equipo</g:product_type>
+      <g:shipping>
+        <g:country>MX</g:country>
+        <g:service>Envío Asegurado Nacional</g:service>
+        <g:price>200.00 MXN</g:price>
+      </g:shipping>
+    </item>
+    <item>
       <g:id>JD-PINZA-PUNTA-PARA-EXTENSIONES</g:id>
       <g:title>Pinza Punta para extensiones - Herramientas, Pinzas y Equipo Profesional J. Denis</g:title>
       <g:description>Pinzas especiales para colocar abanicos o extensiones dimensionales
@@ -5194,6 +5661,50 @@ Color: Plata, Dorado.</g:description>
       <g:price>150.00 MXN</g:price>
       <g:brand>J. Denis Cosméticos</g:brand>
       <g:mpn>JD-PINZA-PUNTA-PARA-EXTENSIONES</g:mpn>
+      <g:identifier_exists>no</g:identifier_exists>
+      <g:google_product_category>Health &amp; Beauty &gt; Personal Care &gt; Cosmetics</g:google_product_category>
+      <g:product_type>Cosméticos &gt; Herramientas, Pinzas y Equipo</g:product_type>
+      <g:shipping>
+        <g:country>MX</g:country>
+        <g:service>Envío Asegurado Nacional</g:service>
+        <g:price>200.00 MXN</g:price>
+      </g:shipping>
+    </item>
+    <item>
+      <g:id>JD-PINZA-PUNTA-ROJA</g:id>
+      <g:title>Pinza Punta Roja - Herramientas, Pinzas y Equipo Profesional J. Denis</g:title>
+      <g:description>Pinza para extensiones de pestañas.
+
+Longitud: 120 mm.
+
+Color: Rojo.</g:description>
+      <g:link>https://jdenis.store/producto/pinza-punta-roja</g:link>
+      <g:image_link>https://jdenis.store/hero-products.jpg</g:image_link>
+      <g:condition>new</g:condition>
+      <g:availability>in_stock</g:availability>
+      <g:price>120.00 MXN</g:price>
+      <g:brand>J. Denis Cosméticos</g:brand>
+      <g:mpn>JD-PINZA-PUNTA-ROJA</g:mpn>
+      <g:identifier_exists>no</g:identifier_exists>
+      <g:google_product_category>Health &amp; Beauty &gt; Personal Care &gt; Cosmetics</g:google_product_category>
+      <g:product_type>Cosméticos &gt; Herramientas, Pinzas y Equipo</g:product_type>
+      <g:shipping>
+        <g:country>MX</g:country>
+        <g:service>Envío Asegurado Nacional</g:service>
+        <g:price>200.00 MXN</g:price>
+      </g:shipping>
+    </item>
+    <item>
+      <g:id>JD-PINZAS-PARA-EXTENSION-SET</g:id>
+      <g:title>Pinzas para Extension Set - Herramientas, Pinzas y Equipo Profesional J. Denis</g:title>
+      <g:description>Set de 4 pinzas, tijeras y cepillo.</g:description>
+      <g:link>https://jdenis.store/producto/pinzas-para-extension-set</g:link>
+      <g:image_link>https://jdenis.store/hero-products.jpg</g:image_link>
+      <g:condition>new</g:condition>
+      <g:availability>in_stock</g:availability>
+      <g:price>500.00 MXN</g:price>
+      <g:brand>J. Denis Cosméticos</g:brand>
+      <g:mpn>JD-PINZAS-PARA-EXTENSION-SET</g:mpn>
       <g:identifier_exists>no</g:identifier_exists>
       <g:google_product_category>Health &amp; Beauty &gt; Personal Care &gt; Cosmetics</g:google_product_category>
       <g:product_type>Cosméticos &gt; Herramientas, Pinzas y Equipo</g:product_type>
@@ -5364,6 +5875,46 @@ El uso de este producto es responsabilidad de quien lo usa y quien lo recomienda
       </g:shipping>
     </item>
     <item>
+      <g:id>JD-COLLAGEN</g:id>
+      <g:title>Protector con colágeno - Extensiones y Pestañas Profesional J. Denis</g:title>
+      <g:description>EstosProtectores se utilizan durante la aplicación de las extensiones de pestañas para cubrir las pestañas inferiores y proteger el parpado, todo esto mientras que da un tratamiento de relajación para la zona inferior del ojo.
+
+La medida del protector se ajusta a cualquier tamaño de ojo.
+
+No suelta pelusa (lint free) durante la aplicacion de extensiones. Su formula hipoalergenica contiene colágeno.
+
+Modo de uso:
+
+Limpie y seque perfectamente el parpado.
+
+Retire el Protector del revestimiento de plástico
+
+Coloque el Protector en el parpado en la parte inferior del ojo para cubrir las pestañas inferiores durante la aplicación de extensiones para pestañas.
+
+Precauciones
+
+Mantener fuera del alcance de los niños. Sólo para uso externo. Evitar el contacto con los ojos, si ocurre enjuague los ojos con agua limpia, si persisten las molestias consulte a su médico. Evite el uso sobre piel irritada. Suspender el uso en caso de irritación o enrojecimiento de la piel o los ojos. Utilice inmediatamente después de abierto.
+
+Ingredientes: Agua DI, Glicerina Alantoína, Sorbitol, Poliacrilato de sodio, Carboximetilcelulosa, Ácido poliacrílico, Aceite de ricino, Colágeno hidrolizado, trietilhexanoína, Caolín, Ácido tartárico, EDTA disódico, Metilisotiazolinona, Acetato de tocoferol, Extracto de hoja de Aloe vera.
+
+Contenido 5 pares.</g:description>
+      <g:link>https://jdenis.store/producto/collagen</g:link>
+      <g:image_link>https://jdenis.store/hero-products.jpg</g:image_link>
+      <g:condition>new</g:condition>
+      <g:availability>in_stock</g:availability>
+      <g:price>130.00 MXN</g:price>
+      <g:brand>J. Denis Cosméticos</g:brand>
+      <g:mpn>JD-COLLAGEN</g:mpn>
+      <g:identifier_exists>no</g:identifier_exists>
+      <g:google_product_category>Health &amp; Beauty &gt; Personal Care &gt; Cosmetics</g:google_product_category>
+      <g:product_type>Cosméticos &gt; Extensiones y Pestañas</g:product_type>
+      <g:shipping>
+        <g:country>MX</g:country>
+        <g:service>Envío Asegurado Nacional</g:service>
+        <g:price>200.00 MXN</g:price>
+      </g:shipping>
+    </item>
+    <item>
       <g:id>JD-PROTECTOR-PARA-PARPADO-20-PARES</g:id>
       <g:title>Protector para Párpado con Medidas - Accesorios y Consumibles Profesional J. Denis</g:title>
       <g:description>Parches protectores para párpados con guía de medidas impresas, ideales para aislar pestañas inferiores durante la colocación de extensiones, lifting o rizado. Disponibles en paquetes de 20 y 70 pares.</g:description>
@@ -5435,6 +5986,26 @@ Contiene medidas.</g:description>
       <g:identifier_exists>no</g:identifier_exists>
       <g:google_product_category>Health &amp; Beauty &gt; Personal Care &gt; Cosmetics</g:google_product_category>
       <g:product_type>Cosméticos &gt; Extensiones y Pestañas</g:product_type>
+      <g:shipping>
+        <g:country>MX</g:country>
+        <g:service>Envío Asegurado Nacional</g:service>
+        <g:price>200.00 MXN</g:price>
+      </g:shipping>
+    </item>
+    <item>
+      <g:id>JD-PULSERA-CON-IMAN-PARA-PINZAS</g:id>
+      <g:title>Pulsera con imán para pinzas - Herramientas, Pinzas y Equipo Profesional J. Denis</g:title>
+      <g:description>Pulsera auxiliar para pinzas en la colocación de extensiones de pestañas.</g:description>
+      <g:link>https://jdenis.store/producto/pulsera-con-iman-para-pinzas</g:link>
+      <g:image_link>https://jdenis.store/hero-products.jpg</g:image_link>
+      <g:condition>new</g:condition>
+      <g:availability>in_stock</g:availability>
+      <g:price>100.00 MXN</g:price>
+      <g:brand>J. Denis Cosméticos</g:brand>
+      <g:mpn>JD-PULSERA-CON-IMAN-PARA-PINZAS</g:mpn>
+      <g:identifier_exists>no</g:identifier_exists>
+      <g:google_product_category>Health &amp; Beauty &gt; Personal Care &gt; Cosmetics</g:google_product_category>
+      <g:product_type>Cosméticos &gt; Herramientas, Pinzas y Equipo</g:product_type>
       <g:shipping>
         <g:country>MX</g:country>
         <g:service>Envío Asegurado Nacional</g:service>
@@ -5600,6 +6171,82 @@ Herramienta indispensable para Lash &amp; Brow Artists que buscan resultados má
       </g:shipping>
     </item>
     <item>
+      <g:id>JD-REGLA-T-PARA-DISENO-DE-CEJAS</g:id>
+      <g:title>Regla T para diseño de cejas - Diseño de Cejas y Microblading Profesional J. Denis</g:title>
+      <g:description>Herramienta fácil y práctica para quien inicia en el arte del diseño de cejas.</g:description>
+      <g:link>https://jdenis.store/producto/regla-t-para-diseno-de-cejas</g:link>
+      <g:image_link>https://jdenis.store/hero-products.jpg</g:image_link>
+      <g:condition>new</g:condition>
+      <g:availability>in_stock</g:availability>
+      <g:price>20.00 MXN</g:price>
+      <g:brand>J. Denis Cosméticos</g:brand>
+      <g:mpn>JD-REGLA-T-PARA-DISENO-DE-CEJAS</g:mpn>
+      <g:identifier_exists>no</g:identifier_exists>
+      <g:google_product_category>Health &amp; Beauty &gt; Personal Care &gt; Cosmetics</g:google_product_category>
+      <g:product_type>Cosméticos &gt; Diseño de Cejas y Microblading</g:product_type>
+      <g:shipping>
+        <g:country>MX</g:country>
+        <g:service>Envío Asegurado Nacional</g:service>
+        <g:price>200.00 MXN</g:price>
+      </g:shipping>
+    </item>
+    <item>
+      <g:id>JD-REMOVEDOR-DE-ADHESIVO</g:id>
+      <g:title>Removedor de Adhesivo - Adhesivos, Higiene y Preparadores Profesional J. Denis</g:title>
+      <g:description>Removedor líquido para adhesivo Supreme.
+
+Este removedor disuelve el pegamento de extensión de pestañas y facilita el retiro de las pestañas postizas
+
+No tiene olor, se requiere de una cantidad mínima para retirar las extensiones
+
+Se envía un removedor de 2 ml y dos microbrush.</g:description>
+      <g:link>https://jdenis.store/producto/removedor-de-adhesivo</g:link>
+      <g:image_link>https://jdenis.store/hero-products.jpg</g:image_link>
+      <g:condition>new</g:condition>
+      <g:availability>in_stock</g:availability>
+      <g:price>200.00 MXN</g:price>
+      <g:brand>J. Denis Cosméticos</g:brand>
+      <g:mpn>JD-REMOVEDOR-DE-ADHESIVO</g:mpn>
+      <g:identifier_exists>no</g:identifier_exists>
+      <g:google_product_category>Health &amp; Beauty &gt; Personal Care &gt; Cosmetics</g:google_product_category>
+      <g:product_type>Cosméticos &gt; Adhesivos, Higiene y Preparadores</g:product_type>
+      <g:shipping>
+        <g:country>MX</g:country>
+        <g:service>Envío Asegurado Nacional</g:service>
+        <g:price>200.00 MXN</g:price>
+      </g:shipping>
+    </item>
+    <item>
+      <g:id>JD-REMOVEDOR-DE-GOTERO-LIQUIDO</g:id>
+      <g:title>REMOVEDOR DE GOTERO LÍQUIDO - Adhesivos, Higiene y Preparadores Profesional J. Denis</g:title>
+      <g:description>Removedor líquido de gotero.
+
+Este removedor disuelve el pegamento de extensión de pestañas y facilita el retiro de las pestañas postizas tipo Mink.
+
+Se requiere de una cantidad minima para retirar las extensiones
+
+Removedor de uso profesional para extensiones de pestañas durante el mantenimiento o retoque.
+
+Solo para uso profesional. Evítese el contacto con la piel.
+
+Se envía un removedor en gotero de 5 ml.</g:description>
+      <g:link>https://jdenis.store/producto/removedor-de-gotero-liquido</g:link>
+      <g:image_link>https://jdenis.store/hero-products.jpg</g:image_link>
+      <g:condition>new</g:condition>
+      <g:availability>in_stock</g:availability>
+      <g:price>250.00 MXN</g:price>
+      <g:brand>J. Denis Cosméticos</g:brand>
+      <g:mpn>JD-REMOVEDOR-DE-GOTERO-LIQUIDO</g:mpn>
+      <g:identifier_exists>no</g:identifier_exists>
+      <g:google_product_category>Health &amp; Beauty &gt; Personal Care &gt; Cosmetics</g:google_product_category>
+      <g:product_type>Cosméticos &gt; Adhesivos, Higiene y Preparadores</g:product_type>
+      <g:shipping>
+        <g:country>MX</g:country>
+        <g:service>Envío Asegurado Nacional</g:service>
+        <g:price>200.00 MXN</g:price>
+      </g:shipping>
+    </item>
+    <item>
       <g:id>JD-REMOVEDOR-CLEAR-GEL</g:id>
       <g:title>Removedor en Gel para Extensiones (15 ml) - Adhesivos, Higiene y Preparadores Profesional J. Denis</g:title>
       <g:description>Removedor en GEL.
@@ -5665,6 +6312,46 @@ Contenido: 1 pieza de silicona de práctica.</g:description>
       <g:identifier_exists>no</g:identifier_exists>
       <g:google_product_category>Health &amp; Beauty &gt; Personal Care &gt; Cosmetics</g:google_product_category>
       <g:product_type>Cosméticos &gt; Diseño de Cejas y Microblading</g:product_type>
+      <g:shipping>
+        <g:country>MX</g:country>
+        <g:service>Envío Asegurado Nacional</g:service>
+        <g:price>200.00 MXN</g:price>
+      </g:shipping>
+    </item>
+    <item>
+      <g:id>JD-RIZADO-FACIL-CON-CLIP</g:id>
+      <g:title>Rizado Facil con Clip - Lash Curling y Botox Profesional J. Denis</g:title>
+      <g:description>RIZADO PERMANENTE PARA PESTAÑAS CON CLIP.
+
+Ahora con los Clips especiales de J. Denis tendrás una elevación natural y perfecta en menos tiempo
+
+Si deseas unas pestañas con elevación espectacular, este producto es perfecto para ti
+
+El kit incluye:
+
+2 Clips especiales J. Denis
+
+2 Frasco con Gel Ondulante
+
+2 Frasco con Gel Neutralizante
+
+2 Frasco con Gel Reestructurante
+
+1 Cronometro
+
+1 Mascara Especial con vitamina
+
+1 Pincel de aplicación</g:description>
+      <g:link>https://jdenis.store/producto/rizado-facil-con-clip</g:link>
+      <g:image_link>https://jdenis.store/hero-products.jpg</g:image_link>
+      <g:condition>new</g:condition>
+      <g:availability>in_stock</g:availability>
+      <g:price>450.00 MXN</g:price>
+      <g:brand>J. Denis Cosméticos</g:brand>
+      <g:mpn>JD-RIZADO-FACIL-CON-CLIP</g:mpn>
+      <g:identifier_exists>no</g:identifier_exists>
+      <g:google_product_category>Health &amp; Beauty &gt; Personal Care &gt; Cosmetics</g:google_product_category>
+      <g:product_type>Cosméticos &gt; Lash Curling y Botox</g:product_type>
       <g:shipping>
         <g:country>MX</g:country>
         <g:service>Envío Asegurado Nacional</g:service>
