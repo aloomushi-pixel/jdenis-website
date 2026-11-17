@@ -1,8 +1,8 @@
 {
-  "commitSha": "dc02e93 (dc02e93735a456c72b3c6779edea7b06c1ec995b)",
-  "shortSha": "dc02e93",
-  "fullSha": "dc02e93735a456c72b3c6779edea7b06c1ec995b",
-  "commitMessage": "fix(pwa): prevent immutable caching of sw.js and switch Supabase catalog cache to NetworkFirst",
-  "builtAt": "2026-11-14T06:03:22.902Z",
+  "commitSha": "9e92ba5 (9e92ba50f818a6d6901926d66e8ea8593a06986e)",
+  "shortSha": "9e92ba5",
+  "fullSha": "9e92ba50f818a6d6901926d66e8ea8593a06986e",
+  "commitMessage": "feat(catalog): clean & structure 184 product descriptions and render rich editorial copy",
+  "builtAt": "2026-11-17T19:44:25.522Z",
   "environment": "production"
 }

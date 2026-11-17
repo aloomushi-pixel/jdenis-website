@@ -95,13 +95,14 @@ export function toDisplayProduct(p: SupabaseProduct, userRole: string | undefine
     };
 }
 
-const PRODUCTS_CACHE_KEY = 'jdennis_products_raw_cache_v4';
+const PRODUCTS_CACHE_KEY = 'jdennis_products_raw_cache_v5';
 const PRODUCTS_CACHE_TTL_MS = 60 * 1000;
 
 if (typeof window !== 'undefined') {
     try {
         sessionStorage.removeItem('jdennis_products_raw_cache_v2');
         sessionStorage.removeItem('jdennis_products_raw_cache_v3');
+        sessionStorage.removeItem('jdennis_products_raw_cache_v4');
     } catch {
         // ignore
     }

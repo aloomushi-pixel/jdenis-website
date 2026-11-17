@@ -80,13 +80,14 @@ function normalizeVariant(row: CatalogVariantRow): NormalizedVariant {
     };
 }
 
-const VARIANTS_CACHE_KEY = 'jdennis_variants_cache_v4';
+const VARIANTS_CACHE_KEY = 'jdennis_variants_cache_v5';
 const VARIANTS_CACHE_TTL_MS = 60 * 1000;
 
 if (typeof window !== 'undefined') {
     try {
         sessionStorage.removeItem('jdennis_variants_cache_v2');
         sessionStorage.removeItem('jdennis_variants_cache_v3');
+        sessionStorage.removeItem('jdennis_variants_cache_v4');
     } catch {
         // ignore
     }
