@@ -131,11 +131,23 @@ async function main() {
     ['Cupones Activos', 'coupons?is_active=eq.true&select=id,code&limit=5'],
     ['Cursos Academia STPS', 'academy_courses?select=id,title&limit=5'],
     ['Artículos Blog', 'blog_posts?select=id,slug&limit=5'],
-    ['Social Reels', 'social_reels?select=id,platform&limit=5'],
+    ['Social Reels', 'social_reels?active=eq.true&select=id,platform,video_url&limit=10'],
     ['Reseñas de Productos', 'product_reviews?select=id,status&limit=5'],
   ]) {
     const r = await queryRest(ep);
     record(`Módulo Funcional: ${label}`, r.ok, `HTTP ${r.status} (${Array.isArray(r.data) ? r.data.length : 0} filas muestra)`);
+    if (label === 'Social Reels' && r.ok && Array.isArray(r.data)) {
+      let okVids = 0;
+      for (const reel of r.data) {
+        if (reel.video_url) {
+          try {
+            const vr = await fetch(reel.video_url, { method: 'HEAD' });
+            if (vr.ok) okVids++;
+          } catch {}
+        }
+      }
+      record('Videos TikTok / Reels Reproducibles (HTTP 200)', okVids === r.data.length && r.data.length > 0, `${okVids}/${r.data.length} videos MP4 activos`);
+    }
   }
 
   const failed = checks.filter(c => !c.ok);

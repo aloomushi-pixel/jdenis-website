@@ -6,7 +6,6 @@ import Header from './components/Header';
 import GlobalSearchModal from './components/GlobalSearchModal';
 import PWAInstallBanner from './components/PWAInstallBanner';
 import TelemetryProvider from './components/TelemetryProvider';
-import UxFeedbackBubble from './components/UxFeedbackBubble';
 
 // Eager public storefront routes for instant LCP & SEO
 import Home from './pages/Home';
@@ -80,7 +79,6 @@ const DistributorRequests = lazyWithRetry(() => import('./pages/admin/Distributo
 const FacturacionAdmin = lazyWithRetry(() => import('./pages/admin/Facturacion'));
 const CouponManager = lazyWithRetry(() => import('./pages/admin/CouponManager'));
 const EmailManager = lazyWithRetry(() => import('./pages/admin/EmailManager'));
-const BackendQaMonitor = lazyWithRetry(() => import('./pages/admin/BackendQaMonitor'));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -163,7 +161,6 @@ function Layout() {
               <Route path="distributors" element={<DistributorRequests />} />
               <Route path="facturacion" element={<FacturacionAdmin />} />
               <Route path="coupons" element={<CouponManager />} />
-              <Route path="qa-guardian" element={<BackendQaMonitor />} />
             </Route>
           </Routes>
         </Suspense>
@@ -171,7 +168,6 @@ function Layout() {
       {!isAdminOrAccount && <Footer />}
       <CartDrawer />
       <GlobalSearchModal />
-      <UxFeedbackBubble />
     </div>
   );
 }

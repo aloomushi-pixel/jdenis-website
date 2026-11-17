@@ -116,11 +116,29 @@ function ReelCard({
                                 }
                             }}
                             src={reel.video_url}
+                            poster={thumb || undefined}
+                            preload="auto"
                             playsInline
                             muted={isMuted}
                             autoPlay
                             loop={false}
-                            crossOrigin="anonymous"
+                            onLoadedData={(e) => {
+                                const v = e.currentTarget;
+                                if (!isManualPaused) {
+                                    v.muted = isMuted;
+                                    v.play().catch(() => {});
+                                }
+                            }}
+                            onCanPlay={(e) => {
+                                const v = e.currentTarget;
+                                if (!isManualPaused && v.paused && !v.dataset.ended) {
+                                    v.muted = isMuted;
+                                    v.play().catch(() => {});
+                                }
+                            }}
+                            onError={() => {
+                                onNextReel();
+                            }}
                             onTimeUpdate={(e) => {
                                 const v = e.currentTarget;
                                 // Limit reels to either their actual duration or 15 seconds max
@@ -211,7 +229,7 @@ export default function Home() {
     const [isReelPaused, setIsReelPaused] = useState(false);
 
     const reelsRef = useRef<HTMLDivElement>(null);
-    const isReelsInView = useInView(reelsRef, { amount: 0.1 });
+    const isReelsInView = useInView(reelsRef, { amount: 0.01, margin: '400px 0px' });
 
     // SEO: meta tags + JSON-LD Website + BreadcrumbList
     usePageMeta({

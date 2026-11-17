@@ -1,8 +1,8 @@
 {
-  "commitSha": "b94dc1d (b94dc1d851b8363e2b93dce13d7b01784ca31363)",
-  "shortSha": "b94dc1d",
-  "fullSha": "b94dc1d851b8363e2b93dce13d7b01784ca31363",
-  "commitMessage": "feat(catalog): activate all 215 products & 524 variants with >=50 stock each",
-  "builtAt": "2026-11-17T20:51:14.819Z",
+  "commitSha": "96cba9b (96cba9b245d93e716a145817555954de5dd643bf)",
+  "shortSha": "96cba9b",
+  "fullSha": "96cba9b245d93e716a145817555954de5dd643bf",
+  "commitMessage": "feat(qa): deploy backend-only autonomous QA guardian (pg_cron) and fix full-stack audit findings",
+  "builtAt": "2026-11-17T21:05:10.001Z",
   "environment": "production"
 }
