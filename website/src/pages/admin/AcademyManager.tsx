@@ -314,16 +314,40 @@ function FormModal({ type, initialData, onClose, onSuccess }: {
 
         try {
             if (isCourse) {
+                const coursePayload = {
+                    title: formData.title,
+                    duration: formData.duration,
+                    price: Number(formData.price) || 0,
+                    description: formData.description,
+                    topics: Array.isArray(formData.topics) ? formData.topics : [],
+                    badge: formData.badge,
+                    next_date: formData.next_date,
+                    link: formData.link,
+                    dc3: Boolean(formData.dc3),
+                    video: formData.video || '',
+                    video_title: formData.video_title || '',
+                    active: formData.active !== false,
+                    images: Array.isArray(formData.images) ? formData.images : [],
+                };
                 if (isEdit) {
-                    await updateCourse((initialData as AcademyCourse).id, formData);
+                    await updateCourse((initialData as AcademyCourse).id, coursePayload);
                 } else {
-                    await createCourse(formData);
+                    await createCourse(coursePayload);
                 }
             } else {
+                const eventPayload = {
+                    title: formData.title,
+                    date: formData.date,
+                    location: formData.location,
+                    description: formData.description,
+                    type: formData.type,
+                    active: formData.active !== false,
+                    images: Array.isArray(formData.images) ? formData.images : [],
+                };
                 if (isEdit) {
-                    await updateEvent((initialData as AcademyEvent).id, formData);
+                    await updateEvent((initialData as AcademyEvent).id, eventPayload);
                 } else {
-                    await createEvent(formData);
+                    await createEvent(eventPayload);
                 }
             }
             onSuccess();
@@ -382,7 +406,7 @@ function FormModal({ type, initialData, onClose, onSuccess }: {
                                         type="number"
                                         required
                                         value={formData.price}
-                                        onChange={(e) => setFormData({ ...formData, price: parseInt(e.target.value) })}
+                                        onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) || 0 })}
                                         className="w-full px-3 py-2 border rounded-lg"
                                     />
                                 </div>

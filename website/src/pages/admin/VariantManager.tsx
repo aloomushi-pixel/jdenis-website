@@ -242,7 +242,7 @@ export default function VariantManager({
                                                             <td key={attr} className="px-3 py-2">{variant.attributes[attr] || '—'}</td>
                                                         ))}
                                                         <td className="px-3 py-2 text-right font-semibold text-blue-800">
-                                                            ${(variant.promo_price_mxn ?? variant.price_mxn ?? 0).toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+                                                            ${((variant.promo_price_mxn && variant.promo_price_mxn > 0 && variant.promo_price_mxn < (variant.price_mxn ?? Infinity)) ? variant.promo_price_mxn : (variant.price_mxn ?? 0)).toLocaleString('es-MX', { minimumFractionDigits: 2 })}
                                                         </td>
                                                         <td className="px-3 py-2 text-center">{variant.stock ?? 0}</td>
                                                         <td className="px-3 py-2 text-right">

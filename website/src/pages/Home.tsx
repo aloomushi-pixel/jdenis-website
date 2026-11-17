@@ -6,6 +6,8 @@ import GoogleReviews from '../components/GoogleReviews';
 import NewsletterForm from '../components/NewsletterForm';
 import ProductCard from '../components/ProductCard';
 import { getFeaturedProducts, getReels, type Product, type SocialReel } from '../lib/supabase';
+import { toDisplayProduct } from '../hooks/useProducts';
+import { useAuthStore } from '../store/authStore';
 import { usePageMeta } from '../hooks/usePageMeta';
 
 const platformStyles: Record<string, { gradient: string; icon: React.ReactNode; label: string }> = {
@@ -596,12 +598,7 @@ export default function Home() {
                                     className="w-[160px] sm:w-[220px] md:w-[260px] lg:w-[280px] shrink-0"
                                 >
                                     <ProductCard
-                                        product={{
-                                            ...product,
-                                            originalPrice: product.original_price ?? undefined,
-                                            isFeatured: product.is_featured ?? false,
-                                            image: product.image_url || '/placeholder.webp',
-                                        } as any}
+                                        product={toDisplayProduct(product, useAuthStore.getState().user?.role)}
                                         variantCount={product.variants_count || 1}
                                     />
                                 </div>

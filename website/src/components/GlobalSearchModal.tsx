@@ -13,9 +13,12 @@ const CATEGORIES = [
   { id: 'Diseño de Cejas y Microblading', name: 'Diseño de Cejas y Microblading', icon: <Sparkles className="w-4 h-4" /> },
   { id: 'Pigmentos y Brow Henna', name: 'Pigmentos y Brow Henna', icon: <Package className="w-4 h-4" /> },
   { id: 'Extensiones y Pestañas', name: 'Extensiones y Pestañas', icon: <Sparkles className="w-4 h-4" /> },
+  { id: 'Lash Curling y Botox', name: 'Lash Curling y Botox', icon: <Eye className="w-4 h-4" /> },
   { id: 'Adhesivos, Higiene y Preparadores', name: 'Adhesivos e Higiene', icon: <Droplet className="w-4 h-4" /> },
   { id: 'Máscaras y Tratamientos', name: 'Máscaras y Tratamientos', icon: <Sparkles className="w-4 h-4" /> },
   { id: 'Herramientas, Pinzas y Equipo', name: 'Herramientas y Pinzas', icon: <Scissors className="w-4 h-4" /> },
+  { id: 'Accesorios y Consumibles', name: 'Accesorios y Consumibles', icon: <Package className="w-4 h-4" /> },
+  { id: 'Paquetes Buen Fin', name: 'Paquetes Buen Fin', icon: <ShoppingBag className="w-4 h-4" /> },
 ];
 
 const QUICK_SUGGESTIONS = [

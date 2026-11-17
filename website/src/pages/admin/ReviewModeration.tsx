@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { useEffect, useState, useCallback } from 'react';
 import { getAllReviews, moderateReview, type ProductReview } from '../../lib/supabase';
+import { useProducts } from '../../hooks/useProducts';
 
 type FilterStatus = 'all' | 'pending' | 'approved' | 'rejected';
 
@@ -12,6 +13,7 @@ const STATUS_COLORS: Record<string, { bg: string; text: string; label: string }>
 
 export default function ReviewModeration() {
     const [reviews, setReviews] = useState<ProductReview[]>([]);
+    const { products } = useProducts();
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState<FilterStatus>('pending');
     const [actionLoading, setActionLoading] = useState<string | null>(null);
@@ -149,8 +151,9 @@ export default function ReviewModeration() {
                                             "{review.comment}"
                                         </p>
 
-                                        <p className="text-xs text-gray-400">
-                                            <strong>Producto:</strong> {review.product_id}
+                                        <p className="text-xs text-gray-500">
+                                            <strong>Producto:</strong>{' '}
+                                            {products.find(p => p.id === String(review.product_id) || p.slug === String(review.product_id))?.name || `#${review.product_id}`}
                                         </p>
                                     </div>
 

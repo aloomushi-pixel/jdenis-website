@@ -5,7 +5,7 @@ import { useCartStore } from '../store/cartStore';
 import { useAuthStore } from '../store/authStore';
 import { useCartPromotion } from '../hooks/useCartPromotion';
 import CartPromoBanner from '../components/CartPromoBanner';
-import { createMercadoPagoCheckout, supabase } from '../lib/supabase';
+import { createMercadoPagoCheckout, markCartConverted, upsertAbandonedCart } from '../lib/supabase';
 import { trackEvent } from '../utils/telemetry';
 
 export default function Checkout() {
@@ -87,34 +87,14 @@ export default function Checkout() {
     useEffect(() => {
         if (!formData.email || !formData.email.includes('@') || items.length === 0 || loading) return;
 
-        const syncCart = async () => {
-            try {
-                const { data } = await supabase.from('abandoned_carts')
-                    .select('id')
-                    .eq('email', formData.email)
-                    .eq('status', 'pending')
-                    .maybeSingle();
+        const timeoutId = setTimeout(() => {
+            upsertAbandonedCart(
+                formData.email.trim().toLowerCase(),
+                formData.fullName || formData.email.split('@')[0],
+                items
+            ).catch(console.error);
+        }, 2000);
 
-                if (data) {
-                    await supabase.from('abandoned_carts').update({
-                        name: formData.fullName || formData.email.split('@')[0],
-                        cart_state: items,
-                        last_updated: new Date().toISOString()
-                    }).eq('id', data.id);
-                } else {
-                    await supabase.from('abandoned_carts').insert({
-                        email: formData.email,
-                        name: formData.fullName || formData.email.split('@')[0],
-                        cart_state: items,
-                        status: 'pending'
-                    });
-                }
-            } catch (err) {
-                console.error('Failed to sync abandoned cart:', err);
-            }
-        };
-
-        const timeoutId = setTimeout(syncCart, 2000);
         return () => clearTimeout(timeoutId);
     }, [formData.email, formData.fullName, items, loading]);
 
@@ -178,14 +158,7 @@ export default function Checkout() {
                 throw new Error('No se pudo generar la ruta de confirmación del pedido. Por favor intenta nuevamente.');
             }
 
-            try {
-                await supabase.from('abandoned_carts')
-                    .update({ status: 'completed' })
-                    .eq('email', formData.email)
-                    .eq('status', 'pending');
-            } catch {
-                // Non-blocking
-            }
+            await markCartConverted(formData.email.trim().toLowerCase());
 
             if (result.checkout_url.startsWith('/')) {
                 navigate(result.checkout_url);

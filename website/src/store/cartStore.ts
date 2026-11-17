@@ -159,16 +159,40 @@ export const useCartStore = create<CartState>()(
                 const user = useAuthStore.getState().user;
                 return state.items.reduce((sum, item) => {
                     const isDistributor = user?.role === 'DISTRIBUIDOR';
-                    const activePrice = isDistributor && item.distributorPrice ? item.distributorPrice : item.price;
-                    return sum + activePrice * item.quantity;
+                    const rawActive = isDistributor && item.distributorPrice ? item.distributorPrice : item.price;
+                    const activePrice = Number.isFinite(Number(rawActive)) ? Number(rawActive) : 0;
+                    const qty = Number.isFinite(Number(item.quantity)) ? Number(item.quantity) : 1;
+                    return sum + activePrice * qty;
                 }, 0);
             },
 
             itemCount: () => {
                 const state = get();
-                return state.items.reduce((sum, item) => sum + item.quantity, 0);
+                return state.items.reduce((sum, item) => sum + (Number(item.quantity) || 0), 0);
             },
         }),
-        { name: 'jdenis-cart' }
+        {
+            name: 'jdenis-cart',
+            merge: (persistedState, currentState) => {
+                const p = (persistedState || {}) as Partial<CartState>;
+                const safeItems = Array.isArray(p.items)
+                    ? p.items
+                        .filter((i): i is CartItem => Boolean(i && i.id && i.name))
+                        .map(i => ({
+                            ...i,
+                            price: Number.isFinite(Number(i.price)) ? Number(i.price) : 0,
+                            originalPrice: i.originalPrice != null && Number.isFinite(Number(i.originalPrice)) ? Number(i.originalPrice) : undefined,
+                            distributorPrice: i.distributorPrice != null && Number.isFinite(Number(i.distributorPrice)) ? Number(i.distributorPrice) : undefined,
+                            quantity: Math.max(1, Number(i.quantity) || 1),
+                            image: i.image || '/placeholder.webp',
+                        }))
+                    : [];
+                return {
+                    ...currentState,
+                    ...p,
+                    items: safeItems,
+                };
+            },
+        }
     )
 );

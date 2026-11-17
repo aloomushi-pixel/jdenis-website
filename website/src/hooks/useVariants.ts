@@ -320,6 +320,25 @@ export function useVariants() {
             .single();
 
         if (error) throw error;
+
+        // Sync parent product variants_count & total_stock
+        const { data: allVars } = await supabase
+            .from('product_variants')
+            .select('stock')
+            .eq('product_id', parent.product_id)
+            .eq('is_active', true);
+        if (allVars) {
+            const totalStock = allVars.reduce((acc, r) => acc + (Number(r.stock) || 0), 0);
+            await supabase
+                .from('products')
+                .update({
+                    has_variants: allVars.length > 1,
+                    variants_count: Math.max(1, allVars.length),
+                    total_stock: totalStock,
+                })
+                .eq('product_id', parent.product_id);
+        }
+
         invalidateVariantsCache();
         await fetchGroups(true);
         return data;

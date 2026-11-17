@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { useState } from 'react';
 import { Link, Navigate, Outlet, useLocation } from 'react-router-dom';
 import { 
-    LayoutDashboard, Users, Mail, TrendingUp, Package, Truck, ClipboardList, Star, GraduationCap, PenTool, Image, Film, Handshake, Receipt, Tag, ShoppingCart, Home, LogOut, Menu
+    LayoutDashboard, Users, Mail, TrendingUp, Package, Truck, ClipboardList, Star, GraduationCap, PenTool, Image, Film, Handshake, Receipt, Tag, ShoppingCart, Home, LogOut, Menu, ShieldCheck
 } from 'lucide-react';
 import type { UserRole } from '../../lib/erp';
 import { useAuthStore } from '../../store/authStore';
@@ -22,7 +22,7 @@ const menuItems: MenuItem[] = [
     { path: '/admin/sales', label: 'Ventas', icon: <TrendingUp className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO'] },
     { path: '/admin/packaging', label: 'Embalaje', icon: <Package className="w-5 h-5" />, roles: ['FABRICA', 'ALMACEN_MATERIA_PRIMA', 'ALMACEN_PRODUCTO_FINAL'] },
     { path: '/admin/warehouse-queue', label: 'Cola de Envíos', icon: <Truck className="w-5 h-5" />, roles: ['FABRICA', 'ALMACEN_MATERIA_PRIMA', 'ALMACEN_PRODUCTO_FINAL'] },
-    { path: '/admin/orders', label: 'Pedidos B2B', icon: <ClipboardList className="w-5 h-5" />, roles: ['EJECUTIVO', 'FABRICA'] },
+    { path: '/admin/orders', label: 'Pedidos Tienda', icon: <ClipboardList className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO', 'FABRICA'] },
     { path: '/admin/reviews', label: 'Reseñas', icon: <Star className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO'] },
     { path: '/admin/academy', label: 'Academia', icon: <GraduationCap className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO'] },
     { path: '/admin/blog', label: 'Blog', icon: <PenTool className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO'] },
@@ -33,6 +33,7 @@ const menuItems: MenuItem[] = [
     { path: '/admin/catalog', label: 'Editor Catálogo', icon: <Package className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO'] },
     { path: '/admin/cart-promos', label: 'Promos Carrito', icon: <ShoppingCart className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO'] },
     { path: '/admin/coupons', label: 'Cupones', icon: <Tag className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO'] },
+    { path: '/admin/qa-guardian', label: 'Guardián QA', icon: <ShieldCheck className="w-5 h-5" />, roles: ['ADMIN'] },
 ];
 
 

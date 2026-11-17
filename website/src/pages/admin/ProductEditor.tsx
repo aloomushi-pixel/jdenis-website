@@ -612,14 +612,14 @@ export default function ProductEditor() {
                     <div className="flex p-1 bg-gray-100 rounded-lg self-start lg:self-center">
                         <button
                             onClick={() => setActiveTab('catalog')}
-                            className={`px - 4 py - 2 rounded - md text - sm font - medium transition - all ${activeTab === 'catalog' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                            className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'catalog' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'
                                 } `}
                         >
                             Catálogo
                         </button>
                         <button
                             onClick={() => setActiveTab('variants')}
-                            className={`px - 4 py - 2 rounded - md text - sm font - medium transition - all ${activeTab === 'variants' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                            className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'variants' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'
                                 } `}
                         >
                             Variantes
@@ -876,7 +876,7 @@ export default function ProductEditor() {
                                         return (
                                             <Fragment key={product.id}>
                                                 <tr
-                                                    className={`hover: bg - indigo - 50 / 30 transition - colors ${isEdited ? 'bg-amber-50/40' : ''} ${rowSaveStatus === 'saving' ? 'opacity-70' : ''} `}
+                                                    className={`hover:bg-indigo-50/30 transition-colors ${isEdited ? 'bg-amber-50/40' : ''} ${rowSaveStatus === 'saving' ? 'opacity-70' : ''} `}
                                                 >
                                                     <td className="px-3 py-2 text-xs text-gray-400">
                                                         <span className="flex items-center gap-1">
@@ -889,7 +889,7 @@ export default function ProductEditor() {
                                                     <td className="px-3 py-2">
                                                         <button
                                                             onClick={() => setImageEditorId(imageEditorId === product.id ? null : product.id)}
-                                                            className={`relative group w - 9 h - 9 rounded cursor - pointer overflow - hidden border - 2 transition - colors ${imageEditorId === product.id ? 'border-indigo-500 shadow-md' : 'border-transparent hover:border-indigo-300'
+                                                            className={`relative group w-9 h-9 rounded cursor-pointer overflow-hidden border-2 transition-colors ${imageEditorId === product.id ? 'border-indigo-500 shadow-md' : 'border-transparent hover:border-indigo-300'
                                                                 } ${edits[product.id] && ('image' in (edits[product.id] || {}) || 'gallery' in (edits[product.id] || {})) ? 'ring-2 ring-amber-300' : ''} `}
                                                             title="Click para editar imagen y galería"
                                                         >
@@ -913,7 +913,7 @@ export default function ProductEditor() {
                                                         {renderEditableCell(product, 'price', 'currency', 'text-sm font-semibold text-blue-800')}
                                                     </td>
                                                     <td className="px-3 py-2 text-right min-w-[100px]">
-                                                        {renderEditableCell(product, 'originalPrice', 'currency', `text - sm font - semibold ${getVal(product, 'originalPrice') ? 'text-red-600' : 'text-gray-300'} `)}
+                                                        {renderEditableCell(product, 'originalPrice', 'currency', `text-sm font-semibold ${getVal(product, 'originalPrice') ? 'text-red-600' : 'text-gray-300'} `)}
                                                     </td>
                                                     <td className="px-3 py-2 text-right min-w-[110px]">
                                                         {renderEditableCell(product, 'distributorPrice', 'currency', 'text-sm font-semibold text-purple-800')}
@@ -928,7 +928,7 @@ export default function ProductEditor() {
                                                         {vc > 1 ? (
                                                             <button
                                                                 onClick={() => setExpandedVariantGroup(expandedVariantGroup === product.id ? null : product.id)}
-                                                                className={`px - 1.5 py - 0.5 rounded - full text - [10px] font - medium transition - colors cursor - pointer ${expandedVariantGroup === product.id
+                                                                className={`px-1.5 py-0.5 rounded-full text-[10px] font-medium transition-colors cursor-pointer ${expandedVariantGroup === product.id
                                                                     ? 'bg-indigo-600 text-white'
                                                                     : 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200'
                                                                     } `}
@@ -941,7 +941,7 @@ export default function ProductEditor() {
                                                     <td className="px-3 py-2 text-center">
                                                         <button
                                                             onClick={() => toggleFeatured(product)}
-                                                            className={`w - 7 h - 7 rounded - lg flex items - center justify - center transition - all cursor - pointer ${getVal(product, 'isFeatured')
+                                                            className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all cursor-pointer ${getVal(product, 'isFeatured')
                                                                 ? 'bg-amber-100 hover:bg-amber-200 text-amber-500 shadow-sm'
                                                                 : 'bg-gray-50 hover:bg-gray-100 text-gray-300'
                                                                 } ${edits[product.id] && 'isFeatured' in (edits[product.id] || {}) ? 'ring-2 ring-amber-300' : ''} `}
@@ -1005,7 +1005,7 @@ export default function ProductEditor() {
 
                                                         return (
                                                             <tr>
-                                                                <td colSpan={12} className="p-0">
+                                                                <td colSpan={13} className="p-0">
                                                                     <motion.div
                                                                         initial={{ opacity: 0, height: 0 }}
                                                                         animate={{ opacity: 1, height: 'auto' }}

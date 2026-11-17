@@ -255,20 +255,24 @@ export default function SalesOrders() {
                               ) : (
                                 <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
                                   <ul className="divide-y divide-gray-100">
-                                    {items.map((item, i) => (
+                                    {items.map((item: any, i) => {
+                                      const imgSrc = item.image || item.product_image || '';
+                                      const itemName = item.name || item.product_name || item.resource_id;
+                                      return (
                                       <li key={item.id || i} className="p-4 flex items-center gap-4 hover:bg-gray-50/50">
-                                        {item.product_image ? (
-                                          <img src={item.product_image} alt="" width={48} height={48} loading="lazy" className="w-12 h-12 rounded-lg object-cover border border-gray-100" />
+                                        {imgSrc ? (
+                                          <img src={imgSrc} alt="" width={48} height={48} loading="lazy" className="w-12 h-12 rounded-lg object-cover border border-gray-100" />
                                         ) : (
                                           <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-xs">IMG</div>
                                         )}
                                         <div className="flex-1 min-w-0">
-                                          <p className="text-sm font-medium text-gray-900 truncate">{item.product_name || item.resource_id}</p>
+                                          <p className="text-sm font-medium text-gray-900 truncate">{itemName}</p>
                                           <p className="text-sm text-gray-500">Cant: <span className="font-medium text-gray-700">{item.quantity}</span> × {fmtMoney(item.unit_price)}</p>
                                         </div>
                                         <div className="text-sm font-bold text-gray-900">{fmtMoney(item.unit_price * item.quantity)}</div>
                                       </li>
-                                    ))}
+                                      );
+                                    })}
                                   </ul>
                                   <div className="p-4 bg-gray-50 border-t border-gray-200 flex justify-between text-base font-bold">
                                     <span className="text-gray-900">Total</span>

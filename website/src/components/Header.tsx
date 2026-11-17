@@ -150,7 +150,7 @@ export default function Header() {
                             <button
                                 onClick={openSearch}
                                 aria-label="Buscar productos"
-                                className="p-2 text-cream hover:text-gold transition-colors"
+                                className="min-w-[44px] min-h-[44px] flex items-center justify-center text-cream hover:text-gold transition-colors"
                             >
                                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
@@ -163,7 +163,7 @@ export default function Header() {
                                 whileTap={{ scale: 0.95 }}
                                 onClick={openCart}
                                 aria-label="Abrir carrito de compras"
-                                className="relative p-2 text-cream hover:text-gold transition-colors"
+                                className="relative min-w-[44px] min-h-[44px] flex items-center justify-center text-cream hover:text-gold transition-colors"
                             >
                                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
@@ -182,7 +182,7 @@ export default function Header() {
 
                             {/* Mobile Menu Toggle */}
                             <button
-                                className="md:hidden p-2 text-cream/70"
+                                className="md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center text-cream/70"
                                 aria-label={mobileMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
                                 aria-expanded={mobileMenuOpen}
                                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

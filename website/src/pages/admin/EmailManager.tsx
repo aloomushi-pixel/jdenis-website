@@ -17,7 +17,7 @@ export default function EmailManager() {
     const [nlBody, setNlBody] = useState('Descubre nuestro nuevo sistema con tecnología avanzada para proteger el vello mientras consigues resultados espectaculares que duran hasta 8 semanas.');
     const [nlImageUrl, setNlImageUrl] = useState('https://images.unsplash.com/photo-1596704017254-9b121068fb31?auto=format&fit=crop&q=80&w=800');
     const [nlButtonText, setNlButtonText] = useState('Comprar Ahora');
-    const [nlButtonUrl, setNlButtonUrl] = useState('https://jdenis.com/shop');
+    const [nlButtonUrl, setNlButtonUrl] = useState('https://jdenis.store/tienda');
 
     // Contact State
     const [customerUsers, setCustomerUsers] = useState<ERPUser[]>([]);

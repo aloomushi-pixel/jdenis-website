@@ -352,7 +352,18 @@ function MyAccount() {
         const items = orderItems(order);
         if (Array.isArray(items)) {
             items.forEach((item: any) => {
-                addItem({ id: item.id, name: item.name, price: item.price, image: item.image || '', category: '' });
+                const qty = Math.max(1, Number(item.quantity) || 1);
+                const prodId = String(item.id || item.product_id || '');
+                if (!prodId) return;
+                for (let i = 0; i < qty; i++) {
+                    addItem({
+                        id: prodId,
+                        name: item.name || item.product_name || 'Producto J. Denis',
+                        price: Number(item.price ?? item.unit_price ?? 0),
+                        image: item.image || item.image_url || '/placeholder.webp',
+                        category: item.category || '',
+                    });
+                }
             });
         }
     };
@@ -834,9 +845,9 @@ function MyAccount() {
                                                                         ) : (
                                                                             <div className="space-y-3 mb-5">
                                                                                 {items.map((item: any, idx: number) => {
-                                                                                    // Get name from joined products table if available
-                                                                                    const prodName = item.products?.name || item.resource_id;
-                                                                                    const imgUrl = item.products?.images?.[0] || '';
+                                                                                    // Get name from joined products table or Catalog v2 enriched fields
+                                                                                    const prodName = item.name || item.product_name || item.products?.name || item.resource_id;
+                                                                                    const imgUrl = item.image || item.product_image || item.products?.image_url || item.products?.images?.[0] || '';
                                                                                     
                                                                                     return (
                                                                                         <div key={idx} className="flex items-center gap-3">

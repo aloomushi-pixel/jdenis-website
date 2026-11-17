@@ -15,6 +15,20 @@ import { trackEvent } from '../utils/telemetry';
 
 type DetailTab = 'benefits' | 'includes' | 'specs' | 'wholesale' | 'reviews';
 
+const LEGACY_PRODUCT_SLUG_ALIASES: Record<string, string> = {
+    'laminado-cejas': 'laminado',
+    'laminado-de-cejas': 'laminado',
+    'godete-cristal': 'godete-de-cristal',
+    'activador-henna': 'activador-de-henna',
+    'kit-brow-henna': 'brow-henna1',
+    'brow-henna': 'brow-henna1',
+    'kit-lash-lifting': 'lash-lifting',
+    'agua-micelar': 'aguami',
+    'desmaquillante-bifasico': 'desmaquillante',
+    'tratamiento-alargador': 'tratamiento-alargador-para-cejas-y-pestanas',
+    'anillo-10-contenedores': 'anillodiez',
+};
+
 export default function ProductDetail() {
     const { id } = useParams<{ id: string }>();
     const { addItem, openCart } = useCartStore();
@@ -27,23 +41,25 @@ export default function ProductDetail() {
     const lastTrackedProductIdRef = useRef<string>('');
     const detailsSectionRef = useRef<HTMLElement | null>(null);
 
+    const resolvedParam = id ? (LEGACY_PRODUCT_SLUG_ALIASES[id.toLowerCase()] || id) : undefined;
+
     // Match parent product directly by id/slug, OR resolve legacy Tiendanube variant slug to its parent
     const matchedLegacyVariant = useMemo(() => {
-        if (!id) return undefined;
-        const directMatch = products.some(p => p.id === id || p.slug === id);
+        if (!resolvedParam) return undefined;
+        const directMatch = products.some(p => p.id === resolvedParam || p.slug === resolvedParam);
         if (directMatch) return undefined;
-        return findVariantBySlug(id);
-    }, [products, id, findVariantBySlug]);
+        return findVariantBySlug(resolvedParam) || (id ? findVariantBySlug(id) : undefined);
+    }, [products, resolvedParam, id, findVariantBySlug]);
 
     const product: DisplayProduct | undefined = useMemo(() => {
-        if (!id) return undefined;
-        const direct = products.find(p => p.id === id || p.slug === id);
+        if (!resolvedParam) return undefined;
+        const direct = products.find(p => p.id === resolvedParam || p.slug === resolvedParam || p.slug === id);
         if (direct) return direct;
         if (matchedLegacyVariant) {
             return products.find(p => p.id === matchedLegacyVariant.productId);
         }
         return undefined;
-    }, [products, id, matchedLegacyVariant]);
+    }, [products, resolvedParam, id, matchedLegacyVariant]);
 
     const productVariants = useMemo(() => {
         if (!product) return [];

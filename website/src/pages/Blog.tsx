@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getBlogPosts, getNewsPosts, type BlogPost } from '../lib/supabase';
 import { usePageMeta } from '../hooks/usePageMeta';
+import NewsletterForm from '../components/NewsletterForm';
 
 export default function Blog() {
     usePageMeta({
@@ -367,15 +368,8 @@ export default function Blog() {
                             Suscríbete a nuestro newsletter y recibe guías exclusivas, tutoriales avanzados y las últimas tendencias en química cosmética.
                         </p>
 
-                        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                            <input
-                                type="email"
-                                placeholder="tu@email.com"
-                                className="px-6 py-3 bg-forest-light border border-gold/30 text-cream placeholder:text-cream/40 focus:outline-none focus:border-gold min-w-[300px]"
-                            />
-                            <button className="btn btn-secondary">
-                                Suscribirme
-                            </button>
+                        <div className="max-w-md mx-auto">
+                            <NewsletterForm />
                         </div>
                     </div>
                 </div>

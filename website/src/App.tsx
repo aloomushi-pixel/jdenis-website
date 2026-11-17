@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState, type ComponentType } from 'react';
 import { BrowserRouter, Route, Routes, useLocation, useParams } from 'react-router-dom';
 import CartDrawer from './components/CartDrawer';
 import Footer from './components/Footer';
@@ -19,44 +19,68 @@ import { useAuthStore } from './store/authStore';
 import { invalidateProductsCache } from './hooks/useProducts';
 import { invalidateVariantsCache } from './hooks/useVariants';
 
+// Resilient lazy loader: recovers automatically from stale Vite chunk hashes after a rolling deploy
+function lazyWithRetry<T extends ComponentType<any>>(
+  factory: () => Promise<{ default: T }>
+) {
+  return lazy(async () => {
+    try {
+      return await factory();
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      const isChunkError =
+        /Failed to fetch dynamically imported module|Importing a module script failed|ChunkLoadError/i.test(msg);
+      if (isChunkError && typeof window !== 'undefined') {
+        const key = `jdenis_chunk_reload_${window.location.pathname}`;
+        if (!sessionStorage.getItem(key)) {
+          sessionStorage.setItem(key, '1');
+          window.location.reload();
+        }
+      }
+      throw err;
+    }
+  });
+}
+
 // Lazy-loaded secondary public routes
-const About = lazy(() => import('./pages/About'));
-const Academy = lazy(() => import('./pages/Academy'));
-const Blog = lazy(() => import('./pages/Blog'));
-const BlogPost = lazy(() => import('./pages/BlogPost'));
-const NewsPost = lazy(() => import('./pages/NewsPost'));
-const Login = lazy(() => import('./pages/Login'));
-const MyAccount = lazy(() => import('./pages/MyAccount'));
-const RegistroDistribuidor = lazy(() => import('./pages/RegistroDistribuidor'));
-const ResetPassword = lazy(() => import('./pages/ResetPassword'));
-const AvisoPrivacidad = lazy(() => import('./pages/AvisoPrivacidad'));
-const PoliticaDevoluciones = lazy(() => import('./pages/PoliticaDevoluciones'));
-const SolicitarFactura = lazy(() => import('./pages/SolicitarFactura'));
+const About = lazyWithRetry(() => import('./pages/About'));
+const Academy = lazyWithRetry(() => import('./pages/Academy'));
+const Blog = lazyWithRetry(() => import('./pages/Blog'));
+const BlogPost = lazyWithRetry(() => import('./pages/BlogPost'));
+const NewsPost = lazyWithRetry(() => import('./pages/NewsPost'));
+const Login = lazyWithRetry(() => import('./pages/Login'));
+const MyAccount = lazyWithRetry(() => import('./pages/MyAccount'));
+const RegistroDistribuidor = lazyWithRetry(() => import('./pages/RegistroDistribuidor'));
+const ResetPassword = lazyWithRetry(() => import('./pages/ResetPassword'));
+const AvisoPrivacidad = lazyWithRetry(() => import('./pages/AvisoPrivacidad'));
+const PoliticaDevoluciones = lazyWithRetry(() => import('./pages/PoliticaDevoluciones'));
+const SolicitarFactura = lazyWithRetry(() => import('./pages/SolicitarFactura'));
 
 // Lazy-loaded Admin / ERP routes (isolates jspdf, xlsx, recharts, dnd from public storefront)
-const AdminLayout = lazy(() => import('./components/layouts/AdminLayout'));
-const AdminDashboard = lazy(() => import('./pages/admin/Dashboard'));
-const EventLog = lazy(() => import('./pages/admin/EventLog'));
-const AdminOrders = lazy(() => import('./pages/admin/Orders'));
-const PackagingRecords = lazy(() => import('./pages/admin/PackagingRecords'));
-const ProductionOrders = lazy(() => import('./pages/admin/ProductionOrders'));
-const PurchaseOrders = lazy(() => import('./pages/admin/PurchaseOrders'));
-const ResourceManager = lazy(() => import('./pages/admin/ResourceManager'));
-const SalesOrders = lazy(() => import('./pages/admin/SalesOrders'));
-const TransportAssignments = lazy(() => import('./pages/admin/TransportAssignments'));
-const UserManager = lazy(() => import('./pages/admin/UserManager'));
-const ReviewModeration = lazy(() => import('./pages/admin/ReviewModeration'));
-const AcademyManager = lazy(() => import('./pages/admin/AcademyManager'));
-const BlogManager = lazy(() => import('./pages/admin/BlogManager'));
-const ReelsManager = lazy(() => import('./pages/admin/ReelsManager'));
-const MediaManagerPage = lazy(() => import('./pages/admin/MediaManagerPage'));
-const ProductEditor = lazy(() => import('./pages/admin/ProductEditor'));
-const CartPromoSettings = lazy(() => import('./pages/admin/CartPromoSettings'));
-const WarehouseQueue = lazy(() => import('./pages/admin/WarehouseQueue'));
-const DistributorRequests = lazy(() => import('./pages/admin/DistributorRequests'));
-const FacturacionAdmin = lazy(() => import('./pages/admin/Facturacion'));
-const CouponManager = lazy(() => import('./pages/admin/CouponManager'));
-const EmailManager = lazy(() => import('./pages/admin/EmailManager'));
+const AdminLayout = lazyWithRetry(() => import('./components/layouts/AdminLayout'));
+const AdminDashboard = lazyWithRetry(() => import('./pages/admin/Dashboard'));
+const EventLog = lazyWithRetry(() => import('./pages/admin/EventLog'));
+const AdminOrders = lazyWithRetry(() => import('./pages/admin/Orders'));
+const PackagingRecords = lazyWithRetry(() => import('./pages/admin/PackagingRecords'));
+const ProductionOrders = lazyWithRetry(() => import('./pages/admin/ProductionOrders'));
+const PurchaseOrders = lazyWithRetry(() => import('./pages/admin/PurchaseOrders'));
+const ResourceManager = lazyWithRetry(() => import('./pages/admin/ResourceManager'));
+const SalesOrders = lazyWithRetry(() => import('./pages/admin/SalesOrders'));
+const TransportAssignments = lazyWithRetry(() => import('./pages/admin/TransportAssignments'));
+const UserManager = lazyWithRetry(() => import('./pages/admin/UserManager'));
+const ReviewModeration = lazyWithRetry(() => import('./pages/admin/ReviewModeration'));
+const AcademyManager = lazyWithRetry(() => import('./pages/admin/AcademyManager'));
+const BlogManager = lazyWithRetry(() => import('./pages/admin/BlogManager'));
+const ReelsManager = lazyWithRetry(() => import('./pages/admin/ReelsManager'));
+const MediaManagerPage = lazyWithRetry(() => import('./pages/admin/MediaManagerPage'));
+const ProductEditor = lazyWithRetry(() => import('./pages/admin/ProductEditor'));
+const CartPromoSettings = lazyWithRetry(() => import('./pages/admin/CartPromoSettings'));
+const WarehouseQueue = lazyWithRetry(() => import('./pages/admin/WarehouseQueue'));
+const DistributorRequests = lazyWithRetry(() => import('./pages/admin/DistributorRequests'));
+const FacturacionAdmin = lazyWithRetry(() => import('./pages/admin/Facturacion'));
+const CouponManager = lazyWithRetry(() => import('./pages/admin/CouponManager'));
+const EmailManager = lazyWithRetry(() => import('./pages/admin/EmailManager'));
+const BackendQaMonitor = lazyWithRetry(() => import('./pages/admin/BackendQaMonitor'));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -107,8 +131,10 @@ function Layout() {
             <Route path="/noticias/:slug" element={<NewsPost />} />
             <Route path="/registro-distribuidor" element={<RegistroDistribuidor />} />
             <Route path="/aviso-de-privacidad" element={<AvisoPrivacidad />} />
+            <Route path="/privacidad" element={<AvisoPrivacidad />} />
             <Route path="/politica-de-devoluciones" element={<PoliticaDevoluciones />} />
             <Route path="/devoluciones" element={<PoliticaDevoluciones />} />
+            <Route path="/terminos" element={<PoliticaDevoluciones />} />
             <Route path="/solicitar-factura" element={<SolicitarFactura />} />
             <Route path="/pago-resultado" element={<PaymentResult />} />
             <Route path="/restablecer-contrasena" element={<ResetPassword />} />
@@ -137,6 +163,7 @@ function Layout() {
               <Route path="distributors" element={<DistributorRequests />} />
               <Route path="facturacion" element={<FacturacionAdmin />} />
               <Route path="coupons" element={<CouponManager />} />
+              <Route path="qa-guardian" element={<BackendQaMonitor />} />
             </Route>
           </Routes>
         </Suspense>

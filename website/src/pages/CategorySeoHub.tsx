@@ -51,7 +51,7 @@ export default function CategorySeoHub({ hubSlug }: CategorySeoHubProps) {
                 // For narrower hubs like laminado-de-cejas, prioritize keyword match or primary category
                 if (hubSlug === 'laminado-de-cejas') {
                     return (
-                        catLower === 'diseño de cejas' ||
+                        catLower.includes('diseño de cejas') ||
                         config.searchKeywords.some((kw) => textLower.includes(kw))
                     );
                 }

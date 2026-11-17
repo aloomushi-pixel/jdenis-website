@@ -654,19 +654,40 @@ export async function getOrderById(orderId: string) {
 export async function getOrderItems(orderId: string) {
     const { data, error } = await supabase
         .from('order_items')
-        .select(`
-            *,
-            products:product_id (
-                id,
-                name,
-                slug,
-                image_url
-            )
-        `)
+        .select('*')
         .eq('order_id', orderId);
 
     if (error) throw error;
-    return data;
+    const rows = data || [];
+    const numIds = Array.from(
+        new Set(
+            rows
+                .map((r: any) => Number(String(r.product_id || '').split('-v')[0]))
+                .filter((n: number) => Number.isFinite(n) && n > 0)
+        )
+    );
+    let prodMap = new Map<number, any>();
+    if (numIds.length > 0) {
+        const { data: prods } = await supabase
+            .from('products')
+            .select('product_id, name, slug, image_url')
+            .in('product_id', numIds);
+        for (const p of prods || []) {
+            prodMap.set(p.product_id, { id: String(p.product_id), name: p.name, slug: p.slug, image_url: p.image_url });
+        }
+    }
+    return rows.map((r: any) => {
+        const pid = Number(String(r.product_id || '').split('-v')[0]);
+        return {
+            ...r,
+            products: prodMap.get(pid) || {
+                id: String(r.product_id || ''),
+                name: r.product_name || 'Producto',
+                slug: String(r.product_id || ''),
+                image_url: r.image_url || '/placeholder.webp',
+            },
+        };
+    });
 }
 
 export async function updateOrderStatus(orderId: string, status: string) {
@@ -786,21 +807,43 @@ export async function getOrCreateCart(userId?: string, sessionId?: string) {
 export async function getCartItems(cartId: string) {
     const { data, error } = await supabase
         .from('cart_items')
-        .select(`
-            *,
-            products:product_id (
-                id,
-                name,
-                slug,
-                price,
-                image_url,
-                stock
-            )
-        `)
+        .select('*')
         .eq('cart_id', cartId);
 
     if (error) throw error;
-    return data;
+    const rows = data || [];
+    const numIds = Array.from(
+        new Set(
+            rows
+                .map((r: any) => Number(String(r.product_id || '').split('-v')[0]))
+                .filter((n: number) => Number.isFinite(n) && n > 0)
+        )
+    );
+    let prodMap = new Map<number, any>();
+    if (numIds.length > 0) {
+        const { data: prods } = await supabase
+            .from('products')
+            .select('*')
+            .in('product_id', numIds);
+        for (const p of prods || []) {
+            const norm = normalizeProductRow(p as CatalogProductRow);
+            prodMap.set(p.product_id, {
+                id: norm.id,
+                name: norm.name,
+                slug: norm.slug,
+                price: norm.price,
+                image_url: norm.image_url,
+                stock: norm.total_stock,
+            });
+        }
+    }
+    return rows.map((r: any) => {
+        const pid = Number(String(r.product_id || '').split('-v')[0]);
+        return {
+            ...r,
+            products: prodMap.get(pid) || null,
+        };
+    });
 }
 
 export async function addToCart(cartId: string, productId: string, quantity: number = 1) {
@@ -971,16 +1014,26 @@ export async function updateWebsiteOrderStatus(orderId: string, status: string):
 export async function hasUserPurchasedProduct(userId: string, productId: string): Promise<boolean> {
     const { data, error } = await supabase
         .from('website_orders')
-        .select('id, items')
+        .select('id, status, payment_status, items')
         .eq('user_id', userId);
 
     if (error || !data) return false;
+    const targetBaseId = String(productId).split('-v')[0];
 
-    return data.some((order: { items: string | WebsiteOrderItem[] }) => {
-        const items: WebsiteOrderItem[] = typeof order.items === 'string'
-            ? JSON.parse(order.items)
-            : order.items;
-        return items.some(item => item.product_id === productId);
+    return data.some((order: { status?: string; payment_status?: string; items: string | any[] }) => {
+        const st = String(order.status || '').toLowerCase();
+        const pst = String(order.payment_status || '').toLowerCase();
+        if (st === 'cancelled' || st === 'failed' || pst === 'rejected') return false;
+        let items: any[] = [];
+        try {
+            items = typeof order.items === 'string' ? JSON.parse(order.items) : (order.items || []);
+        } catch {
+            items = [];
+        }
+        return Array.isArray(items) && items.some(item => {
+            const rawId = String(item?.product_id ?? item?.id ?? '').split('-v')[0];
+            return rawId === targetBaseId;
+        });
     });
 }
 
@@ -2166,12 +2219,12 @@ export async function getWarehouseStats() {
     const { data: pending } = await supabase
         .from('sales_orders')
         .select('id', { count: 'exact' })
-        .in('status', ['PENDING', 'PROCESSING']);
+        .in('status', ['PENDING', 'PROCESSING', 'PENDIENTE', 'CONFIRMADA', 'EN_PRODUCCION']);
 
     const { data: dispatched } = await supabase
         .from('sales_orders')
         .select('id', { count: 'exact' })
-        .eq('status', 'DISPATCHED');
+        .in('status', ['DISPATCHED', 'ENVIADA', 'ENTREGADA']);
 
     return {
         pendingOrders: pending?.length || 0,
@@ -2182,14 +2235,14 @@ export async function getWarehouseStats() {
 /** Get production batch summary */
 export async function getProductionStats() {
     const { data: inProgress } = await supabase
-        .from('production_batches')
+        .from('production_orders')
         .select('id', { count: 'exact' })
-        .eq('status', 'IN_PROGRESS');
+        .in('status', ['IN_PROGRESS', 'EN_PROCESO', 'PENDIENTE']);
 
     const { data: completed } = await supabase
-        .from('production_batches')
+        .from('production_orders')
         .select('id', { count: 'exact' })
-        .eq('status', 'COMPLETED');
+        .in('status', ['COMPLETED', 'COMPLETADA']);
 
     return {
         inProgress: inProgress?.length || 0,

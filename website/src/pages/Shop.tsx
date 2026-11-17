@@ -403,7 +403,7 @@ export default function Shop() {
                                         <button
                                             key={cat.id}
                                             onClick={() => setActiveCategory(cat.id)}
-                                            className={`flex-shrink-0 group/btn px-4 md:px-5 py-2 text-xs md:text-sm rounded-full border transition-all flex items-center gap-1.5 ${activeCategory === cat.id
+                                            className={`flex-shrink-0 group/btn px-4 md:px-5 min-h-[44px] py-2 text-xs md:text-sm rounded-full border transition-all flex items-center gap-1.5 ${activeCategory === cat.id
                                                 ? 'bg-forest text-white border-forest font-medium shadow-sm'
                                                 : 'bg-white border-kraft/30 text-charcoal/70 hover:border-forest/40 hover:text-forest'
                                                 }`}
@@ -435,7 +435,7 @@ export default function Shop() {
                             <div className="flex items-center gap-2 flex-nowrap shrink-0">
                                 <button
                                     onClick={openSearch}
-                                    className="p-2 md:p-2.5 bg-white border border-kraft/30 text-charcoal/70 hover:text-forest hover:border-forest/40 rounded-full transition-all shrink-0 shadow-sm"
+                                    className="min-w-[44px] min-h-[44px] flex items-center justify-center p-2 md:p-2.5 bg-white border border-kraft/30 text-charcoal/70 hover:text-forest hover:border-forest/40 rounded-full transition-all shrink-0 shadow-sm"
                                     aria-label="Buscar productos"
                                 >
                                     <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
