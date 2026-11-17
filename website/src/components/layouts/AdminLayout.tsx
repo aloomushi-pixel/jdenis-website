@@ -3,10 +3,11 @@ import type { ReactNode } from 'react';
 import { useState } from 'react';
 import { Link, Navigate, Outlet, useLocation } from 'react-router-dom';
 import { 
-    LayoutDashboard, Users, Mail, TrendingUp, Package, Truck, ClipboardList, Star, GraduationCap, PenTool, Image, Film, Handshake, Receipt, Tag, ShoppingCart, Home, LogOut, Menu
+    LayoutDashboard, Users, Mail, TrendingUp, Package, Truck, ClipboardList, Star, GraduationCap, PenTool, Image, Film, Handshake, Receipt, Tag, ShoppingCart, ShieldCheck, Home, LogOut, Menu
 } from 'lucide-react';
 import type { UserRole } from '../../lib/erp';
 import { useAuthStore } from '../../store/authStore';
+import UxFeedbackBubble from '../UxFeedbackBubble';
 
 type MenuItem = {
     path: string;
@@ -33,6 +34,7 @@ const menuItems: MenuItem[] = [
     { path: '/admin/catalog', label: 'Editor Catálogo', icon: <Package className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO'] },
     { path: '/admin/cart-promos', label: 'Promos Carrito', icon: <ShoppingCart className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO'] },
     { path: '/admin/coupons', label: 'Cupones', icon: <Tag className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO'] },
+    { path: '/admin/qa-guardian', label: 'Guardián QA & UX', icon: <ShieldCheck className="w-5 h-5" />, roles: ['ADMIN'] },
 ];
 
 
@@ -158,6 +160,7 @@ export default function AdminLayout() {
                     <Outlet />
                 </main>
             </div>
+            {userRole === 'ADMIN' && <UxFeedbackBubble />}
         </div>
     );
 }
