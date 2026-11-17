@@ -5,17 +5,21 @@ import { useCartStore } from '../store/cartStore';
 import { useAuthStore } from '../store/authStore';
 import { useCartPromotion } from '../hooks/useCartPromotion';
 import CartPromoBanner from '../components/CartPromoBanner';
-import { createMercadoPagoCheckout, markCartConverted, upsertAbandonedCart } from '../lib/supabase';
+import CouponCard from '../components/CouponCard';
+import { createMercadoPagoCheckout, markCartConverted, upsertAbandonedCart, validateCoupon } from '../lib/supabase';
 import { trackEvent } from '../utils/telemetry';
 
 export default function Checkout() {
     const navigate = useNavigate();
-    const { items, appliedCoupon } = useCartStore();
+    const { items, appliedCoupon, applyCoupon, removeCoupon } = useCartStore();
     const { user } = useAuthStore();
     const promotion = useCartPromotion();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [paymentMethod, setPaymentMethod] = useState<'mercadopago' | 'transferencia' | 'efectivo'>('mercadopago');
+    const [couponInput, setCouponInput] = useState('');
+    const [couponLoading, setCouponLoading] = useState(false);
+    const [couponError, setCouponError] = useState<string | null>(null);
     const trackedStartRef = useRef(false);
     const trackedStepsRef = useRef<Set<string>>(new Set());
 
@@ -35,17 +39,61 @@ export default function Checkout() {
     const totalDiscountAmount = promoDiscountAmount + couponDiscount;
     const finalTotal = Math.max(0, promotion.grandTotal - couponDiscount);
 
-    const [formData, setFormData] = useState({
-        fullName: user?.fullName || '',
-        email: user?.email || '',
-        phone: '',
-        address: '',
-        references: '',
-        city: '',
-        state: '',
-        zip: '',
-        notes: '',
+    const [formData, setFormData] = useState(() => {
+        try {
+            const saved = typeof window !== 'undefined' ? sessionStorage.getItem('jdenis_checkout_form') : null;
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                return {
+                    fullName: user?.fullName || parsed.fullName || '',
+                    email: user?.email || parsed.email || '',
+                    phone: parsed.phone || '',
+                    address: parsed.address || '',
+                    references: parsed.references || '',
+                    city: parsed.city || '',
+                    state: parsed.state || '',
+                    zip: parsed.zip || '',
+                    notes: parsed.notes || '',
+                };
+            }
+        } catch {
+            // ignore
+        }
+        return {
+            fullName: user?.fullName || '',
+            email: user?.email || '',
+            phone: '',
+            address: '',
+            references: '',
+            city: '',
+            state: '',
+            zip: '',
+            notes: '',
+        };
     });
+
+    useEffect(() => {
+        try {
+            sessionStorage.setItem('jdenis_checkout_form', JSON.stringify(formData));
+        } catch {
+            // ignore
+        }
+    }, [formData]);
+
+    const handleApplyCheckoutCoupon = async () => {
+        const code = couponInput.trim();
+        if (!code) return;
+        setCouponLoading(true);
+        setCouponError(null);
+        const result = await validateCoupon(code, promotion.subtotal);
+        if (result.valid) {
+            applyCoupon(result.coupon);
+            setCouponInput('');
+        } else {
+            setCouponError(result.error);
+        }
+        setCouponLoading(false);
+    };
 
     // Track checkout_start once
     useEffect(() => {
@@ -196,13 +244,20 @@ export default function Checkout() {
     return (
         <div className="min-h-screen bg-cream py-12">
             <div className="container-luxury">
-                <motion.h1
+                <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="section-title text-center mb-8"
+                    className="text-center mb-8"
                 >
-                    Finalizar Compra
-                </motion.h1>
+                    <h1 className="section-title mb-3">Finalizar Compra Segura</h1>
+                    <div className="inline-flex flex-wrap items-center justify-center gap-3 sm:gap-5 px-5 py-2.5 rounded-full bg-white border border-kraft/25 shadow-sm text-xs font-medium text-charcoal/80">
+                        <span>🔒 Conexión Cifrada SSL</span>
+                        <span className="text-gold">•</span>
+                        <span>🚚 Envío Asegurado FedEx</span>
+                        <span className="text-gold">•</span>
+                        <span>🧾 Facturación CFDI 4.0</span>
+                    </div>
+                </motion.div>
 
                 <div className="grid lg:grid-cols-3 gap-8">
                     {/* Form */}
@@ -520,9 +575,56 @@ export default function Checkout() {
                             </div>
 
                             {/* Promotion Banner */}
-                            <div className="mb-6">
+                            <div className="mb-5">
                                 <CartPromoBanner promotion={promotion} />
                             </div>
+
+                            {/* Direct Coupon Input in Checkout */}
+                            {user?.role !== 'DISTRIBUIDOR' && (
+                                <div className="mb-5">
+                                    {isCouponValid && appliedCoupon ? (
+                                        <CouponCard
+                                            code={appliedCoupon.code}
+                                            discountType={appliedCoupon.discount_type}
+                                            discountValue={appliedCoupon.discount_value}
+                                            visualDesign={appliedCoupon.visual_design}
+                                            onRemove={() => removeCoupon()}
+                                        />
+                                    ) : (
+                                        <div className="coupon-input-wrap">
+                                            <p className="coupon-input-label">¿Tienes un código promocional?</p>
+                                            <div className="coupon-input-row">
+                                                <input
+                                                    type="text"
+                                                    className="coupon-input"
+                                                    placeholder="Ej. INVIERNO20"
+                                                    value={couponInput}
+                                                    onChange={(e) => {
+                                                        setCouponInput(e.target.value.toUpperCase());
+                                                        if (couponError) setCouponError(null);
+                                                    }}
+                                                    maxLength={30}
+                                                    disabled={couponLoading}
+                                                    aria-label="Código promocional"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    className="coupon-apply-btn"
+                                                    onClick={handleApplyCheckoutCoupon}
+                                                    disabled={!couponInput.trim() || couponLoading}
+                                                >
+                                                    {couponLoading ? '…' : 'Aplicar'}
+                                                </button>
+                                            </div>
+                                            {couponError && (
+                                                <p className="coupon-error" role="alert">
+                                                    ⚠ {couponError}
+                                                </p>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
 
                             <div className="bg-charcoal/5 h-px w-full my-6"></div>
 
@@ -574,6 +676,26 @@ export default function Checkout() {
                                     <span className="block text-3xl font-bold text-gold leading-none">${finalTotal.toLocaleString()}</span>
                                     <span className="text-xs text-charcoal-light block mt-1">MXN (IVA incluido)</span>
                                 </div>
+                            </div>
+
+                            {/* Trust & Assistance Box */}
+                            <div className="mt-6 pt-5 border-t border-charcoal/10 space-y-2.5 text-xs text-charcoal/75">
+                                <p className="flex items-center gap-2">
+                                    <span>🛡️</span>
+                                    <span><strong>Garantía Oficial J. Denis:</strong> Producto fresco directo de laboratorio en CDMX.</span>
+                                </p>
+                                <p className="flex items-center gap-2">
+                                    <span>📦</span>
+                                    <span><strong>Rastreo en Tiempo Real:</strong> Recibes tu guía FedEx por correo al despachar.</span>
+                                </p>
+                                <a
+                                    href="https://wa.me/525527271067?text=Hola!%20Tengo%20una%20duda%20antes%20de%20finalizar%20mi%20pedido%20en%20jdenis.store"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="mt-2 inline-flex items-center gap-1.5 text-forest font-semibold hover:text-gold transition-colors"
+                                >
+                                    💬 ¿Necesitas apoyo con tu compra? Escríbenos por WhatsApp →
+                                </a>
                             </div>
                         </div>
                     </div>

@@ -4,11 +4,15 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { useCartStore } from '../store/cartStore';
 import { useSearchStore } from '../store/searchStore';
+import { useWishlistStore } from '../store/wishlistStore';
+import { useCartPromotion } from '../hooks/useCartPromotion';
 
 export default function Header() {
     const location = useLocation();
     const { openCart, itemCount } = useCartStore();
     const { isAuthenticated, user, logout } = useAuthStore();
+    const favoriteCount = useWishlistStore((s) => s.favoriteIds.length);
+    const promotion = useCartPromotion();
     const count = itemCount();
     const [scrolled, setScrolled] = useState(false);
     const [hidden, setHidden] = useState(false);
@@ -20,13 +24,10 @@ export default function Header() {
         const handleScroll = () => {
             const currentScrollY = window.scrollY;
             setScrolled(currentScrollY > 50);
-            
+
             if (location.pathname === '/tienda') {
-                // In the shop page, the header stays hidden as long as we are scrolled down
-                // to avoid overlapping with the shop's own sticky bar when scrolling up
                 setHidden(currentScrollY > 100);
             } else {
-                // Default behavior: hide on scroll down, show on scroll up
                 setHidden(currentScrollY > lastScrollY && currentScrollY > 150);
             }
             lastScrollY = currentScrollY;
@@ -60,13 +61,44 @@ export default function Header() {
         { path: '/nosotros', label: 'Nosotros' },
     ];
 
+    const isStaff = ['ADMIN', 'EJECUTIVO', 'FABRICA', 'ALMACEN_MATERIA_PRIMA', 'ALMACEN_PRODUCTO_FINAL', 'TRANSPORTISTA'].includes(user?.role || '');
+
     return (
         <>
-            <header className={`fixed top-0 w-full z-[60] transition-all duration-300 ${hidden && !mobileMenuOpen ? '-translate-y-full' : 'translate-y-0'} ${scrolled
-                ? 'bg-[#001641] shadow-botanical py-3 border-b border-gold/20'
-                : 'bg-[#001641] py-6'
+            <header className={`fixed top-0 w-full z-[60] transition-all duration-300 ${hidden && !mobileMenuOpen ? '-translate-y-full' : 'translate-y-0'} bg-[#001641] ${scrolled
+                ? 'shadow-botanical border-b border-gold/20'
+                : ''
                 }`}>
-                <div className="container-luxury">
+                {/* Dynamic Trust & Free Shipping Top Bar */}
+                {!scrolled && (
+                    <div className="bg-[#08112e] border-b border-gold/15 text-cream/90 text-[11px] sm:text-xs py-1.5 px-4 text-center">
+                        {count > 0 && user?.role !== 'DISTRIBUIDOR' ? (
+                            <button
+                                type="button"
+                                onClick={openCart}
+                                className="inline-flex items-center justify-center gap-2 hover:text-gold transition-colors font-medium"
+                            >
+                                {promotion.isFreeShipping ? (
+                                    <span>🎉 ¡Felicidades! Tu pedido ya incluye <strong className="text-gold">ENVÍO GRATIS asegurado</strong> a todo México</span>
+                                ) : (
+                                    <span>🚚 {promotion.progressText || 'Envío Gratis en compras desde $2,000 MXN'} · <span className="underline text-gold">Ver carrito</span></span>
+                                )}
+                            </button>
+                        ) : (
+                            <div className="flex items-center justify-center gap-3 sm:gap-6 flex-wrap">
+                                <span>✨ <strong className="text-gold">Fabricante Oficial</strong> desde 1998</span>
+                                <span className="hidden sm:inline text-gold/40">•</span>
+                                <span>🚚 Envío Asegurado <strong className="text-gold">GRATIS desde $2,000 MXN</strong></span>
+                                <span className="hidden md:inline text-gold/40">•</span>
+                                <Link to="/solicitar-factura" className="hidden md:inline hover:text-gold transition-colors">
+                                    🧾 Facturación CFDI 4.0
+                                </Link>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                <div className={`container-luxury transition-all duration-300 ${scrolled ? 'py-2.5' : 'py-3.5'}`}>
                     <div className="flex items-center justify-between">
                         {/* Logo */}
                         <Link to="/" className="flex items-center gap-3">
@@ -98,11 +130,11 @@ export default function Header() {
                         </nav>
 
                         {/* Actions */}
-                        <div className="flex items-center gap-6">
+                        <div className="flex items-center gap-1.5 sm:gap-3">
                             {/* User */}
                             {isAuthenticated ? (
-                                <div className="hidden sm:flex items-center gap-4">
-                                    {['ADMIN', 'EJECUTIVO', 'FABRICA', 'ALMACEN_MATERIA_PRIMA', 'ALMACEN_PRODUCTO_FINAL', 'TRANSPORTISTA'].includes(user?.role || '') ? (
+                                <div className="hidden sm:flex items-center gap-3 mr-1">
+                                    {isStaff ? (
                                         <Link
                                             to="/admin"
                                             className="text-xs tracking-wider uppercase text-gold hover:text-white transition-colors"
@@ -119,11 +151,11 @@ export default function Header() {
                                             to="/mi-cuenta"
                                             className="text-xs tracking-wider uppercase text-gold hover:text-white transition-colors"
                                         >
-                                            {user?.role === 'DISTRIBUIDOR' ? 'Distribuidor' : 'Cliente'}
+                                            {user?.role === 'DISTRIBUIDOR' ? 'Distribuidor' : 'Mi Cuenta'}
                                         </Link>
                                     )}
                                     <Link
-                                        to={['ADMIN', 'EJECUTIVO', 'FABRICA', 'ALMACEN_MATERIA_PRIMA', 'ALMACEN_PRODUCTO_FINAL', 'TRANSPORTISTA'].includes(user?.role || '') ? '/admin' : '/mi-cuenta'}
+                                        to={isStaff ? '/admin' : '/mi-cuenta'}
                                         className="text-xs tracking-wider uppercase text-cream hover:text-gold transition-colors"
                                     >
                                         {user?.fullName?.split(' ')[0]}
@@ -140,7 +172,7 @@ export default function Header() {
                             ) : (
                                 <Link
                                     to="/login"
-                                    className="hidden sm:block text-xs tracking-wider uppercase text-cream hover:text-gold transition-colors"
+                                    className="hidden sm:block text-xs tracking-wider uppercase text-cream hover:text-gold transition-colors mr-1"
                                 >
                                     Acceso
                                 </Link>
@@ -156,6 +188,23 @@ export default function Header() {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
                                 </svg>
                             </button>
+
+                            {/* Favorites / Wishlist Link */}
+                            <Link
+                                to="/tienda?favs=1"
+                                aria-label="Ver mis productos favoritos"
+                                title="Mis Favoritos"
+                                className="relative min-w-[44px] min-h-[44px] flex items-center justify-center text-cream hover:text-gold transition-colors"
+                            >
+                                <svg className="w-5 h-5" fill={favoriteCount > 0 ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                                </svg>
+                                {favoriteCount > 0 && (
+                                    <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-rose-500 text-white text-[10px] rounded-full flex items-center justify-center font-bold">
+                                        {favoriteCount}
+                                    </span>
+                                )}
+                            </Link>
 
                             {/* Cart Button */}
                             <motion.button
@@ -211,7 +260,7 @@ export default function Header() {
                     }`}
                 style={{ paddingTop: '100px', background: 'rgba(0, 22, 65, 0.98)' }}
             >
-                <nav className="container-luxury flex flex-col items-center gap-8 py-12">
+                <nav className="container-luxury flex flex-col items-center gap-7 py-10">
                     {navLinks.map((link) => (
                         <Link
                             key={link.path}
@@ -225,10 +274,17 @@ export default function Header() {
                             {link.label}
                         </Link>
                     ))}
-                    <div className="w-16 h-px bg-gold/30 my-4" />
+                    <Link
+                        to="/tienda?favs=1"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="text-base font-serif tracking-wider text-gold hover:text-white transition-colors"
+                    >
+                        ❤️ Mis Favoritos {favoriteCount > 0 ? `(${favoriteCount})` : ''}
+                    </Link>
+                    <div className="w-16 h-px bg-gold/30 my-2" />
                     {isAuthenticated ? (
                         <>
-                            {['ADMIN', 'EJECUTIVO', 'FABRICA', 'ALMACEN_MATERIA_PRIMA', 'ALMACEN_PRODUCTO_FINAL', 'TRANSPORTISTA'].includes(user?.role || '') && (
+                            {isStaff && (
                                 <Link
                                     to="/admin"
                                     onClick={() => setMobileMenuOpen(false)}
@@ -243,7 +299,7 @@ export default function Header() {
                                     onClick={() => setMobileMenuOpen(false)}
                                     className="text-cream hover:text-white"
                                 >
-                                    Dashboard
+                                    Mi Cuenta y Pedidos
                                 </Link>
                             )}
                             <div className="text-cream">
@@ -253,7 +309,7 @@ export default function Header() {
                                 type="button"
                                 onClick={() => { logout(); setMobileMenuOpen(false); }}
                                 aria-label="Cerrar sesión"
-                                className="text-cream hover:text-white"
+                                className="text-cream hover:text-white min-h-[44px]"
                             >
                                 Cerrar Sesión
                             </button>
@@ -264,7 +320,7 @@ export default function Header() {
                             onClick={() => setMobileMenuOpen(false)}
                             className="btn btn-outline-light"
                         >
-                            Acceso
+                            Acceso / Registro
                         </Link>
                     )}
                 </nav>

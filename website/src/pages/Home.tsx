@@ -156,7 +156,7 @@ function ReelCard({
                         >
                             <track kind="captions" label="Sin subtítulos" />
                         </video>
-                        <div className="absolute top-4 right-4 flex flex-col gap-3 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <div className="absolute top-4 right-4 flex flex-col gap-3 z-30 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300">
                             <button
                                 type="button"
                                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); setIsMuted(!isMuted); }}
@@ -579,6 +579,49 @@ export default function Home() {
                 </div>
             </section>
 
+            {/* OFFICIAL TRUST & LOYALTY GUARANTEES STRIP */}
+            <section className="py-10 bg-white border-y border-kraft/25 relative z-10">
+                <div className="container-luxury">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                        {[
+                            {
+                                icon: '🏭',
+                                title: 'Directo de Fábrica (1998)',
+                                desc: 'Laboratorio propio en México con fórmulas hipoalergénicas y patentes originales.',
+                            },
+                            {
+                                icon: '🚚',
+                                title: 'Envío Asegurado GRATIS',
+                                desc: 'En pedidos desde $2,000 MXN a toda la República Mexicana con guía FedEx.',
+                            },
+                            {
+                                icon: '🔒',
+                                title: 'Compra 100% Protegida',
+                                desc: 'Tarjetas Visa, Mastercard, Amex, Mercado Pago, SPEI y pago en OXXO.',
+                            },
+                            {
+                                icon: '👑',
+                                title: 'Fidelidad & Mayoreo',
+                                desc: 'Guarda tus favoritos, repite pedidos en 1 clic y accede a precios de distribuidor.',
+                            },
+                        ].map((pillar, idx) => (
+                            <div
+                                key={idx}
+                                className="flex items-start gap-3.5 p-4 rounded-2xl bg-cream/60 border border-kraft/20 hover:border-gold/40 transition-colors"
+                            >
+                                <span className="w-11 h-11 rounded-xl bg-[#001641] text-gold flex items-center justify-center text-xl shrink-0 shadow-sm">
+                                    {pillar.icon}
+                                </span>
+                                <div>
+                                    <h3 className="text-sm font-bold text-[#0a1847]">{pillar.title}</h3>
+                                    <p className="text-xs text-charcoal/70 leading-relaxed mt-1">{pillar.desc}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
             {/* BESTSELLERS - GRID GALLERY */}
 
             <section className="section py-24 md:py-32 relative overflow-hidden bg-gradient-to-b from-cream via-cream-dark/30 to-cream">
@@ -686,7 +729,7 @@ export default function Home() {
                                 }
                             }}
                         >
-                            <div className="relative w-[370px] sm:w-[430px] md:w-[500px] aspect-[9/16]">
+                            <div className="relative w-[min(340px,88vw)] sm:w-[410px] md:w-[470px] aspect-[9/16]">
                                 <AnimatePresence mode="wait">
                                     {reels.length > 0 && (() => {
                                         const reel = reels[currentReel];

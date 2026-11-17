@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import ReviewSection from '../components/ReviewSection';
 import VariantSelector from '../components/VariantSelector';
@@ -9,6 +9,7 @@ import { useProducts, type DisplayProduct } from '../hooks/useProducts';
 import { useVariants } from '../hooks/useVariants';
 import { useAuthStore } from '../store/authStore';
 import { useCartStore } from '../store/cartStore';
+import { useWishlistStore } from '../store/wishlistStore';
 import { buildOrganizationSchema, getCategorySEO, getProductGenericDescriptor, GSC_PRODUCT_SEO_OVERRIDES, normalizeShopCategoryId } from '../utils/seoData';
 import { FormattedProductDescription, getCleanVariantNote, getHeroSummary } from '../utils/formatDescription';
 import { trackEvent } from '../utils/telemetry';
@@ -31,13 +32,16 @@ const LEGACY_PRODUCT_SLUG_ALIASES: Record<string, string> = {
 
 export default function ProductDetail() {
     const { id } = useParams<{ id: string }>();
+    const navigate = useNavigate();
     const { addItem, openCart } = useCartStore();
     const userRole = useAuthStore(state => state.user?.role);
+    const { favoriteIds, toggleFavorite, recordRecentlyViewed, recentlyViewedIds } = useWishlistStore();
     const { products, loading: productsLoading } = useProducts();
     const { getVariantsForProduct, findVariantBySlug, loading: variantsLoading } = useVariants();
     const [activeTab, setActiveTab] = useState<DetailTab>('benefits');
     const [selectedVariantId, setSelectedVariantId] = useState<string>('');
     const [selectedImageUrl, setSelectedImageUrl] = useState<string>('');
+    const [qty, setQty] = useState<number>(1);
     const lastTrackedProductIdRef = useRef<string>('');
     const detailsSectionRef = useRef<HTMLElement | null>(null);
 
@@ -90,9 +94,10 @@ export default function ProductDetail() {
         return productVariants.find(v => v.id === selectedVariantId) || productVariants[0];
     }, [productVariants, selectedVariantId]);
 
-    // Sync hero image when product or selected variant changes
+    // Sync hero image & record recently viewed when product changes
     useEffect(() => {
         if (!product) return;
+        recordRecentlyViewed(String(product.id));
         setSelectedImageUrl(selectedVariant?.imageUrl || product.image);
     }, [product, selectedVariant?.id, selectedVariant?.imageUrl]);
 
@@ -332,16 +337,18 @@ export default function ProductDetail() {
     );
     const heroImage = selectedImageUrl || selectedVariant?.imageUrl || product.image;
 
-    const handleAddToCart = () => {
-        if (!product || isOutOfStock) return;
-        setIsAdding(true);
+    const isFav = favoriteIds.includes(String(product.id));
+    const recentlyViewedProducts = products
+        .filter(p => recentlyViewedIds.includes(String(p.id)) && String(p.id) !== String(product.id))
+        .slice(0, 4);
 
+    const buildCartItemPayload = () => {
         if (selectedVariant && productVariants.length > 1) {
             const label =
                 selectedVariant.title && selectedVariant.title !== 'Única'
                     ? `${product.name} (${selectedVariant.title})`
                     : product.name;
-            addItem({
+            return {
                 ...product,
                 id: `${product.id}-v${selectedVariant.id}`,
                 name: label,
@@ -349,20 +356,31 @@ export default function ProductDetail() {
                 originalPrice: effectiveOriginalPrice,
                 image: selectedVariant.imageUrl || product.image,
                 stock: selectedVariant.stock,
-            });
-        } else {
-            addItem({
-                ...product,
-                price: effectivePrice,
-                originalPrice: effectiveOriginalPrice,
-                stock: effectiveStock,
-            });
+            };
         }
+        return {
+            ...product,
+            price: effectivePrice,
+            originalPrice: effectiveOriginalPrice,
+            stock: effectiveStock,
+        };
+    };
+
+    const handleAddToCart = () => {
+        if (!product || isOutOfStock) return;
+        setIsAdding(true);
+        addItem(buildCartItemPayload(), qty);
 
         setTimeout(() => {
             setIsAdding(false);
             openCart();
         }, 400);
+    };
+
+    const handleBuyNow = () => {
+        if (!product || isOutOfStock) return;
+        addItem(buildCartItemPayload(), qty);
+        navigate('/checkout');
     };
 
     const handleVariantChange = (nextVariantId: string) => {
@@ -566,36 +584,117 @@ export default function ProductDetail() {
                             ))}
                         </div>
 
-                        {/* CTA Buttons */}
+                        {/* CTA Buttons + Quantity + Favorite */}
                         <div className="mt-auto space-y-3">
-                            <button
-                                onClick={handleAddToCart}
-                                disabled={isAdding || isOutOfStock}
-                                className={`w-full h-12 text-sm sm:text-base font-semibold tracking-wider uppercase rounded-sm transition-all duration-300 ${isOutOfStock
-                                    ? 'bg-charcoal/20 text-charcoal/50 cursor-not-allowed'
-                                    : isAdding
-                                        ? 'bg-gold text-white scale-[1.02] shadow-md'
-                                        : 'bg-forest text-white hover:bg-forest-light hover:shadow-lg hover:-translate-y-0.5'
-                                    }`}
-                            >
-                                {isOutOfStock ? 'Producto Agotado' : isAdding ? '¡Agregado!' : 'Agregar al Carrito'}
-                            </button>
+                            {!isOutOfStock && (
+                                <div className="flex items-center justify-between gap-3">
+                                    <div className="inline-flex items-center border border-kraft/40 rounded-xl bg-white shadow-sm">
+                                        <button
+                                            type="button"
+                                            onClick={() => setQty(q => Math.max(1, q - 1))}
+                                            aria-label="Reducir cantidad"
+                                            className="w-11 h-11 flex items-center justify-center text-lg font-medium text-charcoal hover:bg-cream rounded-l-xl transition-colors"
+                                        >
+                                            −
+                                        </button>
+                                        <span className="min-w-[40px] text-center font-semibold text-forest text-sm">{qty}</span>
+                                        <button
+                                            type="button"
+                                            onClick={() => setQty(q => Math.min(Math.max(1, effectiveStock), q + 1))}
+                                            aria-label="Aumentar cantidad"
+                                            className="w-11 h-11 flex items-center justify-center text-lg font-medium text-charcoal hover:bg-cream rounded-r-xl transition-colors"
+                                        >
+                                            +
+                                        </button>
+                                    </div>
+
+                                    <div className="flex items-center gap-2 text-xs text-emerald-700 font-semibold">
+                                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                        <span>Disponible · Envío directo de fábrica</span>
+                                    </div>
+
+                                    <button
+                                        type="button"
+                                        onClick={() => toggleFavorite(String(product.id), product.name)}
+                                        aria-label={isFav ? 'Quitar de favoritos' : 'Guardar en favoritos'}
+                                        title={isFav ? 'En tus Favoritos' : 'Guardar en Favoritos'}
+                                        className={`w-11 h-11 rounded-xl border flex items-center justify-center transition-all shrink-0 ${
+                                            isFav
+                                                ? 'bg-rose-50 border-rose-200 text-rose-600'
+                                                : 'bg-white border-kraft/40 text-charcoal/60 hover:text-rose-500'
+                                        }`}
+                                    >
+                                        <svg className="w-5 h-5" fill={isFav ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            )}
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <button
+                                    onClick={handleAddToCart}
+                                    disabled={isAdding || isOutOfStock}
+                                    className={`w-full h-12 text-xs sm:text-sm font-semibold tracking-wider uppercase rounded-xl transition-all duration-300 ${isOutOfStock
+                                        ? 'bg-charcoal/20 text-charcoal/50 cursor-not-allowed sm:col-span-2'
+                                        : isAdding
+                                            ? 'bg-gold text-white scale-[1.02] shadow-md'
+                                            : 'bg-forest text-white hover:bg-forest-light hover:shadow-lg hover:-translate-y-0.5'
+                                        }`}
+                                >
+                                    {isOutOfStock ? 'Producto Agotado' : isAdding ? '¡Agregado!' : 'Agregar al Carrito'}
+                                </button>
+                                {!isOutOfStock && (
+                                    <button
+                                        type="button"
+                                        onClick={handleBuyNow}
+                                        className="w-full h-12 text-xs sm:text-sm font-bold tracking-wider uppercase rounded-xl bg-[#001641] text-gold border border-gold/40 hover:bg-[#08205c] hover:shadow-lg transition-all"
+                                    >
+                                        ⚡ Comprar Ahora
+                                    </button>
+                                )}
+                            </div>
+
                             <a
                                 href={`https://wa.me/525527271067?text=Hola! Estoy interesada en: ${product.name}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="block w-full py-3 text-center text-sm font-medium rounded-xl border-2 transition-all hover:shadow-md border-charcoal/40 text-charcoal group"
+                                className="block w-full py-3 text-center text-sm font-medium rounded-xl border transition-all hover:shadow-md border-charcoal/25 text-charcoal hover:border-forest hover:text-forest group"
                             >
-                                <svg className="w-4 h-4 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" /></svg> Preguntar por Menudeo o Mayoreo en WhatsApp
+                                <svg className="w-4 h-4 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" /></svg> Asesoría Profesional o Mayoreo por WhatsApp
                             </a>
                         </div>
 
-                        {/* Shipping Info */}
-                        <div className="mt-6 p-4 rounded-xl bg-forest/5 border border-forest/10">
-                            <p className="text-sm text-charcoal/70">
-                                <svg className="w-4 h-4 inline mr-1 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M21 7.5l-2.25-1.313M21 7.5v2.25m0-2.25l-2.25 1.313M3 7.5l2.25-1.313M3 7.5l2.25 1.313M3 7.5v2.25m9 3l2.25-1.313M12 12.75l-2.25-1.313M12 12.75V15m0 6.75l2.25-1.313M12 21.75V19.5m0 2.25l-2.25-1.313m0-16.875L12 2.25l2.25 1.313M21 14.25v2.25l-2.25 1.313m-13.5 0L3 16.5v-2.25" /></svg> <strong className="text-forest">Envío Asegurado a todo México:</strong> $200 MXN (Gratis en compras mayores a $2,000 MXN)<br />
-                                <svg className="w-4 h-4 inline mr-1 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> <strong className="text-forest">Entrega:</strong> 3-5 días hábiles directo de fábrica
-                            </p>
+                        {/* Shipping & Guarantee Seals */}
+                        <div className="mt-6 grid grid-cols-2 gap-2.5">
+                            <div className="p-3 rounded-xl bg-white border border-kraft/25 flex items-start gap-2.5">
+                                <span className="text-base">🚚</span>
+                                <div>
+                                    <p className="text-xs font-bold text-forest">Envío Asegurado FedEx</p>
+                                    <p className="text-[11px] text-charcoal/65">Gratis desde $2,000 MXN</p>
+                                </div>
+                            </div>
+                            <div className="p-3 rounded-xl bg-white border border-kraft/25 flex items-start gap-2.5">
+                                <span className="text-base">🔒</span>
+                                <div>
+                                    <p className="text-xs font-bold text-forest">Compra 100% Segura</p>
+                                    <p className="text-[11px] text-charcoal/65">Tarjeta, SPEI u OXXO</p>
+                                </div>
+                            </div>
+                            <div className="p-3 rounded-xl bg-white border border-kraft/25 flex items-start gap-2.5">
+                                <span className="text-base">🧪</span>
+                                <div>
+                                    <p className="text-xs font-bold text-forest">Directo de Laboratorio</p>
+                                    <p className="text-[11px] text-charcoal/65">Patente mexicana · 25+ años</p>
+                                </div>
+                            </div>
+                            <div className="p-3 rounded-xl bg-white border border-kraft/25 flex items-start gap-2.5">
+                                <span className="text-base">🧾</span>
+                                <div>
+                                    <p className="text-xs font-bold text-forest">Factura CFDI 4.0</p>
+                                    <p className="text-[11px] text-charcoal/65">Deduce tus insumos</p>
+                                </div>
+                            </div>
                         </div>
                     </motion.div>
                 </div>
@@ -828,6 +927,31 @@ export default function ProductDetail() {
                             Ver todo el catálogo →
                         </Link>
                     </motion.section>
+                )}
+
+                {/* Vistos Recientemente */}
+                {recentlyViewedProducts.length > 0 && (
+                    <section className="mt-12 pb-16">
+                        <div className="flex items-center justify-between mb-6">
+                            <div>
+                                <span className="text-xs uppercase tracking-[0.2em] text-gold font-semibold block mb-1">Tu Historial</span>
+                                <h2 className="font-serif text-2xl text-forest">Vistos Recientemente</h2>
+                            </div>
+                            <Link to="/tienda?favs=1" className="text-xs font-semibold uppercase tracking-wider text-forest hover:text-gold transition-colors">
+                                Ver mis Favoritos →
+                            </Link>
+                        </div>
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                            {recentlyViewedProducts.map((rp, idx) => (
+                                <ProductCard
+                                    key={rp.id}
+                                    product={rp}
+                                    index={idx}
+                                    variantCount={rp.variantsCount || getVariantsForProduct(rp.id).length || 1}
+                                />
+                            ))}
+                        </div>
+                    </section>
                 )}
             </div>
 

@@ -245,9 +245,25 @@ export default function PaymentResult() {
                     )}
 
                     {(status === 'approved' || status === 'order_created') && (
-                        <Link to="/mi-cuenta" className="btn btn-primary w-full">
-                            Ver Mis Pedidos
-                        </Link>
+                        <>
+                            <Link to="/mi-cuenta" className="btn btn-primary w-full">
+                                Ver Mis Pedidos y Recompra en 1 Clic
+                            </Link>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2">
+                                <Link
+                                    to="/solicitar-factura"
+                                    className="py-3 px-4 rounded-xl border border-kraft/30 bg-cream/60 text-xs font-semibold text-forest hover:border-gold transition-colors"
+                                >
+                                    🧾 Solicitar Factura CFDI
+                                </Link>
+                                <Link
+                                    to="/registro-distribuidor"
+                                    className="py-3 px-4 rounded-xl border border-gold/40 bg-gold/10 text-xs font-semibold text-navy hover:bg-gold/20 transition-colors"
+                                >
+                                    👑 Programa Distribuidores
+                                </Link>
+                            </div>
+                        </>
                     )}
 
                     {(status === 'rejected' || status === 'unknown') && (

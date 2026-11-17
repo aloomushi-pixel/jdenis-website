@@ -7,6 +7,7 @@ import { useProducts } from '../hooks/useProducts';
 import { useVariants } from '../hooks/useVariants';
 import { usePageMeta } from '../hooks/usePageMeta';
 import { useSearchStore } from '../store/searchStore';
+import { useWishlistStore } from '../store/wishlistStore';
 import { buildOrganizationSchema, getCategorySEO, matchesProductSearch, normalizeShopCategoryId } from '../utils/seoData';
 import { trackEvent } from '../utils/telemetry';
 
@@ -51,6 +52,12 @@ export default function Shop() {
 
     const [priceRange, setPriceRange] = useState<[number, number]>([PRICE_MIN, DEFAULT_PRICE_MAX]);
     const [showOffersOnly, setShowOffersOnly] = useState(false);
+    const [showFavoritesOnly, setShowFavoritesOnly] = useState(searchParams.get('favs') === '1');
+    const { favoriteIds, recentlyViewedIds } = useWishlistStore();
+
+    useEffect(() => {
+        setShowFavoritesOnly(searchParams.get('favs') === '1');
+    }, [searchParams]);
     const [showPricePopover, setShowPricePopover] = useState(false);
     const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
 
@@ -124,17 +131,19 @@ export default function Shop() {
             priceRange[0] > PRICE_MIN ||
             priceRange[1] < computedMax ||
             showOffersOnly ||
+            showFavoritesOnly ||
             searchQuery.length > 0 ||
             activeCategory !== 'all'
         );
-    }, [priceRange, showOffersOnly, searchQuery, activeCategory, computedMax]);
+    }, [priceRange, showOffersOnly, showFavoritesOnly, searchQuery, activeCategory, computedMax]);
 
     const clearAllFilters = () => {
         setPriceRange([PRICE_MIN, computedMax]);
         setShowOffersOnly(false);
+        setShowFavoritesOnly(false);
         setSearchQuery('');
         setActiveCategory('all');
-        setSortBy('name');
+        setSortBy('featured');
         setSearchParams({});
     };
 
@@ -187,6 +196,10 @@ export default function Shop() {
             result = result.filter(p => p.originalPrice && p.originalPrice > p.price);
         }
 
+        if (showFavoritesOnly) {
+            result = result.filter(p => favoriteIds.includes(String(p.id)));
+        }
+
         result = [...result].sort((a, b) => {
             if (sortBy === 'featured') {
                 const aFeat = a.isFeatured ? 1 : 0;
@@ -207,7 +220,7 @@ export default function Shop() {
         });
 
         return result;
-    }, [groupedProducts, activeCategory, sortBy, searchQuery, priceRange, showOffersOnly]);
+    }, [groupedProducts, activeCategory, sortBy, searchQuery, priceRange, showOffersOnly, showFavoritesOnly, favoriteIds]);
 
     // Track catalog searches in telemetry
     useEffect(() => {
@@ -454,12 +467,31 @@ export default function Shop() {
 
                                 <button
                                     onClick={() => setShowOffersOnly(!showOffersOnly)}
-                                    className={`px-4 md:px-5 py-2 md:py-2.5 text-xs md:text-sm rounded-full border transition-all flex items-center gap-1.5 shrink-0 ${showOffersOnly
+                                    className={`min-h-[44px] px-4 md:px-5 py-2 md:py-2.5 text-xs md:text-sm rounded-full border transition-all flex items-center gap-1.5 shrink-0 ${showOffersOnly
                                         ? 'bg-red-500 text-white border-red-500 font-medium shadow-sm'
                                         : 'bg-white border-kraft/30 text-charcoal/70 hover:border-red-300'
                                         }`}
                                 >
                                     🔥 <span className="hidden md:inline">Ofertas</span>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        const next = !showFavoritesOnly;
+                                        setShowFavoritesOnly(next);
+                                        const nextParams = new URLSearchParams(searchParams);
+                                        if (next) nextParams.set('favs', '1');
+                                        else nextParams.delete('favs');
+                                        setSearchParams(nextParams, { replace: true });
+                                    }}
+                                    className={`min-h-[44px] px-4 md:px-5 py-2 md:py-2.5 text-xs md:text-sm rounded-full border transition-all flex items-center gap-1.5 shrink-0 ${showFavoritesOnly
+                                        ? 'bg-rose-600 text-white border-rose-600 font-medium shadow-sm'
+                                        : 'bg-white border-kraft/30 text-charcoal/70 hover:border-rose-300'
+                                        }`}
+                                >
+                                    ❤️ <span className="hidden sm:inline">Favoritos</span>
+                                    {favoriteIds.length > 0 && <span className="text-[11px] font-bold">({favoriteIds.length})</span>}
                                 </button>
 
                                 <button
@@ -630,6 +662,33 @@ export default function Shop() {
                     </div>
                 </div>
             </section>
+
+            {/* Vistos Recientemente en Tienda */}
+            {recentlyViewedIds.length > 0 && !showFavoritesOnly && (
+                <section className="container-luxury pb-14">
+                    <div className="bg-white rounded-3xl border border-kraft/25 p-6 md:p-8 shadow-sm">
+                        <div className="flex items-center justify-between mb-5">
+                            <div>
+                                <span className="text-xs uppercase tracking-[0.2em] text-gold font-semibold block mb-1">Retoma tu selección</span>
+                                <h2 className="font-serif text-xl md:text-2xl text-forest">Vistos Recientemente</h2>
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                            {groupedProducts
+                                .filter(p => recentlyViewedIds.includes(String(p.id)))
+                                .slice(0, 4)
+                                .map((rp, idx) => (
+                                    <ProductCard
+                                        key={rp.id}
+                                        product={rp}
+                                        index={idx}
+                                        variantCount={variantCounts.get(rp.id) || 1}
+                                    />
+                                ))}
+                        </div>
+                    </div>
+                </section>
+            )}
 
             {/* Price Filter Modal/Bottom Sheet */}
             <AnimatePresence>

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import type { Product } from '../store/cartStore';
 import { useCartStore } from '../store/cartStore';
+import { useWishlistStore } from '../store/wishlistStore';
 import { getCardExcerpt } from '../utils/formatDescription';
 
 interface ProductCardProps {
@@ -13,6 +14,8 @@ interface ProductCardProps {
 
 export default function ProductCard({ product, index = 0, variantCount = 0 }: ProductCardProps) {
     const { addItem, openCart } = useCartStore();
+    const isFav = useWishlistStore((s) => s.favoriteIds.includes(String(product.id)));
+    const toggleFavorite = useWishlistStore((s) => s.toggleFavorite);
     const navigate = useNavigate();
     const hasVariants = variantCount > 1;
     const isOutOfStock = !hasVariants && product.stock === 0;
@@ -77,7 +80,7 @@ export default function ProductCard({ product, index = 0, variantCount = 0 }: Pr
                             isAdding ? `${product.name} agregado al carrito` :
                             `Agregar ${product.name} al carrito`
                         }
-                        className={`lg:absolute lg:bottom-4 lg:left-4 lg:right-4 text-[10px] sm:text-xs tracking-widest uppercase font-semibold h-10 lg:translate-y-4 absolute bottom-0 left-0 right-0 w-full lg:w-auto rounded-t-xl lg:rounded-xl backdrop-blur-md border border-white/10 transition-all duration-300 ${isOutOfStock ? 'bg-charcoal/40 text-white/90 cursor-not-allowed lg:opacity-100 lg:translate-y-0' : isAdding ? 'bg-gold/90 text-white scale-[1.02] lg:opacity-100 lg:translate-y-0 shadow-md' : 'bg-forest/80 text-white hover:bg-forest shadow-lg lg:opacity-0 lg:group-hover:opacity-100 lg:group-hover:translate-y-0'}`}
+                        className={`lg:absolute lg:bottom-4 lg:left-4 lg:right-4 text-[10px] sm:text-xs tracking-widest uppercase font-semibold min-h-[44px] h-11 lg:translate-y-4 absolute bottom-0 left-0 right-0 w-full lg:w-auto rounded-t-xl lg:rounded-xl backdrop-blur-md border border-white/10 transition-all duration-300 ${isOutOfStock ? 'bg-charcoal/40 text-white/90 cursor-not-allowed lg:opacity-100 lg:translate-y-0' : isAdding ? 'bg-gold/90 text-white scale-[1.02] lg:opacity-100 lg:translate-y-0 shadow-md' : 'bg-forest/85 text-white hover:bg-forest shadow-lg lg:opacity-0 lg:group-hover:opacity-100 lg:group-hover:translate-y-0'}`}
                     >
                         <span className="flex items-center justify-center gap-2">
                             {isOutOfStock ? (
@@ -106,11 +109,31 @@ export default function ProductCard({ product, index = 0, variantCount = 0 }: Pr
                         </div>
                     ) : null}
 
-                    {/* Out of Stock Badge */}
-                    {isOutOfStock && (
+                    {/* Out of Stock Badge or Wishlist Heart */}
+                    {isOutOfStock ? (
                         <div className="absolute top-0 right-0 z-10 bg-red-500/90 backdrop-blur-sm text-white px-3 py-1.5 text-[10px] sm:text-[11px] font-bold tracking-wider uppercase rounded-bl-xl shadow-md">
                             Agotado
                         </div>
+                    ) : (
+                        <button
+                            type="button"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                toggleFavorite(String(product.id), product.name);
+                            }}
+                            aria-label={isFav ? `Quitar ${product.name} de favoritos` : `Guardar ${product.name} en favoritos`}
+                            title={isFav ? 'Guardado en Favoritos' : 'Guardar en Favoritos'}
+                            className={`absolute top-2 right-2 z-10 w-11 h-11 rounded-full flex items-center justify-center backdrop-blur-md transition-all shadow-sm ${
+                                isFav
+                                    ? 'bg-white text-rose-600 scale-105'
+                                    : 'bg-white/80 text-charcoal/60 hover:bg-white hover:text-rose-500'
+                            }`}
+                        >
+                            <svg className="w-5 h-5" fill={isFav ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                            </svg>
+                        </button>
                     )}
                 </div>
 

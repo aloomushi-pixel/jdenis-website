@@ -1,8 +1,8 @@
 {
-  "commitSha": "fb18b79 (fb18b79c2d749559547942838ec6a6f8719dc451)",
-  "shortSha": "fb18b79",
-  "fullSha": "fb18b79c2d749559547942838ec6a6f8719dc451",
-  "commitMessage": "feat(admin): isolate Mejora UX bubble and QA Guardian strictly inside /admin for ADMIN role only",
-  "builtAt": "2026-11-17T21:55:11.747Z",
+  "commitSha": "799e910 (799e910e4205c10360a2123a3532b0fbe072e396)",
+  "shortSha": "799e910",
+  "fullSha": "799e910e4205c10360a2123a3532b0fbe072e396",
+  "commitMessage": "fix(admin): verify and repair all 23 /admin panels, RLS policies, Storage buckets, and RPCs",
+  "builtAt": "2026-11-17T22:14:52.503Z",
   "environment": "production"
 }
