@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { useState } from 'react';
 import { Link, Navigate, Outlet, useLocation } from 'react-router-dom';
 import { 
-    LayoutDashboard, Users, Mail, TrendingUp, Package, Truck, ClipboardList, Star, GraduationCap, PenTool, Image, Film, Handshake, Receipt, Tag, ShoppingCart, ShieldCheck, Boxes, Factory, ShoppingBag, Activity, Home, LogOut, Menu
+    LayoutDashboard, Users, Mail, TrendingUp, Package, Truck, ClipboardList, Star, GraduationCap, PenTool, Image, Film, Handshake, Receipt, Tag, ShoppingCart, ShieldCheck, Activity, Home, LogOut, Menu
 } from 'lucide-react';
 import type { UserRole } from '../../lib/erp';
 import { useAuthStore } from '../../store/authStore';
@@ -33,14 +33,20 @@ const menuItems: MenuItem[] = [
     { path: '/admin/media', label: 'Multimedia', icon: <Image className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO'] },
     { path: '/admin/emails', label: 'Emails (Marketing)', icon: <Mail className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO'] },
     { path: '/admin/users', label: 'Usuarios', icon: <Users className="w-5 h-5" />, roles: ['ADMIN'] },
-    { path: '/admin/resources', label: 'Inventario / Insumos', icon: <Boxes className="w-5 h-5" />, roles: ['ADMIN', 'FABRICA', 'ALMACEN_MATERIA_PRIMA', 'ALMACEN_PRODUCTO_FINAL'] },
-    { path: '/admin/purchases', label: 'Compras MP', icon: <ShoppingBag className="w-5 h-5" />, roles: ['ADMIN', 'EJECUTIVO', 'ALMACEN_MATERIA_PRIMA'] },
-    { path: '/admin/production', label: 'Producción', icon: <Factory className="w-5 h-5" />, roles: ['ADMIN', 'FABRICA'] },
-    { path: '/admin/packaging', label: 'Embalaje', icon: <Package className="w-5 h-5" />, roles: ['ADMIN', 'FABRICA', 'ALMACEN_MATERIA_PRIMA', 'ALMACEN_PRODUCTO_FINAL'] },
-    { path: '/admin/transport', label: 'Logística / Rutas', icon: <Truck className="w-5 h-5" />, roles: ['ADMIN', 'TRANSPORTISTA', 'ALMACEN_PRODUCTO_FINAL'] },
+    // Módulos industriales ocultos temporalmente (se habilitarán en siguiente fase):
+    // '/admin/resources' (Inventario), '/admin/purchases' (Compras), '/admin/production' (Producción),
+    // '/admin/packaging' (Embalaje), '/admin/transport' (Logística)
     { path: '/admin/event-log', label: 'Bitácora ERP', icon: <Activity className="w-5 h-5" />, roles: ['ADMIN'] },
     { path: '/admin/qa-guardian', label: 'Guardián QA & UX', icon: <ShieldCheck className="w-5 h-5" />, roles: ['ADMIN'] },
 ];
+
+const TEMPORARILY_HIDDEN_PATHS = new Set([
+    '/admin/resources',
+    '/admin/purchases',
+    '/admin/production',
+    '/admin/packaging',
+    '/admin/transport',
+]);
 
 
 
@@ -68,6 +74,10 @@ export default function AdminLayout() {
     const userRole = user?.role as UserRole;
     if (!isAuthenticated || !ERP_ROLES.includes(userRole)) {
         return <Navigate to="/login" replace />;
+    }
+
+    if (TEMPORARILY_HIDDEN_PATHS.has(location.pathname)) {
+        return <Navigate to="/admin" replace />;
     }
 
     // Enforce per-route role authorization so non-admin ERP roles cannot access restricted routes directly
