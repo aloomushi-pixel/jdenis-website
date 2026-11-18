@@ -1,8 +1,8 @@
 {
-  "commitSha": "799e910 (799e910e4205c10360a2123a3532b0fbe072e396)",
-  "shortSha": "799e910",
-  "fullSha": "799e910e4205c10360a2123a3532b0fbe072e396",
-  "commitMessage": "fix(admin): verify and repair all 23 /admin panels, RLS policies, Storage buckets, and RPCs",
-  "builtAt": "2026-11-17T22:14:52.503Z",
+  "commitSha": "38c7473 (38c747314eb8ee37e9340d73e5e55003cb01ba3f)",
+  "shortSha": "38c7473",
+  "fullSha": "38c747314eb8ee37e9340d73e5e55003cb01ba3f",
+  "commitMessage": "chore(admin): hide logistics, packaging, production, purchases, and inventory panels temporarily",
+  "builtAt": "2026-11-18T02:16:01.386Z",
   "environment": "production"
 }
