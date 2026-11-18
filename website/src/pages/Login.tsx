@@ -63,7 +63,9 @@ export default function Login() {
                 }
             } else {
                 await login(formData.email, formData.password);
-                navigate('/mi-cuenta');
+                const loggedRole = useAuthStore.getState().user?.role || '';
+                const isStaffRole = ['ADMIN', 'EJECUTIVO', 'FABRICA', 'ALMACEN_MATERIA_PRIMA', 'ALMACEN_PRODUCTO_FINAL', 'TRANSPORTISTA'].includes(loggedRole);
+                navigate(isStaffRole ? '/admin' : '/mi-cuenta');
             }
         } catch (err: any) {
             console.error(err);
