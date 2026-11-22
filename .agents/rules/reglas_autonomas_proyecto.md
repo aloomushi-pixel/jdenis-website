@@ -33,3 +33,8 @@
 - Cero correos en pulsos `POSTPONED` con `0` cambios y `0` pendientes nuevos.
 - Máximo **2 cortes ejecutivos diarios** consolidados (o cuando haya `IMPLEMENTED`, `ACTION_REQUIRED`, `PROMPT_EVOLVED` o nuevos ítems en cola).
 - Todo correo incluye obligatoriamente al final la tabla completa acumulada de ítems `PENDIENTE`, `EN_COLA_AUTORIZACION` y `EN_ANALISIS_MAYOR`.
+
+### 5. Aprendizajes Empíricos Incorporados por `meta-prompt-auditor` (Corte Día 21 — `2026-11-21`)
+- **Aislamiento Estricto de UI Interna (`commit fb18b79`):** El buzón `UxFeedbackBubble` (`Mejora UX`) y paneles QA deben permanecer estrictamente aislados dentro de `/admin` solo para el rol `ADMIN`. Prohibido mostrar burbujas flotantes de diagnóstico o QA sobre la tienda pública.
+- **Higiene de Señal en `unhandled_rejection`:** Descartar rechazos de registro de `ServiceWorker` (`sw.js`) emitidos por crawlers headless internacionales para evaluar únicamente excepciones JS reales de sesiones humanas.
+- **Auditoría Prioritaria de Barras Sticky Móviles:** En cada revisión de ergonomía `>= 44×44 px`, priorizar barras inferiores fijas (`ProductDetail`, `CartDrawer`, `Shop` filtros) donde se concentra la conversión móvil orgánica y de `ChatGPT`.

@@ -50,7 +50,7 @@ export default function TelemetryProvider() {
         const handleRejection = (ev: PromiseRejectionEvent) => {
             const rawReason = ev.reason instanceof Error ? ev.reason.message : String(ev.reason || 'Unhandled Rejection');
             const msg = rawReason.slice(0, 180);
-            if (/AbortError|Failed to fetch|NetworkError/i.test(msg)) return;
+            if (/AbortError|Failed to fetch|NetworkError|ServiceWorker|sw\.js/i.test(msg)) return;
             if (reportedJsErrorsRef.current.has(msg) || reportedJsErrorsRef.current.size >= 8) return;
             reportedJsErrorsRef.current.add(msg);
             trackEvent({

@@ -456,7 +456,7 @@ export default function Shop() {
 
                                 <button
                                     onClick={() => setActiveCategory('all')}
-                                    className={`px-4 md:px-5 py-2 md:py-2.5 text-xs md:text-sm rounded-full border transition-all shrink-0 ${activeCategory === 'all'
+                                    className={`min-h-[44px] px-4 md:px-5 py-2 md:py-2.5 text-xs md:text-sm rounded-full border transition-all inline-flex items-center justify-center shrink-0 ${activeCategory === 'all'
                                         ? 'bg-forest text-white border-forest font-medium shadow-sm'
                                         : 'bg-white border-kraft/30 text-charcoal/70 hover:border-forest/40 hover:text-forest'
                                         }`}
@@ -496,7 +496,7 @@ export default function Shop() {
 
                                 <button
                                     onClick={handleOpenPrice}
-                                    className={`px-4 md:px-5 py-2 md:py-2.5 text-xs md:text-sm rounded-full border transition-all flex items-center gap-1.5 shrink-0 ${(priceRange[0] > PRICE_MIN || priceRange[1] < computedMax)
+                                    className={`min-h-[44px] px-4 md:px-5 py-2 md:py-2.5 text-xs md:text-sm rounded-full border transition-all flex items-center gap-1.5 shrink-0 ${(priceRange[0] > PRICE_MIN || priceRange[1] < computedMax)
                                         ? 'bg-gold/10 border-gold/40 text-forest font-medium shadow-sm'
                                         : 'bg-white border-kraft/30 text-charcoal/70 hover:border-gold/40'
                                         }`}
@@ -512,7 +512,7 @@ export default function Shop() {
                                 <select
                                     value={sortBy}
                                     onChange={(e) => setSortBy(e.target.value)}
-                                    className="appearance-none pl-3 pr-8 py-2 md:py-2.5 bg-white border border-kraft/30 text-xs md:text-sm text-forest rounded-full focus:outline-none focus:border-gold cursor-pointer hover:border-gold/40 transition-colors shadow-sm h-full"
+                                    className="min-h-[44px] appearance-none pl-3 pr-8 py-2 md:py-2.5 bg-white border border-kraft/30 text-xs md:text-sm text-forest rounded-full focus:outline-none focus:border-gold cursor-pointer hover:border-gold/40 transition-colors shadow-sm h-full"
                                 >
                                     {sortOptions.map(opt => (
                                         <option key={opt.value} value={opt.value}>{opt.label}</option>

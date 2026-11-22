@@ -11,7 +11,9 @@
 
 ## 2. Reglas Técnicas SEO, GEO y UX v4.0
 - **SEO Estricto:** `100%` de rutas con `<title> <= 60` caracteres, `<meta name="description"> <= 160` caracteres y paridad `1:1` entre HTML prerenderizado, hidratación React (`usePageMeta`) y Schema `JSON-LD` (`Product`, `CollectionPage`, `FAQPage`, `Article`).
-- **Ergonomía Táctil Móvil:** Todo botón o control interactivo móvil debe cumplir área táctil `>= 44×44 px` (`min-w-[44px] min-h-[44px]` o `w-11 h-11`) y contraste legible.
+- **Ergonomía Táctil Móvil:** Todo botón o control interactivo móvil (especialmente barras sticky inferiores en `ProductDetail`, `CartDrawer` y píldoras de filtro en `Shop`) debe cumplir área táctil `>= 44×44 px` (`min-w-[44px] min-h-[44px]` o `w-11 h-11`) y contraste legible.
+- **Aislamiento de UI Interna:** Mantener `UxFeedbackBubble` (`Mejora UX`) y paneles QA estrictamente restringidos a `/admin` para `ADMIN` (jamás exponerlos en rutas públicas).
+- **Higiene de Excepciones JS:** Ignorar fallos de `ServiceWorker` (`sw.js`) originados por crawlers headless; atender con prioridad cualquier `js_exception` humano real en tienda o `/checkout`.
 - **Búsqueda Interna:** Cero búsquedas reales con `results=0` cuando exista producto equivalente en catálogo, y filtrado de stopwords para evitar resultados sobre-amplios.
 
 ## 3. Gobernanza por Rol y Magnitud (Pilar 4)

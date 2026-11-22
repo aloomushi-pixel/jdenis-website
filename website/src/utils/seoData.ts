@@ -74,6 +74,9 @@ export const GENERIC_SYNONYM_MAP: Record<string, string[]> = {
     'duo': ['adhesivos', 'adhesivo', 'pestañas en tira', 'grupo', 'punto', 'transparente', 'negro'],
     'pinza para depilar': ['pinza', 'depilar', 'ceja', 'herramientas'],
     'agua micelar': ['limpiador', 'espuma', 'desmaquillante', 'higiene', 'impurezas'],
+    'cinta nichiban': ['cinta', 'nichiban', 'micropore', 'parche', 'extensiones', 'accesorios'],
+    'brown gray': ['pigmentos', 'brow henna', 'castaño', 'cenizo', 'microblading', 'cejas'],
+    'cepillo para lifting de pestanas': ['cepillo', 'peine', 'herramientas', 'lash lifting', 'separador'],
     'mayoreo': ['kit', 'profesional', 'paquete', 'distribuidor', 'salon', 'estudio'],
     'fabricante': ['j. denis', 'profesional', 'kit', 'cisteamina', 'henna', 'pigmentos'],
 };
