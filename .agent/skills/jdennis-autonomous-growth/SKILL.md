@@ -7,8 +7,9 @@ description: Ecosistema Autónomo v4.0 (7 Pilares) de J. Denis Cosméticos con e
 
 Esta skill rige exclusivamente los **2 Loops Diurnos** de **J. Denis Cosméticos** (`https://jdenis.store`, Supabase `zdciwzeokkrwcxvsgusc`, Google Search Console `sc-domain:jdenis.store`, Dokploy `187.124.86.20:3000`).
 
-> **Regla de Progressive Disclosure (Ahorro de Tokens):**
-> 1. Verifica siempre primero `node .agents/scripts/verify_immutable_guardrails.js`.
+> **Regla de Progressive Disclosure y Sincronización Pre-Plan:**
+> 0. **Compuerta Cero Obligatoria (Git Sync Pre-Plan):** Antes de inspeccionar archivos, diagnosticar o redactar cualquier plan, ejecuta `node .agents/scripts/sync_repo_before_plan.js` (`git fetch --all --prune` + `git pull --rebase origin master`) para asegurar que el workspace esté `100%` al día con `origin/master`.
+> 1. Verifica siempre `node .agents/scripts/verify_immutable_guardrails.js`.
 > 2. Lee **únicamente** la referencia del loop que se disparó:
 >    - **Loop 1 (Principal — Consciente SEO + GEO + CRO + Monitores UX):** [`references/loop1-consciente-seo-geo-ux.md`](references/loop1-consciente-seo-geo-ux.md)
 >    - **Loop 2 (Secundario — Meta-Agente Auditor de Prompts):** [`references/loop2-meta-prompt-auditor.md`](references/loop2-meta-prompt-auditor.md)

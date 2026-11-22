@@ -1,6 +1,7 @@
 # Loop 1 (Principal): Autoperfeccionamiento Consciente SEO + GEO + Catálogo/CRO + Monitores UX
 
-## 1. Compuerta Criptográfica y Diagnóstico Determinista
+## 1. Compuerta Cero (Git Sync Pre-Plan), Criptografía y Diagnóstico
+0. Ejecuta **`node .agents/scripts/sync_repo_before_plan.js`** (`git fetch --all --prune` + `git pull --rebase origin master` + `git status`) **antes de diagnosticar, hacer un plan o editar cualquier archivo**.
 1. Ejecuta `node .agents/scripts/verify_immutable_guardrails.js` (aborta si `exit != 0`).
 2. Ejecuta `node scripts/jdennis-digest-engine.mjs --days=7` para inspeccionar:
    - Producción en Dokploy (`https://jdenis.store/__version.json` HTTP 200).

@@ -8,6 +8,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { verifyGuardrails } from './verify_immutable_guardrails.js';
+import { syncRepoBeforePlan } from './sync_repo_before_plan.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -42,7 +43,12 @@ try {
     // ignore
 }
 
-const msg = `[Ecosistema Autónomo J. Denis v4.0 Activo] Candado: ${guardrailMsg} | Cola Persistente: ${pendingCount} pendiente(s). Si la sesión se acaba de reanudar tras actualización de SO/IDE y el usuario solicita operaciones autónomas, verifica con manage_task que estén activos únicamente los 2 CRONS diurnos (Loop 1 Consciente: '0 10,15,20 * * *' y Loop 2 Meta-Prompt Auditor: '30 20 1,6,11,16,21,26 * *' en America/Mexico_City).`;
+const gitSync = syncRepoBeforePlan({ autoPull: true });
+const gitMsg = gitSync.ok
+    ? `Git Sync OK (HEAD=${gitSync.head} == origin/master=${gitSync.originMaster}${gitSync.pulled ? ', auto-pulled' : ''})`
+    : `Git Sync Warn (${gitSync.error})`;
+
+const msg = `[Ecosistema Autónomo J. Denis v4.0 Activo] ${gitMsg} | Candado: ${guardrailMsg} | Cola Persistente: ${pendingCount} pendiente(s). REGLA OBLIGATORIA PRE-PLAN: Antes de diagnosticar, proponer un plan o editar archivos, ejecuta siempre \`node .agents/scripts/sync_repo_before_plan.js\` (\`git fetch --all --prune\` + \`git pull --rebase origin master\`) para garantizar que estás 100% al día con el repositorio remoto.`;
 
 process.stdout.write(
     JSON.stringify({

@@ -4,7 +4,8 @@ Ejecutado en cadencia de periodo largo (`CRON_TZ=America/Mexico_City 30 20 1,6,1
 
 ## Protocolo Recursivo de Doble Nivel (Pilar 7)
 
-### Paso 1: Verificación Criptográfica Pre-Intervención
+### Paso 1: Sincronización Remota Pre-Plan y Verificación Criptográfica
+0. Ejecuta **`node .agents/scripts/sync_repo_before_plan.js`** (`git fetch --all --prune` + `git pull --rebase origin master`) antes de leer historiales, planear o tocar reglas/skills.
 1. Ejecuta `node .agents/scripts/verify_immutable_guardrails.js`. Si falla (`exit != 0`), aborta de inmediato y emite alerta crítica.
 
 ### Paso 2: Auditoría Cuantitativa Empírica

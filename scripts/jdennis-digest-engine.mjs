@@ -7,6 +7,7 @@ import { execSync } from 'child_process';
 import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
+import { syncRepoBeforePlan } from '../.agents/scripts/sync_repo_before_plan.js';
 
 const SUPABASE_URL = process.env.VITE_SUPABASE_URL || 'https://zdciwzeokkrwcxvsgusc.supabase.co';
 const SUPABASE_KEY = process.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkY2l3emVva2tyd2N4dnNndXNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NTM3NTksImV4cCI6MjA4ODIyOTc1OX0.qbXG0M2Zsjz-rOXY0CgAV2RfLledS67nqBw_dnvzkbg';
@@ -203,6 +204,16 @@ async function runDigest() {
     console.log('===================================================================');
     console.log(`📊 J. DENNIS — 3D TELEMETRY, GSC & DOKPLOY ENGINE (Last ${days}d)`);
     console.log('===================================================================\n');
+
+    const gitSync = syncRepoBeforePlan({ autoPull: true });
+    console.log('## 0. PRE-PLAN GIT REPOSITORY SYNC (origin/master)');
+    if (gitSync.ok) {
+        console.log(
+            `- Status:         ✅ UP TO DATE (branch=${gitSync.branch}, HEAD=${gitSync.head}, origin/master=${gitSync.originMaster}, ahead=${gitSync.ahead}, behind=${gitSync.behindAfterSync}${gitSync.pulled ? ' — auto-pulled' : ''})\n`
+        );
+    } else {
+        console.log(`- Status:         ⚠️ Git sync warning: ${gitSync.error}\n`);
+    }
 
     const [deployStatus, events, orders, quotations, distributorApps, gscReport] = await Promise.all([
         checkDokployVersion(),

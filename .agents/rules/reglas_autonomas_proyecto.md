@@ -35,6 +35,7 @@
 - Todo correo incluye obligatoriamente al final la tabla completa acumulada de ítems `PENDIENTE`, `EN_COLA_AUTORIZACION` y `EN_ANALISIS_MAYOR`.
 
 ### 5. Aprendizajes Empíricos Incorporados por `meta-prompt-auditor` (Corte Día 21 — `2026-11-21`)
+- **Compuerta Cero Pre-Plan (`git fetch` / `git pull`):** Antes de diagnosticar, diseñar cualquier plan o modificar código en sesiones manuales o autónomas, es obligatorio ejecutar `node .agents/scripts/sync_repo_before_plan.js` (`git fetch --all --prune` + `git pull --rebase origin master`) para partir siempre del último commit remoto en `origin/master`.
 - **Aislamiento Estricto de UI Interna (`commit fb18b79`):** El buzón `UxFeedbackBubble` (`Mejora UX`) y paneles QA deben permanecer estrictamente aislados dentro de `/admin` solo para el rol `ADMIN`. Prohibido mostrar burbujas flotantes de diagnóstico o QA sobre la tienda pública.
 - **Higiene de Señal en `unhandled_rejection`:** Descartar rechazos de registro de `ServiceWorker` (`sw.js`) emitidos por crawlers headless internacionales para evaluar únicamente excepciones JS reales de sesiones humanas.
 - **Auditoría Prioritaria de Barras Sticky Móviles:** En cada revisión de ergonomía `>= 44×44 px`, priorizar barras inferiores fijas (`ProductDetail`, `CartDrawer`, `Shop` filtros) donde se concentra la conversión móvil orgánica y de `ChatGPT`.
