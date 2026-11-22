@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 export default function Footer() {
     return (
-        <footer className="footer-premium relative z-10">
+        <footer className="footer-premium w-full relative z-10">
             {/* Main Footer */}
             <div className="container-luxury py-16">
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">

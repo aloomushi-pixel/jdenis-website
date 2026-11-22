@@ -371,7 +371,7 @@ export default function Shop() {
 
     return (
         <div className="min-h-screen bg-cream">
-            <div className="pt-20 md:pt-28 bg-cream"></div>
+            <div className="pt-24 md:pt-28 bg-cream"></div>
 
             {/* ─── Semantic SEO Header (Compact & High-Value for B2C + B2B) ─── */}
             <header className="container-luxury pt-2 pb-4">

@@ -1,8 +1,8 @@
 {
-  "commitSha": "6f54e01 (6f54e012d960ec48cc0116b9adc9d5a7436eacc6)",
-  "shortSha": "6f54e01",
-  "fullSha": "6f54e012d960ec48cc0116b9adc9d5a7436eacc6",
-  "commitMessage": "chore(version): bump __version.json for hidden ERP modules deploy",
-  "builtAt": "2026-11-22T03:00:00.336Z",
+  "commitSha": "7c07a4f (7c07a4f5c25ccc55708c666cff21cf441ec2bd9e)",
+  "shortSha": "7c07a4f",
+  "fullSha": "7c07a4f5c25ccc55708c666cff21cf441ec2bd9e",
+  "commitMessage": "chore(v4.0): enforce mandatory pre-plan git fetch/pull sync gate across loops, digest engine & SessionStart",
+  "builtAt": "2026-11-22T04:22:27.789Z",
   "environment": "production"
 }

@@ -297,6 +297,18 @@ export async function getProductById(id: string | number): Promise<Product> {
 }
 
 export async function getFeaturedProducts(limit: number = 12): Promise<Product[]> {
+    // 1. Prioritize live UX demand ranking (most viewed, searched, and carted by real users)
+    try {
+        const { data: uxRows, error: uxErr } = await supabase.rpc('get_ux_top_products', {
+            p_limit: limit,
+        });
+        if (!uxErr && Array.isArray(uxRows) && uxRows.length > 0) {
+            return (uxRows as CatalogProductRow[]).map(normalizeProductRow);
+        }
+    } catch {
+        // Fallback cleanly to static featured query below
+    }
+
     const { data, error } = await supabase
         .from('products')
         .select('*')

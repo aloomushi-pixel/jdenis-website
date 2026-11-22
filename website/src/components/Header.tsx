@@ -5,14 +5,12 @@ import { useAuthStore } from '../store/authStore';
 import { useCartStore } from '../store/cartStore';
 import { useSearchStore } from '../store/searchStore';
 import { useWishlistStore } from '../store/wishlistStore';
-import { useCartPromotion } from '../hooks/useCartPromotion';
 
 export default function Header() {
     const location = useLocation();
     const { openCart, itemCount } = useCartStore();
     const { isAuthenticated, user, logout } = useAuthStore();
     const favoriteCount = useWishlistStore((s) => s.favoriteIds.length);
-    const promotion = useCartPromotion();
     const count = itemCount();
     const [scrolled, setScrolled] = useState(false);
     const [hidden, setHidden] = useState(false);
@@ -69,36 +67,7 @@ export default function Header() {
                 ? 'shadow-botanical border-b border-gold/20'
                 : ''
                 }`}>
-                {/* Dynamic Trust & Free Shipping Top Bar */}
-                {!scrolled && (
-                    <div className="bg-[#08112e] border-b border-gold/15 text-cream/90 text-[11px] sm:text-xs py-1.5 px-4 text-center">
-                        {count > 0 && user?.role !== 'DISTRIBUIDOR' ? (
-                            <button
-                                type="button"
-                                onClick={openCart}
-                                className="inline-flex items-center justify-center gap-2 hover:text-gold transition-colors font-medium"
-                            >
-                                {promotion.isFreeShipping ? (
-                                    <span>🎉 ¡Felicidades! Tu pedido ya incluye <strong className="text-gold">ENVÍO GRATIS asegurado</strong> a todo México</span>
-                                ) : (
-                                    <span>🚚 {promotion.progressText || 'Envío Gratis en compras desde $2,000 MXN'} · <span className="underline text-gold">Ver carrito</span></span>
-                                )}
-                            </button>
-                        ) : (
-                            <div className="flex items-center justify-center gap-3 sm:gap-6 flex-wrap">
-                                <span>✨ <strong className="text-gold">Fabricante Oficial</strong> desde 1998</span>
-                                <span className="hidden sm:inline text-gold/40">•</span>
-                                <span>🚚 Envío Asegurado <strong className="text-gold">GRATIS desde $2,000 MXN</strong></span>
-                                <span className="hidden md:inline text-gold/40">•</span>
-                                <Link to="/solicitar-factura" className="hidden md:inline hover:text-gold transition-colors">
-                                    🧾 Facturación CFDI 4.0
-                                </Link>
-                            </div>
-                        )}
-                    </div>
-                )}
-
-                <div className={`container-luxury transition-all duration-300 ${scrolled ? 'py-2.5' : 'py-3.5'}`}>
+                <div className={`container-luxury transition-all duration-300 ${scrolled ? 'py-2.5' : 'py-3'}`}>
                     <div className="flex items-center justify-between">
                         {/* Logo */}
                         <Link to="/" className="flex items-center gap-3">
@@ -258,7 +227,7 @@ export default function Header() {
                 }}
                 className={`fixed inset-0 z-[55] backdrop-blur-xl md:hidden ${mobileMenuOpen ? 'pointer-events-auto' : 'pointer-events-none'
                     }`}
-                style={{ paddingTop: '100px', background: 'rgba(0, 22, 65, 0.98)' }}
+                style={{ paddingTop: '76px', background: 'rgba(0, 22, 65, 0.98)' }}
             >
                 <nav className="container-luxury flex flex-col items-center gap-7 py-10">
                     {navLinks.map((link) => (

@@ -12,10 +12,15 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    overflow-x: clip;
+    max-width: 100%;
   }
 
   body {
     @apply bg-cream text-charcoal font-sans antialiased leading-[1.6];
+    overflow-x: clip;
+    max-width: 100%;
+    width: 100%;
   }
 
   h1,

@@ -407,10 +407,10 @@ export default function ProductDetail() {
         : null;
 
     return (
-        <div className="min-h-screen bg-cream pt-24">
-            <div className="container-luxury py-8 md:py-12">
+        <div className="min-h-screen bg-cream pt-24 pb-24 lg:pb-12 w-full max-w-full overflow-x-clip">
+            <div className="container-luxury py-8 md:py-12 min-w-0">
                 {/* Breadcrumb */}
-                <nav className="text-xs uppercase tracking-wider mb-8 flex flex-wrap items-center gap-2 text-charcoal/50">
+                <nav className="text-xs uppercase tracking-wider mb-8 flex flex-wrap items-center gap-2 text-charcoal/50 min-w-0">
                     <Link to="/" className="hover:text-gold transition-colors">Inicio</Link>
                     <span className="text-charcoal/20">/</span>
                     <Link to="/tienda" className="hover:text-gold transition-colors">Tienda</Link>
@@ -419,16 +419,16 @@ export default function ProductDetail() {
                         {product.category}
                     </Link>
                     <span className="text-charcoal/20">/</span>
-                    <span className="text-forest font-semibold">{product.name}</span>
+                    <span className="text-forest font-semibold break-words">{product.name}</span>
                 </nav>
 
                 {/* Product Hero Section */}
-                <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 mb-12 lg:mb-16">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 mb-12 lg:mb-16 min-w-0">
                     {/* Image — explicit aspect-square and fetchPriority="high" for CLS=0 & optimal LCP */}
                     <motion.div
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        className="relative"
+                        initial={{ opacity: 0, y: 12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="relative min-w-0 max-w-full"
                     >
                         <div className="aspect-square overflow-hidden bg-white shadow-lg rounded-2xl border border-kraft/10">
                             <img
@@ -443,12 +443,12 @@ export default function ProductDetail() {
                             />
                         </div>
                         <span
-                            className="absolute top-4 left-4 px-3 py-1.5 text-xs font-semibold tracking-wider uppercase rounded-full bg-gold text-white shadow-md"
+                            className="absolute top-4 left-4 px-3 py-1.5 text-xs font-semibold tracking-wider uppercase rounded-full bg-gold text-white shadow-md max-w-[calc(100%-2rem)] truncate"
                         >
                             {product.category}
                         </span>
                         {galleryImages.length > 1 && (
-                            <div className="flex gap-2.5 mt-3 overflow-x-auto pb-1 scrollbar-hide">
+                            <div className="flex gap-2.5 mt-3 w-full max-w-full overflow-x-auto pb-1 scrollbar-hide">
                                 {galleryImages.map((imgUrl, idx) => (
                                     <button
                                         key={`${imgUrl}-${idx}`}
@@ -475,9 +475,9 @@ export default function ProductDetail() {
 
                     {/* Info */}
                     <motion.div
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        className="flex flex-col"
+                        initial={{ opacity: 0, y: 12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex flex-col min-w-0 max-w-full"
                     >
                         <span className="text-charcoal/50 text-xs uppercase tracking-[0.2em] mb-2 block font-semibold">
                             {product.category} · {genericDescriptor}
@@ -705,9 +705,9 @@ export default function ProductDetail() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
-                    className="mb-12 lg:mb-16 scroll-mt-28"
+                    className="mb-12 lg:mb-16 scroll-mt-28 min-w-0 max-w-full"
                 >
-                    <div className="flex gap-1 mb-0 overflow-x-auto scrollbar-hide"
+                    <div className="flex gap-1 mb-0 w-full max-w-full overflow-x-auto scrollbar-hide"
                         style={{ borderBottom: '2px solid #E0E4ED' }}>
                         <TabButton
                             label="Descripción y Beneficios"
@@ -745,7 +745,7 @@ export default function ProductDetail() {
                         />
                     </div>
 
-                    <div className="bg-white rounded-b-2xl border border-t-0 p-6 sm:p-8 shadow-sm"
+                    <div className="bg-white rounded-b-2xl border border-t-0 p-5 sm:p-8 shadow-sm min-w-0 max-w-full overflow-hidden break-words"
                         style={{ borderColor: '#E0E4ED' }}>
 
                         {activeTab === 'benefits' && (
@@ -888,7 +888,7 @@ export default function ProductDetail() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.4 }}
-                        className="pt-8 lg:pt-12 border-t-2 border-kraft-light"
+                        className="pt-8 lg:pt-12 border-t-2 border-kraft-light min-w-0 max-w-full overflow-hidden"
                     >
                         <div className="flex items-center justify-between mb-6">
                             <div>
@@ -903,9 +903,9 @@ export default function ProductDetail() {
                             </Link>
                         </div>
 
-                        <div className="relative">
-                            <div className="overflow-x-auto scrollbar-hide -mx-4 px-4 pb-4">
-                                <div className="flex gap-4" style={{ minWidth: 'min-content' }}>
+                        <div className="relative w-full max-w-full overflow-hidden">
+                            <div className="w-full overflow-x-auto scrollbar-hide pb-4">
+                                <div className="flex gap-4 w-max">
                                     {relatedProducts.map((p, index) => (
                                         <div key={p.id} className="flex-shrink-0" style={{ width: '220px' }}>
                                             <ProductCard

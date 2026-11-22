@@ -298,8 +298,9 @@ export default function Home() {
         },
     });
 
-    // Bestsellers from Supabase
+    // Bestsellers dynamically ranked from real UX views & searches in Supabase
     const [bestsellers, setBestsellers] = useState<Product[]>([]);
+    const userRole = useAuthStore((s) => s.user?.role);
 
     // Safari/Production Autoplay MEI (Media Engagement Index) Global Override
     // This monkey-patches the play method globally so the browser always sees "muted=true"
@@ -640,7 +641,7 @@ export default function Home() {
                         >
                             <h2 className="text-3xl md:text-4xl font-bold" style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif", color: '#0a1847' }}>Favoritos de la Marca</h2>
                             <p className="text-[#0a1847]/70 text-base md:text-lg font-bold mt-2" style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif" }}>
-                                Los productos más elegidos por profesionales
+                                Los productos más vistos y buscados por nuestra comunidad
                             </p>
                         </motion.div>
                     </div>
@@ -659,7 +660,7 @@ export default function Home() {
                                     className="w-[160px] sm:w-[220px] md:w-[260px] lg:w-[280px] shrink-0"
                                 >
                                     <ProductCard
-                                        product={toDisplayProduct(product, useAuthStore.getState().user?.role)}
+                                        product={toDisplayProduct(product, userRole)}
                                         variantCount={product.variants_count || 1}
                                     />
                                 </div>

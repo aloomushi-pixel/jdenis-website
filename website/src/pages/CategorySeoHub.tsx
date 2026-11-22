@@ -148,7 +148,7 @@ export default function CategorySeoHub({ hubSlug }: CategorySeoHubProps) {
     });
 
     return (
-        <div className="min-h-screen bg-cream pt-20 md:pt-28 pb-16">
+        <div className="min-h-screen bg-cream pt-24 md:pt-28 pb-16">
             {/* Breadcrumb & Hub Switcher */}
             <div className="container-luxury mb-6">
                 <nav className="text-xs uppercase tracking-wider mb-4 flex flex-wrap items-center gap-2 text-charcoal/50">

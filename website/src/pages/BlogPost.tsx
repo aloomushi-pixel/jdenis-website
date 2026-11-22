@@ -219,7 +219,7 @@ export default function BlogPost() {
     return (
         <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
             {/* Header */}
-            <header className="py-8 px-4 border-b border-slate-700/50">
+            <header className="pt-28 pb-10 px-4 border-b border-slate-700/50">
                 <div className="container mx-auto">
                     <Link to="/blog" className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-6">
                         <ArrowLeft className="w-5 h-5" />

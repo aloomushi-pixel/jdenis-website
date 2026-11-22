@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { useCartStore } from '../store/cartStore';
 import { useAuthStore } from '../store/authStore';
 import { useCartPromotion } from '../hooks/useCartPromotion';
@@ -9,9 +8,82 @@ import CouponCard from '../components/CouponCard';
 import { createMercadoPagoCheckout, markCartConverted, upsertAbandonedCart, validateCoupon } from '../lib/supabase';
 import { trackEvent } from '../utils/telemetry';
 
+const ESTADOS_MEXICO = [
+    'Aguascalientes',
+    'Baja California',
+    'Baja California Sur',
+    'Campeche',
+    'Chiapas',
+    'Chihuahua',
+    'Ciudad de México',
+    'Coahuila',
+    'Colima',
+    'Durango',
+    'Estado de México',
+    'Guanajuato',
+    'Guerrero',
+    'Hidalgo',
+    'Jalisco',
+    'Michoacán',
+    'Morelos',
+    'Nayarit',
+    'Nuevo León',
+    'Oaxaca',
+    'Puebla',
+    'Querétaro',
+    'Quintana Roo',
+    'San Luis Potosí',
+    'Sinaloa',
+    'Sonora',
+    'Tabasco',
+    'Tamaulipas',
+    'Tlaxcala',
+    'Veracruz',
+    'Yucatán',
+    'Zacatecas',
+];
+
+function inferStateFromMexicanZip(zip: string): { state: string; defaultCity?: string } | null {
+    if (!/^\d{5}$/.test(zip)) return null;
+    const prefix = Number(zip.slice(0, 2));
+    if (prefix >= 1 && prefix <= 16) return { state: 'Ciudad de México', defaultCity: 'Ciudad de México' };
+    if (prefix === 20) return { state: 'Aguascalientes', defaultCity: 'Aguascalientes' };
+    if (prefix >= 21 && prefix <= 22) return { state: 'Baja California' };
+    if (prefix === 23) return { state: 'Baja California Sur' };
+    if (prefix === 24) return { state: 'Campeche' };
+    if (prefix >= 25 && prefix <= 27) return { state: 'Coahuila' };
+    if (prefix === 28) return { state: 'Colima' };
+    if (prefix >= 29 && prefix <= 30) return { state: 'Chiapas' };
+    if (prefix >= 31 && prefix <= 33) return { state: 'Chihuahua' };
+    if (prefix >= 34 && prefix <= 35) return { state: 'Durango' };
+    if (prefix >= 36 && prefix <= 38) return { state: 'Guanajuato' };
+    if (prefix >= 39 && prefix <= 41) return { state: 'Guerrero' };
+    if (prefix >= 42 && prefix <= 43) return { state: 'Hidalgo' };
+    if (prefix >= 44 && prefix <= 49) return { state: 'Jalisco' };
+    if (prefix >= 50 && prefix <= 57) return { state: 'Estado de México' };
+    if (prefix >= 58 && prefix <= 61) return { state: 'Michoacán' };
+    if (prefix === 62) return { state: 'Morelos' };
+    if (prefix === 63) return { state: 'Nayarit' };
+    if (prefix >= 64 && prefix <= 67) return { state: 'Nuevo León' };
+    if (prefix >= 68 && prefix <= 71) return { state: 'Oaxaca' };
+    if (prefix >= 72 && prefix <= 75) return { state: 'Puebla' };
+    if (prefix === 76) return { state: 'Querétaro', defaultCity: 'Querétaro' };
+    if (prefix === 77) return { state: 'Quintana Roo' };
+    if (prefix >= 78 && prefix <= 79) return { state: 'San Luis Potosí' };
+    if (prefix >= 80 && prefix <= 82) return { state: 'Sinaloa' };
+    if (prefix >= 83 && prefix <= 85) return { state: 'Sonora' };
+    if (prefix === 86) return { state: 'Tabasco' };
+    if (prefix >= 87 && prefix <= 89) return { state: 'Tamaulipas' };
+    if (prefix === 90) return { state: 'Tlaxcala' };
+    if (prefix >= 91 && prefix <= 96) return { state: 'Veracruz' };
+    if (prefix === 97) return { state: 'Yucatán' };
+    if (prefix >= 98 && prefix <= 99) return { state: 'Zacatecas' };
+    return null;
+}
+
 export default function Checkout() {
     const navigate = useNavigate();
-    const { items, appliedCoupon, applyCoupon, removeCoupon } = useCartStore();
+    const { items, updateQuantity, removeItem, appliedCoupon, applyCoupon, removeCoupon } = useCartStore();
     const { user } = useAuthStore();
     const promotion = useCartPromotion();
     const [loading, setLoading] = useState(false);
@@ -20,9 +92,12 @@ export default function Checkout() {
     const [couponInput, setCouponInput] = useState('');
     const [couponLoading, setCouponLoading] = useState(false);
     const [couponError, setCouponError] = useState<string | null>(null);
+    const [mobileSummaryOpen, setMobileSummaryOpen] = useState(false);
+    const [showNotesField, setShowNotesField] = useState(false);
     const trackedStartRef = useRef(false);
     const trackedStepsRef = useRef<Set<string>>(new Set());
 
+    const isDistributor = user?.role === 'DISTRIBUIDOR';
     const isCouponValid = appliedCoupon && promotion.subtotal >= appliedCoupon.min_purchase;
 
     const rawCouponDiscount = appliedCoupon
@@ -146,8 +221,20 @@ export default function Checkout() {
         return () => clearTimeout(timeoutId);
     }, [formData.email, formData.fullName, items, loading]);
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        if (name === 'zip') {
+            const cleanZip = value.replace(/\D/g, '').slice(0, 5);
+            const inferred = inferStateFromMexicanZip(cleanZip);
+            setFormData((prev) => ({
+                ...prev,
+                zip: cleanZip,
+                state: inferred ? inferred.state : prev.state,
+                city: !prev.city && inferred?.defaultCity ? inferred.defaultCity : prev.city,
+            }));
+            return;
+        }
+        setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -166,7 +253,6 @@ export default function Checkout() {
         });
 
         try {
-            const isDistributor = user?.role === 'DISTRIBUIDOR';
             const checkoutData = {
                 items: items.map(item => {
                     const activePrice = isDistributor && item.distributorPrice ? item.distributorPrice : item.price;
@@ -180,23 +266,23 @@ export default function Checkout() {
                 }),
                 buyer: {
                     userId: user?.id,
-                    fullName: formData.fullName,
-                    email: formData.email,
-                    phone: formData.phone,
+                    fullName: formData.fullName.trim(),
+                    email: formData.email.trim(),
+                    phone: formData.phone.trim(),
                 },
                 shipping: {
-                    address: formData.address,
-                    references: formData.references,
-                    city: formData.city,
-                    state: formData.state,
-                    zip: formData.zip,
+                    address: formData.address.trim(),
+                    references: formData.references.trim(),
+                    city: formData.city.trim(),
+                    state: formData.state.trim(),
+                    zip: formData.zip.trim(),
                 },
                 subtotal,
                 total: finalTotal,
                 discount: totalDiscountAmount,
                 shipping_cost: shippingCost,
                 coupon_code: isCouponValid && appliedCoupon ? appliedCoupon.code : null,
-                notes: formData.notes,
+                notes: formData.notes.trim(),
                 payment_method: paymentMethod,
             };
 
@@ -230,7 +316,7 @@ export default function Checkout() {
 
     if (items.length === 0) {
         return (
-            <div className="min-h-screen bg-cream flex items-center justify-center">
+            <div className="min-h-screen bg-cream pt-24 flex items-center justify-center px-4">
                 <div className="text-center">
                     <h2 className="section-title mb-4">Tu carrito está vacío</h2>
                     <Link to="/tienda" className="btn btn-primary">
@@ -241,291 +327,446 @@ export default function Checkout() {
         );
     }
 
-    return (
-        <div className="min-h-screen bg-cream py-12">
-            <div className="container-luxury">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-center mb-8"
-                >
-                    <h1 className="section-title mb-3">Finalizar Compra Segura</h1>
-                    <div className="inline-flex flex-wrap items-center justify-center gap-3 sm:gap-5 px-5 py-2.5 rounded-full bg-white border border-kraft/25 shadow-sm text-xs font-medium text-charcoal/80">
-                        <span>🔒 Conexión Cifrada SSL</span>
-                        <span className="text-gold">•</span>
-                        <span>🚚 Envío Asegurado FedEx</span>
-                        <span className="text-gold">•</span>
-                        <span>🧾 Facturación CFDI 4.0</span>
+    const inputClass =
+        'w-full px-4 py-3.5 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all text-base text-navy placeholder:text-navy/40 bg-white shadow-sm';
+
+    const renderOrderItemsList = () => (
+        <div className="space-y-4">
+            {items.map((item) => {
+                const unitPrice = isDistributor && item.distributorPrice ? item.distributorPrice : item.price;
+                return (
+                    <div key={item.id} className="flex items-center gap-3 pb-3 border-b border-charcoal/10 last:border-0 last:pb-0">
+                        <img
+                            src={item.image}
+                            alt={item.name}
+                            width={64}
+                            height={64}
+                            loading="lazy"
+                            className="w-16 h-16 rounded-lg object-cover bg-blush shadow-sm shrink-0"
+                        />
+                        <div className="flex-1 min-w-0">
+                            <p className="font-medium text-sm text-navy line-clamp-2 leading-snug">
+                                {item.name}
+                            </p>
+                            <div className="flex items-center justify-between gap-2 mt-1.5" data-qty-stepper="true">
+                                <div className="inline-flex items-center border border-charcoal/15 rounded-full bg-cream/50">
+                                    <button
+                                        type="button"
+                                        data-qty-stepper="true"
+                                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                        aria-label="Reducir cantidad"
+                                        className="w-8 h-8 min-w-[36px] min-h-[36px] flex items-center justify-center text-navy hover:text-gold font-semibold"
+                                    >
+                                        −
+                                    </button>
+                                    <span className="px-2 text-xs font-semibold text-navy">{item.quantity}</span>
+                                    <button
+                                        type="button"
+                                        data-qty-stepper="true"
+                                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                        aria-label="Aumentar cantidad"
+                                        className="w-8 h-8 min-w-[36px] min-h-[36px] flex items-center justify-center text-navy hover:text-gold font-semibold"
+                                    >
+                                        +
+                                    </button>
+                                </div>
+                                <span className="text-sm text-gold font-bold whitespace-nowrap">
+                                    ${(unitPrice * item.quantity).toLocaleString('es-MX')}
+                                </span>
+                            </div>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={() => removeItem(item.id)}
+                            aria-label={`Quitar ${item.name}`}
+                            className="min-w-[36px] min-h-[36px] flex items-center justify-center text-charcoal/35 hover:text-red-600 transition-colors"
+                        >
+                            ✕
+                        </button>
                     </div>
-                </motion.div>
+                );
+            })}
+        </div>
+    );
 
-                <div className="grid lg:grid-cols-3 gap-8">
-                    {/* Form */}
-                    <div className="lg:col-span-2">
-                        <form onSubmit={handleSubmit} className="space-y-6">
-                            {/* Contact Info */}
-                            <div className="bg-white rounded-2xl p-8 shadow-luxury border border-charcoal/5">
-                                <h3 className="font-serif text-xl text-navy mb-6 flex items-center gap-2">
-                                    <span className="flex items-center justify-center w-8 h-8 rounded-full bg-gold/10 text-gold text-sm font-bold">1</span>
-                                    Información de Contacto
-                                </h3>
+    const ctaLabel = loading
+        ? 'Procesando tu pedido...'
+        : paymentMethod === 'mercadopago'
+        ? `Pagar $${finalTotal.toLocaleString('es-MX')} MXN →`
+        : paymentMethod === 'transferencia'
+        ? `Confirmar Pedido por SPEI — $${finalTotal.toLocaleString('es-MX')} MXN →`
+        : `Confirmar Pedido OXXO — $${finalTotal.toLocaleString('es-MX')} MXN →`;
 
-                                {!user && (
-                                    <div className="mb-6 p-4 rounded-xl bg-charcoal/5 flex items-center justify-between">
-                                        <p className="text-sm text-charcoal flex-1">
-                                            ¿Ya tienes cuenta? Inicia sesión para guardar tu información.
-                                        </p>
-                                        <Link to="/login" className="text-gold font-medium hover:underline text-sm whitespace-nowrap">
-                                            Iniciar sesión
+    return (
+        <div className="min-h-screen bg-cream pt-24 sm:pt-28 pb-16">
+            <div className="container-luxury max-w-6xl">
+                {/* Breadcrumb sin obstrucción */}
+                <nav aria-label="Migas de pan" className="text-xs uppercase tracking-wider mb-4 flex flex-wrap items-center justify-between gap-2 text-charcoal/55">
+                    <div className="flex items-center gap-2">
+                        <Link to="/" className="hover:text-gold transition-colors">Inicio</Link>
+                        <span className="text-charcoal/25">/</span>
+                        <Link to="/tienda" className="hover:text-gold transition-colors">Tienda</Link>
+                        <span className="text-charcoal/25">/</span>
+                        <span className="text-forest font-semibold">Finalizar Compra</span>
+                    </div>
+                    <Link to="/tienda" className="text-forest hover:text-gold font-medium normal-case tracking-normal">
+                        ← Seguir comprando
+                    </Link>
+                </nav>
+
+                <div className="mb-6">
+                    <h1 className="font-serif text-2xl sm:text-3xl text-navy font-bold">Finalizar Compra</h1>
+                    <p className="text-sm text-charcoal/70 mt-1">
+                        Completa tus datos en menos de un minuto para enviar tu pedido.
+                    </p>
+                </div>
+
+                {/* Resumen rápido desplegable en Móvil (arriba del formulario) */}
+                <div className="lg:hidden mb-6 bg-white rounded-2xl border border-charcoal/10 shadow-sm overflow-hidden">
+                    <button
+                        type="button"
+                        onClick={() => setMobileSummaryOpen(!mobileSummaryOpen)}
+                        aria-expanded={mobileSummaryOpen}
+                        className="w-full min-h-[52px] px-4 py-3.5 flex items-center justify-between text-left"
+                    >
+                        <div className="flex items-center gap-2 text-sm font-semibold text-navy">
+                            <span>🛍️ {mobileSummaryOpen ? 'Ocultar resumen' : 'Ver resumen del pedido'} ({promotion.itemCount})</span>
+                            <svg
+                                className={`w-4 h-4 text-charcoal/60 transition-transform ${mobileSummaryOpen ? 'rotate-180' : ''}`}
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                strokeWidth={2}
+                            >
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                        <span className="text-base font-bold text-gold">
+                            ${finalTotal.toLocaleString('es-MX')} MXN
+                        </span>
+                    </button>
+                    {mobileSummaryOpen && (
+                        <div className="px-4 pb-4 pt-2 border-t border-charcoal/10 bg-cream/30">
+                            {renderOrderItemsList()}
+                        </div>
+                    )}
+                </div>
+
+                <div className="grid lg:grid-cols-12 gap-7 items-start">
+                    {/* Columna Principal: Formulario Simplificado */}
+                    <div className="lg:col-span-7">
+                        <form onSubmit={handleSubmit} className="space-y-5">
+                            {/* Paso 1: Datos de Contacto */}
+                            <section className="bg-white rounded-2xl p-5 sm:p-7 shadow-luxury border border-charcoal/5">
+                                <div className="flex items-center justify-between gap-2 mb-5">
+                                    <h2 className="font-serif text-lg sm:text-xl text-navy flex items-center gap-2.5">
+                                        <span className="flex items-center justify-center w-7 h-7 rounded-full bg-forest text-white text-xs font-bold">1</span>
+                                        Tus Datos
+                                    </h2>
+                                    {!user && (
+                                        <Link to="/login" className="text-xs text-gold font-semibold hover:underline">
+                                            ¿Ya tienes cuenta? Inicia sesión
                                         </Link>
-                                    </div>
-                                )}
+                                    )}
+                                </div>
 
-                                <div className="grid md:grid-cols-2 gap-6">
-                                    <div className="md:col-span-2">
-                                        <label className="block text-sm font-medium text-navy/80 mb-2">Nombre Completo</label>
+                                <div className="grid sm:grid-cols-2 gap-4">
+                                    <div className="sm:col-span-2">
+                                        <label htmlFor="checkout-fullName" className="block text-xs font-semibold uppercase tracking-wide text-navy/75 mb-1.5">
+                                            Nombre y Apellido *
+                                        </label>
                                         <input
+                                            id="checkout-fullName"
                                             type="text"
                                             name="fullName"
+                                            autoComplete="name"
                                             value={formData.fullName}
                                             onChange={handleInputChange}
                                             required
-                                            className="w-full px-5 py-4 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all text-base text-navy placeholder:text-navy/40 bg-white shadow-sm"
+                                            placeholder="Ej. María Fernanda López"
+                                            className={inputClass}
                                         />
                                     </div>
-                                    <div className="md:col-span-1">
-                                        <label className="block text-sm font-medium text-navy/80 mb-2">Email</label>
+                                    <div>
+                                        <label htmlFor="checkout-phone" className="block text-xs font-semibold uppercase tracking-wide text-navy/75 mb-1.5">
+                                            Teléfono / WhatsApp *
+                                        </label>
                                         <input
-                                            type="email"
-                                            name="email"
-                                            value={formData.email}
-                                            onChange={handleInputChange}
-                                            required
-                                            className="w-full px-5 py-4 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all text-base text-navy placeholder:text-navy/40 bg-white shadow-sm"
-                                        />
-                                    </div>
-                                    <div className="md:col-span-1">
-                                        <label className="block text-sm font-medium text-navy/80 mb-2">Teléfono / WhatsApp</label>
-                                        <input
+                                            id="checkout-phone"
                                             type="tel"
                                             name="phone"
+                                            inputMode="tel"
+                                            autoComplete="tel"
                                             value={formData.phone}
                                             onChange={handleInputChange}
                                             required
-                                            className="w-full px-5 py-4 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all text-base text-navy placeholder:text-navy/40 bg-white shadow-sm"
                                             placeholder="55 1234 5678"
+                                            className={inputClass}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="checkout-email" className="block text-xs font-semibold uppercase tracking-wide text-navy/75 mb-1.5">
+                                            Correo Electrónico *
+                                        </label>
+                                        <input
+                                            id="checkout-email"
+                                            type="email"
+                                            name="email"
+                                            autoComplete="email"
+                                            value={formData.email}
+                                            onChange={handleInputChange}
+                                            required
+                                            placeholder="tucorreo@ejemplo.com"
+                                            className={inputClass}
                                         />
                                     </div>
                                 </div>
-                            </div>
+                            </section>
 
-                            {/* Shipping */}
-                            <div className="bg-white rounded-2xl p-8 shadow-luxury border border-charcoal/5">
-                                <h3 className="font-serif text-xl text-navy mb-6 flex items-center gap-2">
-                                    <span className="flex items-center justify-center w-8 h-8 rounded-full bg-gold/10 text-gold text-sm font-bold">2</span>
-                                    Dirección de Envío
-                                </h3>
-                                <div className="grid md:grid-cols-2 gap-6">
-                                    <div className="md:col-span-2">
-                                        <label className="block text-sm font-medium text-navy/80 mb-2">Dirección Completa</label>
-                                        <input
-                                            type="text"
-                                            name="address"
-                                            value={formData.address}
-                                            onChange={handleInputChange}
-                                            required
-                                            className="w-full px-5 py-4 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all text-base text-navy placeholder:text-navy/40 bg-white shadow-sm"
-                                            placeholder="Calle, número exterior/interior, colonia"
-                                        />
-                                    </div>
-                                    <div className="md:col-span-2">
-                                        <label className="block text-sm font-medium text-navy/80 mb-2">
-                                            Referencias de entrega
-                                            <span className="text-rose-deep ml-1">*</span>
+                            {/* Paso 2: Dirección de Envío (con autocompletado automático de Estado por CP) */}
+                            <section className="bg-white rounded-2xl p-5 sm:p-7 shadow-luxury border border-charcoal/5">
+                                <div className="flex items-center justify-between gap-2 mb-5">
+                                    <h2 className="font-serif text-lg sm:text-xl text-navy flex items-center gap-2.5">
+                                        <span className="flex items-center justify-center w-7 h-7 rounded-full bg-forest text-white text-xs font-bold">2</span>
+                                        ¿A dónde enviamos tu pedido?
+                                    </h2>
+                                    <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full">
+                                        {promotion.isFreeShipping ? 'Envío GRATIS' : `Envío $${shippingCost} MXN`}
+                                    </span>
+                                </div>
+
+                                <div className="grid sm:grid-cols-3 gap-4">
+                                    <div>
+                                        <label htmlFor="checkout-zip" className="block text-xs font-semibold uppercase tracking-wide text-navy/75 mb-1.5">
+                                            Código Postal *
                                         </label>
-                                        <textarea
-                                            name="references"
-                                            value={formData.references}
-                                            onChange={handleInputChange}
-                                            required
-                                            rows={2}
-                                            className="w-full px-5 py-4 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all text-base text-navy placeholder:text-navy/40 bg-white shadow-sm resize-none"
-                                            placeholder="Ej: Entre calle Roble y calle Pino, fachada azul, portón negro, frente a la tienda OXXO"
-                                        />
-                                        <p className="text-xs text-charcoal-light mt-2 flex items-center gap-1">
-                                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" /></svg>
-                                            Indica entre qué calles se encuentra, color de fachada, referencias cercanas, etc.
-                                        </p>
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-navy/80 mb-2">Ciudad</label>
                                         <input
-                                            type="text"
-                                            name="city"
-                                            value={formData.city}
-                                            onChange={handleInputChange}
-                                            required
-                                            className="w-full px-5 py-4 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all text-base text-navy placeholder:text-navy/40 bg-white shadow-sm"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-navy/80 mb-2">Estado</label>
-                                        <input
-                                            type="text"
-                                            name="state"
-                                            value={formData.state}
-                                            onChange={handleInputChange}
-                                            required
-                                            className="w-full px-5 py-4 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all text-base text-navy placeholder:text-navy/40 bg-white shadow-sm"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-navy/80 mb-2">Código Postal</label>
-                                        <input
+                                            id="checkout-zip"
                                             type="text"
                                             name="zip"
+                                            inputMode="numeric"
+                                            autoComplete="postal-code"
+                                            maxLength={5}
                                             value={formData.zip}
                                             onChange={handleInputChange}
                                             required
-                                            className="w-full px-5 py-4 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all text-base text-navy placeholder:text-navy/40 bg-white shadow-sm"
+                                            placeholder="Ej. 07300"
+                                            className={inputClass}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="checkout-state" className="block text-xs font-semibold uppercase tracking-wide text-navy/75 mb-1.5">
+                                            Estado *
+                                        </label>
+                                        <select
+                                            id="checkout-state"
+                                            name="state"
+                                            autoComplete="address-level1"
+                                            value={formData.state}
+                                            onChange={handleInputChange}
+                                            required
+                                            className={inputClass}
+                                        >
+                                            <option value="">Selecciona...</option>
+                                            {ESTADOS_MEXICO.map((edo) => (
+                                                <option key={edo} value={edo}>
+                                                    {edo}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label htmlFor="checkout-city" className="block text-xs font-semibold uppercase tracking-wide text-navy/75 mb-1.5">
+                                            Ciudad / Municipio *
+                                        </label>
+                                        <input
+                                            id="checkout-city"
+                                            type="text"
+                                            name="city"
+                                            autoComplete="address-level2"
+                                            value={formData.city}
+                                            onChange={handleInputChange}
+                                            required
+                                            placeholder="Ciudad o alcaldía"
+                                            className={inputClass}
+                                        />
+                                    </div>
+
+                                    <div className="sm:col-span-3">
+                                        <label htmlFor="checkout-address" className="block text-xs font-semibold uppercase tracking-wide text-navy/75 mb-1.5">
+                                            Calle, Número y Colonia *
+                                        </label>
+                                        <input
+                                            id="checkout-address"
+                                            type="text"
+                                            name="address"
+                                            autoComplete="street-address"
+                                            value={formData.address}
+                                            onChange={handleInputChange}
+                                            required
+                                            placeholder="Ej. Av. Montevideo 136 Int. 2, Col. Lindavista"
+                                            className={inputClass}
+                                        />
+                                    </div>
+
+                                    <div className="sm:col-span-3">
+                                        <label htmlFor="checkout-references" className="block text-xs font-semibold uppercase tracking-wide text-navy/75 mb-1.5">
+                                            Referencias de ubicación <span className="text-charcoal/45 font-normal normal-case">(opcional)</span>
+                                        </label>
+                                        <input
+                                            id="checkout-references"
+                                            type="text"
+                                            name="references"
+                                            value={formData.references}
+                                            onChange={handleInputChange}
+                                            placeholder="Entre qué calles está, color de fachada o punto cercano"
+                                            className={inputClass}
                                         />
                                     </div>
                                 </div>
-                                <div className="mt-6 p-5 bg-navy/5 rounded-xl border border-navy/10 flex items-start gap-4">
-                                    <svg className="w-6 h-6 text-navy mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" /></svg>
-                                    <div>
-                                        <p className="font-semibold text-navy text-base">Método de Envío</p>
-                                        <p className="text-sm text-charcoal-light mt-1">
-                                            {promotion.isFreeShipping ? (
-                                                <><strong className="text-emerald-600">¡Envío GRATIS vía FedEx!</strong> <span className="line-through text-charcoal-light/50 ml-2">$200 MXN</span></>
-                                            ) : (
-                                                <>Envío Estándar vía FedEx: <strong>$200 MXN</strong> a todo México</>
-                                            )}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
 
-                            {/* Payment */}
-                            <div className="bg-white rounded-2xl p-8 shadow-luxury border border-charcoal/5">
-                                <h3 className="font-serif text-xl text-navy mb-6 flex items-center gap-2">
-                                    <span className="flex items-center justify-center w-8 h-8 rounded-full bg-gold/10 text-gold text-sm font-bold">3</span>
-                                    Método de Pago
-                                </h3>
-                                <div className="space-y-4">
-                                    {/* Option 1: Mercado Pago / Tarjeta */}
+                                <div className="mt-4">
+                                    {!showNotesField && !formData.notes ? (
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowNotesField(true)}
+                                            className="min-h-[38px] text-xs font-semibold text-forest hover:text-gold transition-colors"
+                                        >
+                                            + Agregar nota o instrucción especial de entrega (opcional)
+                                        </button>
+                                    ) : (
+                                        <div className="mt-2">
+                                            <label htmlFor="checkout-notes" className="block text-xs font-semibold uppercase tracking-wide text-navy/75 mb-1.5">
+                                                Nota del pedido (opcional)
+                                            </label>
+                                            <textarea
+                                                id="checkout-notes"
+                                                name="notes"
+                                                value={formData.notes}
+                                                onChange={handleInputChange}
+                                                rows={2}
+                                                placeholder="Ej. Entregar en recepción de 9am a 6pm"
+                                                className={`${inputClass} resize-none`}
+                                            />
+                                        </div>
+                                    )}
+                                </div>
+                            </section>
+
+                            {/* Paso 3: Método de Pago */}
+                            <section className="bg-white rounded-2xl p-5 sm:p-7 shadow-luxury border border-charcoal/5">
+                                <h2 className="font-serif text-lg sm:text-xl text-navy mb-4 flex items-center gap-2.5">
+                                    <span className="flex items-center justify-center w-7 h-7 rounded-full bg-forest text-white text-xs font-bold">3</span>
+                                    ¿Cómo prefieres pagar?
+                                </h2>
+
+                                <div className="space-y-3">
+                                    {/* Opción 1: Tarjeta / Mercado Pago */}
                                     <button
                                         type="button"
                                         onClick={() => setPaymentMethod('mercadopago')}
-                                        className={`w-full text-left flex items-center gap-4 p-5 rounded-xl border-2 transition-all relative overflow-hidden ${
+                                        className={`w-full text-left flex items-center gap-3.5 p-4 rounded-xl border-2 transition-all ${
                                             paymentMethod === 'mercadopago'
                                                 ? 'border-gold bg-gold/5 shadow-sm'
                                                 : 'border-charcoal/15 bg-white hover:border-gold/50'
                                         }`}
                                     >
-                                        <span className="w-10 h-10 text-forest shrink-0 bg-white rounded-full flex items-center justify-center shadow-sm border border-charcoal/10">
+                                        <span className="w-10 h-10 shrink-0 bg-white rounded-full flex items-center justify-center shadow-sm border border-charcoal/10">
                                             <svg className="w-5 h-5 text-[#009EE3]" viewBox="0 0 24 24" fill="currentColor">
                                                 <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
                                             </svg>
                                         </span>
                                         <div className="flex-1">
-                                            <span className="block font-bold text-navy text-base md:text-lg">Tarjeta de Crédito / Débito o Mercado Pago</span>
-                                            <p className="text-sm text-charcoal-light mt-0.5">
-                                                Pago seguro con tarjeta Visa, Mastercard, American Express o saldo Mercado Pago
+                                            <span className="block font-bold text-navy text-sm sm:text-base">
+                                                Tarjeta de Crédito / Débito o Mercado Pago
+                                            </span>
+                                            <p className="text-xs text-charcoal/65 mt-0.5">
+                                                Visa, Mastercard, American Express o saldo Mercado Pago (acreditación inmediata)
                                             </p>
                                         </div>
-                                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                                        <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
                                             paymentMethod === 'mercadopago' ? 'border-gold bg-gold text-white' : 'border-charcoal/30'
                                         }`}>
                                             {paymentMethod === 'mercadopago' && (
-                                                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                                                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                                                 </svg>
                                             )}
-                                        </div>
+                                        </span>
                                     </button>
 
-                                    {/* Option 2: Transferencia SPEI */}
+                                    {/* Opción 2: SPEI */}
                                     <button
                                         type="button"
                                         onClick={() => setPaymentMethod('transferencia')}
-                                        className={`w-full text-left flex items-center gap-4 p-5 rounded-xl border-2 transition-all relative overflow-hidden ${
+                                        className={`w-full text-left flex items-center gap-3.5 p-4 rounded-xl border-2 transition-all ${
                                             paymentMethod === 'transferencia'
                                                 ? 'border-gold bg-gold/5 shadow-sm'
                                                 : 'border-charcoal/15 bg-white hover:border-gold/50'
                                         }`}
                                     >
-                                        <span className="w-10 h-10 text-navy shrink-0 bg-white rounded-full flex items-center justify-center shadow-sm border border-charcoal/10">
+                                        <span className="w-10 h-10 shrink-0 bg-white rounded-full flex items-center justify-center shadow-sm border border-charcoal/10">
                                             <svg className="w-5 h-5 text-navy" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                                             </svg>
                                         </span>
                                         <div className="flex-1">
-                                            <span className="block font-bold text-navy text-base md:text-lg">Transferencia Bancaria (SPEI)</span>
-                                            <p className="text-sm text-charcoal-light mt-0.5">
-                                                Recibe tu folio de pedido y datos bancarios para transferencia inmediata sin comisiones
+                                            <span className="block font-bold text-navy text-sm sm:text-base">
+                                                Transferencia Bancaria (SPEI)
+                                            </span>
+                                            <p className="text-xs text-charcoal/65 mt-0.5">
+                                                Obtén al instante los datos CLABE y tu número de folio sin comisiones
                                             </p>
                                         </div>
-                                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                                        <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
                                             paymentMethod === 'transferencia' ? 'border-gold bg-gold text-white' : 'border-charcoal/30'
                                         }`}>
                                             {paymentMethod === 'transferencia' && (
-                                                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                                                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                                                 </svg>
                                             )}
-                                        </div>
+                                        </span>
                                     </button>
 
-                                    {/* Option 3: Efectivo OXXO / WhatsApp */}
+                                    {/* Opción 3: Efectivo OXXO / WhatsApp */}
                                     <button
                                         type="button"
                                         onClick={() => setPaymentMethod('efectivo')}
-                                        className={`w-full text-left flex items-center gap-4 p-5 rounded-xl border-2 transition-all relative overflow-hidden ${
+                                        className={`w-full text-left flex items-center gap-3.5 p-4 rounded-xl border-2 transition-all ${
                                             paymentMethod === 'efectivo'
                                                 ? 'border-gold bg-gold/5 shadow-sm'
                                                 : 'border-charcoal/15 bg-white hover:border-gold/50'
                                         }`}
                                     >
-                                        <span className="w-10 h-10 text-emerald-600 shrink-0 bg-white rounded-full flex items-center justify-center shadow-sm border border-charcoal/10">
+                                        <span className="w-10 h-10 shrink-0 bg-white rounded-full flex items-center justify-center shadow-sm border border-charcoal/10">
                                             <svg className="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
                                             </svg>
                                         </span>
                                         <div className="flex-1">
-                                            <span className="block font-bold text-navy text-base md:text-lg">Depósito en OXXO / Atención Personalizada</span>
-                                            <p className="text-sm text-charcoal-light mt-0.5">
-                                                Genera tu pedido y recibe tu referencia de depósito o liga de pago directo por WhatsApp y Correo
+                                            <span className="block font-bold text-navy text-sm sm:text-base">
+                                                Efectivo en OXXO / Atención por WhatsApp
+                                            </span>
+                                            <p className="text-xs text-charcoal/65 mt-0.5">
+                                                Genera tu folio y recibe tu referencia de depósito por WhatsApp y correo
                                             </p>
                                         </div>
-                                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                                        <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
                                             paymentMethod === 'efectivo' ? 'border-gold bg-gold text-white' : 'border-charcoal/30'
                                         }`}>
                                             {paymentMethod === 'efectivo' && (
-                                                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                                                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                                                 </svg>
                                             )}
-                                        </div>
+                                        </span>
                                     </button>
                                 </div>
-                            </div>
-
-                            {/* Notes */}
-                            <div className="bg-white rounded-2xl p-8 shadow-luxury border border-charcoal/5">
-                                <label className="block text-sm font-medium text-navy/80 mb-3">Notas del pedido (opcional)</label>
-                                <textarea
-                                    name="notes"
-                                    value={formData.notes}
-                                    onChange={handleInputChange}
-                                    rows={3}
-                                    className="w-full px-5 py-4 border border-charcoal/20 rounded-xl focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-all text-base text-navy placeholder:text-navy/40 bg-white shadow-sm resize-none"
-                                    placeholder="Instrucciones especiales, horarios de entrega, etc."
-                                />
-                            </div>
+                            </section>
 
                             {error && (
-                                <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-red-700 text-sm">
+                                <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-red-700 text-sm" role="alert">
                                     {error}
                                 </div>
                             )}
@@ -533,54 +774,29 @@ export default function Checkout() {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="btn btn-primary w-full py-4 text-lg disabled:opacity-50"
+                                className="btn btn-primary w-full min-h-[54px] py-4 text-base sm:text-lg font-bold shadow-md hover:shadow-lg disabled:opacity-50"
                             >
-                                {loading
-                                    ? 'Registrando tu pedido...'
-                                    : `Confirmar Pedido y Proceder al Pago - $${finalTotal.toLocaleString()} MXN`
-                                }
+                                {ctaLabel}
                             </button>
                         </form>
                     </div>
 
-                    {/* Order Summary */}
-                    <div className="lg:col-span-1">
-                        <div className="bg-white rounded-2xl p-8 shadow-luxury border border-charcoal/5 sticky top-24">
-                            <h3 className="font-serif text-xl text-navy mb-6">Resumen del Pedido</h3>
+                    {/* Columna Derecha: Resumen del Pedido */}
+                    <aside className="lg:col-span-5">
+                        <div className="bg-white rounded-2xl p-5 sm:p-7 shadow-luxury border border-charcoal/5 sticky top-24">
+                            <h2 className="font-serif text-xl text-navy mb-5">Resumen de tu Pedido</h2>
 
-                            <div className="space-y-5 mb-8">
-                                {items.map((item) => (
-                                    <div key={item.id} className="flex gap-4">
-                                        <img
-                                            src={item.image}
-                                            alt={item.name}
-                                            width={80}
-                                            height={80}
-                                            loading="lazy"
-                                            className="w-20 h-20 rounded-xl object-cover bg-blush shadow-sm"
-                                        />
-                                        <div className="flex-1 flex flex-col justify-center">
-                                            <p className="font-medium text-navy line-clamp-2 leading-snug">
-                                                {item.name}
-                                            </p>
-                                            <p className="text-sm text-charcoal-light mt-1">
-                                                Cant: {item.quantity}
-                                            </p>
-                                            <p className="text-base text-gold font-bold mt-1">
-                                                ${(item.price * item.quantity).toLocaleString()}
-                                            </p>
-                                        </div>
-                                    </div>
-                                ))}
+                            <div className="hidden lg:block mb-6 max-h-[320px] overflow-y-auto pr-1">
+                                {renderOrderItemsList()}
                             </div>
 
-                            {/* Promotion Banner */}
-                            <div className="mb-5">
-                                <CartPromoBanner promotion={promotion} />
-                            </div>
+                            {!isDistributor && (
+                                <div className="mb-4">
+                                    <CartPromoBanner promotion={promotion} />
+                                </div>
+                            )}
 
-                            {/* Direct Coupon Input in Checkout */}
-                            {user?.role !== 'DISTRIBUIDOR' && (
+                            {!isDistributor && (
                                 <div className="mb-5">
                                     {isCouponValid && appliedCoupon ? (
                                         <CouponCard
@@ -603,13 +819,19 @@ export default function Checkout() {
                                                         setCouponInput(e.target.value.toUpperCase());
                                                         if (couponError) setCouponError(null);
                                                     }}
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === 'Enter') {
+                                                            e.preventDefault();
+                                                            handleApplyCheckoutCoupon();
+                                                        }
+                                                    }}
                                                     maxLength={30}
                                                     disabled={couponLoading}
                                                     aria-label="Código promocional"
                                                 />
                                                 <button
                                                     type="button"
-                                                    className="coupon-apply-btn"
+                                                    className="coupon-apply-btn min-h-[44px]"
                                                     onClick={handleApplyCheckoutCoupon}
                                                     disabled={!couponInput.trim() || couponLoading}
                                                 >
@@ -626,18 +848,16 @@ export default function Checkout() {
                                 </div>
                             )}
 
-                            <div className="bg-charcoal/5 h-px w-full my-6"></div>
-
-                            <div className="space-y-4 text-base">
+                            <div className="border-t border-charcoal/10 pt-4 space-y-3 text-sm sm:text-base">
                                 <div className="flex justify-between items-center">
                                     <span className="text-charcoal-light">Subtotal</span>
-                                    <span className="font-medium text-navy">${subtotal.toLocaleString()}</span>
+                                    <span className="font-medium text-navy">${subtotal.toLocaleString('es-MX')} MXN</span>
                                 </div>
 
                                 {promoDiscountAmount > 0 && (
                                     <div className="flex justify-between items-center">
                                         <span className="text-emerald-600 font-medium">Descuento ({promotion.discountPercent}%)</span>
-                                        <span className="text-emerald-600 font-medium whitespace-nowrap">-${promoDiscountAmount.toLocaleString()}</span>
+                                        <span className="text-emerald-600 font-medium whitespace-nowrap">-${promoDiscountAmount.toLocaleString('es-MX')} MXN</span>
                                     </div>
                                 )}
 
@@ -650,55 +870,44 @@ export default function Checkout() {
                                                 : ''}
                                         </span>
                                         <span className="text-emerald-600 font-medium whitespace-nowrap">
-                                            -${couponDiscount.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+                                            -${couponDiscount.toLocaleString('es-MX', { minimumFractionDigits: 2 })} MXN
                                         </span>
                                     </div>
                                 )}
 
                                 <div className="flex justify-between items-center">
-                                    <span className="text-charcoal-light">Envío FedEx</span>
+                                    <span className="text-charcoal-light">Envío a domicilio</span>
                                     {promotion.isFreeShipping ? (
                                         <span className="font-medium whitespace-nowrap">
                                             <span className="text-emerald-600">GRATIS</span>{' '}
-                                            <span className="line-through text-charcoal-light/40 text-sm ml-1">$200</span>
+                                            <span className="line-through text-charcoal-light/40 text-xs ml-1">$200</span>
                                         </span>
                                     ) : (
-                                        <span className="font-medium text-navy">${shippingCost}</span>
+                                        <span className="font-medium text-navy">${shippingCost} MXN</span>
                                     )}
                                 </div>
                             </div>
 
-                            <div className="bg-charcoal/5 h-px w-full my-6"></div>
-
-                            <div className="flex justify-between items-end">
-                                <span className="text-lg font-medium text-navy">Total</span>
+                            <div className="border-t border-charcoal/10 my-4 pt-4 flex justify-between items-end">
+                                <span className="text-base sm:text-lg font-semibold text-navy">Total</span>
                                 <div className="text-right">
-                                    <span className="block text-3xl font-bold text-gold leading-none">${finalTotal.toLocaleString()}</span>
+                                    <span className="block text-2xl sm:text-3xl font-bold text-gold leading-none">
+                                        ${finalTotal.toLocaleString('es-MX')}
+                                    </span>
                                     <span className="text-xs text-charcoal-light block mt-1">MXN (IVA incluido)</span>
                                 </div>
                             </div>
 
-                            {/* Trust & Assistance Box */}
-                            <div className="mt-6 pt-5 border-t border-charcoal/10 space-y-2.5 text-xs text-charcoal/75">
-                                <p className="flex items-center gap-2">
-                                    <span>🛡️</span>
-                                    <span><strong>Garantía Oficial J. Denis:</strong> Producto fresco directo de laboratorio en CDMX.</span>
-                                </p>
-                                <p className="flex items-center gap-2">
-                                    <span>📦</span>
-                                    <span><strong>Rastreo en Tiempo Real:</strong> Recibes tu guía FedEx por correo al despachar.</span>
-                                </p>
-                                <a
-                                    href="https://wa.me/525527271067?text=Hola!%20Tengo%20una%20duda%20antes%20de%20finalizar%20mi%20pedido%20en%20jdenis.store"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="mt-2 inline-flex items-center gap-1.5 text-forest font-semibold hover:text-gold transition-colors"
-                                >
-                                    💬 ¿Necesitas apoyo con tu compra? Escríbenos por WhatsApp →
-                                </a>
-                            </div>
+                            <a
+                                href="https://wa.me/525527271067?text=Hola!%20Tengo%20una%20duda%20antes%20de%20finalizar%20mi%20pedido%20en%20jdenis.store"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="mt-2 min-h-[44px] flex items-center justify-center gap-1.5 text-xs text-forest font-semibold hover:text-gold transition-colors"
+                            >
+                                💬 ¿Dudas con tu compra? Escríbenos por WhatsApp →
+                            </a>
                         </div>
-                    </div>
+                    </aside>
                 </div>
             </div>
         </div>
