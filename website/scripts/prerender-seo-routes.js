@@ -66,6 +66,34 @@ const PRODUCT_OVERRIDES = {
         title: 'Kit Laminado de Cejas Cisteamina (30 Aplic.) | J. Denis',
         description: 'Kit Laminado y Planchado de Cejas J. Denis con Cisteamina (30 aplicaciones). Alinea cejas rebeldes sin maltratar. Menudeo y mayoreo en México.',
     },
+    'laminado': {
+        title: 'Kit Laminado de Cejas Cisteamina ($200 MXN) | J. Denis',
+        description: 'Kit Laminado y Planchado de Cejas J. Denis con Cisteamina ($200 MXN, 30 aplic.). Alinea cejas rebeldes sin maltratar. Menudeo y mayoreo MX.',
+    },
+    'cinta-adhesiva-nichiban-colores-9i6zq': {
+        title: 'Cinta Nichiban Hipoalergénica Pestañas ($65) | J. Denis',
+        description: 'Cinta Adhesiva Nichiban 4mm hipoalergénica ($65 MXN) para aislamiento en extensiones de pestañas y lash lifting. Retiro suave. Envío México.',
+    },
+    'gel-reestructurante-para-diseno-de-cejas': {
+        title: 'Gel Reestructurante y Fijador de Cejas ($60) | J. Denis',
+        description: 'Gel Reestructurante para Diseño de Cejas J. Denis ($60 MXN). Hidrata, fija y prolonga el planchado o laminado de cejas. Directo de fábrica.',
+    },
+    'botox-para-cejas-y-pestanas': {
+        title: 'Botox para Pestañas y Cejas Queratina ($650) | J. Denis',
+        description: 'Tratamiento Botox J. Denis para pestañas y cejas ($650 MXN). Nutre, engrosa y repara con queratina tras Lash Lifting o Laminado en México.',
+    },
+    'mini-cepillo-para-lash-lifting': {
+        title: 'Cepillo para Lifting de Pestañas Mini ($40) | J. Denis',
+        description: 'Mini Cepillo de precisión para Lash Lifting y Laminado de Cejas J. Denis ($40 MXN). Separa y alinea pestañas en el pad. Envíos a todo México.',
+    },
+    'curva-c-0-05-dimensional-3d-combo': {
+        title: 'Abanicos Prearmados 3D Extensiones ($350 MXN) | J. Denis',
+        description: 'Blíster de Abanicos Prearmados 3D J. Denis ($350 MXN) para volumen tecnológico rápido, simétrico y ligero. Venta menudeo y mayoreo en México.',
+    },
+    'curva-b-0-15-dimensional-2d-10mm': {
+        title: 'Abanicos Prearmados 2D Extensiones ($350 MXN) | J. Denis',
+        description: 'Blíster de Abanicos Prearmados 2D J. Denis ($350 MXN) para volumen suave, uniforme y de alta retención. Venta menudeo y mayoreo en México.',
+    },
     'jade-rizado-pestanas': {
         title: 'Kit Jade Rizado de Pestañas ($250 MXN) | J. Denis Oficial',
         description: 'Compra Kit Jade de Rizado de Pestañas J. Denis ($250 MXN): Gel Ondulante, Neutralizante, Adhesivo y Rulos. Duración 6-8 semanas. Envío México.',

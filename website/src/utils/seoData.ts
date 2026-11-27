@@ -77,6 +77,8 @@ export const GENERIC_SYNONYM_MAP: Record<string, string[]> = {
     'cinta nichiban': ['cinta', 'nichiban', 'micropore', 'parche', 'extensiones', 'accesorios'],
     'brown gray': ['pigmentos', 'brow henna', 'castaño', 'cenizo', 'microblading', 'cejas'],
     'cepillo para lifting de pestanas': ['cepillo', 'peine', 'herramientas', 'lash lifting', 'separador'],
+    'abanicos prearmados': ['abanicos', 'dimensional', 'extensiones', 'volumen', 'pestañas'],
+    'gel reestructurante para cejas': ['reestructurante', 'fijador', 'cejas', 'hidratante', 'laminado'],
     'mayoreo': ['kit', 'profesional', 'paquete', 'distribuidor', 'salon', 'estudio'],
     'fabricante': ['j. denis', 'profesional', 'kit', 'cisteamina', 'henna', 'pigmentos'],
 };
@@ -540,6 +542,66 @@ export const GSC_PRODUCT_SEO_OVERRIDES: Record<string, ProductGscSeoOverride> = 
                 answer: 'Se aplica después de retirar el paso neutralizante o el tinte, dejándolo actuar de 5 a 10 minutos para sellar la cutícula con vitaminas, queratina y pantenol.',
             },
         ],
+    },
+    'laminado': {
+        metaTitle: 'Kit Laminado de Cejas Cisteamina ($200 MXN) | J. Denis',
+        metaDescription: 'Kit Laminado y Planchado de Cejas J. Denis con Cisteamina ($200 MXN, 30 aplic.). Alinea cejas rebeldes sin maltratar. Menudeo y mayoreo MX.',
+        extraFaqs: [
+            {
+                question: '¿Cuántas aplicaciones rinde el Kit de Laminado de Cejas J. Denis?',
+                answer: 'Rinde hasta 30 servicios profesionales e incluye crema direccionadora con cisteamina, fijador neutralizante y reestructurante nutritivo.',
+            },
+        ],
+    },
+    'cinta-adhesiva-nichiban-colores-9i6zq': {
+        metaTitle: 'Cinta Nichiban Hipoalergénica Pestañas ($65) | J. Denis',
+        metaDescription: 'Cinta Adhesiva Nichiban 4mm hipoalergénica ($65 MXN) para aislamiento en extensiones de pestañas y lash lifting. Retiro suave. Envío México.',
+        extraFaqs: [
+            {
+                question: '¿Por qué las lashistas eligen la Cinta Adhesiva Nichiban 4mm?',
+                answer: 'Su adhesivo de grado médico hipoalergénico sujeta párpados y pestañas inferiores con precisión sin irritar la piel ni dejar residuos al retirar.',
+            },
+        ],
+    },
+    'gel-reestructurante-para-diseno-de-cejas': {
+        metaTitle: 'Gel Reestructurante y Fijador de Cejas ($60) | J. Denis',
+        metaDescription: 'Gel Reestructurante para Diseño de Cejas J. Denis ($60 MXN). Hidrata, fija y prolonga el planchado o laminado de cejas. Directo de fábrica.',
+        extraFaqs: [
+            {
+                question: '¿Cuándo se usa el Gel Reestructurante para Diseño de Cejas J. Denis?',
+                answer: 'Se aplica como paso final nutritivo tras el planchado o laminado de cejas y como cuidado diario en casa para hidratar, dar brillo y mantener el peinado.',
+            },
+        ],
+    },
+    'botox-para-cejas-y-pestanas': {
+        metaTitle: 'Botox para Pestañas y Cejas Queratina ($650) | J. Denis',
+        metaDescription: 'Tratamiento Botox J. Denis para pestañas y cejas ($650 MXN). Nutre, engrosa y repara con queratina tras Lash Lifting o Laminado en México.',
+        extraFaqs: [
+            {
+                question: '¿Qué beneficios aporta el Botox para cejas y pestañas J. Denis?',
+                answer: 'Hidrata profundamente, sella la cutícula y aumenta el grosor y brillo de la fibra capilar después de procedimientos químicos de lifting o laminado.',
+            },
+        ],
+    },
+    'mini-cepillo-para-lash-lifting': {
+        metaTitle: 'Cepillo para Lifting de Pestañas Mini ($40) | J. Denis',
+        metaDescription: 'Mini Cepillo de precisión para Lash Lifting y Laminado de Cejas J. Denis ($40 MXN). Separa y alinea pestañas en el pad. Envíos a todo México.',
+        extraFaqs: [],
+    },
+    'curva-c-0-05-dimensional-3d-combo': {
+        metaTitle: 'Abanicos Prearmados 3D Extensiones ($350 MXN) | J. Denis',
+        metaDescription: 'Blíster de Abanicos Prearmados 3D J. Denis ($350 MXN) para volumen tecnológico rápido, simétrico y ligero. Venta menudeo y mayoreo en México.',
+        extraFaqs: [
+            {
+                question: '¿Qué ventaja tienen los Abanicos Prearmados 3D J. Denis?',
+                answer: 'Permiten crear sets de volumen simétricos y ultraligeros en la mitad de tiempo en cabina, con base fina que maximiza la retención del adhesivo.',
+            },
+        ],
+    },
+    'curva-b-0-15-dimensional-2d-10mm': {
+        metaTitle: 'Abanicos Prearmados 2D Extensiones ($350 MXN) | J. Denis',
+        metaDescription: 'Blíster de Abanicos Prearmados 2D J. Denis ($350 MXN) para volumen suave, uniforme y de alta retención. Venta menudeo y mayoreo en México.',
+        extraFaqs: [],
     },
     'dark-red-pigmento-cejas': {
         metaTitle: 'Pigmento Cejas Dark Red (Pelirrojo / Caoba) | J. Denis',
