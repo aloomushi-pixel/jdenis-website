@@ -679,12 +679,42 @@ export const GSC_PRODUCT_SEO_OVERRIDES: Record<string, ProductGscSeoOverride> = 
         extraFaqs: [],
     },
     'godete-cristal': {
-        metaTitle: 'Godete de Cristal para Henna y Pigmentos ($295) | J. Denis',
-        metaDescription: 'Godete de Cristal macizo profesional J. Denis ($295 MXN) para mezclar Brow Henna, pigmentos y tintes sin alterar la fórmula. Envío a todo México.',
+        metaTitle: 'Godete de Cristal para Henna y Pigmentos ($30) | J. Denis',
+        metaDescription: 'Godete de Cristal macizo profesional J. Denis ($30 MXN) para mezclar Brow Henna, pigmentos y tintes sin alterar la fórmula. Envío a todo México.',
         extraFaqs: [
             {
                 question: '¿Por qué es indispensable mezclar la Henna y el Pigmento de cejas en un Godete de Cristal?',
                 answer: 'El godete de cristal macizo es no poroso y químicamente inerte, lo que evita que el activador de henna o el oxidante reaccionen como ocurre con recipientes plásticos o metálicos.',
+            },
+        ],
+    },
+    'godete-de-cristal': {
+        metaTitle: 'Godete de Cristal para Henna y Pigmentos ($30) | J. Denis',
+        metaDescription: 'Godete de Cristal macizo profesional J. Denis ($30 MXN) para mezclar Brow Henna, pigmentos y tintes sin alterar la fórmula. Envío a todo México.',
+        extraFaqs: [
+            {
+                question: '¿Por qué es indispensable mezclar la Henna y el Pigmento de cejas en un Godete de Cristal?',
+                answer: 'El godete de cristal macizo es no poroso y químicamente inerte, lo que evita que el activador de henna o el oxidante reaccionen como ocurre con recipientes plásticos o metálicos.',
+            },
+        ],
+    },
+    'activador-de-henna': {
+        metaTitle: 'Activador de Henna Orgánico Cejas ($100 MXN) | J. Denis',
+        metaDescription: 'Activador de Henna orgánico J. Denis para cejas ($100 MXN). Duplica la fijación e intensidad de Brow Henna y pigmentos en piel y vello.',
+        extraFaqs: [
+            {
+                question: '¿Para qué sirve el Activador de Henna Orgánico para cejas J. Denis?',
+                answer: 'Sustituye al agua común al preparar la henna en godete de cristal, estabilizando el pH y duplicando la fijación del tono en piel y vello.',
+            },
+        ],
+    },
+    'after-care': {
+        metaTitle: 'After Care J. Denis Post Lash Lifting ($500) | Oficial',
+        metaDescription: 'Tratamiento After Care J. Denis ($500 MXN) para cuidado post Lash Lifting y Laminado de Cejas. Hidrata, sella la cutícula y prolonga el efecto.',
+        extraFaqs: [
+            {
+                question: '¿Cómo se aplica After Care J. Denis después del Lash Lifting o Laminado?',
+                answer: 'Se aplica al finalizar el servicio en cabina y diariamente en casa sobre pestañas o cejas limpias para nutrir, sellar la cutícula y prolongar el levantamiento.',
             },
         ],
     },

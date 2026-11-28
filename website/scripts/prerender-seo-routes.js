@@ -139,8 +139,20 @@ const PRODUCT_OVERRIDES = {
         description: 'Paquete de 10 aplicadores Microbrush sin pelusa J. Denis para Lash Lifting, extensiones, laminado y retiro de adhesivo. Insumos profesionales MX.',
     },
     'godete-cristal': {
-        title: 'Godete de Cristal para Henna y Pigmentos ($295) | J. Denis',
-        description: 'Godete de Cristal macizo profesional J. Denis ($295 MXN) para mezclar Brow Henna, pigmentos y tintes sin alterar la fórmula. Envío a todo México.',
+        title: 'Godete de Cristal para Henna y Pigmentos ($30) | J. Denis',
+        description: 'Godete de Cristal macizo profesional J. Denis ($30 MXN) para mezclar Brow Henna, pigmentos y tintes sin alterar la fórmula. Envío a todo México.',
+    },
+    'godete-de-cristal': {
+        title: 'Godete de Cristal para Henna y Pigmentos ($30) | J. Denis',
+        description: 'Godete de Cristal macizo profesional J. Denis ($30 MXN) para mezclar Brow Henna, pigmentos y tintes sin alterar la fórmula. Envío a todo México.',
+    },
+    'activador-de-henna': {
+        title: 'Activador de Henna Orgánico Cejas ($100 MXN) | J. Denis',
+        description: 'Activador de Henna orgánico J. Denis para cejas ($100 MXN). Duplica la fijación e intensidad de Brow Henna y pigmentos en piel y vello.',
+    },
+    'after-care': {
+        title: 'After Care J. Denis Post Lash Lifting ($500) | Oficial',
+        description: 'Tratamiento After Care J. Denis ($500 MXN) para cuidado post Lash Lifting y Laminado de Cejas. Hidrata, sella la cutícula y prolonga el efecto.',
     },
     'curva-lc-015-combo': {
         title: 'Extensiones Pestañas Curva LC 0.15 Foxy Eye | J. Denis',
